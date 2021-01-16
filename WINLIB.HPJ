@@ -1,0 +1,14 @@
+[OPTIONS]
+ROOT = F:\SOURCE\WINLIB
+COMPRESS = FALSE
+WARNING = 3
+CONTENTS = index
+TITLE = Windowsklassen Hilfe
+
+[CONFIG]
+BrowseButtons()
+
+[BITMAPS]
+
+[FILES]
+winlib.RTF

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<translations>
+<language lang="by">
+<item caption="Attachment" translation="Ohang" />
+<item caption="&amp;Cancel" translation="Doch Ned" />
+<item caption="&amp;Edit" translation="Ändern" />
+<item caption="&amp;Exit" translation="Hoam geh'n" />
+<item caption="&amp;File" translation="Datei" />
+<item caption="&amp;OK" translation="Basst" />
+<item caption="&amp;Open..." translation="Aufmacha" />
+<item caption="&amp;Save As..." translation="Nei Schreim" />
+<item caption="&amp;View" translation="Oschaun" />
+</language>
+<language lang="de">
+<item caption="About GUI Builder" translation="Über GUI Builder" />
+<item caption="Attachment" translation="Anheftung" />
+<item caption="Background Color" translation="Hintergrundfarbe" />
+<item caption="Base Class" translation="Basisklasse" />
+<item caption="Bottom" translation="Unten" />
+<item caption="Cancel" translation="Abbruch" />
+<item caption="Caption" translation="Titel" />
+<item caption="Edit" translation="Bearbeiten" />
+<item caption="Font" translation="Zeichensatz" />
+<item caption="F&amp;rame" translation="&amp;Rahmen" />
+<item caption="Grow Height" translation="Höher" />
+<item caption="Grow Width" translation="Breiter" />
+<item caption="Items" translation="Elemente" />
+<item caption="Item &amp;List" translation="Element &amp;Liste" />
+<item caption="Item &amp;Tree" translation="Element &amp;Baum" />
+<item caption="Label" translation="Beschriftung" />
+<item caption="Layout Height" translation="Layout Höhe" />
+<item caption="Layout Width" translation="Layout Breite" />
+<item caption="Left" translation="Links" />
+<item caption="Margin Bottom" translation="Rand Unten" />
+<item caption="Margin Left" translation="Rand Links" />
+<item caption="Margin Right" translation="Rand Rechts" />
+<item caption="Margin Top" translation="Rand Oben" />
+<item caption="New &amp;Item" translation="Neues &amp;Element" />
+<item caption="Num. Cols" translation="Anz. Spalten" />
+<item caption="Num. Rows" translation="Anz. Reihen" />
+<item caption="Open a GUI definition" translation="Öffne eine GUI Definition" />
+<item caption="Padding Bottom" translation="Abstand Unten" />
+<item caption="Padding Left" translation="Abstand Links" />
+<item caption="Padding Right" translation="Abstand Rechts" />
+<item caption="Padding Top" translation="Abstand Oben" />
+<item caption="Right" translation="Rechts" />
+<item caption="Save" translation="Speichern" />
+<item caption="Save a GUI definition" translation="Speichern einer GUI Definition" />
+<item caption="Select Font" translation="Auswahl Zeichensatz" />
+<item caption="Style" translation="Stil" />
+<item caption="Styles" translation="Stile" />
+<item caption="Target Language:" translation="Zielsprache" />
+<item caption="Top" translation="Oben" />
+<item caption="Translate" translation="Übersetzen" />
+<item caption="height" translation="Höhe" />
+<item caption="width" translation="Breite" />
+<item caption="&amp;Cancel" translation="&amp;Abbruch" />
+<item caption="&amp;Edit" translation="&amp;Bearbeiten" />
+<item caption="&amp;Exit" translation="&amp;Ende" />
+<item caption="&amp;File" translation="&amp;Datei" />
+<item caption="&amp;Form" translation="&amp;Formular" />
+<item caption="&amp;Menu" translation="&amp;Menü" />
+<item caption="&amp;New Document" translation="&amp;Neues Document" />
+<item caption="&amp;Open..." translation="&amp;Öffnen..." />
+<item caption="&amp;Save As..." translation="&amp;Speichern als..." />
+<item caption="&amp;Stringlist" translation="&amp;Textliste" />
+<item caption="&amp;Translate..." translation="Ü&amp;bersetzen..." />
+<item caption="&amp;View" translation="&amp;Anzeige" />
+</language>
+</translations>

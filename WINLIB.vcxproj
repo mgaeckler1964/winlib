@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugFast|Win32">
+      <Configuration>DebugFast</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugFast|x64">
+      <Configuration>DebugFast</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AREA.CPP" />
+    <ClCompile Include="barcode.c" />
+    <ClCompile Include="BASICWIN.CPP" />
+    <ClCompile Include="CALLWIN.CPP" />
+    <ClCompile Include="ChildWin.cpp" />
+    <ClCompile Include="CONTCHLD.CPP" />
+    <ClCompile Include="CONTROLW.CPP" />
+    <ClCompile Include="DEVICE.CPP" />
+    <ClCompile Include="DIALOGWI.CPP" />
+    <ClCompile Include="FONT.CPP" />
+    <ClCompile Include="frame.cpp" />
+    <ClCompile Include="F_TYPE.CPP" />
+    <ClCompile Include="gridView.cpp" />
+    <ClCompile Include="Layout.cpp" />
+    <ClCompile Include="LISTCONT.CPP" />
+    <ClCompile Include="LSTBCHLD.CPP" />
+    <ClCompile Include="MANAGER.CPP" />
+    <ClCompile Include="MDIWIN.CPP" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="POPUP.CPP" />
+    <ClCompile Include="REGEDIT.CPP" />
+    <ClCompile Include="resource.cpp" />
+    <ClCompile Include="scrollFrame.cpp" />
+    <ClCompile Include="splash.cpp" />
+    <ClCompile Include="STDDLG.CPP" />
+    <ClCompile Include="STREDIT.CPP" />
+    <ClCompile Include="ToolTip.cpp" />
+    <ClCompile Include="WINAPP.CPP" />
+    <ClCompile Include="WINLIB.CPP" />
+    <ClCompile Include="xmlEditorChild.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="accelerators.h" />
+    <ClInclude Include="AREA.H" />
+    <ClInclude Include="barcode.h" />
+    <ClInclude Include="BASICWIN.H" />
+    <ClInclude Include="bitmap.h" />
+    <ClInclude Include="BRUSH.H" />
+    <ClInclude Include="CALLWIN.H" />
+    <ClInclude Include="ChildWin.h" />
+    <ClInclude Include="CONTCHLD.H" />
+    <ClInclude Include="CONTROLW.H" />
+    <ClInclude Include="DEVICE.H" />
+    <ClInclude Include="DIALOGWI.H" />
+    <ClInclude Include="EDITCHLD.H" />
+    <ClInclude Include="FONT.H" />
+    <ClInclude Include="frame.h" />
+    <ClInclude Include="F_TYPE.H" />
+    <ClInclude Include="gdi.h" />
+    <ClInclude Include="gridView.h" />
+    <ClInclude Include="Layout.h" />
+    <ClInclude Include="LISTCONT.H" />
+    <ClInclude Include="LSTBCHLD.H" />
+    <ClInclude Include="MANAGER.H" />
+    <ClInclude Include="MDIWIN.H" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="OLESRVR.H" />
+    <ClInclude Include="palette.h" />
+    <ClInclude Include="pen.h" />
+    <ClInclude Include="POPUP.H" />
+    <ClInclude Include="RAW_DATA.H" />
+    <ClInclude Include="rectangle.h" />
+    <ClInclude Include="REGEDIT.H" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resourceTags.h" />
+    <ClInclude Include="scrollFrame.h" />
+    <ClInclude Include="STDDLG.H" />
+    <ClInclude Include="STREDIT.H" />
+    <ClInclude Include="TOOLTIP.H" />
+    <ClInclude Include="WINAPP.H" />
+    <ClInclude Include="WINLIB.H" />
+    <ClInclude Include="xmlEditorChild.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\DebugSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common32Settings.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="..\DebugSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common64Settings.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'" Label="PropertySheets">
+    <Import Project="..\DebugSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common32Settings.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'" Label="PropertySheets">
+    <Import Project="..\DebugSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common64Settings.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\ReleaseSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common32Settings.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="..\ReleaseSettings.props" />
+    <Import Project="..\CommonSettings.props" />
+    <Import Project="..\Common64Settings.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\Debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\Debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\OBJECT\$(Platform)\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG_LOG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG_LOG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG_LOG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG_LOG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

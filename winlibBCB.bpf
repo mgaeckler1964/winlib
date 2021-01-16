@@ -1,0 +1,28 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+USEUNIT("BASICWIN.CPP");
+USEUNIT("WINAPP.CPP");
+USEUNIT("CALLWIN.CPP");
+USEUNIT("F_TYPE.CPP");
+USEUNIT("DIALOGWI.CPP");
+USEUNIT("ToolTip.cpp");
+USEUNIT("DEVICE.CPP");
+USEUNIT("CONTROLW.CPP");
+USEUNIT("WINLIB.CPP");
+USEUNIT("xmlEditorChild.cpp");
+USEUNIT("FONT.CPP");
+USEUNIT("STDDLG.CPP");
+USEUNIT("AREA.CPP");
+USEUNIT("POPUP.CPP");
+USEUNIT("Layout.cpp");
+USEUNIT("resource.cpp");
+USEUNIT("splash.cpp");
+USEUNIT("barcode.c");
+//---------------------------------------------------------------------------
+#define Library
+
+// To add a file to the library use the Project menu 'Add to Project'.
+
+ 
