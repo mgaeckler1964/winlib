@@ -421,7 +421,7 @@ void ListBox::clearSelection( void )
 	}
 	else
 	{
-		message( LB_SETCURSEL, -1 );
+		message( LB_SETCURSEL, WPARAM(-1) );
 	}
 }
 
@@ -535,7 +535,7 @@ void ListBox::unselectEntry( int entryId )
 	if( isMultipleSelection() )
 		message( LB_SETSEL, false, MAKELPARAM( entryId, 0 ) );
 	else
-		message( LB_SETCURSEL, -1 );
+		message( LB_SETCURSEL, WPARAM(-1) );
 }
 
 /*

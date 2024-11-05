@@ -106,7 +106,7 @@ class ControlWindow : public BasicWindow
 	void restoreProc( void );
 
 	public:
-	SuccessCode create( CallbackWindow *parent )
+	virtual SuccessCode create( CallbackWindow *parent )
 	{
 		addStyle( WS_CHILD );
 		SuccessCode error = BasicWindow::create( parent );
