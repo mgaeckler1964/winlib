@@ -34,4 +34,6 @@
 *.dsk
 *.user
 *.suo
+*.sdf
 *.bak
+ipch/
