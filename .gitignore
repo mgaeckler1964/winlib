@@ -36,4 +36,5 @@
 *.suo
 *.sdf
 *.bak
+*.~*
 ipch/
