@@ -232,7 +232,7 @@ Application::Application( const char *newIconName )
 {
 	guiRoot = NULL;
 	guiDoc = NULL;
-	company = "CRESD";
+	company = "gak";
 	appObject = this;
 	iconName = newIconName;
 }
@@ -241,7 +241,7 @@ Application::Application( int newIconID )
 {
 	guiRoot = NULL;
 	guiDoc = NULL;
-	company = "CRESD";
+	company = "gak";
 	appObject = this;
 	if( newIconID > 0 )
 		iconName = MAKEINTRESOURCE( newIconID );
