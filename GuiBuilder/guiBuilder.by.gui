@@ -38,36 +38,37 @@
 </menu>
 </menus>
 <forms>
-<form name="ABOUT" id="128" width="300" height="177" caption="About GUI Builder" baseClass="ModalPopup" style="2428502016">
+<form name="ABOUT" id="128" width="330" height="185" caption="About GUI Builder" baseClass="ModalPopup" style="2428502016">
 <child type="Label" Caption="MG GUI Builder" x="8" y="9" height="0" width="0" style="268435456" />
 <child type="PushButton" Caption="OK" name="IDOK" x="98" y="115" height="20" width="80" id="1" style="268500993" />
-<child type="Label" name="" caption="(c) 2017 by Martin Gäckler all rights reserved." x="26" y="56" width="0" height="0" style="1342242827" />
+<child type="Label" name="" caption="(c) 2017-2024 by Martin Gäckler all rights reserved." x="8" y="83" width="308" height="19" style="1342242827" />
+<child type="Label" name="SysType" caption="32/64" x="256" y="8" width="53" height="18" style="1342242827" id="154" />
 </form>
 <form name="TEST_FORM" id="129" width="1251" height="780" caption="Demonstration" baseClass="ModalPopup" style="2428502016" bgColor="COLOR_APPWORKSPACE" bg_red="0" bg_green="0" bg_blue="0" font="MS Sans Serif;-13;0;0;0;400;255;0;0;0;1;2;1;34">
-<child type="FrameChild" name="TOOL_BAR" caption="" x="162" y="235" width="80" height="33" style="1350565888" id="159">
+<child type="FrameChild" name="TOOL_BAR" caption="" x="162" y="235" width="80" height="33" style="1350565888" id="160">
 <layout y="0" x="1" width="5" growWidth="1" />
-<child type="PushButton" name="PUSHBUTTON1" caption="PushButton1" x="34" y="6" width="80" height="25" style="1342242816" id="154" />
-<child type="PushButton" name="PUSHBUTTON3" caption="PushButton3" x="266" y="9" width="80" height="25" style="1342242816" id="155" />
-<child type="PushButton" name="PUSHBUTTON2" caption="PushButton2" x="157" y="9" width="80" height="25" style="1342242816" id="156" />
-<child type="PushButton" name="PUSHBUTTON4" caption="PushButton4" x="407" y="9" width="80" height="25" style="1342242816" id="157" />
-<child type="PushButton" name="PUSHBUTTON5" caption="PushButton5" x="557" y="7" width="80" height="25" style="1342242816" id="158" />
+<child type="PushButton" name="PUSHBUTTON1" caption="PushButton1" x="34" y="6" width="80" height="25" style="1342242816" id="155" />
+<child type="PushButton" name="PUSHBUTTON3" caption="PushButton3" x="266" y="9" width="80" height="25" style="1342242816" id="156" />
+<child type="PushButton" name="PUSHBUTTON2" caption="PushButton2" x="157" y="9" width="80" height="25" style="1342242816" id="157" />
+<child type="PushButton" name="PUSHBUTTON4" caption="PushButton4" x="407" y="9" width="80" height="25" style="1342242816" id="158" />
+<child type="PushButton" name="PUSHBUTTON5" caption="PushButton5" x="557" y="7" width="80" height="25" style="1342242816" id="159" />
 <layoutManager type="RowManager" marginLeft="4" marginRight="4" marginTop="4" marginBottom="4" />
 </child>
-<child type="FrameChild" name="BUTTO_BAR" caption="" x="759" y="388" width="100" height="25" style="1350565888" id="166">
+<child type="FrameChild" name="BUTTO_BAR" caption="" x="759" y="388" width="100" height="25" style="1350565888" id="167">
 <layout x="0" growHeight="1" height="7" y="0" paddingLeft="0" paddingTop="0" paddingRight="0" paddingBottom="0" />
-<child type="PushButton" name="PUSHBUTTONx1" caption="PushButton1" x="30" y="39" width="92" height="25" style="1342242816" id="160" />
-<child type="PushButton" name="PUSHBUTTONx2" caption="PushButton2" x="29" y="138" width="92" height="25" style="1342242816" id="161" />
-<child type="PushButton" name="PUSHBUTTONx3" caption="PushButton3" x="31" y="284" width="92" height="25" style="1342242816" id="162" />
-<child type="PushButton" name="PUSHBUTTONx4" caption="PushButton4" x="27" y="381" width="92" height="25" style="1342242816" id="163" />
-<child type="PushButton" name="PUSHBUTTONx5" caption="PushButton5" x="31" y="504" width="92" height="25" style="1342242816" id="164" />
-<child type="PushButton" name="PUSHBUTTONx6" caption="PushButton6" x="34" y="637" width="92" height="25" style="1342242816" id="165" />
+<child type="PushButton" name="PUSHBUTTONx1" caption="PushButton1" x="30" y="39" width="92" height="25" style="1342242816" id="161" />
+<child type="PushButton" name="PUSHBUTTONx2" caption="PushButton2" x="29" y="138" width="92" height="25" style="1342242816" id="162" />
+<child type="PushButton" name="PUSHBUTTONx3" caption="PushButton3" x="31" y="284" width="92" height="25" style="1342242816" id="163" />
+<child type="PushButton" name="PUSHBUTTONx4" caption="PushButton4" x="27" y="381" width="92" height="25" style="1342242816" id="164" />
+<child type="PushButton" name="PUSHBUTTONx5" caption="PushButton5" x="31" y="504" width="92" height="25" style="1342242816" id="165" />
+<child type="PushButton" name="PUSHBUTTONx6" caption="PushButton6" x="34" y="637" width="92" height="25" style="1342242816" id="166" />
 <layoutManager type="ColManager" marginLeft="4" marginRight="4" marginTop="4" marginBottom="4" />
 </child>
 <layoutManager type="TableManager" marginLeft="4" marginRight="4" marginTop="4" marginBottom="4" />
-<child type="PushButton" name="BUTTON" caption="PushButton" x="63" y="60" width="100" height="50" id="167">
+<child type="PushButton" name="BUTTON" caption="PushButton" x="63" y="60" width="100" height="50" id="168">
 <layout x="2" y="2" growWidth="0" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 </child>
-<child type="ListBox" name="LISTBOX" caption="" x="96" y="32" width="100" height="50" id="168" style="276889601">
+<child type="ListBox" name="LISTBOX" caption="" x="96" y="32" width="100" height="50" id="169" style="276889601">
 <layout x="1" growWidth="1" growHeight="1" height="3" y="2" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 <items>
 <item>This ist</item>
@@ -85,19 +86,19 @@
 <item>it</item>
 </items>
 </child>
-<child type="ComboBox" name="COMBOBOX" caption="" x="93" y="141" width="100" height="50" id="169">
+<child type="ComboBox" name="COMBOBOX" caption="" x="93" y="141" width="100" height="50" id="170">
 <layout x="2" y="3" growWidth="0" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 </child>
-<child type="EditControl" name="EDIT" caption="Edit" x="105" y="230" width="100" height="50" id="170" style="276889600">
+<child type="EditControl" name="EDIT" caption="Edit" x="105" y="230" width="100" height="50" id="171" style="276889600">
 <layout y="4" x="2" growWidth="0" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 </child>
-<child type="Label" name="TestLabel" caption="Label" x="52" y="391" width="100" height="50" style="276824065" id="171">
+<child type="Label" name="TestLabel" caption="Label" x="52" y="391" width="100" height="50" style="276824065" id="172">
 <layout x="2" y="1" width="1" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 </child>
 <child type="Label" name="" caption="Label" x="100" y="0" width="100" height="50" style="276824065">
 <layout y="5" x="2" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="FrameChild" name="FRAMECHILD" caption="" x="96" y="355" width="100" height="50" id="173" style="276824064">
+<child type="FrameChild" name="FRAMECHILD" caption="" x="96" y="355" width="100" height="50" id="174" style="276824064">
 <layout x="3" y="1" growWidth="3" growHeight="1" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 <child type="Label" name="" caption="Label" x="122" y="16" width="100" height="50" style="276824065">
 <layout x="1" y="0" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
@@ -109,35 +110,35 @@
 <layout x="0" y="1" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
 <layoutManager type="TableManager" />
-<child type="UpDownButton" name="UPDOWNBUTTON" caption="" x="38" y="24" width="80" height="25" style="1342242880" id="172">
+<child type="UpDownButton" name="UPDOWNBUTTON" caption="" x="38" y="24" width="80" height="25" style="1342242880" id="173">
 <layout x="0" y="0" />
 </child>
 </child>
-<child type="TrackBar" name="H_TRACKBAR" caption="" x="112" y="429" width="100" height="50" id="174" style="276893956">
+<child type="TrackBar" name="H_TRACKBAR" caption="" x="112" y="429" width="100" height="50" id="175" style="276893956">
 <layout x="0" y="7" growWidth="1" height="1" width="4" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="TreeView" name="TREEVIEW" caption="" x="514" y="238" width="100" height="50" style="276889600" id="175" bgColor="Select" bg_red="0" bg_green="17" bg_blue="221">
+<child type="TreeView" name="TREEVIEW" caption="" x="514" y="238" width="100" height="50" style="276889600" id="176" bgColor="Select" bg_red="0" bg_green="17" bg_blue="221">
 <layout x="3" y="2" height="3" growHeight="1" growWidth="1" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="PushButton" name="PUSHBUTTON" caption="PushButton" x="4" y="636" width="100" height="50" style="277053441" id="176" font="Bauhaus 93;-12;0;0;0;700;255;0;0;0;3;2;1;82">
+<child type="PushButton" name="PUSHBUTTON" caption="PushButton" x="4" y="636" width="100" height="50" style="277053441" id="177" font="Bauhaus 93;-12;0;0;0;700;255;0;0;0;3;2;1;82">
 <layout x="2" y="6" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="CheckBox" name="CHECKBOX" caption="CheckBox" x="155" y="164" width="100" height="50" style="1342242851" id="177">
+<child type="CheckBox" name="CHECKBOX" caption="CheckBox" x="155" y="164" width="100" height="50" style="1342242851" id="178">
 <layout x="1" y="6" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="RadioButton" name="RADIOBUTTON" caption="RadioButton" x="204" y="634" width="100" height="50" style="1342242857" id="178">
+<child type="RadioButton" name="RADIOBUTTON" caption="RadioButton" x="204" y="634" width="100" height="50" style="1342242857" id="179">
 <layout x="3" y="6" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="MemoControl" name="MEMOCONTROL" caption="Memo" x="217" y="54" width="100" height="50" style="1353781524" id="179">
+<child type="MemoControl" name="MEMOCONTROL" caption="Memo" x="217" y="54" width="100" height="50" style="1353781524" id="180">
 <layout x="1" y="1" growWidth="1" growHeight="1" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="TrackBar" name="V_TRACKBAR" caption="" x="612" y="300" width="100" height="50" style="1342242818" id="180">
+<child type="TrackBar" name="V_TRACKBAR" caption="" x="612" y="300" width="100" height="50" style="1342242818" id="181">
 <layout x="4" height="6" growHeight="1" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" y="1" />
 </child>
-<child type="ScrollBar" name="H_SCROLLBAR" caption="" x="338" y="699" width="80" height="25" style="1342242816" id="181">
+<child type="ScrollBar" name="H_SCROLLBAR" caption="" x="338" y="699" width="80" height="25" style="1342242816" id="182">
 <layout y="8" x="0" width="5" growWidth="1" />
 </child>
-<child type="ScrollBar" name="V_SCROLLBAR" caption="" x="829" y="603" width="25" height="25" style="1342242823" id="182">
+<child type="ScrollBar" name="V_SCROLLBAR" caption="" x="829" y="603" width="25" height="25" style="1342242823" id="183">
 <layout x="5" growHeight="1" height="7" y="1" />
 </child>
 </form>
@@ -145,7 +146,7 @@
 <child type="Label" caption="Select Styles for Selected Controls" x="9" y="10" width="0" height="0" style="268435456" name="">
 <layout x="0" y="0" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" />
 </child>
-<child type="ListBox" name="StyleListBox" caption="" x="20" y="50" width="500" height="200" id="183" style="280035337">
+<child type="ListBox" name="StyleListBox" caption="" x="20" y="50" width="500" height="200" id="184" style="280035337">
 <layout y="1" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" growWidth="1" width="2" growHeight="1" />
 </child>
 <child type="PushButton" name="IDOK" caption="Ok" x="50" y="313" width="80" height="25" id="1" style="268500993">
@@ -157,20 +158,20 @@
 <layoutManager type="TableManager" marginLeft="4" marginRight="4" marginTop="4" marginBottom="4" />
 </form>
 <form name="TEST_ATTACHMENT" width="1331" height="878" id="131">
-<child type="PushButton" name="PUSHBUTTON_Bottom" caption="Bottom" x="289" y="285" width="80" height="80" style="1342242816" id="184">
+<child type="PushButton" name="PUSHBUTTON_Bottom" caption="Bottom" x="289" y="285" width="80" height="80" style="1342242816" id="185">
 <layout attachment="3" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="PushButton" name="PUSHBUTTON_Top" caption="Top" x="360" y="155" width="80" height="80" style="1342242816" id="185">
+<child type="PushButton" name="PUSHBUTTON_Top" caption="Top" x="360" y="155" width="80" height="80" style="1342242816" id="186">
 <layout attachment="1" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
 <layoutManager type="AttachmentManager" marginLeft="4" marginRight="4" marginTop="4" marginBottom="4" />
-<child type="PushButton" name="PUSHBUTTON_Right" caption="Right" x="459" y="322" width="80" height="80" style="1342242816" id="186">
+<child type="PushButton" name="PUSHBUTTON_Right" caption="Right" x="459" y="322" width="80" height="80" style="1342242816" id="187">
 <layout attachment="2" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="PushButton" name="PUSHBUTTON_Left" caption="Left" x="158" y="170" width="80" height="80" style="1342242816" id="187">
+<child type="PushButton" name="PUSHBUTTON_Left" caption="Left" x="158" y="170" width="80" height="80" style="1342242816" id="188">
 <layout attachment="0" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="PushButton" name="PUSHBUTTON_Full" caption="Full" x="307" y="279" width="80" height="80" style="1342242816" id="188">
+<child type="PushButton" name="PUSHBUTTON_Full" caption="Full" x="307" y="279" width="80" height="80" style="1342242816" id="189">
 <layout attachment="4" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
 </form>
@@ -178,26 +179,26 @@
 <child type="Label" name="" caption="Label Thequick Brown III" x="21" y="37" width="0" height="0" style="1342242827" font="Arimo;-96;0;0;0;700;255;0;0;0;3;2;1;34" />
 </form>
 <form name="TEST_xmlGridFORM" width="346" height="361" caption="xmlFORM" baseClass="OverlappedWindow" id="133">
-<child type="XMLeditorChild" name="XMLEDITORCHILD" caption="" x="14" y="27" width="80" height="25" style="1342177280" id="189" />
-<child type="GridViewer" name="GRIDVIEWER" caption="" x="157" y="182" width="80" height="25" style="1342177280" id="190" />
+<child type="XMLeditorChild" name="XMLEDITORCHILD" caption="" x="14" y="27" width="80" height="25" style="1342177280" id="190" />
+<child type="GridViewer" name="GRIDVIEWER" caption="" x="157" y="182" width="80" height="25" style="1342177280" id="191" />
 </form>
 <form name="StringListEditor" width="391" height="339" caption="String List Editor" baseClass="OverlappedWindow" id="134" style="277807104">
 <layoutManager type="SingleChildManager" />
-<child type="GridViewer" name="stringListGrid" caption="" x="0" y="0" width="80" height="25" style="1342177323" id="191" numCols="0" numRows="0" />
+<child type="GridViewer" name="stringListGrid" caption="" x="0" y="0" width="80" height="25" style="1342177323" id="192" numCols="0" numRows="0" />
 </form>
 <form name="TranslationForm" width="485" height="452" caption="Translate" id="135" baseClass="ModalPopup" style="269287424">
-<child type="FrameChild" name="TopFrame" caption="" x="508" y="54" width="80" height="33" style="1342308352" id="193">
+<child type="FrameChild" name="TopFrame" caption="" x="508" y="54" width="80" height="33" style="1342308352" id="194">
 <layout attachment="1" growWidth="1" />
 <layoutManager type="TableManager" marginLeft="0" marginRight="0" marginTop="0" marginBottom="0" />
 <child type="Label" name="" caption="Target Language:" x="330" y="27" width="0" height="25" style="1342177291">
 <layout x="0" y="0" width="1" height="1" paddingLeft="8" paddingRight="8" paddingTop="4" paddingBottom="4" />
 </child>
-<child type="ComboBox" name="targetLanguageCombo" caption="" x="351" y="37" width="80" height="100" style="1342243842" id="192">
+<child type="ComboBox" name="targetLanguageCombo" caption="" x="351" y="37" width="80" height="100" style="1342243842" id="193">
 <layout x="1" y="0" width="1" height="1" growWidth="1" growHeight="0" paddingLeft="8" paddingRight="8" paddingTop="4" paddingBottom="4" />
 </child>
 </child>
 <layoutManager type="AttachmentManager" />
-<child type="FrameChild" name="BottomFrame" caption="" x="51" y="381" width="80" height="35" style="1342308352" id="194">
+<child type="FrameChild" name="BottomFrame" caption="" x="51" y="381" width="80" height="35" style="1342308352" id="195">
 <layout attachment="3" growWidth="1" />
 <child type="PushButton" name="IDOK" caption="Basst" x="1" y="5" width="80" height="25" style="1342242817" id="1" font="">
 <layout x="0" y="0" width="1" height="1" growWidth="0" growHeight="0" paddingLeft="4" paddingRight="4" paddingTop="4" />
@@ -207,7 +208,7 @@
 </child>
 <layoutManager type="TableManager" />
 </child>
-<child type="GridViewer" name="translationsGrid" caption="" x="279" y="222" width="80" height="25" style="1342177283" numCols="2" numRows="2" id="195">
+<child type="GridViewer" name="translationsGrid" caption="" x="279" y="222" width="80" height="25" style="1342177283" numCols="2" numRows="2" id="196">
 <layout attachment="4" growWidth="1" growHeight="1" />
 </child>
 </form>
@@ -218,103 +219,103 @@
 <child type="Label" Caption="Name" height="20" style="268435467">
 <layout x="0" y="0" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="controlName" height="23" id="196" style="276889984">
+<child type="EditControl" NAME="controlName" height="23" id="197" style="276889984">
 <layout x="1" y="0" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
 <child type="Label" Caption="Caption" height="20" style="268435467">
 <layout x="0" y="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="childCaption" height="23" id="197" style="276889984">
+<child type="EditControl" NAME="childCaption" height="23" id="198" style="276889984">
 <layout x="1" y="1" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="x" height="20" style="268435467" name="xPOSLabel" id="198">
+<child type="Label" Caption="x" height="20" style="268435467" name="xPOSLabel" id="199">
 <layout x="0" y="2" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="xPOS" height="23" id="199" style="276889600">
+<child type="EditControl" NAME="xPOS" height="23" id="200" style="276889600">
 <layout x="1" y="2" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="y" height="20" style="268435467" name="yPOSLabel" id="200">
+<child type="Label" Caption="y" height="20" style="268435467" name="yPOSLabel" id="201">
 <layout x="0" y="3" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="yPOS" height="23" id="201" style="276889600">
+<child type="EditControl" NAME="yPOS" height="23" id="202" style="276889600">
 <layout x="1" y="3" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="width" height="20" style="268435467" name="childWidthLabel" id="202">
+<child type="Label" Caption="width" height="20" style="268435467" name="childWidthLabel" id="203">
 <layout x="0" y="4" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="childWidth" height="23" id="203" style="276889600">
+<child type="EditControl" NAME="childWidth" height="23" id="204" style="276889600">
 <layout x="1" y="4" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="height" height="20" style="268435467" name="childHeightLabel" id="204">
+<child type="Label" Caption="height" height="20" style="268435467" name="childHeightLabel" id="205">
 <layout x="0" y="5" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="childHeight" height="23" id="205" style="276889600">
+<child type="EditControl" NAME="childHeight" height="23" id="206" style="276889600">
 <layout x="1" y="5" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Layout x" height="20" style="268435467" name="layout_xPOSLabel" id="206">
+<child type="Label" Caption="Layout x" height="20" style="268435467" name="layout_xPOSLabel" id="207">
 <layout x="0" y="6" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="layout_xPOS" height="23" id="207" style="276889600">
+<child type="EditControl" NAME="layout_xPOS" height="23" id="208" style="276889600">
 <layout x="1" y="6" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Layout y" height="20" style="268435467" name="layout_yPOSLabel" id="208">
+<child type="Label" Caption="Layout y" height="20" style="268435467" name="layout_yPOSLabel" id="209">
 <layout x="0" y="7" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="layout_yPOS" height="23" id="209" style="276889600">
+<child type="EditControl" NAME="layout_yPOS" height="23" id="210" style="276889600">
 <layout x="1" y="7" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Layout Width" height="20" style="268435467" name="layoutWIDTHLabel" id="210">
+<child type="Label" Caption="Layout Width" height="20" style="268435467" name="layoutWIDTHLabel" id="211">
 <layout x="0" y="8" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="layoutWIDTH" height="23" id="211" style="276889600">
+<child type="EditControl" NAME="layoutWIDTH" height="23" id="212" style="276889600">
 <layout x="1" y="8" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Layout Height" height="20" style="268435467" name="layoutHEIGHTLabel" id="212">
+<child type="Label" Caption="Layout Height" height="20" style="268435467" name="layoutHEIGHTLabel" id="213">
 <layout x="0" y="9" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="layoutHEIGHT" height="23" id="213" style="276889600">
+<child type="EditControl" NAME="layoutHEIGHT" height="23" id="214" style="276889600">
 <layout x="1" y="9" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Grow Width" height="20" style="268435467" name="growWIDTHLabel" id="214">
+<child type="Label" Caption="Grow Width" height="20" style="268435467" name="growWIDTHLabel" id="215">
 <layout x="0" y="10" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="growWIDTH" height="23" id="215" style="276889600">
+<child type="EditControl" NAME="growWIDTH" height="23" id="216" style="276889600">
 <layout x="1" y="10" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Grow Height" height="20" style="268435467" name="growHEIGHTLabel" id="216">
+<child type="Label" Caption="Grow Height" height="20" style="268435467" name="growHEIGHTLabel" id="217">
 <layout x="0" y="11" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="growHEIGHT" height="23" id="217" style="276889600">
+<child type="EditControl" NAME="growHEIGHT" height="23" id="218" style="276889600">
 <layout x="1" y="11" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Padding Left" height="20" style="268435467" name="paddingLEFTLabel" id="218">
+<child type="Label" Caption="Padding Left" height="20" style="268435467" name="paddingLEFTLabel" id="219">
 <layout x="0" y="12" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="paddingLEFT" height="23" id="219" style="276889600">
+<child type="EditControl" NAME="paddingLEFT" height="23" id="220" style="276889600">
 <layout x="1" y="12" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Padding Right" height="20" style="268435467" name="paddingRIGHTLabel" id="220">
+<child type="Label" Caption="Padding Right" height="20" style="268435467" name="paddingRIGHTLabel" id="221">
 <layout x="0" y="13" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="paddingRIGHT" height="23" id="221" style="276889600">
+<child type="EditControl" NAME="paddingRIGHT" height="23" id="222" style="276889600">
 <layout x="1" y="13" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Padding Top" height="20" style="268435467" name="paddingTOPLabel" id="222">
+<child type="Label" Caption="Padding Top" height="20" style="268435467" name="paddingTOPLabel" id="223">
 <layout x="0" y="14" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="paddingTOP" height="23" id="223" style="276889600">
+<child type="EditControl" NAME="paddingTOP" height="23" id="224" style="276889600">
 <layout x="1" y="14" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Padding Bottom" height="20" style="268435467" name="paddingBOTTOMLabel" id="224">
+<child type="Label" Caption="Padding Bottom" height="20" style="268435467" name="paddingBOTTOMLabel" id="225">
 <layout x="0" y="15" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="paddingBOTTOM" height="23" id="225" style="276889600">
+<child type="EditControl" NAME="paddingBOTTOM" height="23" id="226" style="276889600">
 <layout x="1" y="15" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" name="attachmentLabel" caption="Ohang" x="49" y="684" width="0" height="0" style="1342177291" id="226">
+<child type="Label" name="attachmentLabel" caption="Ohang" x="49" y="684" width="0" height="0" style="1342177291" id="227">
 <layout y="16" x="0" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 </child>
-<child type="ComboBox" name="attachment" caption="" x="262" y="694" width="80" height="200" style="1342242819" id="227">
+<child type="ComboBox" name="attachment" caption="" x="262" y="694" width="80" height="200" style="1342242819" id="228">
 <layout x="1" y="16" growWidth="1" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 <items>
 <item>-</item>
@@ -325,10 +326,10 @@
 <item>Full</item>
 </items>
 </child>
-<child type="Label" Caption="Layout Manager" style="268435467" name="layoutManagerLabel" id="228">
+<child type="Label" Caption="Layout Manager" style="268435467" name="layoutManagerLabel" id="229">
 <layout x="0" y="17" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="ComboBox" NAME="layoutManager" height="200" id="229" style="268500995" x="121" y="35" width="80">
+<child type="ComboBox" NAME="layoutManager" height="200" id="230" style="268500995" x="121" y="35" width="80">
 <layout x="1" y="17" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 <items>
 <item>None</item>
@@ -339,34 +340,34 @@
 <item>AttachmentManager</item>
 </items>
 </child>
-<child type="Label" Caption="Margin Left" height="20" style="268435467" name="marginLEFTLabel" id="230">
+<child type="Label" Caption="Margin Left" height="20" style="268435467" name="marginLEFTLabel" id="231">
 <layout x="0" y="18" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="marginLEFT" height="23" id="231" style="276889600">
+<child type="EditControl" NAME="marginLEFT" height="23" id="232" style="276889600">
 <layout x="1" y="18" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Margin Right" height="20" style="268435467" name="marginRIGHTLabel" id="232">
+<child type="Label" Caption="Margin Right" height="20" style="268435467" name="marginRIGHTLabel" id="233">
 <layout x="0" y="19" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="marginRIGHT" height="23" id="233" style="276889600">
+<child type="EditControl" NAME="marginRIGHT" height="23" id="234" style="276889600">
 <layout x="1" y="19" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Margin Top" height="20" style="268435467" name="marginTOPLabel" id="234">
+<child type="Label" Caption="Margin Top" height="20" style="268435467" name="marginTOPLabel" id="235">
 <layout x="0" y="20" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="marginTOP" height="23" id="235" style="276889600">
+<child type="EditControl" NAME="marginTOP" height="23" id="236" style="276889600">
 <layout x="1" y="20" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" Caption="Margin Bottom" height="20" style="268435467" name="marginBOTTOMLabel" id="236">
+<child type="Label" Caption="Margin Bottom" height="20" style="268435467" name="marginBOTTOMLabel" id="237">
 <layout x="0" y="21" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="EditControl" NAME="marginBOTTOM" height="23" id="237" style="276889600">
+<child type="EditControl" NAME="marginBOTTOM" height="23" id="238" style="276889600">
 <layout x="1" y="21" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" name="BackgroundColorLabel" caption="Background Color" x="0" y="0" width="0" height="0" style="1342177291" id="238">
+<child type="Label" name="BackgroundColorLabel" caption="Background Color" x="0" y="0" width="0" height="0" style="1342177291" id="239">
 <layout y="22" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" x="0" />
 </child>
-<child type="ComboBox" name="BackgroundColor" caption="" x="201" y="679" width="80" height="200" style="1342242819" id="239">
+<child type="ComboBox" name="BackgroundColor" caption="" x="201" y="679" width="80" height="200" style="1342242819" id="240">
 <layout x="1" y="22" growWidth="1" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 <items>
 <item>Default</item>
@@ -400,22 +401,22 @@
 <item>Select</item>
 </items>
 </child>
-<child type="CheckBox" name="SelectFontCheck" caption="Font" x="59" y="711" width="0" height="25" style="1342242851" id="240">
+<child type="CheckBox" name="SelectFontCheck" caption="Font" x="59" y="711" width="0" height="25" style="1342242851" id="241">
 <layout x="0" y="23" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 </child>
-<child type="PushButton" name="SelectFontButton" caption="Select Font" x="265" y="685" width="80" height="23" style="1342243584" id="241">
+<child type="PushButton" name="SelectFontButton" caption="Select Font" x="265" y="685" width="80" height="23" style="1342243584" id="242">
 <layout x="1" y="23" growWidth="1" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 </child>
-<child type="Label" name="controlStyleLabel" caption="Style" x="0" y="0" width="0" height="0" style="268435467" id="242">
+<child type="Label" name="controlStyleLabel" caption="Style" x="0" y="0" width="0" height="0" style="268435467" id="243">
 <layout y="24" x="0" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="PushButton" name="controlStyle" caption="Styles" x="365" y="708" width="80" height="23" id="243" style="268501760">
+<child type="PushButton" name="controlStyle" caption="Styles" x="365" y="708" width="80" height="23" id="244" style="268501760">
 <layout x="1" y="24" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" name="baseClassLabel" caption="Base Class" x="0" y="0" width="0" height="0" style="268435467" id="244">
+<child type="Label" name="baseClassLabel" caption="Base Class" x="0" y="0" width="0" height="0" style="268435467" id="245">
 <layout y="25" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" x="0" />
 </child>
-<child type="ComboBox" name="baseClass" caption="" x="251" y="685" width="80" height="200" id="245" style="276889603">
+<child type="ComboBox" name="baseClass" caption="" x="251" y="685" width="80" height="200" id="246" style="276889603">
 <layout y="25" x="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 <items>
 <item>OverlappedWindow</item>
@@ -424,40 +425,40 @@
 <item />
 </items>
 </child>
-<child type="Label" Caption="Items" height="0" style="268435467" name="itemListLabel" id="246">
+<child type="Label" Caption="Items" height="0" style="268435467" name="itemListLabel" id="247">
 <layout x="0" y="26" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="PushButton" NAME="itemList" caption="Items" height="23" id="247" style="268501760" x="116" y="514">
+<child type="PushButton" NAME="itemList" caption="Items" height="23" id="248" style="268501760" x="116" y="514">
 <layout x="1" y="26" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" name="numColsLABEL" caption="Num. Cols" x="35" y="711" width="80" height="25" style="1342242827" id="248">
+<child type="Label" name="numColsLABEL" caption="Num. Cols" x="35" y="711" width="80" height="25" style="1342242827" id="249">
 <layout x="0" y="27" width="1" height="1" />
 </child>
 <layout paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
-<child type="EditControl" name="numCols" caption="" x="150" y="674" width="80" height="23" style="1350631808" id="249">
+<child type="EditControl" name="numCols" caption="" x="150" y="674" width="80" height="23" style="1350631808" id="250">
 <layout x="1" y="27" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="Label" name="numRowsLABEL" caption="Num. Rows" x="28" y="719" width="0" height="0" style="1342242827" id="250">
+<child type="Label" name="numRowsLABEL" caption="Num. Rows" x="28" y="719" width="0" height="0" style="1342242827" id="251">
 <layout x="0" y="28" />
 </child>
-<child type="EditControl" name="numRows" caption="" x="136" y="701" width="80" height="23" style="1350631808" id="251">
+<child type="EditControl" name="numRows" caption="" x="136" y="701" width="80" height="23" style="1350631808" id="252">
 <layout x="1" y="28" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
 </frame>
 </frames>
 <strings>
 <list name="TEST_STRINGLIST" caption="">
-<string name="HELLO_WORLD1" caption="Hello World" id="252" />
-<string name="HELLO_WORLD2" caption="Hello 2World" id="253" />
-<string name="HELLO_WORLD3" caption="Hello World" id="254" />
-<string name="TEST_STRING" caption="SO So Das ist es" id="255" />
+<string name="HELLO_WORLD1" caption="Hello World" id="253" />
+<string name="HELLO_WORLD2" caption="Hello 2World" id="254" />
+<string name="HELLO_WORLD3" caption="Hello World" id="255" />
+<string name="TEST_STRING" caption="SO So Das ist es" id="256" />
 </list>
 <list name="GuiBuilderStrings" caption="">
-<string name="OPEN_GUI_FILE" caption="Open a GUI definition" id="256" />
-<string name="SAVE_GUI_FILE" caption="Save a GUI definition" id="257" />
+<string name="OPEN_GUI_FILE" caption="Open a GUI definition" id="257" />
+<string name="SAVE_GUI_FILE" caption="Save a GUI definition" id="258" />
 </list>
 <list name="GuiFilterList">
-<string name="GuiDefinitions" caption="Gui definitions (*.gui)|*.gui|" id="258" />
+<string name="GuiDefinitions" caption="Gui definitions (*.gui)|*.gui|" id="259" />
 </list>
 </strings>
 </gui>

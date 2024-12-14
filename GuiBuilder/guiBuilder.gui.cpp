@@ -11,6 +11,7 @@ namespace winlibGUI {
 
 	void ABOUT_form::getControls() {
 		IDOK_PushButton=static_cast<winlib::PushButton*>(findChild(IDOK));
+		SysType=static_cast<winlib::Label*>(findChild(SysType_id));
 	}	// ABOUT
 
 	void TEST_FORM_form::getControls() {

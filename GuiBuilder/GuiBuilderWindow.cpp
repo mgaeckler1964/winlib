@@ -84,6 +84,19 @@ struct IdValues
 	int			value;
 };
 
+class MyAboutForm : public ABOUT_form
+{
+	public:
+	MyAboutForm() : ABOUT_form( NULL ) {}
+
+	virtual winlib::ProcessStatus handleCreate()
+	{
+		winlib::ProcessStatus result = ABOUT_form::handleCreate();
+		SysType->setText(gak::formatNumber(sizeof(void*)*8)+" bit");
+		return result;
+	}
+};
+
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -2295,7 +2308,7 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 
 		case MENU_INFO_id:
 		{
-			ABOUT_form	theForm( NULL );
+			MyAboutForm	theForm;
 
 			theForm.create( this );
 			break;
