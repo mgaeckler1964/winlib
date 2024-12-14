@@ -2110,8 +2110,11 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 			if( !checkLayoutData() )
 			{
 				int attachment = properties.attachment->getSelection()-1;
-				designerForm->setAttachment( attachment );
-				designerForm->doLayout();
+				if( attachment >= 0 )
+				{
+					designerForm->setAttachment( attachment );
+					designerForm->doLayout();
+				}
 			}
 			break;
 		}

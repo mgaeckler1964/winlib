@@ -185,6 +185,10 @@ struct LayoutData
 	}
 	LayoutData *setAttachment( Attachment newAttach )
 	{
+		if( newAttach < 0 )
+		{
+			newAttach = ATTACH_LEFT;
+		}
 		attach = newAttach;
 		return this;
 	}

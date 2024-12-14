@@ -581,6 +581,10 @@ class DesignerForm : public OverlappedWindow
 	}
 	void setAttachment( int attachment )
 	{
+		if( attachment < 0 )
+		{
+			return;		// do not change
+		}
 		for( 
 			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
 			it != endIT;
@@ -598,7 +602,9 @@ class DesignerForm : public OverlappedWindow
 			{
 				gak::xml::Element *layout = resource->getElement( LayoutData::className );
 				if( !layout )
+				{
 					layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+				}
 
 				layout->setIntegerAttribute( LayoutData::attachment, attachment );
 			}

@@ -388,7 +388,7 @@ static void createLayoutData( xml::Element *resource, BasicWindow *child )
 	unsigned paddingTop = resource->getAttribute( LayoutData::paddingTop ).getValueN<unsigned>();
 	unsigned paddingBottom = resource->getAttribute( LayoutData::paddingBottom ).getValueN<unsigned>();
 	LayoutData::Attachment attach = LayoutData::Attachment(
-		resource->getAttribute( LayoutData::attachment ).getValueN<unsigned>()
+		resource->getAttribute( LayoutData::attachment ).getValueN<signed>()
 	);
 
 	layoutData->setX( x )->setY( y )->setPaddingLeft( paddingLeft )->setPaddingRight( paddingRight )->setPaddingTop( paddingTop )->setPaddingBottom( paddingBottom )->setAttachment( attach );
