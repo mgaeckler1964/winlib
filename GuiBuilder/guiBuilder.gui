@@ -313,7 +313,7 @@
 <child type="Label" name="attachmentLabel" caption="Attachment" x="49" y="684" width="0" height="0" style="1342177291" id="226">
 <layout y="16" x="0" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 </child>
-<child type="ComboBox" name="attachment" caption="" x="262" y="694" width="80" height="23" style="1342242819" id="227">
+<child type="ComboBox" name="attachment" caption="" x="262" y="694" width="80" height="200" style="1342242819" id="227">
 <layout x="1" y="16" growWidth="1" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 <items>
 <item>-</item>
@@ -327,7 +327,7 @@
 <child type="Label" Caption="Layout Manager" style="268435467" name="layoutManagerLabel" id="228">
 <layout x="0" y="17" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
-<child type="ComboBox" NAME="layoutManager" height="23" id="229" style="268500995" x="121" y="35" width="80">
+<child type="ComboBox" NAME="layoutManager" height="200" id="229" style="268500995" x="121" y="35" width="80">
 <layout x="1" y="17" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 <items>
 <item>None</item>
