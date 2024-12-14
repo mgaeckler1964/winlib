@@ -30,6 +30,7 @@
 */
 
 #define GUIBUILDER_ICON 1
+#define GAK_ICON 2
 
 
 #define RESOURCE_SELECT		1024

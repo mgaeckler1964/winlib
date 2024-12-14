@@ -478,6 +478,29 @@ class Label : public ControlWindow
 		invalidateWindow();
 		resize();
 	}
+	template <typename ResourceIdT>
+	bool setIcon( ResourceIdT resourceId )
+	{
+		bool			success = false;
+		unsigned long	style = getStyle();
+
+		HICON icon = Application::loadIcon( resourceId );
+		if( icon )
+		{
+			if( !(style & SS_ICON) || (style & SS_BITMAP) )
+			{
+				removeStyle( SS_BITMAP );
+				style = addStyle( SS_ICON );
+			}
+			message( STM_SETICON, (WPARAM)icon );
+			success = true;
+		}
+		else if( style & SS_ICON )
+		{
+			style = removeStyle( SS_ICON );
+		}
+		return success;
+	}
 };
 
 class EDIT : public ControlWindow

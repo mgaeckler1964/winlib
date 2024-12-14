@@ -85,10 +85,10 @@ struct ConstantValues;
 
 class StyleDialog : public StyleDialog_form
 {
-	unsigned  long style, styleMask;
+	unsigned  long m_style, m_styleMask;
 
-	ConstantValues	*additional;
-	size_t			numAdditional;
+	ConstantValues	*m_additional;
+	size_t			m_numAdditional;
 
 	public:
 	StyleDialog( unsigned  long style, const STRING &curentType );
@@ -98,11 +98,11 @@ class StyleDialog : public StyleDialog_form
 
 	unsigned long getStyle() const
 	{
-		return style;
+		return m_style;
 	}
 	unsigned long getStyleMask() const
 	{
-		return styleMask;
+		return m_styleMask;
 	}
 	void calcStyle();
 };

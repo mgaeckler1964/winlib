@@ -75,7 +75,7 @@ struct ConstantValues
 {
 	char			name[32];
 	unsigned long	value;
-	unsigned long	mask;
+	unsigned long	mask;		// these flags are removed before setting this entry
 };
 
 // --------------------------------------------------------------------- //
@@ -124,7 +124,11 @@ static ConstantValues labelStyles[] =
 	{ "SS_ETCHEDHORZ", SS_ETCHEDHORZ, labelMask },
 	{ "SS_ETCHEDVERT", SS_ETCHEDVERT, labelMask },
  	{ "SS_SIMPLE", SS_SIMPLE, labelMask },
- 	{ "SS_SUNKEN", SS_SUNKEN, SS_SUNKEN },
+
+	{ "SS_ICON", SS_ICON, SS_ICON|SS_BITMAP },
+	{ "SS_BITMAP", SS_BITMAP, SS_ICON|SS_BITMAP },
+
+	{ "SS_SUNKEN", SS_SUNKEN, SS_SUNKEN },
  	{ "SS_NOTIFY", SS_NOTIFY, SS_NOTIFY },
  	{ "SS_NOPREFIX", SS_NOPREFIX, SS_NOPREFIX },
 };
@@ -357,87 +361,87 @@ static ConstantValues gridViewStyles[] =
 // --------------------------------------------------------------------- //
 
 StyleDialog::StyleDialog( unsigned  long style, const STRING &curentType ) 
-: style(style), StyleDialog_form( NULL ) 
+: m_style(style), StyleDialog_form( NULL ) 
 {
 	if( curentType == ListBox::className )
 	{
-		additional = listBoxStyles;
-		numAdditional = arraySize( listBoxStyles );
+		m_additional = listBoxStyles;
+		m_numAdditional = arraySize( listBoxStyles );
 	}
 	else if( curentType == PushButton::className )
 	{
-		additional = pushButtonStyles;
-		numAdditional = arraySize( pushButtonStyles );
+		m_additional = pushButtonStyles;
+		m_numAdditional = arraySize( pushButtonStyles );
 	}
 	else if( curentType == CheckBox::className )
 	{
-		additional = checkBoxStyles;
-		numAdditional = arraySize( checkBoxStyles );
+		m_additional = checkBoxStyles;
+		m_numAdditional = arraySize( checkBoxStyles );
 	}
 	else if( curentType == GroupBox::className )
 	{
-		additional = groupBoxStyles;
-		numAdditional = arraySize( groupBoxStyles );
+		m_additional = groupBoxStyles;
+		m_numAdditional = arraySize( groupBoxStyles );
 	}
 	else if( curentType == RadioButton::className )
 	{
-		additional = radioButtonStyles;
-		numAdditional = arraySize( radioButtonStyles );
+		m_additional = radioButtonStyles;
+		m_numAdditional = arraySize( radioButtonStyles );
 	}
 	else if( curentType == Label::className )
 	{
-		additional = labelStyles;
-		numAdditional = arraySize( labelStyles );
+		m_additional = labelStyles;
+		m_numAdditional = arraySize( labelStyles );
 	}
 	else if( curentType == EditControl::className )
 	{
-		additional = editControlStyles;
-		numAdditional = arraySize( editControlStyles );
+		m_additional = editControlStyles;
+		m_numAdditional = arraySize( editControlStyles );
 	}
 	else if( curentType == MemoControl::className )
 	{
-		additional = memoControlStyles;
-		numAdditional = arraySize( memoControlStyles );
+		m_additional = memoControlStyles;
+		m_numAdditional = arraySize( memoControlStyles );
 	}
 	else if( curentType == ComboBox::className )
 	{
-		additional = comboBoxStyles;
-		numAdditional = arraySize( comboBoxStyles );
+		m_additional = comboBoxStyles;
+		m_numAdditional = arraySize( comboBoxStyles );
 	}
 	else if( curentType == TrackBar::className )
 	{
-		additional = trackBarStyles;
-		numAdditional = arraySize( trackBarStyles );
+		m_additional = trackBarStyles;
+		m_numAdditional = arraySize( trackBarStyles );
 	}
 	else if( curentType == ScrollBar::className )
 	{
-		additional = scrollBarStyles;
-		numAdditional = arraySize( scrollBarStyles );
+		m_additional = scrollBarStyles;
+		m_numAdditional = arraySize( scrollBarStyles );
 	}
 	else if( curentType == UpDownButton::className )
 	{
-		additional = upDownButtonStyles;
-		numAdditional = arraySize( upDownButtonStyles );
+		m_additional = upDownButtonStyles;
+		m_numAdditional = arraySize( upDownButtonStyles );
 	}
 	else if( curentType == FORM_TAG )
 	{
-		additional = formStyles;
-		numAdditional = arraySize( formStyles );
+		m_additional = formStyles;
+		m_numAdditional = arraySize( formStyles );
 	}
 	else if( curentType == TreeView::className )
 	{
-		additional = treeViewStyles;
-		numAdditional = arraySize( treeViewStyles );
+		m_additional = treeViewStyles;
+		m_numAdditional = arraySize( treeViewStyles );
 	}
 	else if( curentType == GridViewer::className )
 	{
-		additional = gridViewStyles;
-		numAdditional = arraySize( gridViewStyles );
+		m_additional = gridViewStyles;
+		m_numAdditional = arraySize( gridViewStyles );
 	}
 	else
 	{
-		additional = NULL;
-		numAdditional = 0;
+		m_additional = NULL;
+		m_numAdditional = 0;
 	}
 }
 
@@ -459,26 +463,26 @@ StyleDialog::StyleDialog( unsigned  long style, const STRING &curentType )
    
 ProcessStatus StyleDialog::handleCreate( void )
 {
-	styleMask = 0;
+	m_styleMask = 0;
 	for( size_t i=0; i<arraySize( windowStyles ); i++ )
 	{
-		styleMask |= windowStyles[i].mask;
+		m_styleMask |= windowStyles[i].mask;
 		StyleListBox->addEntry( windowStyles[i].name );
 	}
-	for( size_t i=0; i<numAdditional; i++ )
+	for( size_t i=0; i<m_numAdditional; i++ )
 	{
-		styleMask |= additional[i].mask;
-		StyleListBox->addEntry( additional[i].name );
+		m_styleMask |= m_additional[i].mask;
+		StyleListBox->addEntry( m_additional[i].name );
 	}
 
 	for( size_t i=0; i<arraySize( windowStyles ); i++ )
 	{
-		if( (style & windowStyles[i].mask) == windowStyles[i].value )
+		if( (m_style & windowStyles[i].mask) == windowStyles[i].value )
 			StyleListBox->selectEntry( int(i) );
 	}
-	for( size_t i=0; i<numAdditional; i++ )
+	for( size_t i=0; i<m_numAdditional; i++ )
 	{
-		if( (style & additional[i].mask) == additional[i].value )
+		if( (m_style & m_additional[i].mask) == m_additional[i].value )
 			StyleListBox->selectEntry( int(arraySize( windowStyles ) + i) );
 	}
 
@@ -516,15 +520,15 @@ void StyleDialog::calcStyle()
 				newStyle &= ~windowStyles[idx].mask;
 				newStyle |= windowStyles[idx].value;
 			}
-			else if( (idx -= arraySize( windowStyles )) < numAdditional )
+			else if( (idx -= arraySize( windowStyles )) < m_numAdditional )
 			{
-				newStyle &= ~additional[idx].mask;
-				newStyle |= additional[idx].value;
+				newStyle &= ~m_additional[idx].mask;
+				newStyle |= m_additional[idx].value;
 			}
 		}
 	}
 
-	style = newStyle;
+	m_style = newStyle;
 }
 
 // --------------------------------------------------------------------- //
