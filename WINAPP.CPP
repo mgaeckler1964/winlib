@@ -82,8 +82,75 @@ HINSTANCE Application::resInstance = 0;
 // ----- module functions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-static STRING readRegistration( const char *company, const char *app, const char *section, const char *var, bool publicVal = false )
+
+template <typename RESULTTYPE>
+struct ResultTraits
 {
+	static const int	sRegistryType = REG_SZ;
+	static RESULTTYPE	GetValue( char *valueBuff )
+	{
+		return valueBuff;
+	}
+	static size_t GetValueSize(const RESULTTYPE &value)
+	{
+		return strlen(value)+1;
+	}
+};
+
+template <>
+struct ResultTraits<long>
+{
+	static const int	sRegistryType = REG_DWORD;
+	static long	GetValue(char *valueBuff)
+	{
+		return *((long*)valueBuff);
+	}
+	static size_t GetValueSize(long)
+	{
+		return sizeof(long);
+	}
+};
+
+template <typename INPUTTYPE>
+struct InputTraits : public ResultTraits<INPUTTYPE>
+{
+	const INPUTTYPE &m_value;
+	
+	InputTraits(const INPUTTYPE &value) : m_value(value) {}
+
+	size_t GetValueSize()
+	{
+		return strlen(m_value)+1;
+	}
+
+	LPBYTE GetAdress() const
+	{
+		return (LPBYTE)static_cast<const char*>(m_value);
+	}
+};
+
+template <>
+struct InputTraits<long> : public ResultTraits<long>
+{
+	long m_value;
+	
+	InputTraits(long value) : m_value(value) {}
+
+	static size_t GetValueSize()
+	{
+		return sizeof(long);
+	}
+	LPBYTE GetAdress() const
+	{
+		return (LPBYTE)(&m_value);
+	}
+};
+
+template <class RESULTTYPE>
+static RESULTTYPE readRegistration( const char *company, const char *app, const char *section, const char *var, const RESULTTYPE &def, bool publicVal = false )
+{
+	typedef ResultTraits<RESULTTYPE>	tResultTraits;
+
 	long		openResult;
 	HKEY		softKey;
 	HKEY		companyKey;
@@ -91,10 +158,10 @@ static STRING readRegistration( const char *company, const char *app, const char
 	HKEY		sectionKey;
 
 	DWORD		typeVar;
-	char		valueBuff[1024];
+	char		valueBuff[10240];
 	DWORD		valueSize;
 	bool		valueFound = false;
-	STRING		result;
+	RESULTTYPE	result;
 
 	valueSize = sizeof( valueBuff ) -1;
 
@@ -128,7 +195,7 @@ static STRING readRegistration( const char *company, const char *app, const char
 													&typeVar, (LPBYTE)valueBuff, &valueSize );
 						if( openResult == ERROR_SUCCESS
 						&&  valueSize > 0
-						&&  typeVar == REG_SZ )
+						&&  typeVar == tResultTraits::sRegistryType )
 							valueFound = true;
 
 						RegCloseKey( sectionKey );
@@ -140,7 +207,7 @@ static STRING readRegistration( const char *company, const char *app, const char
 												&typeVar, (LPBYTE)valueBuff, &valueSize );
 					if( openResult == ERROR_SUCCESS
 					&&  valueSize > 0
-					&&  typeVar == REG_SZ )
+					&&  typeVar == tResultTraits::sRegistryType )
 						valueFound = true;
 				}
 
@@ -153,15 +220,26 @@ static STRING readRegistration( const char *company, const char *app, const char
 	}
 
 	if( valueFound )
-		result = valueBuff;
+	{
+		result = tResultTraits::GetValue(valueBuff);
+	}
 	else if( !publicVal )
-		result = readRegistration( company, app, section, var, true );
+	{
+		result = readRegistration<RESULTTYPE>( company, app, section, var, def, true );
+	}
+	else
+	{
+		result = def;
+	}
 
 	return result;
 }
 
-static void writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const char *value )
+template <class INPUTTYPE>
+static void writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const INPUTTYPE &i_value )
 {
+	typedef InputTraits<INPUTTYPE>	tInputTraits;
+
 	DWORD			dummy;
 	long			openResult;
 	HKEY			softKey;
@@ -171,7 +249,9 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 
 	DWORD			valueSize;
 
-	valueSize = DWORD(strlen( value ) +1);
+	tInputTraits	value(i_value);
+
+	valueSize = DWORD(value.GetValueSize());
 
 	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
 											: HKEY_CURRENT_USER,
@@ -206,13 +286,13 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 					if( openResult == ERROR_SUCCESS )
 					{
 						RegSetValueEx( sectionKey, (char *)var, 0,
-										REG_SZ, (LPBYTE)value, valueSize );
+							tInputTraits::sRegistryType, value.GetAdress(), valueSize );
 						RegCloseKey( sectionKey );
 					}
 				}
 				else
 					RegSetValueEx( appKey, (char *)var, 0,
-									REG_SZ, (LPBYTE)value, valueSize );
+									tInputTraits::sRegistryType, value.GetAdress(), valueSize );
 
 				RegCloseKey( appKey );
 			}
@@ -527,25 +607,12 @@ const F_STRING &Application::getPathName( void )
 
 STRING Application::GetProfile( const char *section, const char *variable, const STRING &defaultVal )
 {
-	STRING	valueStr;
-
-	valueStr = readRegistration( company, getApplication(), section, variable );
-	if( !valueStr )
-		valueStr = defaultVal;
-	return valueStr;
+	return readRegistration<STRING>( company, getApplication(), section, variable, defaultVal );;
 }
 
 long Application::GetProfile( const char *section, const char *variable, long defaultVal )
 {
-	STRING	value = GetProfile( section, variable, (const char *)0 );
-	long	l;
-
-	if( !value || !value[0U] )
-		l = defaultVal;
-	else
-		l = atol( value );
-
-	return l;
+	return readRegistration<long>( company, getApplication(), section, variable, defaultVal );;
 }
 
 #ifdef __BORLANDC__
@@ -559,9 +626,7 @@ void Application::WriteProfile( bool publicVal, const char *section, const char 
 
 void Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
 {
-	char valueCp[32];
-	wsprintf( valueCp, "%ld", value );
-	WriteProfile( publicVal, section, variable, valueCp );
+	writeRegistration( publicVal, company, getApplication(), section, variable, value );
 }
 
 // --------------------------------------------------------------------- //
