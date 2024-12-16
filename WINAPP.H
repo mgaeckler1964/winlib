@@ -132,7 +132,8 @@ class Application
 	Application( int iconID=-1 );
 	~Application();
 
-	gak::xml::Document *getGuiDoc( void );
+	gak::xml::Document *getGuiDoc( const STRING &xmlSrc );
+	virtual gak::xml::Document *getGuiDoc( void );
 	F_STRING getGuiFile( void )
 	{
 		gak::xml::Document	*doc = getGuiDoc();

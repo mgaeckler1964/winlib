@@ -418,9 +418,9 @@ class GuiBuilderWindow : public OverlappedWindow
 	void loadGUI( xml::Document *doc );
 	void loadDocument( void );
 	IdentifiersMap createIDs( void );
-	void saveGui( const F_STRING &fileName );
+	STRING saveGui( const F_STRING &fileName );
 	void saveHeader( const F_STRING &fileName, const IdentifiersMap &identifiers );
-	void saveCpp( const F_STRING &fileName );
+	void saveCpp( const F_STRING &fileName, const STRING &xmlGuiSrc );
 	void saveDictionaries( const STRING &fileName );
 	void saveDocumentAs( const F_STRING &newName );
 	void saveTranslations( const F_STRING &fileName );

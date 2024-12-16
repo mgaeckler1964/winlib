@@ -1013,11 +1013,13 @@ GuiBuilderWindow::IdentifiersMap GuiBuilderWindow::createIDs( void )
 	return identifiers;
 }
 
-void GuiBuilderWindow::saveGui( const F_STRING &fileName )
+STRING GuiBuilderWindow::saveGui( const F_STRING &fileName )
 {
 	STRING	xmlCode = m_guiDoc->generate( xml::XML_MODE );
 	std::ofstream	stream( fileName );
 	stream << xmlCode;
+
+	return xmlCode;
 }
 
 void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMap &identifiers )
@@ -1045,6 +1047,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 				"#include <winlib/ControlW.h>\n"
 				"#include <winlib/xmlEditorChild.h>\n"
 				"#include <winlib/gridView.h>\n\n"
+				"#include <winlib/winApp.h>\n\n"
 				"namespace winlibGUI {\n\n";
 	for( 
 		IdentifiersMap::const_iterator	it = identifiers.cbegin(), endIT = identifiers.cend();
@@ -1058,6 +1061,12 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 			stream << "\tconst int " << name << "_id=" << it->getValue() << ";\n";
 		}
 	}
+
+	stream << "\n\tclass GuiApplication : public winlib::Application {\n"
+			<< "\t\tpublic:\n"
+			<< "\t\tvirtual gak::xml::Document *getGuiDoc( void );\n"
+			"\t\tGuiApplication(int iconID=-1) : winlib::Application(iconID) {}\n"
+			"\t};\n";
 
 	for( 
 		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
@@ -1136,7 +1145,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 	;
 }
 
-void GuiBuilderWindow::saveCpp( const F_STRING &fileName )
+void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSrc )
 {
 	F_STRING		hFile = fileName + ".h";
 	F_STRING		cppFile = fileName + ".cpp";
@@ -1149,8 +1158,16 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName )
 				"\t+++++++++++++++++++++++\n"
 				"*/\n\n"
 				"#include \"" << hFile << "\"\n\n"
-				"namespace winlibGUI {\n";
+				"namespace winlibGUI {\n\n";
 
+	stream <<	"\tgak::xml::Document *GuiApplication::getGuiDoc() {\n"
+					"\t\tgak::xml::Document *doc = winlib::Application::getGuiDoc();\n"
+					"\t\tif(!doc) {\n"
+						"\t\t\tgak::STRING xmlSrc = " << xmlGuiSrc.cString() << ";\n"
+						"\t\t\treturn Application::getGuiDoc( xmlSrc );\n"
+					"\t\t}\n"
+					"\t\treturn NULL;\n"
+				"\t}\n\n";
 	for( 
 		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
 		it != endIT;
@@ -1287,9 +1304,9 @@ void GuiBuilderWindow::saveDocumentAs( const F_STRING &fileName )
 {
 	IdentifiersMap	identifiers = createIDs();
 
-	saveGui( fileName );
+	STRING xmlGuiSrc = saveGui( fileName );
 	saveHeader( fileName, identifiers );
-	saveCpp( fileName );
+	saveCpp( fileName, xmlGuiSrc );
 	saveDictionaries( fileName );
 	saveTranslations( fileName );
 

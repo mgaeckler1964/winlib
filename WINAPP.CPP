@@ -43,7 +43,7 @@
 
 #include <gak/xmlParser.h>
 #include <gak/directory.h>
-
+#include <gak/stringStream.h>
 #include <winlib/callwin.h>
 #include <winlib/winapp.h>
 #include <winlib/resource.h>
@@ -443,6 +443,24 @@ xml::Document *Application::getGuiDoc( void )
 			guiDoc = theParser.readFile( false );
 			guiRoot = guiDoc->getRoot();
 		}
+	}
+
+	return guiDoc;
+}
+
+xml::Document *Application::getGuiDoc( const STRING &xmlSrc )
+{
+	if( !guiDoc )
+	{
+		STRING		appName = getApplication();
+		STRING		country = getCountry();
+		F_STRING	fileName = appName + '.' + country + ".gui";
+
+		gak::iSTRINGstream	theStream(xmlSrc);
+
+		xml::Parser		theParser( &theStream, fileName );
+		guiDoc = theParser.readFile( false );
+		guiRoot = guiDoc->getRoot();
 	}
 
 	return guiDoc;

@@ -13,6 +13,8 @@
 #include <winlib/xmlEditorChild.h>
 #include <winlib/gridView.h>
 
+#include <winlib/winApp.h>
+
 namespace winlibGUI {
 
 	const int ABOUT_id=128;
@@ -153,6 +155,10 @@ namespace winlibGUI {
 	const int xPOSLabel_id=201;
 	const int yPOS_id=204;
 	const int yPOSLabel_id=203;
+
+	class GuiApplication : public winlib::Application {
+		virtual gak::xml::Document *getGuiDoc( void );
+	};
 
 	class ABOUT_form : public winlib::ModalPopup {
 		public:
