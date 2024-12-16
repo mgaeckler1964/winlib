@@ -86,7 +86,7 @@ using namespace winlibGUI;
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-enum SelectionSource { FromDesignerWindow, FromChildSelect, FromTreeSelect };
+enum SelectionSource { FromDesignerWindow, FromChildSelect, FromTreeSelect, FromRefresh };
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -115,8 +115,8 @@ class GuiBuilderWindow : public OverlappedWindow
 
 	Dictionarys			m_dictionarys;
 	xml::Document		*m_guiDoc;
-	F_STRING			docFileName;
-	bool				changedFlag;
+	F_STRING			m_docFileName;
+	bool				m_changedFlag;
 
 	FrameChild			toolbar, mainArea;
 	ScrollFrame			propertiesScroller;
@@ -128,20 +128,20 @@ class GuiBuilderWindow : public OverlappedWindow
 						btnCreateTrackBar, btnCreateScrollBar, btnCreateUpDownButton,
 						btnCreateTreeView, btnCreateXmlViewer, btnCreateGridViewer, 
 						btnCreateFrame, btnCreateScroller;
-	int					currentId;
+	int					m_currentId;
 
 	ListBox				topResourceSelect;
-	xml::XmlArray		topResources;
+	xml::XmlArray		m_topResources;
 
 
 	enum
 	{
 		emFORM, emMENU, emSTRINGS
-	}					editorMode;
+	}					m_editorMode;
 
 	TreeView			treeSelect;
 	ListBox				childSelect;
-	xml::XmlArray		childResources;
+	xml::XmlArray		m_childResources;
 
 	Properties_frame	properties;
 	DesignerForm		*designerForm;
@@ -149,36 +149,36 @@ class GuiBuilderWindow : public OverlappedWindow
 
 	bool				m_loading;
 
-	int					currentStyle;
+	int					m_currentStyle;
 
 	void setDocument( const F_STRING &fileName )
 	{
-		docFileName = fileName;
+		m_docFileName = fileName;
 	}
 	const F_STRING &getDocument( void ) const
 	{
-		return docFileName;
+		return m_docFileName;
 	}
 	void clrChangedFlag( void )
 	{
-		if( changedFlag )
+		if( m_changedFlag )
 		{
 			setTitle( WINDOW_TITLE );
-			changedFlag = false;
+			m_changedFlag = false;
 		}
 	}
 	public:
 	void setChangedFlag( void )
 	{
-		if( !changedFlag )
+		if( !m_changedFlag )
 		{
 			setTitle( STRING(WINDOW_TITLE) + " *" );
-			changedFlag = true;
+			m_changedFlag = true;
 		}
 	}
 	bool getChangedFlag( void ) const
 	{
-		return changedFlag;
+		return m_changedFlag;
 	}
 
 	public:
@@ -188,9 +188,9 @@ class GuiBuilderWindow : public OverlappedWindow
 		designerForm = NULL;
 		stringListEditor = NULL;
 		m_guiDoc = NULL;
-		changedFlag = false;
-		currentId = SELECT_PUSH;
-		editorMode = emFORM;
+		m_changedFlag = false;
+		m_currentId = SELECT_PUSH;
+		m_editorMode = emFORM;
 		setTitle( WINDOW_TITLE );
 	}
 	~GuiBuilderWindow()
@@ -208,7 +208,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	public:
 	TreeNode *addChildItem( xml::Element *resource )
 	{
-		return addChildItem( resource, editorMode != emSTRINGS ? treeSelect.findItem( resource->getParent() ) : NULL );
+		return addChildItem( resource, m_editorMode != emSTRINGS ? treeSelect.findItem( resource->getParent() ) : NULL );
 	}
 
 	private:
@@ -218,10 +218,14 @@ class GuiBuilderWindow : public OverlappedWindow
 	xml::Element *getSelectedChildResource( void ) const
 	{
 		size_t	selIdx = size_t(childSelect.getSelection());
-		if( selIdx < childResources.size() )
-			return childResources[selIdx];
+		if( selIdx < m_childResources.size() )
+		{
+			return m_childResources[selIdx];
+		}
 		else
+		{
 			return NULL;
+		}
 	}
 	void deleteDesignerForm( void )
 	{
@@ -247,22 +251,23 @@ class GuiBuilderWindow : public OverlappedWindow
 	xml::Element *getSelectedTopResource( void ) const
 	{
 		size_t	selResource = size_t(topResourceSelect.getSelection());
-		if( selResource < topResources.size() )
+		if( selResource < m_topResources.size() )
 		{
-			return topResources[selResource];
+			return m_topResources[selResource];
 		}
 		return NULL;
 	}
 	void addTopResource( xml::Element *resource, const STRING &name )
 	{
 		topResourceSelect.addEntry( name );
-		topResources += resource;
+		m_topResources += resource;
 	}
 	void addSelectedTopResource( xml::Element *resource, const STRING &name )
 	{
 		addTopResource( resource, name );
 		topResourceSelect.selectEntry( name );
 	}
+	void refreshChildSelect( void );
 	void loadResource( void );
 
 	static void enableChild( BasicWindow *child )
@@ -331,7 +336,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	public:
 	int getCurrentId( void ) const
 	{
-		return currentId;
+		return m_currentId;
 	}
 
 	private:
@@ -348,8 +353,8 @@ class GuiBuilderWindow : public OverlappedWindow
 		if( source != FromChildSelect )
 		{
 			xml::Element	*resource = child->getResource();
-			size_t		pos = childResources.findElement( resource );
-			if( pos != childResources.no_index )
+			size_t		pos = m_childResources.findElement( resource );
+			if( pos != m_childResources.no_index )
 			{
 				childSelect.selectEntry( int(pos) );
 			}
@@ -359,7 +364,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	void unselectControl( BasicWindow *child )
 	{
 		xml::Element	*resource = child->getResource();
-		size_t		pos = childResources.findElement( resource );
+		size_t		pos = m_childResources.findElement( resource );
 		if( pos != -1 )
 			childSelect.unselectEntry( int(pos) );
 		enableDisaleProperties();

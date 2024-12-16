@@ -140,6 +140,10 @@ namespace winlibGUI {
 		numCols=static_cast<winlib::EditControl*>(findChild(numCols_id));
 		numRowsLABEL=static_cast<winlib::Label*>(findChild(numRowsLABEL_id));
 		numRows=static_cast<winlib::EditControl*>(findChild(numRows_id));
+		upLABEL=static_cast<winlib::Label*>(findChild(upLABEL_id));
+		upBUTTON=static_cast<winlib::PushButton*>(findChild(upBUTTON_id));
+		downLABEL=static_cast<winlib::Label*>(findChild(downLABEL_id));
+		downBUTTON=static_cast<winlib::PushButton*>(findChild(downBUTTON_id));
 	}	// Properties
 	const int TEST_STRINGLIST_ids[] = {
 		HELLO_WORLD1_id,

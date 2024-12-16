@@ -115,13 +115,13 @@
 void DesignerForm::internalSelect( BasicWindow *control )
 {
 	selectControl( control, false );
-	theGuiBuilder->selectControl( control, FromDesignerWindow );
+	m_theGuiBuilder->selectControl( control, FromDesignerWindow );
 }
 
 void DesignerForm::internalUnselect( BasicWindow *control )
 {
 	unselectControl( control );
-	theGuiBuilder->unselectControl( control );
+	m_theGuiBuilder->unselectControl( control );
 }
 
 void DesignerForm::startSelect( const Point &position )
@@ -136,14 +136,14 @@ void DesignerForm::startSelect( const Point &position )
 			internalSelect( child );
 			invalidateWindow();
 		}
-		lastMousePos = position;
+		m_lastMousePos = position;
 		m_startDraging = true;
 		if( child->getLayoutData() )
 		{
-			currentFrame = dynamic_cast<const CallbackWindow *>( child->getParent() );
-			if( currentFrame )
+			m_currentFrame = dynamic_cast<const CallbackWindow *>( child->getParent() );
+			if( m_currentFrame )
 			{
-				m_tableManager = dynamic_cast<TableManager *>( currentFrame->getLayoutManager() );
+				m_tableManager = dynamic_cast<TableManager *>( m_currentFrame->getLayoutManager() );
 				m_lastChildClick = child;		// we can move this child, only
 			}
 		}
@@ -174,7 +174,7 @@ void DesignerForm::endSelect( WPARAM modifier, const Point &position )
 		}
 		else
 		{
-			theGuiBuilder->loadChildProperties( child );
+			m_theGuiBuilder->loadChildProperties( child );
 		}
 	}
 }
@@ -253,8 +253,8 @@ void DesignerForm::restoreChildren( void )
 	{
 		// perform a layout, so that the chnildren matrix is uptodate
 		restored = false;
-		currentFrame->doLayout();
-		const ChildWindows	&children = currentFrame->getChildren();
+		m_currentFrame->doLayout();
+		const ChildWindows	&children = m_currentFrame->getChildren();
 		for(
 			ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
 			it != endIT;
@@ -368,7 +368,7 @@ void DesignerForm::performTableDrag( const Point &position )
 				we are outside the left frame
 				move all children right
 			*/
-			const ChildWindows &children = currentFrame->getChildren();
+			const ChildWindows &children = m_currentFrame->getChildren();
 			for(
 				ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
 				it != endIT;
@@ -394,7 +394,7 @@ void DesignerForm::performTableDrag( const Point &position )
 				we are outside the top frame
 				move all children down
 			*/
-			const ChildWindows	&children = currentFrame->getChildren();
+			const ChildWindows	&children = m_currentFrame->getChildren();
 			for(
 				ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
 				it != endIT;
@@ -451,7 +451,7 @@ void DesignerForm::performTableDrag( const Point &position )
 				restoreChildren();
 			}
 		}
-		currentFrame->doLayout();
+		m_currentFrame->doLayout();
 	}
 }
 
@@ -459,11 +459,11 @@ void DesignerForm::performStandardDrag( const Point &position )
 {
 	doEnterFunction("DesignerForm::performStandardDrag");
 
-	int xOffset = position.x - lastMousePos.x;
-	int yOffset = position.y - lastMousePos.y;
-	lastMousePos = position;
+	int xOffset = position.x - m_lastMousePos.x;
+	int yOffset = position.y - m_lastMousePos.y;
+	m_lastMousePos = position;
 	for( 
-		ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 		it != endIT;
 		++it
 	)
@@ -486,12 +486,12 @@ void DesignerForm::performStandardDrag( const Point &position )
 		pos.x += xOffset;
 		pos.y += yOffset;
 		m_relativePositions[control] = pos;
-		if( m_gridSize )
+		if( s_gridSize )
 		{
-			pos.x += m_gridSize/2;
-			pos.y += m_gridSize/2;
-			pos.x -= pos.x % m_gridSize;
-			pos.y -= pos.y % m_gridSize;
+			pos.x += s_gridSize/2;
+			pos.y += s_gridSize/2;
+			pos.x -= pos.x % s_gridSize;
+			pos.y -= pos.y % s_gridSize;
 		}
 		control->move( pos );
 		xml::Element *resource = control->getResource();
@@ -499,7 +499,7 @@ void DesignerForm::performStandardDrag( const Point &position )
 		resource->setIntegerAttribute( LayoutData::yPosAttr, pos.y );
 		if( m_oldPositions[control] != pos )
 		{
-			theGuiBuilder->setChangedFlag();
+			m_theGuiBuilder->setChangedFlag();
 		}
 	}
 }
@@ -507,11 +507,11 @@ void DesignerForm::performStandardDrag( const Point &position )
 void DesignerForm::performResize( const Point &position )
 {
 	doEnterFunction("DesignerForm::performResize");
-	int xOffset = position.x - lastMousePos.x;
-	int yOffset = position.y - lastMousePos.y;
-	lastMousePos = position;
+	int xOffset = position.x - m_lastMousePos.x;
+	int yOffset = position.y - m_lastMousePos.y;
+	m_lastMousePos = position;
 	for( 
-		ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 		it != endIT;
 		++it
 	)
@@ -545,13 +545,13 @@ void DesignerForm::performResize( const Point &position )
 		resource->setIntegerAttribute( LayoutData::yPosAttr, rect.top );
 		resource->setIntegerAttribute( LayoutData::widthAttr, rect.getWidth() );
 		resource->setIntegerAttribute( LayoutData::heightAttr, rect.getHeight() );
-		theGuiBuilder->setChangedFlag();
+		m_theGuiBuilder->setChangedFlag();
 	}
 }
 
 void DesignerForm::endTableDrag( void )
 {
-	const ChildWindows &children = currentFrame->getChildren();
+	const ChildWindows &children = m_currentFrame->getChildren();
 	for(
 		ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
 		it != endIT;
@@ -573,10 +573,10 @@ void DesignerForm::endTableDrag( void )
 
 void DesignerForm::endDragging( void )
 {
-	if( m_gridSize && !m_tableManager )
+	if( s_gridSize && !m_tableManager )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -584,15 +584,15 @@ void DesignerForm::endDragging( void )
 			BasicWindow *control = *it;
 			RectBorder	rect = control->getRelativeRectangle();
 
-			rect.left += m_gridSize / 2;
-			rect.top += m_gridSize / 2;
-			rect.right += m_gridSize / 2;
-			rect.bottom += m_gridSize / 2;
+			rect.left += s_gridSize / 2;
+			rect.top += s_gridSize / 2;
+			rect.right += s_gridSize / 2;
+			rect.bottom += s_gridSize / 2;
 
-			rect.left -= rect.left % m_gridSize;
-			rect.top -= rect.top % m_gridSize;
-			rect.right -= rect.right % m_gridSize;
-			rect.bottom -= rect.bottom % m_gridSize;
+			rect.left -= rect.left % s_gridSize;
+			rect.top -= rect.top % s_gridSize;
+			rect.right -= rect.right % s_gridSize;
+			rect.bottom -= rect.bottom % s_gridSize;
 			control->sizeNmove( rect );
 
 			xml::Element *resource = control->getResource();
@@ -630,103 +630,103 @@ void DesignerForm::createControl( const Point *position )
 
 	xml::Element	*resource = parent->getResource();
 	xml::Element	*newResource = resource->addObject( new xml::Any( CHILD_TAG ) );
-	if(theGuiBuilder->getCurrentId() == BUTTON_PUSH )
+	if(m_theGuiBuilder->getCurrentId() == BUTTON_PUSH )
 	{
 		newWindow = newControl = new PushButton( parent );
 		newCaption = PushButton::className;
 		type = PushButton::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == CHECKBOX_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == CHECKBOX_PUSH )
 	{
 		newWindow = newControl = new CheckBox( parent );
 		newCaption = CheckBox::className;
 		type = CheckBox::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == RADIOBUTTON_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == RADIOBUTTON_PUSH )
 	{
 		newWindow = newControl = new RadioButton( parent );
 		newCaption = RadioButton::className;
 		type = RadioButton::className;
 	}
-	else if( theGuiBuilder->getCurrentId() == GROUPBOX_PUSH )
+	else if( m_theGuiBuilder->getCurrentId() == GROUPBOX_PUSH )
 	{
 		newWindow = newControl = new GroupBox( parent );
 		newCaption = GroupBox::className;
 		type = GroupBox::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == LABEL_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == LABEL_PUSH )
 	{
 		newWindow = newControl = new Label( parent );
 		newCaption = Label::className;
 		type = Label::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == LIST_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == LIST_PUSH )
 	{
 		newWindow = newControl = new ListBox( parent );
 		newCaption = "";
 		type = ListBox::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == TREEVIEW_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == TREEVIEW_PUSH )
 	{
 		newWindow = newControl = new TreeView( parent );
 		newCaption = "";
 		type = TreeView::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == TRACKBAR_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == TRACKBAR_PUSH )
 	{
 		newWindow = newControl = new TrackBar( parent );
 		newCaption = "";
 		type = TrackBar::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == SCROLLBAR_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == SCROLLBAR_PUSH )
 	{
 		newWindow = newControl = new ScrollBar( parent );
 		newCaption = "";
 		type = ScrollBar::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == UPDPOWN_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == UPDPOWN_PUSH )
 	{
 		newWindow = newControl = new UpDownButton( parent );
 		newCaption = "";
 		type = UpDownButton::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == COMBO_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == COMBO_PUSH )
 	{
 		newWindow = newControl = new ComboBox( parent );
 		newCaption = "";
 		type = ComboBox::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == EDIT_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == EDIT_PUSH )
 	{
 		newWindow = newControl = new EditControl( parent );
 		newCaption = "Edit";
 		type = EditControl::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == MEMO_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == MEMO_PUSH )
 	{
 		newWindow = newControl = new MemoControl( parent );
 		newCaption = "Memo";
 		type = MemoControl::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == FRAME_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == FRAME_PUSH )
 	{
 		newWindow = newChild = new FrameChild( parent );
 		newCaption = "";
 		type = FrameChild::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == SCROLLER_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == SCROLLER_PUSH )
 	{
 		newWindow = newChild = new ScrollFrame( parent );
 		newCaption = "";
 		type = ScrollFrame::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == XMLVIEW_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == XMLVIEW_PUSH )
 	{
 		newWindow = newChild = new XMLeditorChild( parent );
 		newCaption = "";
 		type = XMLeditorChild::className;
 	}
-	else if(theGuiBuilder->getCurrentId() == GRIDVIEW_PUSH )
+	else if(m_theGuiBuilder->getCurrentId() == GRIDVIEW_PUSH )
 	{
 		newWindow = newChild = new GridViewer( parent );
 		newCaption = "";
@@ -756,7 +756,7 @@ void DesignerForm::createControl( const Point *position )
 		newControl->create( parent );
 	}
 	catchControl( newWindow );
-	theGuiBuilder->addChildItem( newResource );
+	m_theGuiBuilder->addChildItem( newResource );
 }
 
 // --------------------------------------------------------------------- //
@@ -773,7 +773,7 @@ ProcessStatus DesignerForm::handleKeyDown( int key )
 	{
 		bool	itsMe = false;
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -789,9 +789,9 @@ ProcessStatus DesignerForm::handleKeyDown( int key )
 			delete resource;
 			child->close();
 		}
-		selected.clear();
+		m_selected.clear();
 		
-		theGuiBuilder->removeSelected( itsMe );
+		m_theGuiBuilder->removeSelected( itsMe );
 
 		return psPROCESSED;
 	}
@@ -813,7 +813,7 @@ ProcessStatus DesignerForm::handleLeftButton( LeftButton leftButton, WPARAM modi
 {
 	doEnterFunction("DesignerForm::handleLeftButton");
 	focus();
-	if( leftButton == lbDOWN && theGuiBuilder->getCurrentId() == SELECT_PUSH && !(modifier& MK_SHIFT) )
+	if( leftButton == lbDOWN && m_theGuiBuilder->getCurrentId() == SELECT_PUSH && !(modifier& MK_SHIFT) )
 	{
 		m_startDraging = false;
 		startSelect( position );
@@ -828,7 +828,7 @@ ProcessStatus DesignerForm::handleLeftButton( LeftButton leftButton, WPARAM modi
 		{
 			endDragging();
 		}
-		else if( theGuiBuilder->getCurrentId() == SELECT_PUSH )
+		else if( m_theGuiBuilder->getCurrentId() == SELECT_PUSH )
 		{
 			endSelect( modifier, position );
 		}
@@ -907,7 +907,7 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 
 		Size	childRect = control->getClientSize();
 
-		if( selected.hasElement( control ) )
+		if( m_selected.hasElement( control ) )
 		{
 			hDC.getPen().selectPen( Pen::spBlack );
 			hDC.getBrush().selectBrush( Brush::sbNull );
@@ -926,12 +926,12 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 			const LayoutManager *layoutManager = callbackWindow->getLayoutManager();
 			if( !layoutManager )
 			{
-				if( m_gridSize )
+				if( s_gridSize )
 				{
 					Size	size = control->getSize();
-					for( int x=m_gridSize; x<size.width; x += m_gridSize )
+					for( int x=s_gridSize; x<size.width; x += s_gridSize )
 					{
-						for( int y=m_gridSize; y<size.height; y += m_gridSize )
+						for( int y=s_gridSize; y<size.height; y += s_gridSize )
 						{
 							hDC.setPixel( x, y, 0, 0, 255 );
 						}
@@ -967,6 +967,21 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void DesignerForm::refreshSelection()
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+
+		BasicWindow *child = *it;
+		m_theGuiBuilder->selectControl( child, FromRefresh );
+
+	}
+}
 
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //

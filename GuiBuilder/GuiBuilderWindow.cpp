@@ -216,10 +216,10 @@ void GuiBuilderWindow::deleteGuiDoc()
 	m_dictionarys.clear();
 
 	topResourceSelect.clearEntries();
-	topResources.clear();
+	m_topResources.clear();
 
 	childSelect.clearEntries();
-	childResources.clear();
+	m_childResources.clear();
 
 	deleteDesignerForm();
 }
@@ -238,7 +238,7 @@ void GuiBuilderWindow::handleChildSelect( void )
 		++it
 	)
 	{
-		BasicWindow *child = getChildByResource( childResources[*it] );
+		BasicWindow *child = getChildByResource( m_childResources[*it] );
 		if( child )
 		{
 			designerForm->selectControl( child, false );
@@ -273,7 +273,7 @@ void GuiBuilderWindow::handleStringSelect( void )
 	int	selected = childSelect.getSelection();
 	if( selected >= 0 )
 	{
-		loadStringProperties( childResources[selected] );
+		loadStringProperties( m_childResources[selected] );
 	}
 
 	enableDisaleProperties();
@@ -291,7 +291,7 @@ STRING GuiBuilderWindow::getUniqueType( void )
 		++it
 	)
 	{
-		xml::Element *resource = childResources[*it];
+		xml::Element *resource = m_childResources[*it];
 		currentType = resource->getTag();
 		if( currentType == CHILD_TAG )
 		{
@@ -327,9 +327,9 @@ TreeNode *GuiBuilderWindow::addChildItem( xml::Element *resource, TreeNode *pare
 	}
 
 	childSelect.addEntry( name );
-	childResources += resource;
+	m_childResources += resource;
 
-	return editorMode != emSTRINGS ? treeSelect.appendItem( parent, name, resource ) : NULL;
+	return m_editorMode != emSTRINGS ? treeSelect.appendItem( parent, name, resource ) : NULL;
 }
 
 void GuiBuilderWindow::fillMenuItemList( xml::Element *resource, TreeNode *parent )
@@ -365,6 +365,28 @@ void GuiBuilderWindow::fillChildItemList( xml::Element *resource, TreeNode *pare
 		throw LibraryException( STRING( "Unkown tag " ) + tag );
 }
 
+void GuiBuilderWindow::refreshChildSelect( void )
+{
+	if( m_editorMode == emFORM )
+	{
+		xml::Element	*resource = getSelectedTopResource();
+		if( resource )
+		{
+			childSelect.clearEntries();
+			m_childResources.clear();
+
+			fillChildItemList( resource, NULL );
+
+			if( !childSelect.isVisible() )
+			{
+				treeSelect.hide();
+				childSelect.show();
+				mainArea.doLayout();
+			}
+		}
+	}
+}
+
 void GuiBuilderWindow::loadResource( void )
 {
 	xml::Element	*resource = getSelectedTopResource();
@@ -376,16 +398,16 @@ void GuiBuilderWindow::loadResource( void )
 			deleteDesignerForm();
 
 			childSelect.clearEntries();
-			childResources.clear();
+			m_childResources.clear();
 			treeSelect.clear();
 
 			if( tag == FORM_TAG || tag == FRAME_TAG || tag == SCROLLER_TAG )
 			{
-				editorMode = emFORM;
+				m_editorMode = emFORM;
 
 				designerForm = new DesignerForm( resource, this );
 
-				createForm( docFileName, resource, designerForm, NULL, true );
+				createForm( m_docFileName, resource, designerForm, NULL, true );
 				designerForm->catchControls();
 
 				fillChildItemList( resource, NULL );
@@ -399,12 +421,12 @@ void GuiBuilderWindow::loadResource( void )
 			}
 			else if( tag == LIST_TAG )
 			{
-				editorMode = emSTRINGS;
+				m_editorMode = emSTRINGS;
 
 				fillChildItemList( resource, NULL );
 
 				stringListEditor = new StringListEditor();
-				stringListEditor->create( this, childResources );
+				stringListEditor->create( this, m_childResources );
 
 				if( !childSelect.isVisible() )
 				{
@@ -415,7 +437,7 @@ void GuiBuilderWindow::loadResource( void )
 			}
 			else
 			{
-				editorMode = emMENU;
+				m_editorMode = emMENU;
 
 				fillMenuItemList( resource, NULL );
 
@@ -437,15 +459,15 @@ void GuiBuilderWindow::loadResource( void )
 
 void GuiBuilderWindow::enableDisaleProperties( void )
 {
-	if( editorMode == emMENU )
+	if( m_editorMode == emMENU )
 	{
 		enableDisaleMenuProperties();
 	}
-	else if( editorMode == emFORM )
+	else if( m_editorMode == emFORM )
 	{
 		enableDisaleFormProperties();
 	}
-	else if( editorMode == emSTRINGS )
+	else if( m_editorMode == emSTRINGS )
 	{
 		enableDisaleStringsProperties();
 	}
@@ -634,7 +656,7 @@ void GuiBuilderWindow::enableDisaleFormProperties( void )
 
 	for( size_t i=0; i<numSelected; i++ )
 	{
-		xml::Element	*childResource = childResources[selItems[i]];
+		xml::Element	*childResource = m_childResources[selItems[i]];
 		STRING			type = childResource->getAttribute( TYPE_ATTR );
 		if( type == ListBox::className )
 		{
@@ -811,7 +833,7 @@ void GuiBuilderWindow::newStyle( unsigned long newStyle, unsigned long styleMask
 	size_t	numSelected = childSelect.getSelectedItems( &selected );
 	for( size_t i=0; i<numSelected; i++ )
 	{
-		xml::Element *resource = childResources[selected[i]];
+		xml::Element *resource = m_childResources[selected[i]];
 		unsigned long currentStyle = resource->getAttribute( STYLE_ATTR ).getValueN<unsigned long>();
 		currentStyle &= styleMask;
 		currentStyle |= newStyle;
@@ -821,7 +843,7 @@ void GuiBuilderWindow::newStyle( unsigned long newStyle, unsigned long styleMask
 
 bool GuiBuilderWindow::checkChangedFlag( void )
 {
-	if( changedFlag )
+	if( m_changedFlag )
 	{
 		int buttonID = messageBox( "Document has changed. Do you want to save?", "MG GUI Builder", MB_ICONQUESTION|MB_YESNOCANCEL );
 		if( buttonID == IDCANCEL )
@@ -1038,7 +1060,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 	}
 
 	for( 
-		xml::XmlArray::iterator	it = topResources.begin(), endIT = topResources.end();
+		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
 		it != endIT;
 		++it
 	)
@@ -1130,7 +1152,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName )
 				"namespace winlibGUI {\n";
 
 	for( 
-		xml::XmlArray::iterator	it = topResources.begin(), endIT = topResources.end();
+		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
 		it != endIT;
 		++it
 	)
@@ -1310,7 +1332,7 @@ void GuiBuilderWindow::handleChildNameChange( void )
 	size_t	numSelected = childSelect.getSelectedItems( &selected );
 	if( numSelected )
 	{
-		xml::Element *resource = childResources[selected[0]];
+		xml::Element *resource = m_childResources[selected[0]];
 		STRING	oldName = resource->getAttribute( NAME_ATTR );
 		STRING	newName = properties.controlName->getText();
 		STRING	resourceTag = resource->getTag();
@@ -1347,8 +1369,8 @@ void GuiBuilderWindow::changeStringResource( xml::Element *string, const STRING 
 	STRING	tag = string->getTag();
 	string->setStringAttribute( NAME_ATTR, name );
 
-	int	selIdx = int(childResources.findElement( string ));
-	if( selIdx != childResources.no_index  )
+	int	selIdx = int(m_childResources.findElement( string ));
+	if( selIdx != m_childResources.no_index  )
 	{
 		childSelect.replaceEntry( selIdx, name );
 		childSelect.selectEntry( selIdx );
@@ -1381,11 +1403,11 @@ void GuiBuilderWindow::changeStringResource( size_t idx, const STRING &name, con
 	xml::Element	*stringList = getSelectedTopResource();
 	if( stringList )
 	{
-		while( idx >= childResources.size() )
+		while( idx >= m_childResources.size() )
 		{
 			addChildItem( stringList->addObject( new xml::Any( STRING_TAG ) )->setStringAttribute( NAME_ATTR, "NEW_STRNG" ), false );
 		}
-		xml::Element	*string = childResources[idx];
+		xml::Element	*string = m_childResources[idx];
 		changeStringResource( string, name, value, source );
 	}
 }
@@ -1452,7 +1474,7 @@ void GuiBuilderWindow::editItemList( void )
 
 	for( size_t i=0; i<numSelected; i++ )
 	{
-		xml::Element		*resource = childResources[selItems[i]];
+		xml::Element		*resource = m_childResources[selItems[i]];
 		xml::Element		*items = resource->getElement( ITEMS_TAG );
 		if( items )
 		{
@@ -1499,7 +1521,7 @@ void GuiBuilderWindow::editItemList( void )
 		*/
 		for( size_t i=0; i<numSelected; i++ )
 		{
-			xml::Element		*resource = childResources[selItems[i]];
+			xml::Element		*resource = m_childResources[selItems[i]];
 			xml::Element		*items = resource->getElement( ITEMS_TAG );
 			if( items )
 			{
@@ -1554,11 +1576,11 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 	{
 		case controlName_id:
 		{
-			if( editorMode == emFORM )
+			if( m_editorMode == emFORM )
 			{
 				handleChildNameChange();
 			}
-			else if( editorMode == emMENU )
+			else if( m_editorMode == emMENU )
 			{
 				TreeNode	*selected = treeSelect.getSelection();
 				if( selected )
@@ -1567,7 +1589,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 					resource->setStringAttribute( NAME_ATTR, properties.controlName->getText() );
 				}
 			}
-			else if( editorMode == emSTRINGS )
+			else if( m_editorMode == emSTRINGS )
 			{
 				xml::Element	*stringResource = getSelectedChildResource();
 				if( stringResource )
@@ -1582,12 +1604,12 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 		case childCaption_id:
 		{
 			STRING caption = properties.childCaption->getText();
-			if( editorMode == emFORM )
+			if( m_editorMode == emFORM )
 			{
 				designerForm->setCaption( caption );
 				designerForm->invalidateWindow();
 			}
-			else if( editorMode == emMENU )
+			else if( m_editorMode == emMENU )
 			{
 				TreeNode	*selected = treeSelect.getSelection();
 				if( selected )
@@ -1597,7 +1619,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 					treeSelect.changeLabel( selected, caption );
 				}
 			}
-			else if( editorMode == emSTRINGS )
+			else if( m_editorMode == emSTRINGS )
 			{
 				xml::Element	*stringResource = getSelectedChildResource();
 				if( stringResource )
@@ -1938,9 +1960,9 @@ void GuiBuilderWindow::handleStringEditor( WPARAM wParam )
 		int selected = childSelect.getSelection();
 		if( selected > 0 )
 		{
-			xml::Element	*resource = childResources[selected];
+			xml::Element	*resource = m_childResources[selected];
 			childSelect.deleteEntry( selected );
-			childResources.removeElementAt( selected );
+			m_childResources.removeElementAt( selected );
 			resource->remove();
 			delete resource;
 
@@ -1957,12 +1979,12 @@ void GuiBuilderWindow::postControlCallback( BasicWindow *control, unsigned uMsg,
 	{
 		if( control == &treeSelect )
 		{
-			if( editorMode == emMENU )
+			if( m_editorMode == emMENU )
 				handleMenuEditor( wParam );
-			else if( editorMode == emFORM )
+			else if( m_editorMode == emFORM )
 				handleFormEditor( wParam );
 		}
-		else if( control == &childSelect && editorMode == emSTRINGS )
+		else if( control == &childSelect && m_editorMode == emSTRINGS )
 		{
 			handleStringEditor( wParam );
 		}
@@ -1985,7 +2007,7 @@ bool GuiBuilderWindow::handleTreeViewDrag( TreeView *, TreeNode *dragItem, TreeN
 				allow = false;
 		}
 
-		if( allow && editorMode == emFORM )
+		if( allow && m_editorMode == emFORM )
 		{
 			xml::Element	*dropResource = (xml::Element *)dragOver->getData();
 			CallbackWindow *dropChild = dynamic_cast<CallbackWindow *>( 
@@ -2022,7 +2044,7 @@ void GuiBuilderWindow::handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dra
 	/*
 		move the child control
 	*/
-	if( editorMode == emFORM )
+	if( m_editorMode == emFORM )
 	{
 		BasicWindow	*dragChild = getChildByResource( dragResource );
 		CallbackWindow *dropChild = static_cast<CallbackWindow *>( 
@@ -2045,8 +2067,8 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 			break;
 
 		case ITEM_SELECT:
-			assert( editorMode == emSTRINGS || editorMode == emFORM );
-			if( editorMode == emFORM )
+			assert( m_editorMode == emSTRINGS || m_editorMode == emFORM );
+			if( m_editorMode == emFORM )
 			{
 				handleChildSelect();
 			}
@@ -2058,8 +2080,8 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 
 		case TREE_SELECT:
 		{
-			assert( editorMode == emMENU || editorMode == emFORM );
-			if( editorMode == emMENU )
+			assert( m_editorMode == emMENU || m_editorMode == emFORM );
+			if( m_editorMode == emMENU )
 			{
 				TreeNode *myNode = treeSelect.getSelection();
 				if( myNode )
@@ -2151,7 +2173,7 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		case SCROLLER_PUSH:
 		case XMLVIEW_PUSH:
 		case GRIDVIEW_PUSH:
-			currentId = control;
+			m_currentId = control;
 			break;
 
 		/*
@@ -2163,13 +2185,13 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 
 		case controlStyle_id:
 		{
-			StyleDialog	styleDialog( currentStyle, getUniqueType() );
+			StyleDialog	styleDialog( m_currentStyle, getUniqueType() );
 			styleDialog.create( this );
 			if( styleDialog.getModalResult() == IDOK )
 			{
-				currentStyle = styleDialog.getStyle();
+				m_currentStyle = styleDialog.getStyle();
 				unsigned long styleMask = styleDialog.getStyleMask();
-				newStyle( currentStyle, styleMask );
+				newStyle( m_currentStyle, styleMask );
 				setChangedFlag();
 			}
 			break;
@@ -2212,6 +2234,28 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 					setChangedFlag();
 				}
 			}
+		}
+		case upBUTTON_id:
+		{
+			assert( designerForm );
+			if( designerForm->moveUp() )
+			{
+				refreshChildSelect();
+				designerForm->refreshSelection();
+				setChangedFlag();
+			}
+			break;
+		}
+		case downBUTTON_id:
+		{
+			assert( designerForm );
+			if( designerForm->moveDown() )
+			{
+				refreshChildSelect();
+				designerForm->refreshSelection();
+				setChangedFlag();
+			}
+			break;
 		}
 		default:
 			return OverlappedWindow::handleButtonClick( control );
@@ -2292,7 +2336,7 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 		}
 
 		case VIEW_ITEM_LIST_id:
-			if( editorMode == emFORM )
+			if( m_editorMode == emFORM )
 			{
 				treeSelect.hide();
 				childSelect.show();
@@ -2301,7 +2345,7 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 			break;
 
 		case VIEW_ITEM_TREE_id:
-			if( editorMode == emFORM )
+			if( m_editorMode == emFORM )
 			{
 				childSelect.hide();
 				treeSelect.show();
@@ -2356,7 +2400,7 @@ SuccessCode GuiBuilderWindow::create( void )
 		btnSelectControl.setId( SELECT_PUSH );
 		btnSelectControl.create( &toolbar );
 		btnSelectControl.setActive();
-		currentId = SELECT_PUSH;
+		m_currentId = SELECT_PUSH;
 
 		btnCreateLabel.setTitle( Label::className );
 		btnCreateLabel.setId( LABEL_PUSH );
@@ -2580,7 +2624,7 @@ void GuiBuilderWindow::loadChildProperties( BasicWindow *child )
 	}
 
 	properties.BackgroundColor->selectEntry( getColorValue( resource->getAttribute( "bgColor" ) ) );
-	currentStyle = resource->getAttribute( STYLE_ATTR ).getValueN<unsigned>();
+	m_currentStyle = resource->getAttribute( STYLE_ATTR ).getValueN<unsigned>();
 
 	STRING font = resource->getAttribute("font");
 	if( font.isEmpty() )
@@ -2604,7 +2648,7 @@ void GuiBuilderWindow::removeSelected( bool withDesigner )
 	assert( designerForm );
 
 	childSelect.clearEntries();
-	childResources.clear();
+	m_childResources.clear();
 	treeSelect.clear();
 	if( !withDesigner )
 	{
@@ -2613,7 +2657,7 @@ void GuiBuilderWindow::removeSelected( bool withDesigner )
 	else
 	{
 		topResourceSelect.clearEntries();
-		topResources.clear();
+		m_topResources.clear();
 		loadGUI( m_guiDoc );
 	}
 

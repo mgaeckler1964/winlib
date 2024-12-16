@@ -35,6 +35,8 @@ namespace winlibGUI {
 	const int controlName_id=199;
 	const int controlStyle_id=246;
 	const int controlStyleLabel_id=245;
+	const int downBUTTON_id=258;
+	const int downLABEL_id=257;
 	const int EDIT_id=173;
 	const int EDIT_TRANSLATE_id=148;
 	const int FILE_EXIT_id=146;
@@ -54,11 +56,11 @@ namespace winlibGUI {
 	const int growHEIGHTLabel_id=219;
 	const int growWIDTH_id=218;
 	const int growWIDTHLabel_id=217;
-	const int GuiDefinitions_id=261;
+	const int GuiDefinitions_id=265;
 	const int GuiIcon_id=156;
-	const int HELLO_WORLD1_id=255;
-	const int HELLO_WORLD2_id=256;
-	const int HELLO_WORLD3_id=257;
+	const int HELLO_WORLD1_id=259;
+	const int HELLO_WORLD2_id=260;
+	const int HELLO_WORLD3_id=261;
 	const int H_SCROLLBAR_id=184;
 	const int H_TRACKBAR_id=177;
 	const int itemList_id=250;
@@ -90,7 +92,7 @@ namespace winlibGUI {
 	const int numColsLABEL_id=251;
 	const int numRows_id=254;
 	const int numRowsLABEL_id=253;
-	const int OPEN_GUI_FILE_id=259;
+	const int OPEN_GUI_FILE_id=263;
 	const int paddingBOTTOM_id=228;
 	const int paddingBOTTOMLabel_id=227;
 	const int paddingLEFT_id=222;
@@ -118,7 +120,7 @@ namespace winlibGUI {
 	const int PUSHBUTTON_Right_id=189;
 	const int PUSHBUTTON_Top_id=188;
 	const int RADIOBUTTON_id=181;
-	const int SAVE_GUI_FILE_id=260;
+	const int SAVE_GUI_FILE_id=264;
 	const int SelectFontButton_id=244;
 	const int SelectFontCheck_id=243;
 	const int StringListEditor_id=134;
@@ -132,14 +134,16 @@ namespace winlibGUI {
 	const int TEST_FORM_id=129;
 	const int TEST_LABEL_id=132;
 	const int TEST_MENU_id=153;
-	const int TEST_STRING_id=258;
+	const int TEST_STRING_id=262;
 	const int TEST_xmlGridFORM_id=133;
 	const int TOOL_BAR_id=162;
 	const int TopFrame_id=196;
 	const int TranslationForm_id=135;
 	const int translationsGrid_id=198;
 	const int TREEVIEW_id=178;
+	const int upBUTTON_id=256;
 	const int UPDOWNBUTTON_id=175;
+	const int upLABEL_id=255;
 	const int VIEW_ITEM_LIST_id=149;
 	const int VIEW_ITEM_TREE_id=150;
 	const int V_SCROLLBAR_id=185;
@@ -351,6 +355,10 @@ namespace winlibGUI {
 		winlib::EditControl *numCols;
 		winlib::Label *numRowsLABEL;
 		winlib::EditControl *numRows;
+		winlib::Label *upLABEL;
+		winlib::PushButton *upBUTTON;
+		winlib::Label *downLABEL;
+		winlib::PushButton *downBUTTON;
 		private:
 		virtual void getControls();
 	};	// end of Properties

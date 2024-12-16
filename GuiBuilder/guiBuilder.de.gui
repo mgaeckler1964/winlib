@@ -446,21 +446,33 @@
 <child type="EditControl" name="numRows" caption="" x="136" y="701" width="80" height="23" style="1350631808" id="254">
 <layout x="1" y="28" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 </child>
+<child type="Label" name="upLABEL" caption="Oben" x="25" y="796" width="0" height="0" style="1342242827" id="255">
+<layout x="0" y="29" />
+</child>
+<child type="PushButton" name="upBUTTON" caption="^" x="174" y="809" width="80" height="25" style="1342242816" id="256">
+<layout x="1" y="29" growWidth="1" />
+</child>
+<child type="Label" name="downLABEL" caption="Unten" x="26" y="839" width="0" height="0" style="1342242827" id="257">
+<layout x="0" y="30" />
+</child>
+<child type="PushButton" name="downBUTTON" caption="v" x="152" y="835" width="80" height="25" style="1342242816" id="258">
+<layout x="1" y="30" growWidth="1" />
+</child>
 </frame>
 </frames>
 <strings>
 <list name="TEST_STRINGLIST" caption="">
-<string name="HELLO_WORLD1" caption="Hello World" id="255" />
-<string name="HELLO_WORLD2" caption="Hello 2World" id="256" />
-<string name="HELLO_WORLD3" caption="Hello World" id="257" />
-<string name="TEST_STRING" caption="SO So Das ist es" id="258" />
+<string name="HELLO_WORLD1" caption="Hello World" id="259" />
+<string name="HELLO_WORLD2" caption="Hello 2World" id="260" />
+<string name="HELLO_WORLD3" caption="Hello World" id="261" />
+<string name="TEST_STRING" caption="SO So Das ist es" id="262" />
 </list>
 <list name="GuiBuilderStrings" caption="">
-<string name="OPEN_GUI_FILE" caption="Öffne eine GUI Definition" id="259" />
-<string name="SAVE_GUI_FILE" caption="Speichern einer GUI Definition" id="260" />
+<string name="OPEN_GUI_FILE" caption="Öffne eine GUI Definition" id="263" />
+<string name="SAVE_GUI_FILE" caption="Speichern einer GUI Definition" id="264" />
 </list>
 <list name="GuiFilterList">
-<string name="GuiDefinitions" caption="Gui definitions (*.gui)|*.gui|" id="261" />
+<string name="GuiDefinitions" caption="Gui definitions (*.gui)|*.gui|" id="265" />
 </list>
 </strings>
 </gui>

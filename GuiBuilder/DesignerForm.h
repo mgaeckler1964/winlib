@@ -85,39 +85,39 @@ class GuiBuilderWindow;
 class DesignerForm : public OverlappedWindow
 {
 	static const int s_handleSize = 5;
-	static const int m_gridSize = 8;
+	static const int s_gridSize = 8;
 
 	gak::PairMap<void*,Point>	m_relativePositions;
 	gak::PairMap<void*,Point>	m_oldPositions;
 
 	BasicWindow					*m_lastChildClick;
 	bool						m_tableMoved;
-	const CallbackWindow		*currentFrame;
+	const CallbackWindow		*m_currentFrame;
 
 	TableManager				*m_tableManager;
-	ChildWindows				selected;
-	GuiBuilderWindow			*theGuiBuilder;
+	ChildWindows				m_selected;
+	GuiBuilderWindow			*m_theGuiBuilder;
 	enum SizeMode
 	{
 		smNONE, smUPPERLEFT, smUPPERRIGHT, smLOWERLEFT, smLOWERRIGHT
 	}							m_sizeMode;
 	bool						m_startDraging;
-	Point						lastMousePos;
+	Point						m_lastMousePos;
 
 	void internalClearSelected()
 	{
-		for( size_t i=selected.size()-1; i!=-1; i-- )
+		for( size_t i=m_selected.size()-1; i!=-1; i-- )
 		{
-			internalUnselect( selected[i] );
+			internalUnselect( m_selected[i] );
 		}
 
-		selected.clear();
+		m_selected.clear();
 	}
 	void internalSelect( BasicWindow *control );
 	void internalUnselect( BasicWindow *control );
 	bool isSelected( BasicWindow *control )
 	{
-		return selected.hasElement( control );
+		return m_selected.hasElement( control );
 	}
 
 	void startSelect( const Point &position );
@@ -138,17 +138,17 @@ class DesignerForm : public OverlappedWindow
 	{
 		if( fromTree )
 		{
-			selected.clear();
+			m_selected.clear();
 		}
-		selected.addElement( control );
+		m_selected.addElement( control );
 	}
 	void unselectControl( BasicWindow *control )
 	{
-		selected.removeElement( control );
+		m_selected.removeElement( control );
 	}
 	void clearSelected()
 	{
-		selected.clear();
+		m_selected.clear();
 	}
 
 	private:
@@ -225,7 +225,7 @@ class DesignerForm : public OverlappedWindow
 	public:
 	DesignerForm( gak::xml::Element *resource, GuiBuilderWindow	*theGuiBuilder ) : OverlappedWindow( NULL ) 
 	{
-		this->theGuiBuilder = theGuiBuilder;
+		m_theGuiBuilder = theGuiBuilder;
 		this->setResource( resource );
 
 		resetClickStatus();
@@ -240,7 +240,7 @@ class DesignerForm : public OverlappedWindow
 	{
 		int	dummy, yPos;
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -259,7 +259,7 @@ class DesignerForm : public OverlappedWindow
 	{
 		int	dummy, xPos;
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -277,7 +277,7 @@ class DesignerForm : public OverlappedWindow
 	void setWidth( int width )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -296,7 +296,7 @@ class DesignerForm : public OverlappedWindow
 	void setHeight( int height )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -315,7 +315,7 @@ class DesignerForm : public OverlappedWindow
 	void setCaption( const STRING &caption )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -331,7 +331,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutHorizontal( int xPos )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -356,7 +356,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutVertical( int yPos )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -381,7 +381,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutSizeHorizontal( unsigned width )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -406,7 +406,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutSizeVertical( unsigned height )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -432,7 +432,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutGrowHorizontal( unsigned growWidth )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -457,7 +457,7 @@ class DesignerForm : public OverlappedWindow
 	void setLayoutGrowVertical( unsigned growHeight )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -482,7 +482,7 @@ class DesignerForm : public OverlappedWindow
 	void setPaddingLeft( int paddingLeft )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -507,7 +507,7 @@ class DesignerForm : public OverlappedWindow
 	void setPaddingRight( int paddingRight )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -532,7 +532,7 @@ class DesignerForm : public OverlappedWindow
 	void setPaddingTop( int paddingTop )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -557,7 +557,7 @@ class DesignerForm : public OverlappedWindow
 	void setPaddingBottom( int paddingBottom )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -586,7 +586,7 @@ class DesignerForm : public OverlappedWindow
 			return;		// do not change
 		}
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -630,7 +630,7 @@ class DesignerForm : public OverlappedWindow
 		}
 	
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -667,7 +667,7 @@ class DesignerForm : public OverlappedWindow
 	void setMargin( int marginLeft, int marginRight, int marginTop, int marginBottom )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -710,7 +710,7 @@ class DesignerForm : public OverlappedWindow
 	void setFont( const STRING &font )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -727,7 +727,7 @@ class DesignerForm : public OverlappedWindow
 	void setBaseClass( const STRING &baseClass )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -743,7 +743,7 @@ class DesignerForm : public OverlappedWindow
 	void setNumCols( unsigned numCols )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -763,7 +763,7 @@ class DesignerForm : public OverlappedWindow
 	void setNumRows( unsigned numRows )
 	{
 		for( 
-			ChildWindows::const_iterator it = selected.cbegin(), endIT = selected.cend();
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
 			it != endIT;
 			++it
 		)
@@ -780,6 +780,77 @@ class DesignerForm : public OverlappedWindow
 			}
 		}
 	}
+
+	bool moveUp()
+	{
+		bool hasChanged = false;
+		for( 
+			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+			it != endIT;
+			++it
+		)
+		{
+
+			BasicWindow *child = *it;
+			gak::xml::Element *element = child->getResource();
+			if( element )
+			{
+				long index = element->getIndex();
+				if( index )
+				{
+					element->moveTo(index-1);
+					hasChanged = true;
+				}
+				else
+				{
+/*v*/				break;
+				}
+			}
+			else
+			{
+/*v*/			break;
+			}
+		}
+		
+		return hasChanged;
+	}
+
+	bool moveDown()
+	{
+		bool hasChanged = false;
+		for( 
+			ChildWindows::const_reverse_iterator it = m_selected.crbegin(), endIT = m_selected.crend();
+			it != endIT;
+			++it
+		)
+		{
+
+			BasicWindow *child = *it;
+			gak::xml::Element *element = child->getResource();
+			if( element )
+			{
+				long index = element->getIndex();
+				long numSiblings = element->getParent()->getNumObjects()-1;
+				if( index < numSiblings )
+				{
+					element->moveTo(index+1);
+					hasChanged = true;
+				}
+				else
+				{
+/*v*/				break;
+				}
+			}
+			else
+			{
+/*v*/			break;
+			}
+		}
+		
+		return hasChanged;
+	}
+
+	void refreshSelection();
 
 	private:
 	class BackgroundChanger
@@ -810,7 +881,7 @@ class DesignerForm : public OverlappedWindow
 	void setBackgroundColor( const STRING &colorName, COLORREF color )
 	{
 		BackgroundChanger	theChanger( colorName, color );
-		selected.forEach( theChanger );
+		m_selected.forEach( theChanger );
 	}
 	using OverlappedWindow::setBackgroundColor;
 
@@ -836,7 +907,7 @@ class DesignerForm : public OverlappedWindow
 	public:
 	void removeLayoutData()
 	{
-		selected.forEach<LayoutRemover>();
+		m_selected.forEach<LayoutRemover>();
 	}
 
 	private:
@@ -872,7 +943,7 @@ class DesignerForm : public OverlappedWindow
 
 	BasicWindow *getSelected() const
 	{
-		return selected.size() ? selected[0] : NULL;
+		return m_selected.size() ? m_selected[0] : NULL;
 	}
 };
 

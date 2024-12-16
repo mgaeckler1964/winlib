@@ -2,6 +2,8 @@
 <translations>
 <language lang="by">
 <item caption="Attachment" translation="Ohang" />
+<item caption="Down" translation="Owie" />
+<item caption="Up" translation="aufie" />
 <item caption="&amp;Cancel" translation="Doch Ned" />
 <item caption="&amp;Edit" translation="Ändern" />
 <item caption="&amp;Exit" translation="Hoam geh'n" />
@@ -19,6 +21,7 @@
 <item caption="Bottom" translation="Unten" />
 <item caption="Cancel" translation="Abbruch" />
 <item caption="Caption" translation="Titel" />
+<item caption="Down" translation="Unten" />
 <item caption="Edit" translation="Bearbeiten" />
 <item caption="Font" translation="Zeichensatz" />
 <item caption="F&amp;rame" translation="&amp;Rahmen" />
@@ -52,6 +55,7 @@
 <item caption="Target Language:" translation="Zielsprache" />
 <item caption="Top" translation="Oben" />
 <item caption="Translate" translation="Übersetzen" />
+<item caption="Up" translation="Oben" />
 <item caption="height" translation="Höhe" />
 <item caption="width" translation="Breite" />
 <item caption="&amp;Cancel" translation="&amp;Abbruch" />
