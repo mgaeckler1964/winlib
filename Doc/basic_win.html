@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>BASIC_WIN</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;11591029">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>BASIC_WIN</H1>
+<H2>Beschreibung</H2>
+<P>Stellt alle Basis funktionen zur Verf&uuml;gung.</P>
+<H2>Basisklassen</H2>
+<P><A HREF="index.html">keine</A> 
+</P>
+<H2>Abgeleitete Klassen</H2>
+<P><A HREF="call_win.html">CALL_WIN</A>, <A HREF="search_dlg.html">SEARCH_DLG</A>,
+<A HREF="control_win.html">CONTROL_WIN</A> 
+</P>
+<H2>Methoden</H2>
+<H3><A NAME="create"></A>bool create( const BASIC_WIN *parent, const
+char *className, ... );</H3>
+<P>Erzeugt ein neues Fenster. Liefert <B>false</B> zur&uuml;ck, wenn
+das Fenster erfolgreich erzeugt wurde.</P>
+<PRE>bool BASIC_WIN::create( const BASIC_WIN *parent,
+        const char *className, const char *winName=NULL,
+        int x=CW_USEDEFAULT, int y=CW_USEDEFAULT,
+        int nWidth=CW_USEDEFAULT, int nHeight=CW_USEDEFAULT,
+        DWORD dwStyle = 0, HMENU menu=0, LPSTR lpParam=NULL )
+{
+        winHandle = CreateWindow( (LPSTR)className, (LPSTR)winName, dwStyle,
+                x, y, nWidth, nHeight,
+                parent ? parent-&gt;winHandle : 0,
+                menu, instance, lpParam );
+        return winHandle ? false : true;
+}</PRE><H3>
+<A NAME="close"></A>virtual void close( void );</H3>
+<P>Schlie&szlig;t das Fenster.</P>
+<PRE>void BASIC_WIN::close( void )
+{
+	if( parent )
+		parent-&gt;handleChildClose( this );
+        DestroyWindow( winHandle );
+        winHandle = 0;
+}</PRE>
+</BODY>
+</HTML>

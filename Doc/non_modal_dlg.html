@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>NON_MODAL_DLG</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;10501201">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>NON_MODAL_DLG</H1>
+<H2>Beschreibung</H2>
+<P>Nicht-Modale Dialogfenster</P>
+<H2>Basisklassen</H2>
+<P><A HREF="dialog_win.html">DIALOG_WIN</A></P>
+<H2>Abgeleitete Klassen</H2>
+<P><A HREF="app_dialog.html">APP_DIALOG</A></P>
+<H2>Methoden</H2>
+<H3>int create( const char *dialog, const BASIC_WIN *parent );<BR>int
+create( int dialog, const BASIC_WIN *parent )</H3>
+<P>Erzeugt eine neue Dialogbox aus einer Ressource. Liefert <B>false</B>
+zur&uuml;ck, wenn der Dialog erfolgreich erzeugt wurde.</P>
+<PRE>bool NON_MODAL_DLG::create( const char *dialog, const BASIC_WIN *parent )
+{
+	HWND	handle;
+
+	registerWindow();
+	handle = CreateDialog( instance, (LPSTR)dialog,
+		parent ? parent-&gt;handle() : 0,
+		(DLGPROC)WindowProc );
+	if( handle )
+		return false;
+	else
+	{
+		unregisterWindow();
+		return true;
+	}
+}
+
+bool NON_MODAL_DLG::create( int dialog, const BASIC_WIN *parent )
+{
+	return create( (const char *)MAKEINTRESOURCE(dialog), parent );
+}</PRE><H3>
+virtual void exitDialog( int value );</H3>
+<P>Beendet den Dialog.</P>
+<PRE>void NON_MODAL_DLG::exitDialog( int )
+{
+        close();
+};</PRE>
+</BODY>
+</HTML>

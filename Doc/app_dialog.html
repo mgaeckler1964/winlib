@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>NON_MODAL_DLG</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;10112206">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>APP_DIALOG</H1>
+<H2>Beschreibung</H2>
+<P>Nicht-modale Dialogfenster. Beim Schlie&szlig;en, wird die
+Anwendung beendet.</P>
+<H2>Basisklassen</H2>
+<P><A HREF="non_modal_dlg.html">NON_MODAL_DLG</A></P>
+<H2>Abgeleitete Klassen</H2>
+<P><BR><BR>
+</P>
+<H2>Methoden</H2>
+<H3>virtual bool handleDestroy( void );</H3>
+<P>Beendet die Anwendung.</P>
+<PRE>bool APP_DIALOG::handleDestroy( void )
+{
+        PostQuitMessage( 1 );
+        return false;
+}</PRE>
+</BODY>
+</HTML>

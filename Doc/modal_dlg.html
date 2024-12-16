@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>MODAL_DLG</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;12002628">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>MODAL_DLG</H1>
+<H2>Beschreibung</H2>
+<P>Modale Dialogfenster</P>
+<H2>Basisklassen</H2>
+<P><A HREF="dialog_win.html">DIALOG_WIN</A></P>
+<H2>Abgeleitete Klassen</H2>
+<P><BR><BR>
+</P>
+<H2>Methoden</H2>
+<H3>virtual void close( void );</H3>
+<P>Beendet den Dialog.</P>
+<PRE>void MODAL_DLG::close( void )
+{
+	if( parent )
+		parent-&gt;handleChildClose( this );
+        <A HREF="#exitDialog">exitDialog</A>( 0 );
+}</PRE><H3>
+int create( const char *dialog, const BASIC_WIN *parent );<BR>int
+create( int dialog, const BASIC_WIN *parent )</H3>
+<P>Erzeugt eine neue Dialogbox aus einer Ressource.</P>
+<PRE>int MODAL_DLG::create( const char *dialog, const BASIC_WIN *parent )
+{
+        int retVal;
+
+        registerWindow();
+        retVal = DialogBox( instance, (LPSTR)dialog,
+                        parent ? parent-&gt;handle() : 0,
+                        (DLGPROC)WindowProc );
+        clrHandle();
+        unregisterWindow();
+        return retVal;
+}
+
+int MODAL_DLG::create( int dialog, const BASIC_WIN *parent )
+{
+        return create( (const char *)MAKEINTRESOURCE(dialog), parent );
+}</PRE><H3>
+<A NAME="exitDialog"></A>virtual void exitDialog( int value );</H3>
+<P>Beendet den Dialog.</P>
+<PRE>void MODAL_DLG::exitDialog( int value )
+{
+        EndDialog( handle(), value );
+};</PRE>
+</BODY>
+</HTML>

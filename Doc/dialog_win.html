@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>DIALOG_WIN</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;10052445">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>DIALOG_WIN</H1>
+<H2>Beschreibung</H2>
+<P>Basisklasse f&uuml;r alle Fenster, die Windowsnachrichten
+erhalten.</P>
+<H2>Basisklassen</H2>
+<P><A HREF="call_win.html">CALL_WIN</A> 
+</P>
+<H2>Abgeleitete Klassen</H2>
+<P><A HREF="modal_dlg.html">MODAL_DLG</A>, <A HREF="non_modal_dlg.html">NON_MODAL_DLG</A></P>
+<H2>Methoden</H2>
+<H3>virtual LONG doDefault( UINT msg, WPARAM wParam, LPARAM lParam );</H3>
+<P>Wird aufgerufen, wenn Ihre Messagehandler true zur&uuml;ckgeliefert
+haben.</P>
+<PRE>LONG DIALOG_WIN::doDefault( UINT, WPARAM, LPARAM )
+{
+        return false;
+}</PRE><H3>
+virtual void exitDialog( int value ) = 0;</H3>
+<P>Beendet den Dialog.</P>
+<H3>virtual bool handleCancel( void );</H3>
+<P>Wird aufgerufen, wenn der Benutzer den Abbruch Button klickt.
+Standardm&auml;&szlig;ig wird das Fenster geschlossen.</P>
+<PRE>bool DIALOG_WIN::handleCancel( void )
+{
+        return true;
+}</PRE><H3>
+virtual bool handleCommand( int cmd );</H3>
+<P>Wird aufgerufen, wenn ein Control angeklickt wurde. Der Parameter
+cmd enth&auml;lt die ID des Controls. Wenn der Standardhandler
+aufgerufen werden soll, m&uuml;ssen Sie <B>true</B> zur&uuml;ckliefen.
+Standardm&auml;&szlig;ig wird der modale Dialog mit der gleichen ID
+angezeigt.</P>
+<PRE>bool DIALOG_WIN::handleCommand( int cmd )
+{
+        if( cmd &gt;= IDOK &amp;&amp; cmd &lt;= IDNO )
+        {
+                if( cmd == IDOK &amp;&amp; !handleOk() )
+                        return false;                   // continue dialog
+
+                else if( cmd == IDCANCEL &amp;&amp; !handleCancel() )
+                        return false;                   // continue dialog
+
+                exitDialog( cmd );
+
+                return false;
+        }
+        else
+                return <A HREF="call_win.html#handleCommand">CALL_WIN::handleCommand</A>( cmd );
+}</PRE><H3>
+virtual bool handleDestroy( void );</H3>
+<P>Wird aufgerufen, wenn ein Fester geschlossen wurde.</P>
+<PRE>bool DIALOG_WIN::handleDestroy( void )
+{
+        return false;
+}</PRE><H3>
+virtual bool handleOk( void );</H3>
+<P>Wird aufgerufen, wenn der Benutzer den OK Button klickt.
+Standardm&auml;&szlig;ig wird das Fenster geschlossen.</P>
+<PRE>bool DIALOG_WIN::handleOk( void )
+{
+        return true;
+}</PRE>
+</BODY>
+</HTML>

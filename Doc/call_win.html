@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>CALL_WIN</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Win32)">
+	<META NAME="AUTHOR" CONTENT="Martin G&auml;ckler">
+	<META NAME="CREATED" CONTENT="20071215;17050031">
+	<META NAME="CHANGEDBY" CONTENT="Martin G&auml;ckler">
+	<META NAME="CHANGED" CONTENT="20080420;16581137">
+	<STYLE>
+	<!--
+		@page { margin: 2cm }
+		H1 { margin-bottom: 0.21cm; font-family: "Arial", sans-serif; font-size: 16pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>CALL_WIN</H1>
+<H2>Beschreibung</H2>
+<P>Basisklasse f&uuml;r alle Fenster, die Windowsnachrichten
+erhalten.</P>
+<H2>Basisklassen</H2>
+<P><A HREF="basic_win.html">BASIC_WIN</A> 
+</P>
+<H2>Abgeleitete Klassen</H2>
+<P>CHILD_WIN, <A HREF="dialog_win.html">DIALOG_WIN</A>, TOOL_TIP_WIN,
+MDI_WIN, AREA_WIN</P>
+<H2>Methoden</H2>
+<H3><A NAME="close"></A>virtual void close( void );</H3>
+<P>Schlie&szlig;t das Fenster.</P>
+<PRE>void CALL_WIN::close( void )
+{
+        removeTimer();
+        removeToolHelp();
+        removeStatusBar();
+
+        closed = true;
+
+        <A HREF="basic_win.html#close">BASIC_WIN::close</A>();
+        unregisterWindow();
+}</PRE><H3>
+bool create( const BASIC_WIN *parent, const char*className, ... );</H3>
+<P>Erzeugt ein neues Fenster. Liefert <B>false</B> zur&uuml;ck, wenn
+das Fenster erfolgreich erzeugt wurde.</P>
+<PRE>bool CALL_WIN::create( const BASIC_WIN *parent,
+        const char*className, const char *winName=NULL,
+        int x=CW_USEDEFAULT, int y=CW_USEDEFAULT,
+        int nWidth=CW_USEDEFAULT, int nHeight=CW_USEDEFAULT,
+        DWORD dwStyle = 0, HMENU menu=0, LPSTR lpParam=NULL )
+{
+        bool error;
+
+        registerWindow();
+        error = <A HREF="basic_win.html#create">BASIC_WIN::create</A>( parent, className, winName,
+                x, y, nWidth, nHeight,
+                dwStyle, menu, lpParam );
+        this-&gt;menu = menu;
+
+        if( error )
+                unregisterWindow();
+        return error;
+}
+
+bool CALL_WIN::create( const BASIC_WIN *parent,
+        const char *className, const char *winName,
+        const char *menu,
+        DWORD dwStyle = WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX|WS_THICKFRAME,
+        int x=CW_USEDEFAULT, int y=CW_USEDEFAULT,
+        int nWidth=CW_USEDEFAULT, int nHeight=CW_USEDEFAULT,
+        LPSTR lpParam = NULL )
+{
+        HMENU hMenu;
+
+        hMenu = LoadMenu( instance, menu );
+        if( hMenu )
+        {
+                return create( parent, className, winName, x, y, nWidth, nHeight, dwStyle, hMenu, lpParam );
+        }
+        else
+                return true;
+}</PRE><H3>
+<A NAME="exitApplication"></A>void exitApplication( int exitCode = 0
+);</H3>
+<P>Beendet die Anwendung.</P>
+<PRE>void exitApplication( int exitCode = 0 )
+{
+        PostQuitMessage( exitCode );
+}</PRE><H3>
+virtual bool handleClose( void )</H3>
+<P>Wird aufgerufen, wenn ein Fenster geschlossen werden soll. Wenn
+der Standardhandler aufgerufen werden soll, m&uuml;ssen Sie <B>true</B>
+zur&uuml;ckliefern. Standardm&auml;&szlig;ig wird die Funktion close
+aufgerufen.</P>
+<PRE>bool CALL_WIN::handleClose( void )
+{
+        <A HREF="#close">close</A>();
+
+        return false;
+}</PRE><H3>
+<A NAME="handleCommand"></A>virtual bool handleCommand( int cmd );</H3>
+<P>Wird aufgerufen, wenn ein Control angeklickt wurde. Der Parameter
+cmd enth&auml;lt die ID des Controls. Wenn der Standardhandler
+aufgerufen werden soll, m&uuml;ssen Sie <B>true</B> zur&uuml;ckliefern.
+Standardm&auml;&szlig;ig wird der modale Dialog mit der gleichen ID
+angezeigt.</P>
+<PRE>bool CALL_WIN::handleCommand( int command )
+{
+        doModalDialog( (WORD)command );
+        return false;
+}</PRE><H3>
+virtual bool handleCreate( void );</H3>
+<P>Wird aufgerufen nachdem das Fenster erzeugt wurde. Wenn der
+Standardhandler aufgerufen werden soll, m&uuml;ssen Sie <B>true</B>
+zur&uuml;ckliefern. Wenn das Erzeugen des Fensters abgebrochen werden
+soll, setzen Sie den Wert von callBackValue auf &#150;1.</P>
+<PRE>bool CALL_WIN::handleCreate( void )
+{
+        return false;                   // don't call default funtion
+}</PRE><H3>
+virtual bool handleDestroy( void );</H3>
+<P>Wird aufgerufen, wenn das Fenster geschlossen wqrde.</P>
+<PRE>bool CALL_WIN::handleDestroy( void )
+{
+        destroyed = true;
+
+        <A HREF="#exitApplication">exitApplication</A>();
+        return false;
+}</PRE><H3>
+virtual bool handleRepaint( void );</H3>
+<P>Wird aufgerufen, wenn das Fenster neu gezeichnet werden soll. Wenn
+der Standardhandler aufgerufen werden soll, m&uuml;ssen Sie <B>true</B>
+zur&uuml;ckliefern.</P>
+<PRE>bool CALL_WIN::handleRepaint( void )
+{
+        return true;
+}</PRE><P>
+<BR><BR>
+</P>
+</BODY>
+</HTML>
