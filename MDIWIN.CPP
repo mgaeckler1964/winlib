@@ -117,7 +117,7 @@ STRING MDIchildWindow::getWindowClassName( void ) const
 void MDIchildWindow::handleActivate( bool activate )
 {
 	if( activate )
-		myParent->setActiveWindow( this, menu, winMenu );
+		myParent->setActiveWindow( this, m_menu, winMenu );
 	else
 		myParent->setNoWindow();
 
@@ -306,7 +306,7 @@ SuccessCode MDIwindow::create( int menuId, int winMenu )
 
 	if( error == scSUCCESS )
 	{
-		error = clientWindow.create(this, menu ? menu->getSubMenu( winMenu ) : NULL );
+		error = clientWindow.create(this, m_menu ? m_menu->getSubMenu( winMenu ) : NULL );
 	}
 	return error;
 }

@@ -638,25 +638,25 @@ class DesignerForm : public OverlappedWindow
 			CallbackWindow *child = dynamic_cast<CallbackWindow*>( *it );
 			if( child )
 			{
-				LayoutManager *layoutManager = createLayoutManager( type, true );
+				LayoutManager *m_layoutManager = createLayoutManager( type, true );
 
-				child->setLayoutManager( layoutManager );
+				child->setLayoutManager( m_layoutManager );
 
 				gak::xml::Element	*resource = child->getResource();
 				if( resource )
 				{
 					gak::xml::Element	*layoutManagerResource = resource->getElement( LayoutManager::className );
-					if( layoutManagerResource && !layoutManager )
+					if( layoutManagerResource && !m_layoutManager )
 					{
 						resource->removeObject( layoutManagerResource );
 						delete layoutManagerResource;
 					}
-					else if( !layoutManagerResource && layoutManager )
+					else if( !layoutManagerResource && m_layoutManager )
 					{
 						gak::xml::Element	*layoutManagerResource = resource->addObject( new gak::xml::Any( LayoutManager::className ) );
 						layoutManagerResource->setStringAttribute( TYPE_ATTR, type );
 					}
-					else if( layoutManagerResource && layoutManager )
+					else if( layoutManagerResource && m_layoutManager )
 					{
 						layoutManagerResource->setStringAttribute( TYPE_ATTR, type );
 					}
@@ -675,21 +675,21 @@ class DesignerForm : public OverlappedWindow
 			CallbackWindow	*child = dynamic_cast<CallbackWindow*>(*it);
 			if( child )
 			{
-				LayoutManager	*layoutManager = child->getLayoutManager();
-				if( layoutManager )
+				LayoutManager	*m_layoutManager = child->getLayoutManager();
+				if( m_layoutManager )
 				{
-					layoutManager->margin.left = marginLeft;
-					layoutManager->margin.right = marginRight;
-					layoutManager->margin.top = marginTop;
-					layoutManager->margin.bottom = marginBottom;
+					m_layoutManager->margin.left = marginLeft;
+					m_layoutManager->margin.right = marginRight;
+					m_layoutManager->margin.top = marginTop;
+					m_layoutManager->margin.bottom = marginBottom;
 				}
 				gak::xml::Element		*resource = child->getResource();
 				if( resource )
 				{
 					gak::xml::Element *layoutManagerResource = resource->getElement( LayoutManager::className );
-					if( !layoutManagerResource && layoutManager )
+					if( !layoutManagerResource && m_layoutManager )
 						layoutManagerResource = resource->addObject( new gak::xml::Any( LayoutManager::className ) );
-					else if( layoutManagerResource && !layoutManager )
+					else if( layoutManagerResource && !m_layoutManager )
 					{
 						resource->removeObject( layoutManagerResource );
 						delete layoutManagerResource;

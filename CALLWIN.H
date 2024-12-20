@@ -172,33 +172,32 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	static HACCEL			s_hAccel;
 	static AcceleratorMap	s_accelerators;
-	static UINT 			findMessage;
-	static SearchDialog		*findDialog;
+	static UINT 			s_findMessage;
+	static SearchDialog		*s_findDialog;
 
-	Menu				*menu;
-	EDIT				*statusBar;
-	ToolTipWindow		*toolWin;
-	bool				applicationTimer, toolWinTimer;
+	Menu				*m_menu;
+	EDIT				*m_statusBar;
+	ToolTipWindow		*m_toolWin;
+	bool				m_applicationTimer, m_toolWinTimer;
 
-	TreeView			*dragTreeView;
-	TreeNode			*dragItem;
+	TreeView			*m_dragTreeView;
+	TreeNode			*m_dragItem;
 
 	bool				m_allowNotifications;
 	bool				m_dialogProcessing;
-	bool				terminate, m_closed, destroyed;
-	bool				altKey, shiftKey, controlKey;
-	LRESULT				dialogCode;
+	bool				m_terminate, m_closed, m_destroyed;
+	bool				m_altKey, m_shiftKey, m_controlKey;
 #ifndef NDEBUG
 	gak::Stack<UINT>	m_messageStack;
 	bool				m_watchMe;
 #endif
 	int					m_callBackCount;
-	LayoutManager		*layoutManager;
+	LayoutManager		*m_layoutManager;
 
-	Size				clientSize;
+	Size				m_clientSize;
 
 	protected:
-	LRESULT				callBackValue;
+	LRESULT				m_callBackValue;
 
 	protected:
 	void watch()
@@ -238,15 +237,15 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	protected:
 	bool isShiftKey( void ) const
 	{
-		return shiftKey;
+		return m_shiftKey;
 	}
 	bool isAltKey( void ) const
 	{
-		return altKey;
+		return m_altKey;
 	}
 	bool isControlKey( void ) const
 	{
-		return controlKey;
+		return m_controlKey;
 	}
 	void setClosedFlag( void )
 	{
@@ -254,14 +253,14 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 	bool mayBeDeleted( void ) const
 	{
-		return bool(m_closed && destroyed);
+		return bool(m_closed && m_destroyed);
 	}
 
 	protected:
 
 	SuccessCode create( BasicWindow *parent, LPSTR lpParam=NULL )
 	{
-		SuccessCode error = BasicWindow::create( parent, menu, lpParam );
+		SuccessCode error = BasicWindow::create( parent, m_menu, lpParam );
 		if( error == scSUCCESS )
 		{
 			getFont().selectFont( Font::sfAnsiVar );
@@ -395,8 +394,8 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	static	LRESULT dispatch( HWND handle, unsigned msg, WPARAM wParam, LPARAM lParam );
 
-	virtual bool handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver );
-	virtual void handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget );
+	virtual bool handleTreeViewDrag( TreeView *m_dragTreeView, TreeNode *m_dragItem, TreeNode *dragOver );
+	virtual void handleTreeViewDrop( TreeView *m_dragTreeView, TreeNode *m_dragItem, TreeNode *dropTarget );
 
 	/*
 		message loop
@@ -404,7 +403,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	protected:
 	void terminateLoop()
 	{
-		terminate = true;
+		m_terminate = true;
 	}
 	public:
 	void mainLoop( void );
@@ -483,19 +482,19 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	*/
 	const Menu *setMenu( const char *menuName )
 	{
-		if( menu )
-			delete menu;
-		return menu = appObject->loadMenu( menuName );
+		if( m_menu )
+			delete m_menu;
+		return m_menu = appObject->loadMenu( menuName );
 	}
 	const Menu *setMenu( int menuId )
 	{
-		if( menu )
-			delete menu;
-		return menu = appObject->loadMenu( menuId );
+		if( m_menu )
+			delete m_menu;
+		return m_menu = appObject->loadMenu( menuId );
 	}
 	const Menu *getMenu( void ) const
 	{
-		return menu;
+		return m_menu;
 	}
 	void drawMenuBar( void ) const
 	{
@@ -510,9 +509,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	{
 		KillTimer( handle(), appTimer ? APPL_TIMER_ID : TOOL_WIN_TIMER_ID );
 		if( appTimer )
-			applicationTimer = false;
+			m_applicationTimer = false;
 		else
-			toolWinTimer = false;
+			m_toolWinTimer = false;
 	}
 	void createTimer( int milliSeconds, bool appTimer )
 	{
@@ -520,9 +519,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		{
 			SetTimer( handle(), appTimer ? APPL_TIMER_ID : TOOL_WIN_TIMER_ID, milliSeconds, NULL );
 			if( appTimer )
-				applicationTimer = true;
+				m_applicationTimer = true;
 			else
-				toolWinTimer = true;
+				m_toolWinTimer = true;
 		}
 		else 
 			removeTimer( appTimer );
@@ -538,7 +537,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 	bool hasTimer( void ) const
 	{
-		return applicationTimer;
+		return m_applicationTimer;
 	}
 
 	/*
@@ -557,7 +556,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	void addStatusBar( void );
 	bool hasStatusBar( void ) const
 	{
-		return( statusBar ) ? true : false;
+		return( m_statusBar ) ? true : false;
 	}
 	void setStatusText( const STRING &value );
 	void removeStatusBar( void );
@@ -587,20 +586,20 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	public:
 	void setLayoutManager( LayoutManager *newLayoutManager )
 	{
-		if( layoutManager )
-			delete layoutManager;
-		layoutManager = newLayoutManager;
+		if( m_layoutManager )
+			delete m_layoutManager;
+		m_layoutManager = newLayoutManager;
 	}
 	LayoutManager *getLayoutManager( void ) const
 	{
-		return layoutManager;
+		return m_layoutManager;
 	}
 	Size calcSize( const Size &newSize ) const
 	{
 		Size	result;
-		if( layoutManager )
+		if( m_layoutManager )
 		{
-			result = layoutManager->calcSize( getChildren(), newSize );
+			result = m_layoutManager->calcSize( getChildren(), newSize );
 		}
 		else
 		{
@@ -610,17 +609,17 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 	void doLayout( const Size &newSize ) const
 	{
-		if( layoutManager )
+		if( m_layoutManager )
 		{
-			layoutManager->doLayout( getChildren(), newSize );
+			m_layoutManager->doLayout( getChildren(), newSize );
 			invalidateWindow();
 		}
 	}
 	void doLayout( void ) const
 	{
-		if( layoutManager )
+		if( m_layoutManager )
 		{
-			layoutManager->doLayout( getChildren(), getClientSize() );
+			m_layoutManager->doLayout( getChildren(), getClientSize() );
 			invalidateWindow();
 		}
 	}

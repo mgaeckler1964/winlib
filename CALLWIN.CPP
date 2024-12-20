@@ -94,8 +94,8 @@ static ListContainer	*openWin = NULL;
 
 HACCEL			CallbackWindow::s_hAccel	= 0;
 AcceleratorMap	CallbackWindow::s_accelerators;
-UINT			CallbackWindow::findMessage	= UINT(-1);
-SearchDialog	*CallbackWindow::findDialog	= NULL;
+UINT			CallbackWindow::s_findMessage	= UINT(-1);
+SearchDialog	*CallbackWindow::s_findDialog	= NULL;
 
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //
@@ -108,27 +108,27 @@ CallbackWindow::CallbackWindow( BasicWindow *owner )
 #ifndef NDEBUG
 	m_watchMe = false;
 #endif
-	if( int(findMessage) < 0 )
+	if( int(s_findMessage) < 0 )
 	{
-		findMessage = RegisterWindowMessage( FINDMSGSTRING );
+		s_findMessage = RegisterWindowMessage( FINDMSGSTRING );
 	}
 
-	menu  = 0;
-	statusBar = NULL;
-	toolWin = NULL;
-	toolWinTimer = applicationTimer = 0;
-	layoutManager = NULL;
+	m_menu  = 0;
+	m_statusBar = NULL;
+	m_toolWin = NULL;
+	m_toolWinTimer = m_applicationTimer = 0;
+	m_layoutManager = NULL;
 
 	m_callBackCount = 0;
 
 	m_allowNotifications = true;
 	m_dialogProcessing = false;
 	
-	altKey = shiftKey = controlKey = false;
-	terminate = m_closed = destroyed = false;
+	m_altKey = m_shiftKey = m_controlKey = false;
+	m_terminate = m_closed = m_destroyed = false;
 
-	dragTreeView = NULL;
-	dragItem = NULL;
+	m_dragTreeView = NULL;
+	m_dragItem = NULL;
 
 	if( !openWin )
 	{
@@ -146,13 +146,13 @@ CallbackWindow::~CallbackWindow()
 	removeStatusBar();
 	openWin->removeObject( (ListEntry *)this );
 
-	if( layoutManager )
+	if( m_layoutManager )
 	{
-		delete layoutManager;
+		delete m_layoutManager;
 	}
-	if( menu )
+	if( m_menu )
 	{
-		delete menu;
+		delete m_menu;
 	}
 }
 
@@ -162,13 +162,13 @@ CallbackWindow::~CallbackWindow()
 
 void CallbackWindow::registerSearchDialog( SearchDialog *newFindDialog )
 {
-	if( findDialog )
+	if( s_findDialog )
 	{
-		findDialog->close();
-		delete findDialog;
+		s_findDialog->close();
+		delete s_findDialog;
 	}
 
-	findDialog = newFindDialog;
+	s_findDialog = newFindDialog;
 }
 
 LRESULT CallbackWindow::dispatch( HWND handle, unsigned msg, WPARAM wParam, LPARAM lParam )
@@ -252,9 +252,9 @@ LRESULT CallbackWindow::dispatch( HWND handle, unsigned msg, WPARAM wParam, LPAR
 
 inline void CallbackWindow::resizeStatusBar( Size *mySize )
 {
-	if( statusBar )
+	if( m_statusBar )
 	{
-		statusBar->sizeNmove( 0, mySize->height - STATUS_HEIGHT, mySize->width, STATUS_HEIGHT );
+		m_statusBar->sizeNmove( 0, mySize->height - STATUS_HEIGHT, mySize->width, STATUS_HEIGHT );
 //		mySize->y -= STATUS_HEIGHT;
 	}
 }
@@ -279,29 +279,29 @@ void CallbackWindow::handleFindReplace( FINDREPLACE *findReplace )
 {
 	if( findReplace->Flags & FR_DIALOGTERM )
 	{
-		delete findDialog;
-		findDialog = NULL;
+		delete s_findDialog;
+		s_findDialog = NULL;
 		return;
 	}
 	else if( findReplace->Flags & FR_FINDNEXT )
 	{
-		handleFind(	findDialog->getFindText(),
+		handleFind(	s_findDialog->getFindText(),
 					findReplace->Flags & FR_WHOLEWORD ? true : false,
 					findReplace->Flags & FR_MATCHCASE ? true : false,
 					findReplace->Flags & FR_DOWN      ? true : false );
 	}
 	else if( findReplace->Flags & FR_REPLACE )
 	{
-		handleReplace(	findDialog->getFindText(),
-						((ReplaceDialog*)findDialog)->getReplaceText(),
+		handleReplace(	s_findDialog->getFindText(),
+						((ReplaceDialog*)s_findDialog)->getReplaceText(),
 						false,
 						findReplace->Flags & FR_WHOLEWORD ? true : false,
 						findReplace->Flags & FR_MATCHCASE ? true : false );
 	}
 	else if( findReplace->Flags & FR_REPLACEALL )
 	{
-		handleReplace(	findDialog->getFindText(),
-						((ReplaceDialog*)findDialog)->getReplaceText(),
+		handleReplace(	s_findDialog->getFindText(),
+						((ReplaceDialog*)s_findDialog)->getReplaceText(),
 						true,
 						findReplace->Flags & FR_WHOLEWORD ? true : false,
 						findReplace->Flags & FR_MATCHCASE ? true : false );
@@ -352,9 +352,9 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 	ProcessStatus	msgStatus = psPROCESSED;
 
-	callBackValue = 0;	// show that we have processed the message
+	m_callBackValue = 0;	// show that we have processed the message
 	// find/replace
-	if( message == findMessage )
+	if( message == s_findMessage )
 	{
 		handleFindReplace( (FINDREPLACE *)lParam );
 	}
@@ -364,10 +364,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		// creating/destroying
 		case WM_INITDIALOG:
-			callBackValue = 1;		// set the input focus to the first item
+			m_callBackValue = 1;		// set the input focus to the first item
 		case WM_CREATE:
 		{
-			m_closed = destroyed = false;
+			m_closed = m_destroyed = false;
 			setIcon( appObject->getIcon() );
 
 			if( !getResource() )
@@ -394,7 +394,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			msgStatus = handleDestroy();
 			if( this == appObject->getMainWindow() )
 				exitApplication();
-			destroyed = true;
+			m_destroyed = true;
 			break;
 
 		// activation
@@ -407,15 +407,15 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		case WM_SIZE:
 		{
-			clientSize = MAKESIZE( DWORD(lParam) );
-			resizeStatusBar( &clientSize );
-			msgStatus = handleResize( clientSize );
+			m_clientSize = MAKESIZE( DWORD(lParam) );
+			resizeStatusBar( &m_clientSize );
+			msgStatus = handleResize( m_clientSize );
 			break;
 		}
 		// repainting
 		case WM_ERASEBKGND:
 		{
-			callBackValue = 1;
+			m_callBackValue = 1;
 			BackgroundDevice dc( this, HDC(wParam) );
 			msgStatus = handleErase( dc );
 			break;
@@ -429,7 +429,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		// scroll bars
 		case WM_VSCROLL:
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -437,7 +437,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 
 		case WM_HSCROLL:
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -447,7 +447,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		// command buttons / menus
 		case WM_NOTIFY:
 		{
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -472,10 +472,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 					if( treeView )
 					{
 						NM_TREEVIEW  *notify = reinterpret_cast<NM_TREEVIEW *>(lParam);
-						if( (dragItem = treeView->startDrag( notify )) != NULL )
+						if( (m_dragItem = treeView->startDrag( notify )) != NULL )
 						{
 							msgStatus = psPROCESSED;
-							dragTreeView = treeView;
+							m_dragTreeView = treeView;
 							//ShowCursor( FALSE );
 							captureMouse();
 						}
@@ -485,7 +485,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 		}
 		case WM_COMMAND:
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -536,18 +536,18 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		case WM_MOUSEMOVE:
 		{
-			controlKey = wParam & MK_CONTROL;
-			shiftKey = wParam & MK_SHIFT;
+			m_controlKey = wParam & MK_CONTROL;
+			m_shiftKey = wParam & MK_SHIFT;
 
 			Point point = MAKEPOINT( DWORD(lParam) );
-			if( dragTreeView )
+			if( m_dragTreeView )
 			{
 				msgStatus = psPROCESSED;
-				mouseToChildPosition( dragTreeView, &point );
-				TreeNode	*dragOver = dragTreeView->doDrag( point );
+				mouseToChildPosition( m_dragTreeView, &point );
+				TreeNode	*dragOver = m_dragTreeView->doDrag( point );
 				if( dragOver )
 				{
-					handleTreeViewDrag( dragTreeView, dragItem, dragOver );
+					handleTreeViewDrag( m_dragTreeView, m_dragItem, dragOver );
 				}
 			}
 			else
@@ -557,25 +557,25 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 		}
 		case WM_LBUTTONUP:
-			if( dragTreeView )
+			if( m_dragTreeView )
 			{
-				TreeNode *dropTarget = dragTreeView->doDrop();
-				if( dropTarget && dropTarget != dragItem )
+				TreeNode *dropTarget = m_dragTreeView->doDrop();
+				if( dropTarget && dropTarget != m_dragItem )
 				{
-					handleTreeViewDrop( dragTreeView, dragItem, dropTarget );
+					handleTreeViewDrop( m_dragTreeView, m_dragItem, dropTarget );
 				}
 				//ShowCursor( TRUE );
 				releaseMouse();
-				dragTreeView = NULL;
+				m_dragTreeView = NULL;
 				msgStatus = psPROCESSED;
 				break;
 			}
 		case WM_LBUTTONDBLCLK:
 		case WM_LBUTTONDOWN:
-			controlKey = wParam & MK_CONTROL;
-			shiftKey = wParam & MK_SHIFT;
+			m_controlKey = wParam & MK_CONTROL;
+			m_shiftKey = wParam & MK_SHIFT;
 
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -588,10 +588,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		case WM_RBUTTONDBLCLK:
 		case WM_RBUTTONDOWN:
 		case WM_RBUTTONUP:
-			controlKey = wParam & MK_CONTROL;
-			shiftKey = wParam & MK_SHIFT;
+			m_controlKey = wParam & MK_CONTROL;
+			m_shiftKey = wParam & MK_SHIFT;
 
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -664,7 +664,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		// help
 		case WM_HELP:
 		{
-			if( toolWin )
+			if( m_toolWin )
 			{
 				removeToolHelp();
 			}
@@ -688,10 +688,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		// keyboard input
 		case WM_GETDLGCODE:
-			callBackValue = DLGC_WANTCHARS|DLGC_WANTARROWS|DLGC_WANTTAB|DLGC_WANTALLKEYS;
+			m_callBackValue = DLGC_WANTCHARS|DLGC_WANTARROWS|DLGC_WANTTAB|DLGC_WANTALLKEYS;
 			if( wParam != 0 )
 			{
-				callBackValue |= DLGC_WANTTAB;
+				m_callBackValue |= DLGC_WANTTAB;
 			}
 			break;
 
@@ -710,27 +710,27 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 			if( wParam == VK_MENU )
-				altKey = true;
+				m_altKey = true;
 			else if( wParam == VK_SHIFT )
-				shiftKey = true;
+				m_shiftKey = true;
 			else if( wParam == VK_CONTROL )
-				controlKey = true;
+				m_controlKey = true;
 
 			msgStatus = handleKeyDown( int(wParam) );
 			break;
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 			if( wParam == VK_MENU )
-				altKey = false;
+				m_altKey = false;
 			else if( wParam == VK_SHIFT )
-				shiftKey = false;
+				m_shiftKey = false;
 			else if( wParam == VK_CONTROL )
-				controlKey = false;
+				m_controlKey = false;
 
 			msgStatus = handleKeyUp( int(wParam) );
 			break;
 		case WM_CHAR:
-			altKey = lParam & (1<<29);
+			m_altKey = lParam & (1<<29);
 			msgStatus = handleCharacterInput( int(wParam) );
 			break;
 
@@ -758,9 +758,9 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 		}
 		case WM_GETFONT:
-			callBackValue = LRESULT(HFONT(getFont()));
-			if( !callBackValue && getParent() )
-				callBackValue = getParent()->message( WM_GETFONT );
+			m_callBackValue = LRESULT(HFONT(getFont()));
+			if( !m_callBackValue && getParent() )
+				m_callBackValue = getParent()->message( WM_GETFONT );
 
 			msgStatus = psPROCESSED;
 			break;
@@ -786,9 +786,9 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		}
 	}
 
-	LRESULT result = msgStatus == psDO_DEFAULT ? doDefault( message, wParam, lParam ) : callBackValue;
+	LRESULT result = msgStatus == psDO_DEFAULT ? doDefault( message, wParam, lParam ) : m_callBackValue;
 
-	if( destroyed && m_callBackCount <= 1 )
+	if( m_destroyed && m_callBackCount <= 1 )
 	{
 		clrHandle();
 	}
@@ -803,23 +803,23 @@ void CallbackWindow::checkModifiers( unsigned uMsg, WPARAM wParam, LPARAM lParam
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 			if( wParam == VK_MENU )
-				altKey = true;
+				m_altKey = true;
 			else if( wParam == VK_SHIFT )
-				shiftKey = true;
+				m_shiftKey = true;
 			else if( wParam == VK_CONTROL )
-				controlKey = true;
+				m_controlKey = true;
 			break;
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 			if( wParam == VK_MENU )
-				altKey = false;
+				m_altKey = false;
 			else if( wParam == VK_SHIFT )
-				shiftKey = false;
+				m_shiftKey = false;
 			else if( wParam == VK_CONTROL )
-				controlKey = false;
+				m_controlKey = false;
 			break;
 		case WM_CHAR:
-			altKey = lParam & (1<<29);
+			m_altKey = lParam & (1<<29);
 			break;
 	}
 }
@@ -832,10 +832,10 @@ LRESULT CallbackWindow::controlCallback( BasicWindow *control, unsigned uMsg, WP
 
 	ProcessStatus doDefault = preControlCallback( control, uMsg, wParam, lParam );
 	if( doDefault == psDO_DEFAULT )
-		callBackValue = DefSubclassProc( control->handle(), uMsg, wParam, lParam );
+		m_callBackValue = DefSubclassProc( control->handle(), uMsg, wParam, lParam );
 	postControlCallback( control, uMsg, wParam, lParam );
 
-	return callBackValue;
+	return m_callBackValue;
 }
 #endif
 
@@ -849,7 +849,7 @@ ProcessStatus CallbackWindow::checkControlColor( HWND handle, HDC device )
 		{
 			COLORREF backgroundColor = brush.getBackgroundColor();
 			SetBkColor( device, backgroundColor );
-			callBackValue = LRESULT(HBRUSH(brush));
+			m_callBackValue = LRESULT(HBRUSH(brush));
 			return psPROCESSED;
 		}
 	}
@@ -861,7 +861,7 @@ ProcessStatus CallbackWindow::checkControlColor( HWND handle, HDC device )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-bool CallbackWindow::handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver )
+bool CallbackWindow::handleTreeViewDrag( TreeView *m_dragTreeView, TreeNode *m_dragItem, TreeNode *dragOver )
 {
 	bool allow = false;
 
@@ -872,13 +872,13 @@ bool CallbackWindow::handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragI
 		CallbackWindow	*cbParent = static_cast<CallbackWindow *>(
 			const_cast<BasicWindow*>( parent )
 		);
-		allow = cbParent->handleTreeViewDrag( dragTreeView, dragItem, dragOver );
+		allow = cbParent->handleTreeViewDrag( m_dragTreeView, m_dragItem, dragOver );
 	}
 
 	return allow;
 }
 
-void CallbackWindow::handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget )
+void CallbackWindow::handleTreeViewDrop( TreeView *m_dragTreeView, TreeNode *m_dragItem, TreeNode *dropTarget )
 {
 	const BasicWindow *parent = getParent();
 
@@ -887,7 +887,7 @@ void CallbackWindow::handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragI
 		CallbackWindow	*cbParent = static_cast<CallbackWindow *>(
 			const_cast<BasicWindow*>( parent )
 		);
-		cbParent->handleTreeViewDrop( dragTreeView, dragItem, dropTarget );
+		cbParent->handleTreeViewDrop( m_dragTreeView, m_dragItem, dropTarget );
 	}
 }
 
@@ -1075,9 +1075,9 @@ ProcessStatus CallbackWindow::ddeExecute( const char * )
 
 void CallbackWindow::showHelp( int , int controlId )
 {
-	toolWin = new ToolTipWindow;
+	m_toolWin = new ToolTipWindow;
 
-	toolWin->create( this, controlId );
+	m_toolWin->create( this, controlId );
 	createTimer( 5000, false );
 }
 
@@ -1133,7 +1133,7 @@ void CallbackWindow::mainLoop( void )
 
 	m_callBackCount++;	// do not delete the main window during the mainloop
 
-	while( !terminate && GetMessage( &msg, 0, 0, 0 ) )
+	while( !m_terminate && GetMessage( &msg, 0, 0, 0 ) )
 	{
 		if( !msg.hwnd && handle() )
 		{
@@ -1141,9 +1141,9 @@ void CallbackWindow::mainLoop( void )
 		}
 		else if( !translateAccell( msg ) )
 		{
-			if( findDialog
-			&&	findDialog->isValid()
-			&&	IsDialogMessage( findDialog->handle(), &msg ) )
+			if( s_findDialog
+			&&	s_findDialog->isValid()
+			&&	IsDialogMessage( s_findDialog->handle(), &msg ) )
 			{
 /*^*/			continue;
 			}
@@ -1179,41 +1179,41 @@ void CallbackWindow::doModalDialog( int id )
 
 void CallbackWindow::showToolHelp( const char *text )
 {
-	if( toolWin )
+	if( m_toolWin )
 	{
-		toolWin->changeText( text );
+		m_toolWin->changeText( text );
 	}
 	else
 	{
-		toolWin = new ToolTipWindow;
+		m_toolWin = new ToolTipWindow;
 
-		toolWin->create( this, text );
+		m_toolWin->create( this, text );
 		createTimer( 5000, false );
 	}
 }
 
 void CallbackWindow::removeToolHelp( void )
 {
-	if( toolWin )
+	if( m_toolWin )
 	{
-		toolWin->close();
-		delete toolWin;
-		toolWin = 0;
+		m_toolWin->close();
+		delete m_toolWin;
+		m_toolWin = 0;
 		removeTimer( false );
 	}
 }
 
 void CallbackWindow::addStatusBar( void )
 {
-	if( !statusBar )
+	if( !m_statusBar )
 	{
-		statusBar = new EditControl;
+		m_statusBar = new EditControl;
 
-		if( statusBar )
+		if( m_statusBar )
 		{
 			Size	mySize = getClientSize();
-			statusBar->create( this, 0, mySize.height - STATUS_HEIGHT, mySize.width, STATUS_HEIGHT );
-			statusBar->setReadonly();
+			m_statusBar->create( this, 0, mySize.height - STATUS_HEIGHT, mySize.width, STATUS_HEIGHT );
+			m_statusBar->setReadonly();
 			resize( mySize );
 		}
 	}
@@ -1221,18 +1221,18 @@ void CallbackWindow::addStatusBar( void )
 
 void CallbackWindow::setStatusText( const STRING &value )
 {
-	if( statusBar )
-		*statusBar = value;
+	if( m_statusBar )
+		*m_statusBar = value;
 }
 
 void CallbackWindow::removeStatusBar( void )
 {
-	if( statusBar )
+	if( m_statusBar )
 	{
-		statusBar->close();
-		delete statusBar;
+		m_statusBar->close();
+		delete m_statusBar;
 
-		statusBar = 0;
+		m_statusBar = 0;
 	}
 }
 
