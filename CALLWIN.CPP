@@ -1154,7 +1154,7 @@ void CallbackWindow::mainLoop( void )
 				if( curWindow->isValid()
 				&&  curWindow->isDialogMessage( msg ) )
 				{
-					break;
+/*v*/				break;
 				}
 				curWindow = static_cast<CallbackWindow *>(cursor.getNext());
 			}

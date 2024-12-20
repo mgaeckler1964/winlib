@@ -133,7 +133,7 @@ class TestWindow : public PopupWindow
 		{
 			doRepaint();
 		}
-		myResult.setText( formatFloat( double(clock() - startTime) / CLOCKS_PER_SEC ) );
+		myResult.setText( gak::formatFloat( double(clock() - startTime) / CLOCKS_PER_SEC ) );
 		return psPROCESSED;
 	}
 	virtual ProcessStatus handleCancel()

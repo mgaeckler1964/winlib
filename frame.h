@@ -72,6 +72,7 @@ class FrameChild : public ChildWindow
 	{
 		registerClass();
 		addStyle( WS_GROUP|WS_VISIBLE );
+		addExStyle( WS_EX_CONTROLPARENT );
 	}
 	SuccessCode create( CallbackWindow *parent )
 	{
