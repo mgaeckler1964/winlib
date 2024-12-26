@@ -1187,6 +1187,10 @@ class BasicWindow : public ForeignWindow
 		m_caption = title;
 		ForeignWindow::setTitle( title );
 	}
+	void setText( const STRING &title )
+	{
+		setTitle( title );
+	}
 	STRING getTitle( void ) const
 	{
 		return m_caption;
