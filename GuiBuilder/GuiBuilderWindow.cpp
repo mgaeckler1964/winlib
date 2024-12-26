@@ -2413,77 +2413,77 @@ SuccessCode GuiBuilderWindow::create( void )
 		toolbar.setLayoutData( (new LayoutData)->setAttachment( LayoutData::ATTACH_TOP )->setGrowWidth( 1 ) );
 		toolbar.setLayoutManager( new RowManager );
 
-		btnSelectControl.setTitle( "Select" );
+		btnSelectControl.setText( "Select" );
 		btnSelectControl.setId( SELECT_PUSH );
 		btnSelectControl.create( &toolbar );
 		btnSelectControl.setActive();
 		m_currentId = SELECT_PUSH;
 
-		btnCreateLabel.setTitle( Label::className );
+		btnCreateLabel.setText( Label::className );
 		btnCreateLabel.setId( LABEL_PUSH );
 		btnCreateLabel.create( &toolbar );
 
-		btnCreatePushButton.setTitle( "Button" );
+		btnCreatePushButton.setText( "Button" );
 		btnCreatePushButton.setId( BUTTON_PUSH );
 		btnCreatePushButton.create( &toolbar );
 
-		btnCreateCheckBox.setTitle( CheckBox::className );
+		btnCreateCheckBox.setText( CheckBox::className );
 		btnCreateCheckBox.setId( CHECKBOX_PUSH );
 		btnCreateCheckBox.create( &toolbar );
 
-		btnCreateRadioButton.setTitle( RadioButton::className );
+		btnCreateRadioButton.setText( RadioButton::className );
 		btnCreateRadioButton.setId( RADIOBUTTON_PUSH );
 		btnCreateRadioButton.create( &toolbar );
 
-		btnCreateGroupBox.setTitle( RadioButton::className );
+		btnCreateGroupBox.setText( RadioButton::className );
 		btnCreateGroupBox.setId( GROUPBOX_PUSH );
 		btnCreateGroupBox.create( &toolbar );
 
-		btnCreateListBox.setTitle( ListBox::className );
+		btnCreateListBox.setText( ListBox::className );
 		btnCreateListBox.setId( LIST_PUSH );
 		btnCreateListBox.create( &toolbar );
 
-		btnCreateComboBox.setTitle( ComboBox::className );
+		btnCreateComboBox.setText( ComboBox::className );
 		btnCreateComboBox.setId( COMBO_PUSH );
 		btnCreateComboBox.create( &toolbar );
 
-		btnCreateEditControl.setTitle( "Edit" );
+		btnCreateEditControl.setText( "Edit" );
 		btnCreateEditControl.setId( EDIT_PUSH );
 		btnCreateEditControl.create( &toolbar );
 
-		btnCreateMemoControl.setTitle( "Memo" );
+		btnCreateMemoControl.setText( "Memo" );
 		btnCreateMemoControl.setId( MEMO_PUSH );
 		btnCreateMemoControl.create( &toolbar );
 
-		btnCreateTrackBar.setTitle( TrackBar::className );
+		btnCreateTrackBar.setText( TrackBar::className );
 		btnCreateTrackBar.setId( TRACKBAR_PUSH );
 		btnCreateTrackBar.create( &toolbar );
 
-		btnCreateScrollBar.setTitle( ScrollBar::className );
+		btnCreateScrollBar.setText( ScrollBar::className );
 		btnCreateScrollBar.setId( SCROLLBAR_PUSH );
 		btnCreateScrollBar.create( &toolbar );
 
-		btnCreateUpDownButton.setTitle( UpDownButton::className );
+		btnCreateUpDownButton.setText( UpDownButton::className );
 		btnCreateUpDownButton.setId( UPDPOWN_PUSH );
 		btnCreateUpDownButton.create( &toolbar );
 
-		btnCreateTreeView.setTitle( "TreeView." );
+		btnCreateTreeView.setText( "TreeView." );
 		btnCreateTreeView.setId( TREEVIEW_PUSH );
 		btnCreateTreeView.create( &toolbar );
 
-		btnCreateXmlViewer.setTitle( "XmlViewer." );
+		btnCreateXmlViewer.setText( "XmlViewer." );
 		btnCreateXmlViewer.setId( XMLVIEW_PUSH );
 		btnCreateXmlViewer.create( &toolbar );
 
-		btnCreateGridViewer.setTitle( "GridViewer." );
+		btnCreateGridViewer.setText( "GridViewer." );
 		btnCreateGridViewer.setId( GRIDVIEW_PUSH );
 		btnCreateGridViewer.create( &toolbar );
 
-		btnCreateFrame.setTitle( "Frame" );
+		btnCreateFrame.setText( "Frame" );
 		btnCreateFrame.setId( FRAME_PUSH );
 		btnCreateFrame.create( &toolbar );
 
-		btnCreateScroller.setTitle( "Scroller" );
+		btnCreateScroller.setText( "Scroller" );
 		btnCreateScroller.setId( SCROLLER_PUSH );
 		btnCreateScroller.create( &toolbar );
 

@@ -171,7 +171,7 @@ SuccessCode createForm(
 	}
 
 	form->setResource( resource );
-	form->setTitle( caption );
+	form->setText( caption );
 
 	form->setStyle( style );
 	

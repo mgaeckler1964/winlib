@@ -277,7 +277,7 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		}
 		newBasicChild->setResource( child );
 		newBasicChild->move( x, y );
-		newBasicChild->setTitle( caption );
+		newBasicChild->setText( caption );
 
 		if( !style.isEmpty() )
 		{

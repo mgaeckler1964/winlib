@@ -167,7 +167,7 @@ class ToolWindow : public CallbackWindow
 	}
 	SuccessCode create( BasicWindow *parent, int width, int height, const STRING &title )
 	{
-		setTitle( title );
+		setText( title );
 		resize( width, height );
 		return CallbackWindow::create( parent );
 	}

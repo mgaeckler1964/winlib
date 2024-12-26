@@ -321,7 +321,7 @@ class DesignerForm : public OverlappedWindow
 		)
 		{
 			BasicWindow	*child = *it;
-			child->setTitle( caption );
+			child->setText( caption );
 			gak::xml::Element	*resource = child->getResource();
 			if( resource )
 				resource->setStringAttribute( CAPTION_ATTR, caption );

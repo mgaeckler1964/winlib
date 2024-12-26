@@ -736,7 +736,7 @@ void DesignerForm::createControl( const Point *position )
 	newName = type.uperCaseCopy();
 
 	newWindow->sizeNmove( position->x, position->y, 80, 25 );
-	newWindow->setTitle( newCaption );
+	newWindow->setText( newCaption );
 
 	newResource->setStringAttribute( TYPE_ATTR, type );
 	newResource->setStringAttribute( NAME_ATTR, newName );

@@ -586,25 +586,17 @@ class ForeignWindow
 	{
 		return int(message( WM_GETTEXTLENGTH ));
 	}
-	void setTitle( const STRING &title )
-	{
-		if( isValid() )
-		{
-			SetWindowText( m_winHandle, title.convertToCharset( STR_ANSI ) );
-		}
-	}
-	STRING getTitle( void ) const
-	{
-		return getText();
-	}
 	STRING getText( bool oemConvert = false ) const;
 	void setText( const STRING &text )
 	{
-		setTitle( text );
+		if( isValid() )
+		{
+			SetWindowText( m_winHandle, text.convertToCharset( STR_ANSI ) );
+		}
 	}
-	void setTitle( int id )
+	void setText( int id )
 	{
-		setTitle( loadString( id ) );
+		setText( loadString( id ) );
 	}
 
 	/*
@@ -1181,15 +1173,12 @@ class BasicWindow : public ForeignWindow
 	/*
 		title
 	*/
-	using ForeignWindow::setTitle;
-	void setTitle( const STRING &title )
-	{
-		m_caption = title;
-		ForeignWindow::setTitle( title );
-	}
+	using ForeignWindow::setText;
 	void setText( const STRING &title )
 	{
-		setTitle( title );
+		m_caption = title;
+		ForeignWindow::setText( title );
+		checkSize( m_width, m_height );
 	}
 	STRING getTitle( void ) const
 	{

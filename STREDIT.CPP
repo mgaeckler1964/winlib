@@ -53,7 +53,7 @@ STRING StringEditor::create( BasicWindow *parent, const char *title, const char 
 	int		controlHeight = singleLine ? 20 : 200;
 	theValue = string;
 
-	setTitle( title );
+	setText( title );
 	if( ModalPopup::create( parent, labelWidth+430, controlHeight + 70 ) == scSUCCESS )
 	{
 		label.create( this, 8, 8, labelWidth, 20 );

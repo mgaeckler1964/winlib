@@ -163,7 +163,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	{
 		if( m_changedFlag )
 		{
-			setTitle( WINDOW_TITLE );
+			setText( WINDOW_TITLE );
 			m_changedFlag = false;
 		}
 	}
@@ -172,7 +172,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	{
 		if( !m_changedFlag )
 		{
-			setTitle( STRING(WINDOW_TITLE) + " *" );
+			setText( STRING(WINDOW_TITLE) + " *" );
 			m_changedFlag = true;
 		}
 	}
@@ -191,7 +191,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		m_changedFlag = false;
 		m_currentId = SELECT_PUSH;
 		m_editorMode = emFORM;
-		setTitle( WINDOW_TITLE );
+		setText( WINDOW_TITLE );
 	}
 	~GuiBuilderWindow()
 	{
