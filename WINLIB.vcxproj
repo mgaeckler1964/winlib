@@ -54,6 +54,7 @@
     <ClCompile Include="STDDLG.CPP" />
     <ClCompile Include="STREDIT.CPP" />
     <ClCompile Include="ToolTip.cpp" />
+    <ClCompile Include="version.cpp" />
     <ClCompile Include="WINAPP.CPP" />
     <ClCompile Include="WINLIB.CPP" />
     <ClCompile Include="xmlEditorChild.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="STDDLG.H" />
     <ClInclude Include="STREDIT.H" />
     <ClInclude Include="TOOLTIP.H" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="WINAPP.H" />
     <ClInclude Include="WINLIB.H" />
     <ClInclude Include="xmlEditorChild.h" />

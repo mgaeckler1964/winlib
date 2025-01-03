@@ -20,6 +20,7 @@ USEUNIT("Layout.cpp");
 USEUNIT("resource.cpp");
 USEUNIT("splash.cpp");
 USEUNIT("barcode.c");
+USEUNIT("version.cpp");
 //---------------------------------------------------------------------------
 #define Library
 

@@ -13,7 +13,8 @@
       ..\..\Object\Winlib\bcb\FONT.obj ..\..\Object\Winlib\bcb\STDDLG.obj 
       ..\..\Object\Winlib\bcb\AREA.obj ..\..\Object\Winlib\bcb\POPUP.obj 
       ..\..\Object\Winlib\bcb\Layout.obj ..\..\Object\Winlib\bcb\resource.obj 
-      ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj"/>
+      ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj 
+      ..\..\Object\Winlib\bcb\version.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
