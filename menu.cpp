@@ -119,7 +119,7 @@ using namespace gak;
 
 HMENU Menu::createMenu( xml::Element *root )
 {
-	HMENU newMenu = CreateMenu();
+	HMENU newMenu = createMenu();
 
 	for( size_t i=0; i<root->getNumObjects(); i++ )
 	{
@@ -162,7 +162,18 @@ HMENU Menu::createMenu( xml::Element *root )
 // --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-   
+
+HMENU Menu::createMenu()
+{
+	return ::CreateMenu();
+}
+
+HMENU PopupMenu::createMenu()
+{
+	return ::CreatePopupMenu();
+}
+
+
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //

@@ -549,9 +549,9 @@ STRING Application::loadString( int textId )
 	return resourceStrings[textId];
 }
 
-Menu *Application::loadMenu( const char *menuName )
+Menu *Application::loadMenu( const char *menuName, bool asPopup )
 {
-	Menu *theMenu = new Menu();
+	Menu *theMenu = asPopup ? new PopupMenu() : new Menu();
 	if( theMenu->load( getResInstance(), menuName ) )
 	{
 		if( theMenu->load( getAppInstance(), menuName ) )
@@ -567,9 +567,9 @@ Menu *Application::loadMenu( const char *menuName )
 	return theMenu;
 }
 
-Menu *Application::loadMenu( int menuId )
+Menu *Application::loadMenu( int menuId, bool asPopup )
 {
-	Menu *theMenu = new Menu();
+	Menu *theMenu = asPopup ? new PopupMenu() : new Menu();
 	if( theMenu->load( getResInstance(), menuId ) )
 	{
 		if( theMenu->load( getAppInstance(), menuId ) )

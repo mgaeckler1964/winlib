@@ -107,6 +107,8 @@ class Menu
 		return newMenu == NULL; 
 	}
 
+	virtual HMENU createMenu();
+
 	HMENU createMenu( gak::xml::Element *root );
 
 	Menu( HMENU menu )
@@ -178,6 +180,11 @@ class Menu
 
 		RemoveMenu( subMenu, id, MF_BYCOMMAND );
 	}
+};
+
+class PopupMenu : public Menu
+{
+	virtual HMENU createMenu();
 };
 
 // --------------------------------------------------------------------- //

@@ -91,15 +91,20 @@ namespace winlib
 
 int CALLBACK WordBreakProc( LPSTR text, int cursPos, int length, int action );
 class PrintDevice;
+class PopupMenu;
 
 class ControlWindow : public BasicWindow
 {
-	WNDPROC		wpOrigControlProc;
+	WNDPROC		m_wpOrigControlProc;
+	size_t		m_subclassCounter;
+	PopupMenu	*m_popupMenu;
 
 	protected:
 	ControlWindow( BasicWindow *owner=NULL ) : BasicWindow( ControlWindowFlag, owner )
 	{
-		wpOrigControlProc = NULL;
+		m_wpOrigControlProc = NULL;
+		m_subclassCounter = 0;
+		m_popupMenu = NULL;
 		setStyle( WS_CHILD|WS_VISIBLE|WS_TABSTOP );
 	}
 	void subclassControl( void );
@@ -137,6 +142,16 @@ class ControlWindow : public BasicWindow
 		parent->addChild( this );
 	}
 	virtual LRESULT callback( UINT uMsg, WPARAM wParam, LPARAM lParam  );
+	void setPopupMenu( PopupMenu *menu )
+	{
+		subclassControl();
+		m_popupMenu = menu;
+	}
+	void clrPopupMenu()
+	{
+		restoreProc();
+		m_popupMenu = NULL;
+	}
 };
 
 class Button : public ControlWindow

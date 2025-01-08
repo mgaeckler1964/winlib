@@ -244,8 +244,8 @@ class Application
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, const char *value );
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, long value );
 
-	Menu *loadMenu( const char *menuName );
-	Menu *loadMenu( int menuId );
+	Menu *loadMenu( const char *menuName, bool asPopup=false );
+	Menu *loadMenu( int menuId, bool asPopup=false );
 
 	static HACCEL loadAccelerators( const char *acceleratorsName )
 	{

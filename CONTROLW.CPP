@@ -188,7 +188,7 @@ void Button::clearSiblingsFlag( unsigned int msg ) const
 
 void ControlWindow::subclassControl( void )
 {
-	if( !wpOrigControlProc )
+	if( !m_wpOrigControlProc )
 	{
 #if defined( __WIN32__ )
 		WNDPROC oldProc = (WNDPROC)SetWindowLong(
@@ -204,23 +204,24 @@ void ControlWindow::subclassControl( void )
 		#error "What Windows?"
 #endif
 		subclassedControls.addElement( this );
-		wpOrigControlProc = oldProc;
+		m_wpOrigControlProc = oldProc;
 	}
+	m_subclassCounter++;
 }
 
 void ControlWindow::restoreProc( void )
 {
-	if( wpOrigControlProc )
+	if( --m_subclassCounter && m_wpOrigControlProc )
 	{
 #if defined( __WIN32__ )
 		(WNDPROC)SetWindowLong(
 			handle(),
-			GWL_WNDPROC, (LONG)wpOrigControlProc
+			GWL_WNDPROC, (LONG)m_wpOrigControlProc
 		);
 #elif defined( __WIN64__ )
 		(WNDPROC)SetWindowLongPtr(
 			handle(),
-			GWLP_WNDPROC, (LONG_PTR)wpOrigControlProc
+			GWLP_WNDPROC, (LONG_PTR)m_wpOrigControlProc
 		);
 #else
 	#error "What Windows?"
@@ -292,7 +293,15 @@ STRING TreeView::getWindowClassName( void ) const
 
 LRESULT ControlWindow::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
 {
-	return CallWindowProc(wpOrigControlProc, handle(), uMsg, wParam, lParam);
+	if( m_popupMenu && uMsg == WM_RBUTTONDOWN )
+	{
+		POINT p;
+		GetCursorPos(&p);
+		int id = TrackPopupMenu(m_popupMenu->getMenu(), TPM_LEFTALIGN|TPM_VCENTERALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD, p.x, p.y, 0, handle(), NULL );
+		doLogValue(id);
+/***/	return getParent()->message(WM_COMMAND, id);
+	}
+	return CallWindowProc(m_wpOrigControlProc, handle(), uMsg, wParam, lParam);
 }
 
 LRESULT EDIT::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
