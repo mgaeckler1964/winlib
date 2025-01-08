@@ -932,6 +932,8 @@ class BasicWindow : public ForeignWindow
 	int					m_x, m_y, m_width, m_height,
 						m_widthOffset, m_heightOffset;
 
+	int					m_tag;
+
 	gak::xml::Element	*m_resource;
 
 	void addWindow( BasicWindow *child )
@@ -955,6 +957,8 @@ class BasicWindow : public ForeignWindow
 		m_owner		= NULL;
 		m_parent	= NULL;
 		m_controlId	= -1;
+
+		m_tag = 0;
 	}
 	void readWindowData()
 	{
@@ -1442,6 +1446,18 @@ class BasicWindow : public ForeignWindow
 		{
 			message( WM_SETFONT, m_parent->message( WM_GETFONT ), true );
 		}
+	}
+
+	/*
+		tag
+	*/
+	int getTag() const
+	{
+		return m_tag;
+	}
+	void setTag( int tag )
+	{
+		m_tag = tag;
 	}
 };
 
