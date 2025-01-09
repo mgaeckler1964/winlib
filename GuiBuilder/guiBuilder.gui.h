@@ -157,7 +157,9 @@ namespace winlibGUI {
 	const int yPOSLabel_id=203;
 
 	class GuiApplication : public winlib::Application {
+		public:
 		virtual gak::xml::Document *getGuiDoc( void );
+		GuiApplication(int iconID=-1) : winlib::Application(iconID) {}
 	};
 
 	class ABOUT_form : public winlib::ModalPopup {

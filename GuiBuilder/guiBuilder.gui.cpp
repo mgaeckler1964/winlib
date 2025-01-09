@@ -491,7 +491,7 @@ namespace winlibGUI {
 "</gui>";
 			return Application::getGuiDoc( xmlSrc );
 		}
-		return NULL;
+		return doc;
 	}
 
 

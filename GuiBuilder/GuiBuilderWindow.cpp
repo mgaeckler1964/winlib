@@ -2305,23 +2305,62 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		}
 		case upBUTTON_id:
 		{
-			assert( designerForm );
-			if( designerForm->moveUp() )
+			if( m_editorMode == emFORM && designerForm && designerForm->moveUp() )
 			{
 				refreshChildSelect();
 				designerForm->refreshSelection();
 				setChangedFlag();
 			}
+			else if( m_editorMode == emMENU )
+			{
+				TreeNode *myNode = treeSelect.getSelection();
+				if( myNode )
+				{
+					xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
+					if( menu )
+					{
+						long index = menu->getIndex();
+						if( index )
+						{
+							menu->moveTo(index-1);
+							setChangedFlag();
+							xml::Element	*resource = getSelectedTopResource();
+							fillMenuItemList( resource, NULL );
+							treeSelect.selectItem( treeSelect.findItem(menu) );
+						}
+					}
+				}
+			}
 			break;
 		}
 		case downBUTTON_id:
 		{
-			assert( designerForm );
-			if( designerForm->moveDown() )
+			if( m_editorMode == emFORM && designerForm && designerForm->moveDown() )
 			{
 				refreshChildSelect();
 				designerForm->refreshSelection();
 				setChangedFlag();
+			}
+			else if( m_editorMode == emMENU )
+			{
+				TreeNode *myNode = treeSelect.getSelection();
+				if( myNode )
+				{
+					xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
+					if( menu )
+					{
+						long index = menu->getIndex();
+						long numSiblings = menu->getParent()->getNumObjects()-1;
+						if( index < numSiblings )
+						{
+							menu->moveTo(index+1);
+							setChangedFlag();
+							xml::Element	*resource = getSelectedTopResource();
+							fillMenuItemList( resource, NULL );
+							treeSelect.selectItem( treeSelect.findItem(menu) );
+						}
+					}
+				}
 			}
 			break;
 		}
