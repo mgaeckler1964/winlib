@@ -1217,7 +1217,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 						"\t\t\tgak::STRING xmlSrc = " << xmlGuiSrc.cString() << ";\n"
 						"\t\t\treturn Application::getGuiDoc( xmlSrc );\n"
 					"\t\t}\n"
-					"\t\treturn NULL;\n"
+					"\t\treturn doc;\n"
 				"\t}\n\n";
 	for( 
 		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
