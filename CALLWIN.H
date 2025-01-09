@@ -480,17 +480,12 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		menu_bar
 	*/
-	const Menu *setMenu( const char *menuName )
+	template <class MENU_T>
+	const Menu *setMenu( MENU_T menuName )
 	{
 		if( m_menu )
 			delete m_menu;
 		return m_menu = appObject->loadMenu( menuName );
-	}
-	const Menu *setMenu( int menuId )
-	{
-		if( m_menu )
-			delete m_menu;
-		return m_menu = appObject->loadMenu( menuId );
 	}
 	const Menu *getMenu( void ) const
 	{

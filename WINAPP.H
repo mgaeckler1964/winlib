@@ -244,8 +244,33 @@ class Application
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, const char *value );
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, long value );
 
-	Menu *loadMenu( const char *menuName, bool asPopup=false );
-	Menu *loadMenu( int menuId, bool asPopup=false );
+	template <class RESULT_MENU, class MENU_T>
+	RESULT_MENU *loadMenuNew( MENU_T menuName )
+	{
+		RESULT_MENU *theMenu = new RESULT_MENU();
+		if( theMenu->load( getResInstance(), menuName ) )
+		{
+			if( theMenu->load( getAppInstance(), menuName ) )
+			{
+				if( theMenu->load( getMenuResource( menuName ) ) )
+				{
+					delete theMenu;
+					theMenu = NULL;
+				}
+			}
+		}
+
+		return theMenu;
+	}
+
+	Menu *loadMenu( const char *menuName )
+	{
+		return loadMenuNew<Menu>(menuName);
+	}
+	Menu *loadMenu( int menuId )
+	{
+		return loadMenuNew<Menu>(menuId);
+	}
 
 	static HACCEL loadAccelerators( const char *acceleratorsName )
 	{

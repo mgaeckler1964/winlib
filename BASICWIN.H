@@ -1433,18 +1433,19 @@ class BasicWindow : public ForeignWindow
 		if( !font.isAssigned() )
 			font.create();
 
-		if( isValid() && HFONT(font) != HFONT(m_font) )
+		if( isValid() )
 		{
 			m_font = font;
 			message( WM_SETFONT, WPARAM(HFONT(font)), true );
 			resize();
 		}
 	}
-	void inheritFont( ) const
+	void inheritFont( )
 	{
 		if( this->isValid() && m_parent && m_parent->isValid() )
 		{
 			message( WM_SETFONT, m_parent->message( WM_GETFONT ), true );
+			m_font.readFont();
 		}
 	}
 

@@ -121,6 +121,7 @@ class ControlWindow : public BasicWindow
 			if( !font.isAssigned() )
 			{
 				message( WM_SETFONT, parent->message( WM_GETFONT ), true );
+				font.readFont();
 			}
 			else
 			{

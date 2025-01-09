@@ -136,6 +136,21 @@ inline void Font::send2Window()
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+bool Font::readFont()
+{
+	if( window && window->handle() )
+	{
+		HFONT fnt = HFONT(window->message( WM_GETFONT ));
+		if( fnt )
+		{
+			GdiObject<HFONT>::setHandle( fnt );
+			GetObject( fnt, sizeof(fontData), &fontData );
+			return false;
+		}
+	}
+	return true;
+}
+
 bool Font::selectFont(
 	const BasicWindow *parent, bool allwaysCreate, unsigned long Flags
 )

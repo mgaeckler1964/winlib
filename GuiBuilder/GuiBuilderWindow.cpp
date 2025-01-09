@@ -140,6 +140,57 @@ const char GuiBuilderWindow::TRANSLATION_ATTRIBUTE[] = "translation";
 // ----- module functions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+static bool isIllegalChar( char c, size_t pos )
+{
+	if( c >= 'A' && c <= 'Z' )
+		return false;
+	if( c >= 'a' && c <= 'z' )
+		return false;
+	if( pos && c >= '0' && c <= '9' )
+		return false;
+	if( c == '_'  )
+		return false;
+
+	return true;
+}
+
+static bool hasIllegalChar( const STRING &s )
+{
+	bool illegal = false;
+	for( size_t  i=0; i<strlen(s); ++i )
+	{
+		char c = s[i];
+		if( !isIllegalChar(c,i) )
+			continue;
+		illegal = true;
+		break;
+	}
+	return illegal;
+}
+
+static STRING removeIllegal( const STRING &s )
+{
+	STRING stripped;
+	for( size_t  i=0; i<strlen(s); ++i )
+	{
+		char c = s[i];
+		if( !isIllegalChar( c, i ) )
+			stripped += c;
+		else if( stripped.isEmpty() )
+			stripped += '_';
+	}
+	return stripped;
+}
+
+static STRING fixIfBad( const STRING &s )
+{
+	if( hasIllegalChar( s ) )
+	{
+		return removeIllegal( s );
+	}
+	return s;
+}
+
 // --------------------------------------------------------------------- //
 // ----- class inlines ------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -985,7 +1036,7 @@ GuiBuilderWindow::IdentifiersMap GuiBuilderWindow::createIDs( void )
 		for( size_t i=0; i<items.size(); i++ )
 		{
 			xml::Element	*item = items[i];
-			name = item->getAttribute( NAME_ATTR );
+			name = fixIfBad(item->getAttribute( NAME_ATTR ));
 			if( !name.isEmpty() )
 			{
 				id = checkDefaultIdentifier( name );
@@ -1076,7 +1127,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 	{
 		xml::Element		*resource = *it;
 		STRING			tag = resource->getTag();
-		STRING			name = resource->getAttribute( NAME_ATTR );
+		STRING			name = fixIfBad(resource->getAttribute( NAME_ATTR ));
 		if( (tag == FORM_TAG || tag==FRAME_TAG || tag==SCROLLER_TAG) && !name.isEmpty() )
 		{
 			STRING	parentClass, baseClass;
@@ -1115,7 +1166,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 			{
 				xml::Element	*child = *it;
 				STRING		type = child->getAttribute( TYPE_ATTR );
-				STRING		name = child->getAttribute( NAME_ATTR );
+				STRING		name = fixIfBad(child->getAttribute( NAME_ATTR ));
 				if( !type.isEmpty() && !name.isEmpty() )
 				{
 					if( checkDefaultIdentifier( name ) )
@@ -1176,7 +1227,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 	{
 		xml::Element		*resource = *it;
 		STRING			tag = resource->getTag();
-		STRING			name = resource->getAttribute( NAME_ATTR );
+		STRING			name = fixIfBad(resource->getAttribute( NAME_ATTR ));
 		if( (tag == FORM_TAG || tag==FRAME_TAG || tag==SCROLLER_TAG) && !name.isEmpty() )
 		{
 			stream << "\n\tvoid " << name << '_' << tag << "::getControls() {\n";
@@ -1190,7 +1241,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 			{
 				xml::Element	*child = *it;
 				STRING		type = child->getAttribute( TYPE_ATTR );
-				STRING		name = child->getAttribute( NAME_ATTR );
+				STRING		name = fixIfBad(child->getAttribute( NAME_ATTR ));
 				STRING		idName = name;
 				if( !type.isEmpty() && !name.isEmpty() )
 				{
@@ -1222,7 +1273,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 				)
 				{
 					xml::Element	*string = *it;
-					STRING			name = string->getAttribute( NAME_ATTR );
+					STRING			name = fixIfBad(string->getAttribute( NAME_ATTR ));
 					if( !name.isEmpty() )
 					{
 						stream << "\t\t" << name << "_id,\n";

@@ -116,7 +116,8 @@ class Font : public GdiObject<HFONT>
 	{
 		this->window = window;
 		pointSize = 0;
-		memset( &fontData, 0, sizeof( fontData ) );
+		if( readFont() )
+			memset( &fontData, 0, sizeof( fontData ) );
 	}
 	Font( const Font &source ) : GdiObject<HFONT>( source )
 	{
@@ -333,6 +334,7 @@ class Font : public GdiObject<HFONT>
 	};
 
 	void selectFont( SystemFont font );
+	bool readFont();
 
 	STRING toString() const;
 	void fromString( const STRING &source, bool alwaysCreate );
