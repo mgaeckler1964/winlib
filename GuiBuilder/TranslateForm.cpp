@@ -117,7 +117,7 @@ void TranslateForm::saveDict( void )
 		{
 			STRING	original = translationsGrid->getCell( 0, i ),
 					translation = translationsGrid->getCell( 1, i );
-			if( translation.isEmpty() )
+			if( translation.isEmpty() || translation == original )
 			{
 				m_currentDict->removeElementByKey( original );
 			}
@@ -141,7 +141,12 @@ void TranslateForm::loadNewDict( const STRING &newLanguage )
 		for( size_t i=0; i<max; ++i )
 		{
 			STRING	original = translationsGrid->getCell( 0, i );
-			translationsGrid->setCell( 1, i, (*m_currentDict)[original] );
+			STRING	translation = (*m_currentDict)[original];
+			if( translation.isEmpty() )
+			{
+				translation = original;
+			}
+			translationsGrid->setCell( 1, i, translation );
 		}
 		translationsGrid->invalidateWindow();
 	}
