@@ -106,9 +106,9 @@ using namespace gak;
 
 inline void Font::send2Window()
 {
-	if( getHandle() && window )
+	if( getHandle() && m_window )
 	{
-		window->setFont( *this );
+		m_window->setFont( *this );
 	}
 }
 
@@ -138,13 +138,13 @@ inline void Font::send2Window()
 
 bool Font::readFont()
 {
-	if( window && window->handle() )
+	if( m_window && m_window->handle() )
 	{
-		HFONT fnt = HFONT(window->message( WM_GETFONT ));
+		HFONT fnt = HFONT(m_window->message( WM_GETFONT ));
 		if( fnt )
 		{
 			GdiObject<HFONT>::setHandle( fnt );
-			GetObject( fnt, sizeof(fontData), &fontData );
+			GetObject( fnt, sizeof(m_fontData), &m_fontData );
 			return false;
 		}
 	}
@@ -155,7 +155,7 @@ bool Font::selectFont(
 	const BasicWindow *parent, bool allwaysCreate, unsigned long Flags
 )
 {
-	FontDialog	fontDlg( &fontData, Flags );
+	FontDialog	fontDlg( &m_fontData, Flags );
 	bool		ok =fontDlg.create( parent );
 
 	if( ok )
@@ -172,14 +172,14 @@ bool Font::selectFont(
 void Font::deleteFont( void )
 {
 	clear();
-	if( window && window->isValid() )
-		window->inheritFont();
+	if( m_window && m_window->isValid() )
+		m_window->inheritFont();
 }
 
 int Font::getFontSize( void ) const
 {
-	if( pointSize )
-		return pointSize;
+	if( m_pointSize )
+		return m_pointSize;
 	else
 	{
 		bool	release; 
@@ -192,7 +192,7 @@ int Font::getFontSize( void ) const
 		else
 			release = false;
 		
-		int pointSize = MulDiv(-fontData.lfHeight, 72, GetDeviceCaps(device, LOGPIXELSY));
+		int pointSize = MulDiv(-m_fontData.lfHeight, 72, GetDeviceCaps(device, LOGPIXELSY));
 		if( release )
 			ReleaseDC( NULL, device );
 
@@ -202,7 +202,7 @@ int Font::getFontSize( void ) const
 
 int Font::getFontSizePixel( void ) const
 {
-	if( pointSize )
+	if( m_pointSize )
 	{
 		bool	release; 
 		HDC		device = getConnection();
@@ -214,14 +214,14 @@ int Font::getFontSizePixel( void ) const
 		else
 			release = false;
 		
-		int pixelSize = MulDiv(pointSize, GetDeviceCaps(device,LOGPIXELSY), 72);
+		int pixelSize = MulDiv(m_pointSize, GetDeviceCaps(device,LOGPIXELSY), 72);
 		if( release )
 			ReleaseDC( NULL, device );
 
 		return pixelSize;
 	}
 	else 
-		return abs(fontData.lfHeight);
+		return abs(m_fontData.lfHeight);
 }
 
 STRING Font::toString() const
@@ -251,8 +251,8 @@ void Font::fromString( const STRING &source, bool alwaysCreate )
 
 bool Font::create( void )
 {
-	fontData.lfHeight = -getFontSizePixel();
-	setHandle( CreateFontIndirect( &fontData ) );
+	m_fontData.lfHeight = -getFontSizePixel();
+	setHandle( CreateFontIndirect( &m_fontData ) );
 
 	send2Window();
 
@@ -263,8 +263,8 @@ void Font::selectFont( SystemFont font )
 {
 	HFONT	handle = HFONT( GetStockObject(font) );
 	setHandle( handle );
-	GetObject( handle, sizeof(fontData), &fontData );
-	pointSize = 0;
+	GetObject( handle, sizeof(m_fontData), &m_fontData );
+	m_pointSize = 0;
 
 	send2Window();
 }
@@ -277,14 +277,14 @@ std::ostream &operator << ( std::ostream &out, const Font &font )
 {
 	int lfHeight = -font.getFontSizePixel();
 
-	out	<< font.fontData.lfFaceName << ';' 
-		<< lfHeight << ';' << font.fontData.lfWidth << ';' 
-		<< font.fontData.lfEscapement << ';'  << font.fontData.lfOrientation << ';'  
-		<< font.fontData.lfWeight << ';' 
-		<< short(font.fontData.lfItalic) << ';'  << short(font.fontData.lfUnderline) << ';'  
-		<< short(font.fontData.lfStrikeOut) << ';' << short(font.fontData.lfCharSet) << ';'  
-		<< short(font.fontData.lfOutPrecision) << ';'  << short(font.fontData.lfClipPrecision) << ';' 
-		<< short(font.fontData.lfQuality) << ';'  << short(font.fontData.lfPitchAndFamily)
+	out	<< font.m_fontData.lfFaceName << ';' 
+		<< lfHeight << ';' << font.m_fontData.lfWidth << ';' 
+		<< font.m_fontData.lfEscapement << ';'  << font.m_fontData.lfOrientation << ';'  
+		<< font.m_fontData.lfWeight << ';' 
+		<< short(font.m_fontData.lfItalic) << ';'  << short(font.m_fontData.lfUnderline) << ';'  
+		<< short(font.m_fontData.lfStrikeOut) << ';' << short(font.m_fontData.lfCharSet) << ';'  
+		<< short(font.m_fontData.lfOutPrecision) << ';'  << short(font.m_fontData.lfClipPrecision) << ';' 
+		<< short(font.m_fontData.lfQuality) << ';'  << short(font.m_fontData.lfPitchAndFamily)
 	;
 
 	return out;
@@ -300,28 +300,28 @@ std::istream &operator >> ( std::istream &in, Font &font )
 			break;
 		faceName += c;
 	}
-	strncpy( font.fontData.lfFaceName, faceName, LF_FACESIZE );
+	strncpy( font.m_fontData.lfFaceName, faceName, LF_FACESIZE );
 
-	font.pointSize = 0;
+	font.m_pointSize = 0;
 	char semicolon;
 	short lfItalic, lfUnderline, lfStrikeOut, lfCharSet, lfOutPrecision, lfClipPrecision, lfQuality, lfPitchAndFamily;
 
-	in	>> font.fontData.lfHeight >> semicolon >> font.fontData.lfWidth >> semicolon 
-		>> font.fontData.lfEscapement >> semicolon  >> font.fontData.lfOrientation >> semicolon 
-		>> font.fontData.lfWeight >> semicolon 
+	in	>> font.m_fontData.lfHeight >> semicolon >> font.m_fontData.lfWidth >> semicolon 
+		>> font.m_fontData.lfEscapement >> semicolon  >> font.m_fontData.lfOrientation >> semicolon 
+		>> font.m_fontData.lfWeight >> semicolon 
 		>> lfItalic >> semicolon  >> lfUnderline >> semicolon  
 		>> lfStrikeOut >> semicolon >> lfCharSet >> semicolon  
 		>> lfOutPrecision >> semicolon  >> lfClipPrecision >> semicolon 
 		>> lfQuality >> semicolon  >> lfPitchAndFamily
 	;
-	font.fontData.lfItalic = BYTE(lfItalic);
-	font.fontData.lfUnderline = BYTE(lfUnderline);
-	font.fontData.lfStrikeOut = BYTE(lfStrikeOut);
-	font.fontData.lfCharSet = BYTE(lfCharSet);
-	font.fontData.lfOutPrecision = BYTE(lfOutPrecision);
-	font.fontData.lfClipPrecision = BYTE(lfClipPrecision);
-	font.fontData.lfQuality = BYTE(lfQuality);
-	font.fontData.lfPitchAndFamily = BYTE(lfPitchAndFamily);
+	font.m_fontData.lfItalic = BYTE(lfItalic);
+	font.m_fontData.lfUnderline = BYTE(lfUnderline);
+	font.m_fontData.lfStrikeOut = BYTE(lfStrikeOut);
+	font.m_fontData.lfCharSet = BYTE(lfCharSet);
+	font.m_fontData.lfOutPrecision = BYTE(lfOutPrecision);
+	font.m_fontData.lfClipPrecision = BYTE(lfClipPrecision);
+	font.m_fontData.lfQuality = BYTE(lfQuality);
+	font.m_fontData.lfPitchAndFamily = BYTE(lfPitchAndFamily);
 
 	return in;
 }

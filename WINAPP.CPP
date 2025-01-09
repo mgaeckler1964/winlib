@@ -75,8 +75,8 @@ Application	*appObject = NULL;
 // ----- class statics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-HINSTANCE Application::appInstance = 0;
-HINSTANCE Application::resInstance = 0;
+HINSTANCE Application::m_appInstance = 0;
+HINSTANCE Application::m_resInstance = 0;
 
 // --------------------------------------------------------------------- //
 // ----- module functions ---------------------------------------------- //
@@ -310,29 +310,29 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 
 Application::Application( const char *newIconName )
 {
-	guiRoot = NULL;
-	guiDoc = NULL;
-	company = "gak";
+	m_guiRoot = NULL;
+	m_guiDoc = NULL;
+	m_company = "gak";
 	appObject = this;
-	iconName = newIconName;
+	m_iconName = newIconName;
 }
 
 Application::Application( int newIconID )
 {
-	guiRoot = NULL;
-	guiDoc = NULL;
-	company = "gak";
+	m_guiRoot = NULL;
+	m_guiDoc = NULL;
+	m_company = "gak";
 	appObject = this;
 	if( newIconID > 0 )
-		iconName = MAKEINTRESOURCE( newIconID );
+		m_iconName = MAKEINTRESOURCE( newIconID );
 	else
-		iconName = NULL;
+		m_iconName = NULL;
 }
 
 Application::~Application()
 {
-	if( guiDoc )
-		delete guiDoc;
+	if( m_guiDoc )
+		delete m_guiDoc;
 }
 
 // --------------------------------------------------------------------- //
@@ -402,13 +402,13 @@ int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdSho
 	if( startApplication( hInstance, cmdLine ) )
 		return 1;
 
-	mainWindow = createMainWindow( cmdLine, nCmdShow );
-	if( !mainWindow )
+	m_mainWindow = createMainWindow( cmdLine, nCmdShow );
+	if( !m_mainWindow )
 		return 1;
 
-	mainWindow->mainLoop();
+	m_mainWindow->mainLoop();
 
-	deleteMainWindow( mainWindow );
+	deleteMainWindow( m_mainWindow );
 
 	return 0;
 }
@@ -419,7 +419,7 @@ int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdSho
 
 xml::Document *Application::getGuiDoc( void )
 {
-	if( !guiDoc )
+	if( !m_guiDoc )
 	{
 		STRING		appName = getApplication();
 		STRING		country = getCountry();
@@ -440,17 +440,17 @@ xml::Document *Application::getGuiDoc( void )
 		if( exists( fileName ) )
 		{
 			xml::Parser		theParser( fileName );
-			guiDoc = theParser.readFile( false );
-			guiRoot = guiDoc->getRoot();
+			m_guiDoc = theParser.readFile( false );
+			m_guiRoot = m_guiDoc->getRoot();
 		}
 	}
 
-	return guiDoc;
+	return m_guiDoc;
 }
 
 xml::Document *Application::getGuiDoc( const STRING &xmlSrc )
 {
-	if( !guiDoc )
+	if( !m_guiDoc )
 	{
 		STRING		appName = getApplication();
 		STRING		country = getCountry();
@@ -459,21 +459,21 @@ xml::Document *Application::getGuiDoc( const STRING &xmlSrc )
 		gak::iSTRINGstream	theStream(xmlSrc);
 
 		xml::Parser		theParser( &theStream, fileName );
-		guiDoc = theParser.readFile( false );
-		guiRoot = guiDoc->getRoot();
+		m_guiDoc = theParser.readFile( false );
+		m_guiRoot = m_guiDoc->getRoot();
 	}
 
-	return guiDoc;
+	return m_guiDoc;
 }
 
 xml::Element	*Application::getResource( const STRING &identifier, const STRING &type, const STRING &filterType )
 {
 	xml::Element	*resource = NULL;
 
-	if( !guiDoc )
+	if( !m_guiDoc )
 		getGuiDoc();
 
-	if( guiRoot )
+	if( m_guiRoot )
 	{
 		STRING	containerType;
 		if( type == FORM_TAG )
@@ -487,7 +487,7 @@ xml::Element	*Application::getResource( const STRING &identifier, const STRING &
 		else
 			throw LibraryException( "Don't know container type" );
 
-		xml::Element	*container = guiRoot->getElement( containerType );
+		xml::Element	*container = m_guiRoot->getElement( containerType );
 		if( container )
 		{
 			if( type == STRING_TAG )
@@ -528,7 +528,7 @@ xml::Element	*Application::getResource( const STRING &identifier, const STRING &
 
 STRING Application::loadString( int textId )
 {
-	if( !resourceStrings.hasElement( textId ) )
+	if( !m_resourceStrings.hasElement( textId ) )
 	{
 		char	text[10240];
 		STRING	newString;
@@ -543,10 +543,10 @@ STRING Application::loadString( int textId )
 				newString = resource->getAttribute( CAPTION_ATTR );
 		}
 
-		resourceStrings[textId] = newString;
+		m_resourceStrings[textId] = newString;
 	}
 
-	return resourceStrings[textId];
+	return m_resourceStrings[textId];
 }
 
 const STRING &Application::getApplication( void )
@@ -565,7 +565,7 @@ const F_STRING &Application::getFileName( void )
 	{
 		char	theFileName[10240];
 
-		GetModuleFileName( appInstance, theFileName, sizeof( theFileName ) -1 );
+		GetModuleFileName( m_appInstance, theFileName, sizeof( theFileName ) -1 );
 		m_fileName = theFileName;
 	}
 
@@ -589,12 +589,12 @@ const F_STRING &Application::getPathName( void )
 
 STRING Application::GetProfile( const char *section, const char *variable, const STRING &defaultVal )
 {
-	return readRegistration<STRING>( company, getApplication(), section, variable, defaultVal );;
+	return readRegistration<STRING>( m_company, getApplication(), section, variable, defaultVal );;
 }
 
 long Application::GetProfile( const char *section, const char *variable, long defaultVal )
 {
-	return readRegistration<long>( company, getApplication(), section, variable, defaultVal );;
+	return readRegistration<long>( m_company, getApplication(), section, variable, defaultVal );;
 }
 
 #ifdef __BORLANDC__
@@ -603,12 +603,12 @@ long Application::GetProfile( const char *section, const char *variable, long de
 
 void Application::WriteProfile( bool publicVal, const char *section, const char *variable, const char *value )
 {
-	writeRegistration( publicVal, company, getApplication(), section, variable, value );
+	writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
 }
 
 void Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
 {
-	writeRegistration( publicVal, company, getApplication(), section, variable, value );
+	writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
 }
 
 // --------------------------------------------------------------------- //

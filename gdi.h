@@ -102,30 +102,30 @@ template <class GdiType>
 class GdiHandle
 {
 	private:
-	GdiType		handle;
+	GdiType		m_handle;
 
 	GdiHandle( const GdiHandle &src );
 
 	public:
 	GdiHandle( const GdiType &newHandle = 0 )
 	{
-		handle = newHandle;
+		m_handle = newHandle;
 	}
 	~GdiHandle()
 	{
-		DeleteObject( handle );
+		DeleteObject( m_handle );
 	}
 	const GdiHandle & operator = ( const GdiType &newHandle )
 	{
-		DeleteObject( handle );
-		handle = newHandle;
+		DeleteObject( m_handle );
+		m_handle = newHandle;
 
 		return *this;
 	}
 
 	const GdiType &getHandle( void ) const
 	{
-		return handle;
+		return m_handle;
 	}
 };
 
@@ -137,42 +137,42 @@ class GdiObjectHandle : public GdiHandle<GdiType>
 {
 	friend class GdiObject<GdiType>;
 
-	size_t		usageCounter;
+	size_t		m_usageCounter;
 
 	public:
 	GdiObjectHandle( const GdiType &newHandle ) : GdiHandle<GdiType>( newHandle )
 	{
-		usageCounter = 1;
+		m_usageCounter = 1;
 	}
 };
 
 template <class GdiType> 
 class GdiObject
 {
-	GdiObjectHandle<GdiType>	*handle;
-	HDC							deviceContext;
+	GdiObjectHandle<GdiType>	*m_handle;
+	HDC							m_deviceContext;
 
 	void remove( void )
 	{
-		if( handle && !--handle->usageCounter )
-			delete handle;
+		if( m_handle && !--m_handle->m_usageCounter )
+			delete m_handle;
 	}
 	void setHandle( GdiObjectHandle<GdiType> *newHandle )
 	{
 		remove();
-		handle = newHandle;
+		m_handle = newHandle;
 	}
 
 	protected:
 	GdiObject( HDC newDevice = NULL )
 	{
-		handle = NULL;
-		deviceContext = newDevice;
+		m_handle = NULL;
+		m_deviceContext = newDevice;
 	}
 	GdiObject( GdiType newHandle )
 	{
-		handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : NULL;
-		deviceContext = NULL;
+		m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : NULL;
+		m_deviceContext = NULL;
 	}
 	const GdiObject & operator = ( GdiType src )
 	{
@@ -182,22 +182,22 @@ class GdiObject
 	}
 	GdiObject( const GdiObject &src )
 	{
-		handle = src.handle;
-		deviceContext = src.deviceContext;
+		m_handle = src.m_handle;
+		m_deviceContext = src.m_deviceContext;
 
-		if( handle )
-			handle->usageCounter++;
+		if( m_handle )
+			m_handle->m_usageCounter++;
 	}
 	const GdiObject & operator = ( const GdiObject &src )
 	{
-		if( this != &src && this->handle != src.handle )
+		if( this != &src && m_handle != src.m_handle )
 		{
 			remove();
-			handle = src.handle;
-			if( handle )
-				handle->usageCounter++;
-			if( !deviceContext )
-				deviceContext = src.deviceContext;
+			m_handle = src.m_handle;
+			if( m_handle )
+				m_handle->m_usageCounter++;
+			if( !m_deviceContext )
+				m_deviceContext = src.m_deviceContext;
 		}
 
 		return *this;
@@ -210,40 +210,40 @@ class GdiObject
 	void clear( void )
 	{
 		remove();
-		handle = NULL;
+		m_handle = NULL;
 	}
 	void setHandle( const GdiType &newHandle )
 	{
 		remove();
 		if( newHandle )
 		{
-			handle = new GdiObjectHandle<GdiType>( newHandle );
-			if( deviceContext )
-				SelectObject( deviceContext, newHandle );
+			m_handle = new GdiObjectHandle<GdiType>( newHandle );
+			if( m_deviceContext )
+				SelectObject( m_deviceContext, newHandle );
 		}
 		else
-			handle = NULL;
+			m_handle = NULL;
 	}
 	GdiType getHandle( void ) const
 	{
-		return handle ? handle->getHandle() : NULL;
+		return m_handle ? m_handle->getHandle() : NULL;
 	}
 
 	public:
 	void connect( HDC hDC )
 	{
-		deviceContext = hDC;
+		m_deviceContext = hDC;
 		GdiType handle = getHandle();
 		if( handle )
-			SelectObject( deviceContext, handle );
+			SelectObject( m_deviceContext, handle );
 	}
 	void disconnect( void )
 	{
-		deviceContext = NULL;
+		m_deviceContext = NULL;
 	}
 	HDC getConnection( void ) const
 	{
-		return deviceContext;
+		return m_deviceContext;
 	}
 	operator bool () const
 	{

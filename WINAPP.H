@@ -100,24 +100,24 @@ class Menu;
 class Application
 {
 	static
-	HINSTANCE			appInstance;
+	HINSTANCE			m_appInstance;
 	static
-	HINSTANCE			resInstance;
+	HINSTANCE			m_resInstance;
 
-	STRING				company;
+	STRING				m_company;
 	STRING				m_country;
 
 	STRING				m_applicationName;
 	F_STRING			m_fileName;
 	F_STRING			m_pathName;
 
-	HICON				applicationIcon;
-	const char			*iconName;
-	CallbackWindow		*mainWindow;
-	gak::xml::Document	*guiDoc;
-	gak::xml::Element	*guiRoot;
+	HICON				m_applicationIcon;
+	const char			*m_iconName;
+	CallbackWindow		*m_mainWindow;
+	gak::xml::Document	*m_guiDoc;
+	gak::xml::Element	*m_guiRoot;
 
-	gak::IntStrMap		resourceStrings;
+	gak::IntStrMap		m_resourceStrings;
 
 	private:
 	STRING getApplicationFromFile( void );
@@ -184,19 +184,19 @@ class Application
 
 	static void setInstance( HINSTANCE theInst )
 	{
-		appInstance  = theInst;
+		m_appInstance  = theInst;
 	}
 	static void setResInstance( HINSTANCE hInstance )
 	{
-		resInstance = hInstance;
+		m_resInstance = hInstance;
 	}
 	static HINSTANCE getAppInstance( void )
 	{
-		return appInstance;
+		return m_appInstance;
 	}
 	static HINSTANCE getResInstance( void )
 	{
-		return resInstance ? resInstance : appInstance;
+		return m_resInstance ? m_resInstance : m_appInstance;
 	}
 
 	STRING loadString( int stringId );
@@ -225,7 +225,7 @@ class Application
 	}
 	void setComapny( const char *name )
 	{
-		company = name;
+		m_company = name;
 	}
 	void setApplication( const STRING &name )
 	{
@@ -321,15 +321,15 @@ class Application
 	}
 	HICON getIcon( void )
 	{
-		if( !applicationIcon && iconName )
-			applicationIcon = loadIcon( iconName );
-		if( !applicationIcon )
-			applicationIcon = LoadIcon( NULL, IDI_APPLICATION );
-		return applicationIcon;
+		if( !m_applicationIcon && m_iconName )
+			m_applicationIcon = loadIcon( m_iconName );
+		if( !m_applicationIcon )
+			m_applicationIcon = LoadIcon( NULL, IDI_APPLICATION );
+		return m_applicationIcon;
 	}
 	CallbackWindow *getMainWindow( void ) const
 	{
-		return mainWindow;
+		return m_mainWindow;
 	}
 };
 

@@ -60,7 +60,7 @@
 #include <gak/gaklib.h>
 
 #include <WINLIB/gdi.h>
-#include <WINLIB\WINLIB.H>
+#include <WINLIB/WINLIB.H>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -88,10 +88,10 @@ class Font : public GdiObject<HFONT>
 	friend std::ostream &operator << ( std::ostream &out, const Font &font );
 	friend std::istream &operator >> ( std::istream &in, Font &font );
 
-	LOGFONT 		fontData;
-	int				pointSize;
+	LOGFONT 		m_fontData;
+	int				m_pointSize;
 
-	BasicWindow		*window;
+	BasicWindow		*m_window;
 
 	void send2Window();
 
@@ -107,31 +107,31 @@ class Font : public GdiObject<HFONT>
 	friend class Device;
 	Font( HDC device ) : GdiObject<HFONT>( device )
 	{
-		this->window = NULL;
-		pointSize = 0;
-		memset( &fontData, 0, sizeof( fontData ) );
+		m_window = NULL;
+		m_pointSize = 0;
+		memset( &m_fontData, 0, sizeof( m_fontData ) );
 	}
 	public:
 	Font( BasicWindow *window=NULL )
 	{
-		this->window = window;
-		pointSize = 0;
+		m_window = window;
+		m_pointSize = 0;
 		if( readFont() )
-			memset( &fontData, 0, sizeof( fontData ) );
+			memset( &m_fontData, 0, sizeof( m_fontData ) );
 	}
 	Font( const Font &source ) : GdiObject<HFONT>( source )
 	{
-		window = source.window;
-		pointSize = source.pointSize;
-		fontData = source.fontData;
+		m_window = source.m_window;
+		m_pointSize = source.m_pointSize;
+		m_fontData = source.m_fontData;
 	}
 	const Font &operator = ( const Font &source )
 	{
 		GdiObject<HFONT>::operator= ( source );
-		if( !window )
-			window = source.window;
-		pointSize = source.pointSize;
-		fontData = source.fontData;
+		if( !m_window )
+			m_window = source.m_window;
+		m_pointSize = source.m_pointSize;
+		m_fontData = source.m_fontData;
 
 		return *this;
 	}
@@ -144,7 +144,7 @@ class Font : public GdiObject<HFONT>
 
 	Font &setAnsiFont( void )
 	{
-		fontData.lfCharSet = ANSI_CHARSET;
+		m_fontData.lfCharSet = ANSI_CHARSET;
 		if( isAssigned() )
 			create();
 
@@ -152,7 +152,7 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setOemFont( void )
 	{
-		fontData.lfCharSet = OEM_CHARSET;
+		m_fontData.lfCharSet = OEM_CHARSET;
 		if( isAssigned() )
 			create();
 
@@ -160,7 +160,7 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setSymbolFont( void )
 	{
-		fontData.lfCharSet = SYMBOL_CHARSET;
+		m_fontData.lfCharSet = SYMBOL_CHARSET;
 		if( isAssigned() )
 			create();
 
@@ -168,8 +168,8 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setVariableFont( void )
 	{
-		fontData.lfPitchAndFamily &= 0xFC;
-		fontData.lfPitchAndFamily |= VARIABLE_PITCH;
+		m_fontData.lfPitchAndFamily &= 0xFC;
+		m_fontData.lfPitchAndFamily |= VARIABLE_PITCH;
 		if( isAssigned() )
 			create();
 
@@ -177,8 +177,8 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setFixedFont( void )
 	{
-		fontData.lfPitchAndFamily &= 0xFC;
-		fontData.lfPitchAndFamily |= FIXED_PITCH;
+		m_fontData.lfPitchAndFamily &= 0xFC;
+		m_fontData.lfPitchAndFamily |= FIXED_PITCH;
 		if( isAssigned() )
 			create();
 
@@ -186,7 +186,7 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setFontName( const char *name )
 	{
-		strncpy( fontData.lfFaceName, name, LF_FACESIZE -1 );
+		strncpy( m_fontData.lfFaceName, name, LF_FACESIZE -1 );
 		if( isAssigned() )
 			create();
 
@@ -194,12 +194,12 @@ class Font : public GdiObject<HFONT>
 	}
 	const char *getFontName( void ) const
 	{
-		return fontData.lfFaceName;
+		return m_fontData.lfFaceName;
 	}
 	Font &setFontSize( int newSize )
 	{
-		pointSize = newSize;
-		fontData.lfHeight = 0;
+		m_pointSize = newSize;
+		m_fontData.lfHeight = 0;
 		if( isAssigned() )
 			create();
 
@@ -207,8 +207,8 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setFontSizePixel( int newSize )
 	{
-		pointSize = 0;
-		fontData.lfHeight = -newSize;
+		m_pointSize = 0;
+		m_fontData.lfHeight = -newSize;
 		if( isAssigned() )
 			create();
 
@@ -235,7 +235,7 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setWeight( int weight )
 	{
-		fontData.lfWeight = weight;
+		m_fontData.lfWeight = weight;
 		if( isAssigned() )
 			create();
 
@@ -244,11 +244,11 @@ class Font : public GdiObject<HFONT>
 
 	bool isItalic( void ) const
 	{
-		return fontData.lfItalic;
+		return m_fontData.lfItalic;
 	}
 	Font &setItalic( bool style )
 	{
-		fontData.lfItalic = BYTE(style);
+		m_fontData.lfItalic = BYTE(style);
 		if( isAssigned() )
 			create();
 
@@ -256,11 +256,11 @@ class Font : public GdiObject<HFONT>
 	}
 	bool isUnderline( void ) const
 	{
-		return fontData.lfUnderline;
+		return m_fontData.lfUnderline;
 	}
 	Font &setUnderline( bool style )
 	{
-		fontData.lfUnderline = BYTE(style);
+		m_fontData.lfUnderline = BYTE(style);
 		if( isAssigned() )
 			create();
 
@@ -268,11 +268,11 @@ class Font : public GdiObject<HFONT>
 	}
 	bool isStrikeOut( void ) const
 	{
-		return fontData.lfStrikeOut;
+		return m_fontData.lfStrikeOut;
 	}
 	Font &setStrikeOut( bool style )
 	{
-		fontData.lfStrikeOut = BYTE(style);
+		m_fontData.lfStrikeOut = BYTE(style);
 		if( isAssigned() )
 			create();
 
@@ -280,7 +280,7 @@ class Font : public GdiObject<HFONT>
 	}
 	unsigned long getStyle( void ) const
 	{
-		unsigned long style = fontData.lfWeight & 0xFFFFUL;
+		unsigned long style = m_fontData.lfWeight & 0xFFFFUL;
 		if( isItalic() )
 			style |= 0x10000;
 		if( isUnderline() )
@@ -292,7 +292,7 @@ class Font : public GdiObject<HFONT>
 	}
 	Font &setStyle( unsigned long style )
 	{
-		fontData.lfWeight = style & 0xFFFFUL;
+		m_fontData.lfWeight = style & 0xFFFFUL;
 		if( style & 0x10000 )
 			setItalic(true);
 		else
@@ -314,7 +314,7 @@ class Font : public GdiObject<HFONT>
 
 	long getCharWidth( void ) const
 	{
-		return fontData.lfWidth;
+		return m_fontData.lfWidth;
 	}
 
 	bool selectFont(
