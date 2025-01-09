@@ -92,6 +92,17 @@ const int gvROW_CREATE			= 0x0020;
 
 class GridViewer : public ChildWindow
 {
+	struct CellAttribute
+	{
+		long backgroundColor;
+		CellAttribute() : backgroundColor(-1) {}
+	};
+	struct TheCell
+	{
+		CellAttribute	attribute;
+		gak::STRING		text;
+	};
+
 	struct RowAttribute
 	{
 		unsigned	height;
@@ -107,21 +118,21 @@ class GridViewer : public ChildWindow
 	enum MouseState
 	{
 		msNORMAL, msSTART_COL_SIZER, msDO_COL_SIZER
-	}							mouseState;
-	size_t						sizerCol;
-	STRING						*editCell;
-	size_t						editCol, editRow;
-	size_t						editPos, editOffset, selPos;
-	int							caretOffsetPixel;
+	}							m_mouseState;
+	size_t						m_sizerCol;
+	TheCell						*m_editCell;
+	size_t						m_editCol, m_editRow;
+	size_t						m_editPos, m_editOffset, m_selPos;
+	int							m_caretOffsetPixel;
 
-	gak::PODarray<RowAttribute>	rowAttributes;
-	gak::PODarray<ColAttribute>	colAttributes;
-	gak::Matrix<gak::STRING>	data;
-	size_t						fixedCols, fixedRows;
-	unsigned					rowHeight, colWidth;
+	gak::PODarray<RowAttribute>	m_rowAttributes;
+	gak::PODarray<ColAttribute>	m_colAttributes;
+	gak::Matrix<TheCell>		m_data;
+	size_t						m_fixedCols, m_fixedRows;
+	unsigned					m_rowHeight, m_colWidth;
 
-	int							horizOffset, vertOffset;
-	int							totalHeight, totalWidth;
+	int							m_horizOffset, m_vertOffset;
+	int							m_totalHeight, m_totalWidth;
 
 	static void registerClass( void );
 
@@ -132,8 +143,8 @@ class GridViewer : public ChildWindow
 	void calcDimensions( const Size &size );
 	void calcDimensions( void )
 	{
-		assert( rowAttributes.size() == data.getNumRows() );
-		assert( colAttributes.size() == data.getNumCols() );
+		assert( m_rowAttributes.size() == m_data.getNumRows() );
+		assert( m_colAttributes.size() == m_data.getNumCols() );
 
 		calcDimensions( getClientSize() );
 	}
@@ -145,9 +156,9 @@ class GridViewer : public ChildWindow
 	bool moveCursorLeftWord( Device &hDC, bool includeSelection );
 	bool moveCursorLeft( Device &hDC, bool includeSelection )
 	{
-		assert( editCell );
+		assert( m_editCell );
 
-		size_t	newPosition = editPos;
+		size_t	newPosition = m_editPos;
 		if( newPosition )
 			newPosition--;
 
@@ -157,10 +168,10 @@ class GridViewer : public ChildWindow
 	bool moveCursorRightWord( Device &hDC, bool includeSelection );
 	bool moveCursorRight( Device &hDC, bool includeSelection )
 	{
-		assert( editCell );
+		assert( m_editCell );
 
-		size_t	newPosition = editPos;
-		if( newPosition < editCell->strlen() )
+		size_t	newPosition = m_editPos;
+		if( newPosition < m_editCell->text.strlen() )
 			newPosition++;
 
 		return moveCursor( hDC, newPosition, includeSelection );
@@ -168,24 +179,24 @@ class GridViewer : public ChildWindow
 
 	RectBorder getCellVirtualPosition( size_t col, size_t row );
 	RectBorder getCellScreenPosition( size_t col, size_t row );
-	void drawCell( Device &hDC, const RectBorder &rect, const STRING &cellData, size_t offset );
+	void drawCell( Device &hDC, const RectBorder &rect, const TheCell &cellData, size_t offset );
 	void drawEditCell( Device &hDC, const RectBorder &rect );
 	void drawEditCell( Device &hDC )
 	{
-		assert( editCell );
+		assert( m_editCell );
 
-		RectBorder	rect = getCellScreenPosition( editCol, editRow );
+		RectBorder	rect = getCellScreenPosition( m_editCol, m_editRow );
 
 		drawEditCell( hDC, rect );
 	}
 	void deleteSelection( void )
 	{
-		assert( editCell );
-		size_t	start = gak::math::min( editPos, selPos );
-		size_t	end = gak::math::max( editPos, selPos );
+		assert( m_editCell );
+		size_t	start = gak::math::min( m_editPos, m_selPos );
+		size_t	end = gak::math::max( m_editPos, m_selPos );
 
-		editCell->delStr( start, end-start ); 
-		editPos = selPos = start;
+		m_editCell->text.delStr( start, end-start ); 
+		m_editPos = m_selPos = start;
 	}
 
 	virtual STRING getWindowClassName( void ) const;
@@ -205,102 +216,112 @@ class GridViewer : public ChildWindow
 	static const char className[];
 
 	GridViewer( BasicWindow *owner ) 
-	: ChildWindow( owner ), fixedCols( 0 ), fixedRows( 0 ), rowHeight(0), colWidth(0), horizOffset( 0 ), vertOffset( 0 ), mouseState( msNORMAL ), editCell( NULL )
+	: ChildWindow( owner ), m_fixedCols( 0 ), m_fixedRows( 0 ), m_rowHeight(0), 
+	m_colWidth(0), m_horizOffset( 0 ), m_vertOffset( 0 ), m_mouseState( msNORMAL ), 
+	m_editCell( NULL )
 	{
 		registerClass();
 	}
 	void createData( size_t newNumCols, size_t newNumRows )
 	{
-		editCell = NULL;
-		data.create( newNumCols, newNumRows );
-		colAttributes.setSize( newNumCols );
-		rowAttributes.setSize( newNumRows );
+		m_editCell = NULL;
+		m_data.create( newNumCols, newNumRows );
+		m_colAttributes.setSize( newNumCols );
+		m_rowAttributes.setSize( newNumRows );
 		calcDimensions();
 	}
 	void setNumCols( size_t newNumCols )
 	{
-		editCell = NULL;
-		data.setNumCols( newNumCols );
-		colAttributes.setSize( newNumCols );
+		m_editCell = NULL;
+		m_data.setNumCols( newNumCols );
+		m_colAttributes.setSize( newNumCols );
 		calcDimensions();
 	}
 	size_t getNumCols( void ) const
 	{
-		return data.getNumCols();
+		return m_data.getNumCols();
 	}
 	void setNumRows( size_t newNumRows )
 	{
-		editCell = NULL;
-		data.setNumRows( newNumRows );
-		rowAttributes.setSize( newNumRows );
+		m_editCell = NULL;
+		m_data.setNumRows( newNumRows );
+		m_rowAttributes.setSize( newNumRows );
 		calcDimensions();
 	}
 	void removeRow( size_t row )
 	{
-		editCell = NULL;
+		m_editCell = NULL;
 
-		data.removeRow( row );
-		rowAttributes.removeElementAt( row );
+		m_data.removeRow( row );
+		m_rowAttributes.removeElementAt( row );
 
 		calcDimensions();
 	}
 	size_t getNumRows( void ) const
 	{
-		return data.getNumRows();
+		return m_data.getNumRows();
 	}
 	void setFixedCols( size_t newNumCols )
 	{
-		assert( newNumCols < data.getNumCols() );
-		fixedCols = newNumCols;
+		assert( newNumCols < m_data.getNumCols() );
+		m_fixedCols = newNumCols;
 	}
 	void setFixedRows( size_t newNumRows )
 	{
-		assert( newNumRows < data.getNumRows() );
-		fixedRows = newNumRows;
+		assert( newNumRows < m_data.getNumRows() );
+		m_fixedRows = newNumRows;
 	}
 	void setColWidth( unsigned colWidth )
 	{
-		this->colWidth = colWidth;
+		m_colWidth = colWidth;
 		calcDimensions();
 	}
 	void setColWidth( size_t col, unsigned colWidth );
 	int getTrueColWidth( size_t colNum )
 	{
-		const ColAttribute	&col = colAttributes[colNum];
+		const ColAttribute	&col = m_colAttributes[colNum];
 		return col.right - col.left;
 	}
 	int getVisibleTextWidth( size_t colNum )
 	{
 		Size clientSize = getClientSize();
 
-		const ColAttribute	&col = colAttributes[colNum];
+		const ColAttribute	&col = m_colAttributes[colNum];
 		int visibleWidth = gak::math::min( col.right - col.left, clientSize.width - col.left );
 
 		return visibleWidth -2*cellPadding;
 	}
 	size_t getEditCol( void ) const
 	{
-		return editCol;
+		return m_editCol;
 	}
 	size_t getEditRow( void ) const
 	{
-		return editRow;
+		return m_editRow;
 	}
 	const STRING &getEditCell( void )
 	{
-		return getCell( editCol, editRow );
+		return getCell( m_editCol, m_editRow );
+	}
+	TheCell &getCellData( size_t col, size_t row )
+	{
+		return m_data( col, row );
 	}
 	STRING &getCell( size_t col, size_t row )
 	{
-		return data( col, row );
+		return m_data( col, row ).text;
 	}
 	const STRING &getCell( size_t col, size_t row ) const
 	{
-		return data( col, row );
+		return m_data( col, row ).text;
 	}
 	void setCell( size_t col, size_t row, const STRING &cellData )
 	{
-		data( col, row ) = cellData;
+		m_data( col, row ).text = cellData;
+	}
+	void setCellColor( size_t col, size_t row, int color )
+	{
+		m_data( col, row ).attribute.backgroundColor = color;
 	}
 
 	void clear( void );

@@ -135,17 +135,17 @@ void GridViewer::registerClass( void )
 
 void GridViewer::calcDimensions( const Size &size )
 {
-	assert( rowAttributes.size() == data.getNumRows() );
-	assert( colAttributes.size() == data.getNumCols() );
+	assert( m_rowAttributes.size() == m_data.getNumRows() );
+	assert( m_colAttributes.size() == m_data.getNumCols() );
 
-	if( data.getNumRows() && data.getNumCols() )
+	if( m_data.getNumRows() && m_data.getNumCols() )
 	{
-		double	colWidth = this->colWidth ? this->colWidth : double(size.width)/double(data.getNumCols());
+		double	colWidth = m_colWidth ? m_colWidth : double(size.width)/double(m_data.getNumCols());
 		double	rowHeight = getRowHeight();
 
 		double	left = 0;
 		for(
-			gak::PODarray<ColAttribute>::iterator it = colAttributes.begin(), endIT = colAttributes.end();
+			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
 			it != endIT;
 			++it
 		)
@@ -157,23 +157,23 @@ void GridViewer::calcDimensions( const Size &size )
 				left += colWidth;
 			it->right = unsigned(left+0.5);
 		}
-		totalWidth = int(left+0.5);
-		if( totalWidth > size.width )
+		m_totalWidth = int(left+0.5);
+		if( m_totalWidth > size.width )
 		{
 			showHorizScrollBar( 0, int(left-size.width) );
-			if( horizOffset  > totalWidth - size.width )
-				horizOffset = totalWidth - size.width;
-			setHorizScrollPos( horizOffset );
+			if( m_horizOffset  > m_totalWidth - size.width )
+				m_horizOffset = m_totalWidth - size.width;
+			setHorizScrollPos( m_horizOffset );
 		}
 		else
 		{
-			horizOffset = 0;
+			m_horizOffset = 0;
 			hideHorizScrollBar();
 		}
 
 		double	top = 0;
 		for(
-			gak::PODarray<RowAttribute>::iterator it = rowAttributes.begin(), endIT = rowAttributes.end();
+			gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
 			it != endIT;
 			++it
 		)
@@ -185,17 +185,17 @@ void GridViewer::calcDimensions( const Size &size )
 				top += rowHeight;
 			it->bottom = unsigned(top+0.5);
 		}
-		totalHeight = int(top+0.5);
-		if( totalHeight > size.height )
+		m_totalHeight = int(top+0.5);
+		if( m_totalHeight > size.height )
 		{
-			showVertScrollBar( 0, totalHeight-size.height );
-			if( vertOffset > totalHeight - size.height )
-				vertOffset = totalHeight - size.height;
-			setVertScrollPos( vertOffset );
+			showVertScrollBar( 0, m_totalHeight-size.height );
+			if( m_vertOffset > m_totalHeight - size.height )
+				m_vertOffset = m_totalHeight - size.height;
+			setVertScrollPos( m_vertOffset );
 		}
 		else
 		{
-			vertOffset = 0;
+			m_vertOffset = 0;
 			hideVertScrollBar();
 		}
 	}
@@ -206,12 +206,12 @@ RectBorder GridViewer::getCellVirtualPosition( size_t col, size_t row )
 {
 	RectBorder	rect;
 
-	const ColAttribute	&colAttribute = colAttributes[col];
+	const ColAttribute	&colAttribute = m_colAttributes[col];
 
 	rect.left = colAttribute.left;
 	rect.right = colAttribute.right;
 
-	const RowAttribute	&rowAttribute = rowAttributes[row];
+	const RowAttribute	&rowAttribute = m_rowAttributes[row];
 	rect.top = rowAttribute.top;
 	rect.bottom = rowAttribute.bottom;
 
@@ -222,21 +222,21 @@ RectBorder GridViewer::getCellScreenPosition( size_t col, size_t row )
 {
 	RectBorder	rect = getCellVirtualPosition( col, row );
 
-	if( col >= fixedCols )
+	if( col >= m_fixedCols )
 	{
-		rect.left -= horizOffset;
-		rect.right -= horizOffset;
+		rect.left -= m_horizOffset;
+		rect.right -= m_horizOffset;
 	}
-	if( row >= fixedRows )
+	if( row >= m_fixedRows )
 	{
-		rect.top -= vertOffset;
-		rect.bottom -= vertOffset;
+		rect.top -= m_vertOffset;
+		rect.bottom -= m_vertOffset;
 	}
 
 	return rect;
 }
 
-void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const STRING &cellData, size_t offset )
+void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const TheCell &cellData, size_t offset )
 {
 	doEnterFunction("GridViewer::drawCell");
 
@@ -246,23 +246,23 @@ void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const STRING &ce
 	textRect.right -= cellPadding;
 	textRect.bottom -= cellPadding;
 	if( offset )
-		hDC.drawText( cellData+offset, cellData.strlen()-offset, textRect, DT_NOPREFIX|DT_LEFT|DT_TOP );
+		hDC.drawText( cellData.text+offset, cellData.text.strlen()-offset, textRect, DT_NOPREFIX|DT_LEFT|DT_TOP );
 	else
-		hDC.drawText( cellData, textRect, DT_NOPREFIX|DT_LEFT|DT_TOP );
+		hDC.drawText( cellData.text, textRect, DT_NOPREFIX|DT_LEFT|DT_TOP );
 
-	if( &cellData == editCell && editPos != selPos )
+	if( &cellData == m_editCell && m_editPos != m_selPos )
 	{
 		Size	size;
 
-		hDC.getTextExtent( cellData+offset, selPos-offset, &size );
-		if( editPos < selPos )
+		hDC.getTextExtent( cellData.text+offset, m_selPos-offset, &size );
+		if( m_editPos < m_selPos )
 		{
 			textRect.right = textRect.left+size.width;
-			textRect.left += caretOffsetPixel;
+			textRect.left += m_caretOffsetPixel;
 		}
 		else
 		{
-			textRect.right = textRect.left + caretOffsetPixel;
+			textRect.right = textRect.left + m_caretOffsetPixel;
 			textRect.left += size.width;
 		}
 		hDC.setROP2( R2_NOT );
@@ -275,76 +275,76 @@ void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const STRING &ce
 
 void GridViewer::drawEditCell( Device &hDC, const RectBorder &rect )
 {
-	assert( editCell );
+	assert( m_editCell );
 
 	hDC.getBrush().createSyscolor( scWINDOW_FACE );
 	hDC.getPen().setStyle( Pen::psSolid ).setWidth( 1 );
 	hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
 
 	hideCaret();
-	drawCell( hDC, rect, *editCell, editOffset );
+	drawCell( hDC, rect, *m_editCell, m_editOffset );
 	showCaret();
 }
 
 void GridViewer::updateCaretPos( void )
 {
-	if( editCell )
+	if( m_editCell )
 	{
-		int left = colAttributes[editCol].left+1;
-		if( editCol >= fixedCols )
-			left -= horizOffset;
-		int top = rowAttributes[editRow].top;
-		if( editRow >= fixedRows )
+		int left = m_colAttributes[m_editCol].left+1;
+		if( m_editCol >= m_fixedCols )
+			left -= m_horizOffset;
+		int top = m_rowAttributes[m_editRow].top;
+		if( m_editRow >= m_fixedRows )
 		{
-			top -= vertOffset;
+			top -= m_vertOffset;
 		}
 
-		moveCaret( left+caretOffsetPixel, top );
+		moveCaret( left+m_caretOffsetPixel, top );
 	}
 }
 
 void GridViewer::moveCursor( size_t newEditCol, size_t newEditRow )
 {
-	assert( newEditCol < data.getNumCols() );
-	assert( newEditRow < data.getNumRows() );
+	assert( newEditCol < m_data.getNumCols() );
+	assert( newEditRow < m_data.getNumRows() );
 
-	if( newEditRow != editRow  || newEditCol != editCol )
+	if( newEditRow != m_editRow  || newEditCol != m_editCol )
 	{
-		selPos = editPos = 0;
-		editOffset = 0;
-		caretOffsetPixel = 0;
-		editCell = &data( newEditCol, newEditRow );
-		editRow = newEditRow;
-		editCol = newEditCol;
+		m_selPos = m_editPos = 0;
+		m_editOffset = 0;
+		m_caretOffsetPixel = 0;
+		m_editCell = &m_data( newEditCol, newEditRow );
+		m_editRow = newEditRow;
+		m_editCol = newEditCol;
 
-		if( newEditCol >= fixedCols && newEditRow >= fixedRows )
+		if( newEditCol >= m_fixedCols && newEditRow >= m_fixedRows )
 		{
 			Size		size= getClientSize();
-			RectBorder rect = getCellScreenPosition( editCol, editRow );
+			RectBorder rect = getCellScreenPosition( m_editCol, m_editRow );
 
-			int	minLeft = colAttributes[fixedCols].left;
+			int	minLeft = m_colAttributes[m_fixedCols].left;
 			if( rect.left < minLeft )
 			{
-				horizOffset -= minLeft-rect.left;
-				setHorizScrollPos( horizOffset );
+				m_horizOffset -= minLeft-rect.left;
+				setHorizScrollPos( m_horizOffset );
 			}
 			else if( rect.right > size.width )
 			{
 				int visibleWidth = math::min( rect.getWidth(), size.width-minLeft );
-				horizOffset = rect.left+horizOffset-size.width+visibleWidth; 
-				setHorizScrollPos( horizOffset );
+				m_horizOffset = rect.left+m_horizOffset-size.width+visibleWidth; 
+				setHorizScrollPos( m_horizOffset );
 			}
-			int	minTop = rowAttributes[fixedRows].top;
+			int	minTop = m_rowAttributes[m_fixedRows].top;
 			if( rect.top < minTop )
 			{
-				vertOffset -= minTop-rect.top;
-				setVertScrollPos( vertOffset );
+				m_vertOffset -= minTop-rect.top;
+				setVertScrollPos( m_vertOffset );
 			}
 			else if( rect.bottom > size.height )
 			{
 				int visibleHeight = math::min( rect.getHeight(), size.height-minTop );
-				vertOffset = rect.top+vertOffset-size.height+visibleHeight; 
-				setVertScrollPos( vertOffset );
+				m_vertOffset = rect.top+m_vertOffset-size.height+visibleHeight; 
+				setVertScrollPos( m_vertOffset );
 			}
 		}
 
@@ -355,24 +355,24 @@ void GridViewer::moveCursor( size_t newEditCol, size_t newEditRow )
 
 void GridViewer::moveCursorNextCell( void )
 {
-	size_t	newEditRow = editRow;
-	size_t	newEditCol = editCol+1;
-	if( newEditCol >= data.getNumCols() )
+	size_t	newEditRow = m_editRow;
+	size_t	newEditCol = m_editCol+1;
+	if( newEditCol >= m_data.getNumCols() )
 	{
 		if( getStyle() & gvCOL_CREATE )
 			setNumCols( newEditCol+1 );
 		else
 		{
 			newEditRow++;
-			newEditCol = fixedCols;
-			if( newEditRow >= data.getNumRows() )
+			newEditCol = m_fixedCols;
+			if( newEditRow >= m_data.getNumRows() )
 			{
 				if( getStyle() & gvROW_CREATE )
 					setNumRows( newEditRow+1 );
 				else
 				{
-					newEditRow = editRow;
-					newEditCol = editCol;
+					newEditRow = m_editRow;
+					newEditCol = m_editCol;
 				}
 			}
 		}
@@ -382,32 +382,32 @@ void GridViewer::moveCursorNextCell( void )
 
 void GridViewer::moveCursorPrevCell( void )
 {
-	if( editCol > fixedCols )
+	if( m_editCol > m_fixedCols )
 	{
-		moveCursor( editCol-1, editRow );
+		moveCursor( m_editCol-1, m_editRow );
 	}
-	else if( editRow > fixedRows )
+	else if( m_editRow > m_fixedRows )
 	{
-		moveCursor( data.getNumCols()-1, editRow-1 );
+		moveCursor( m_data.getNumCols()-1, m_editRow-1 );
 	}
 }
 
 bool GridViewer::moveCursorLeftWord( Device &hDC, bool includeSelection )
 {
-	assert( editCell );
+	assert( m_editCell );
 
-	size_t newEditPos = editPos;
+	size_t newEditPos = m_editPos;
 	while( newEditPos )
 	{
-		if( !isspace( (*editCell)[--newEditPos] ) )
+		if( !isspace( m_editCell->text[--newEditPos] ) )
 /*v*/		break;
 	}
 	while( newEditPos )
 	{
-		if( isspace( (*editCell)[--newEditPos] ) )
+		if( isspace( m_editCell->text[--newEditPos] ) )
 /*v*/		break;
 	}
-	if( isspace( (*editCell)[newEditPos] ) )
+	if( isspace( m_editCell->text[newEditPos] ) )
 		newEditPos++;
 
 	return moveCursor( hDC, newEditPos, includeSelection );
@@ -415,20 +415,20 @@ bool GridViewer::moveCursorLeftWord( Device &hDC, bool includeSelection )
 
 bool GridViewer::moveCursorRightWord( Device &hDC, bool includeSelection )
 {
-	assert( editCell );
-	size_t	len = editCell->strlen();
+	assert( m_editCell );
+	size_t	len = m_editCell->text.strlen();
 
-	size_t newEditPos = editPos;
+	size_t newEditPos = m_editPos;
 	while( newEditPos < len )
 	{
-		if( isspace( (*editCell)[newEditPos] ) )
+		if( isspace( m_editCell->text[newEditPos] ) )
 /*v*/		break;
 
 		newEditPos++;
 	}
 	while( newEditPos < len )
 	{
-		if( !isspace( (*editCell)[newEditPos] ) )
+		if( !isspace( m_editCell->text[newEditPos] ) )
 /*v*/		break;
 
 		newEditPos++;
@@ -439,39 +439,39 @@ bool GridViewer::moveCursorRightWord( Device &hDC, bool includeSelection )
 
 bool GridViewer::moveCursor( Device &hDC, size_t newPosition, bool includeSelection )
 {
-	assert( editCell );
+	assert( m_editCell );
 
-	bool	scrolled = editPos != selPos;
+	bool	scrolled = m_editPos != m_selPos;
 
-	if( newPosition <= editOffset )
+	if( newPosition <= m_editOffset )
 	{
-		scrolled = scrolled || newPosition < editOffset;
+		scrolled = scrolled || newPosition < m_editOffset;
 
-		editOffset = newPosition;
-		caretOffsetPixel = 0;
+		m_editOffset = newPosition;
+		m_caretOffsetPixel = 0;
 	}
 	else
 	{
-		if( newPosition > editCell->strlen() )
-			newPosition = editCell->strlen();
+		if( newPosition > m_editCell->text.strlen() )
+			newPosition = m_editCell->text.strlen();
 
 		Size	size;
-		hDC.getTextExtent( *editCell, editOffset, newPosition-editOffset, &size );
-		caretOffsetPixel = size.width;
+		hDC.getTextExtent( m_editCell->text, m_editOffset, newPosition-m_editOffset, &size );
+		m_caretOffsetPixel = size.width;
 
-		int	width = getVisibleTextWidth( editCol );
+		int	width = getVisibleTextWidth( m_editCol );
 
-		while( width < caretOffsetPixel )
+		while( width < m_caretOffsetPixel )
 		{
-			hDC.getTextExtent( (*editCell)[editOffset++], &size );
-			caretOffsetPixel -= size.width;
+			hDC.getTextExtent( m_editCell->text[m_editOffset++], &size );
+			m_caretOffsetPixel -= size.width;
 			scrolled = true;
 		}
 	}
 
-	editPos = newPosition;
+	m_editPos = newPosition;
 	if( includeSelection )
-		selPos = newPosition;
+		m_selPos = newPosition;
 	else
 		scrolled = true;
 
@@ -504,19 +504,19 @@ ProcessStatus GridViewer::handleVertScroll( VertScrollCode scrollCode, int nPos,
 			nPos = 0;
 			break;
 		case vscLINE_UP:
-			nPos = vertOffset - rowHeight;
+			nPos = m_vertOffset - rowHeight;
 			break;
 		case vscPAGE_UP:
-			nPos = vertOffset - size.height;
+			nPos = m_vertOffset - size.height;
 			break;
 		case vscLINE_DOWN:
-			nPos = vertOffset + rowHeight;
+			nPos = m_vertOffset + rowHeight;
 			break;
 		case vscPAGE_DOWN:
-			nPos = vertOffset + size.height;
+			nPos = m_vertOffset + size.height;
 			break;
 		case vscBOTTOM:
-			nPos = totalHeight - size.height;
+			nPos = m_totalHeight - size.height;
 			break;
 
 		case vscTHUMB_POSITION:
@@ -530,11 +530,11 @@ ProcessStatus GridViewer::handleVertScroll( VertScrollCode scrollCode, int nPos,
 	int maxNpos;
 	if( nPos < 0 )
 		nPos = 0;
-	else if( nPos > (maxNpos = totalHeight - size.height) )
+	else if( nPos > (maxNpos = m_totalHeight - size.height) )
 		nPos = maxNpos;
 
 	setVertScrollPos( nPos );
-	vertOffset = nPos;
+	m_vertOffset = nPos;
 	updateCaretPos();
 
 	invalidateWindow();
@@ -552,19 +552,19 @@ ProcessStatus GridViewer::handleHorizScroll( HorizScrollCode scrollCode, int nPo
 			nPos = 0;
 			break;
 		case hscLINE_LEFT:
-			nPos = horizOffset - rowHeight;
+			nPos = m_horizOffset - rowHeight;
 			break;
 		case hscPAGE_LEFT:
-			nPos = horizOffset - size.width;
+			nPos = m_horizOffset - size.width;
 			break;
 		case hscLINE_RIGHT:
-			nPos = horizOffset + rowHeight;
+			nPos = m_horizOffset + rowHeight;
 			break;
 		case hscPAGE_RIGHT:
-			nPos = horizOffset + size.width;
+			nPos = m_horizOffset + size.width;
 			break;
 		case hscRIGHT:
-			nPos = totalWidth - size.width;
+			nPos = m_totalWidth - size.width;
 			break;
 
 		case hscTHUMB_POSITION:
@@ -578,11 +578,11 @@ ProcessStatus GridViewer::handleHorizScroll( HorizScrollCode scrollCode, int nPo
 	int maxNpos;
 	if( nPos < 0 )
 		nPos = 0;
-	else if( nPos > (maxNpos = totalWidth - size.width) )
+	else if( nPos > (maxNpos = m_totalWidth - size.width) )
 		nPos = maxNpos;
 
 	setHorizScrollPos( nPos );
-	horizOffset = nPos;
+	m_horizOffset = nPos;
 	updateCaretPos();
 
 	invalidateWindow();
@@ -600,13 +600,13 @@ ProcessStatus GridViewer::handleResize( const Size &newSize )
 ProcessStatus GridViewer::handleRepaint( Device &hDC )
 {
 	doEnterFunction("GridViewer::handleRepaint");
-	assert( rowAttributes.size() == data.getNumRows() );
-	assert( colAttributes.size() == data.getNumCols() );
+	assert( m_rowAttributes.size() == m_data.getNumRows() );
+	assert( m_colAttributes.size() == m_data.getNumCols() );
 
 	Size	size = getSize();
 
-	int	fixedHeight = fixedRows ? rowAttributes[fixedRows-1].bottom	: 0;
-	int	fixedWidth  = fixedCols ? colAttributes[fixedCols-1].right	: 0;
+	int	fixedHeight = m_fixedRows ? m_rowAttributes[m_fixedRows-1].bottom	: 0;
+	int	fixedWidth  = m_fixedCols ? m_colAttributes[m_fixedCols-1].right	: 0;
 
 	if( getStyle() & gvGRID )
 	{
@@ -615,14 +615,14 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 
 		unsigned col=0;
 		for(
-			gak::PODarray<ColAttribute>::iterator it = colAttributes.begin(), endIT = colAttributes.end();
+			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
 			it != endIT;
 			++it, ++col
 		)
 		{
 			int	pos = it->left;
-			if( col >= fixedCols )
-				pos -= horizOffset;
+			if( col >= m_fixedCols )
+				pos -= m_horizOffset;
 			if( pos >= size.width )
 				break;
 			if( pos > 0 )
@@ -633,14 +633,14 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 
 		unsigned row=0;
 		for(
-			gak::PODarray<RowAttribute>::iterator it = rowAttributes.begin(), endIT = rowAttributes.end();
+			gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
 			it != endIT;
 			++it, ++row
 		)
 		{
 			int pos = it->top;
-			if( row >= fixedRows )
-				pos -= vertOffset;
+			if( row >= m_fixedRows )
+				pos -= m_vertOffset;
 			if( pos >= size.height )
 				break;
 			if( pos > 0  )
@@ -648,14 +648,14 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 		}
 	}
 
-	if( data.getNumRows() && data.getNumCols() )
+	if( m_data.getNumRows() && m_data.getNumCols() )
 	{
 		doEnterFunction("showText");
 		size_t col=0;
 		hDC.selectFont( getFont() );
 		hDC.clrBackgroundColor();
 		for(
-			gak::PODarray<ColAttribute>::iterator it = colAttributes.begin(), endIT = colAttributes.end();
+			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
 			it != endIT;
 			++it, ++col
 		)
@@ -663,10 +663,10 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 			RectBorder	rect;
 			rect.left = it->left;
 			rect.right = it->right;
-			if( col >= fixedCols )
+			if( col >= m_fixedCols )
 			{
-				rect.left -= horizOffset;
-				rect.right -= horizOffset;
+				rect.left -= m_horizOffset;
+				rect.right -= m_horizOffset;
 			}
 			if( rect.left > size.width )
 /*v*/			break;
@@ -675,35 +675,43 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 			{
 				size_t row=0;
 				for(
-					gak::PODarray<RowAttribute>::iterator it = rowAttributes.begin(), endIT = rowAttributes.end();
+					gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
 					it != endIT;
 					++it, ++row
 				)
 				{
 					rect.top = it->top;
 					rect.bottom = it->bottom;
-					if( vertOffset && row >= fixedRows )
+					if( m_vertOffset && row >= m_fixedRows )
 					{
-						rect.top -= vertOffset;
-						rect.bottom -= vertOffset;
+						rect.top -= m_vertOffset;
+						rect.bottom -= m_vertOffset;
 					}
 
 					if( rect.top > size.height )
 /*v*/					break;
 					if( rect.bottom > 0 )
 					{
-						if( row < fixedRows || col < fixedCols )
+						const TheCell &cellData = getCellData( col, row );
+
+						if( row < m_fixedRows || col < m_fixedCols )
 						{
 							doEnterFunction("prepare Fixed Cells");
-							if( row < fixedRows && col < fixedCols )
+							if( row < m_fixedRows && col < m_fixedCols )
 								hDC.removeClipping();
-							else if( row < fixedRows )
+							else if( row < m_fixedRows )
 								hDC.setClipping( fixedWidth, 0, size.width, size.height );
-							else if( col < fixedCols )
+							else if( col < m_fixedCols )
 								hDC.setClipping( 0, fixedHeight, size.width, size.height );
 
 
 							hDC.getBrush().createSyscolor( scDIALOG_FACE );
+							hDC.getPen().setStyle( Pen::psNull );
+							hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
+						}
+						else if( cellData.attribute.backgroundColor > 0 )
+						{
+							hDC.getBrush().create( cellData.attribute.backgroundColor );
 							hDC.getPen().setStyle( Pen::psNull );
 							hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
 						}
@@ -712,12 +720,12 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 							hDC.setClipping( fixedWidth, fixedHeight, size.width, size.height );
 						}
 
-						const STRING &cellData = getCell( col, row );
-						if( editCell == &cellData )
+
+						if( m_editCell == &cellData )
 						{
 							drawEditCell( hDC, rect );
 						}
-						else if( !cellData.isEmpty() )
+						else if( !cellData.text.isEmpty() )
 						{
 							drawCell( hDC, rect, cellData, 0 );
 						}
@@ -732,40 +740,40 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 
 ProcessStatus GridViewer::handleMouseMove( WPARAM /*modifier*/, const Point &position )
 {
-	MouseState		newState = mouseState;
+	MouseState		newState = m_mouseState;
 	unsigned long	style = getStyle();
 
-	if( (mouseState == msNORMAL || mouseState == msSTART_COL_SIZER) && (style & gvCOL_SIZABLE) )
+	if( (m_mouseState == msNORMAL || m_mouseState == msSTART_COL_SIZER) && (style & gvCOL_SIZABLE) )
 	{
 		newState = msNORMAL;
 		size_t	col = 0;
 		for(
-			gak::PODarray<ColAttribute>::iterator it = colAttributes.begin(), endIT = colAttributes.end();
+			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
 			it != endIT;
 			++it, ++col
 		)
 		{
 			int right = it->right;
-			if( col >= fixedCols )
-				right -= horizOffset;
+			if( col >= m_fixedCols )
+				right -= m_horizOffset;
 
 			if( abs(int(right - position.x)) <= mouseSizeWidth )
 			{
 				newState = msSTART_COL_SIZER;
-				sizerCol = col;
+				m_sizerCol = col;
 				break;
 			}
 		}
 	}
-	else if( mouseState == msDO_COL_SIZER )
+	else if( m_mouseState == msDO_COL_SIZER )
 	{
-		int left = colAttributes[sizerCol].left;
-		if( sizerCol >= fixedCols )
-			left -= horizOffset;
+		int left = m_colAttributes[m_sizerCol].left;
+		if( m_sizerCol >= m_fixedCols )
+			left -= m_horizOffset;
 		int newWidth = position.x - left;
 		if( newWidth > mouseSizeWidth*2 )
 		{
-			setColWidth( sizerCol, newWidth );
+			setColWidth( m_sizerCol, newWidth );
 			invalidateWindow();
 		}
 	}
@@ -774,10 +782,10 @@ ProcessStatus GridViewer::handleMouseMove( WPARAM /*modifier*/, const Point &pos
 		SetCursor( LoadCursor( NULL, IDC_ARROW ) );
 	}
 
-	if( newState != mouseState )
+	if( newState != m_mouseState )
 	{
-		mouseState = newState;
-		if( mouseState == msSTART_COL_SIZER || mouseState == msDO_COL_SIZER )
+		m_mouseState = newState;
+		if( m_mouseState == msSTART_COL_SIZER || m_mouseState == msDO_COL_SIZER )
 			SetCursor( LoadCursor( NULL, IDC_SIZEWE ) );
 		else
 			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
@@ -790,30 +798,30 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 {
 	unsigned long	style = getStyle();
 
-	if( leftButton == lbDOWN && mouseState == msSTART_COL_SIZER )
+	if( leftButton == lbDOWN && m_mouseState == msSTART_COL_SIZER )
 	{
-		mouseState = msDO_COL_SIZER;
+		m_mouseState = msDO_COL_SIZER;
 		captureMouse();
 		return psPROCESSED;
 	}
-	else if( leftButton == lbDOWN && mouseState == msNORMAL && (style & (gvEDITABLE|gvCAPTION_EDITABLE)) )
+	else if( leftButton == lbDOWN && m_mouseState == msNORMAL && (style & (gvEDITABLE|gvCAPTION_EDITABLE)) )
 	{
-		STRING	*lastEditCell = editCell;
-		editCell = NULL;
+		TheCell	*lastEditCell = m_editCell;
+		m_editCell = NULL;
 		int		caretLeft;
 		size_t	col = 0;
 		for(
-			gak::PODarray<ColAttribute>::iterator it = colAttributes.begin(), endIT = colAttributes.end();
+			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
 			it != endIT;
 			++it, ++col
 		)
 		{
 			int left = it->left;
 			int right = it->right;
-			if( horizOffset && col >= fixedCols )
+			if( m_horizOffset && col >= m_fixedCols )
 			{
-				left -= horizOffset;
-				right -= horizOffset;
+				left -= m_horizOffset;
+				right -= m_horizOffset;
 			}
 
 			if( left < position.x && position.x < right )
@@ -822,22 +830,22 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 /*v*/			break;
 			}
 		}
-		if( col < data.getNumCols() )
+		if( col < m_data.getNumCols() )
 		{
 			size_t row=0;
 			for(
-				gak::PODarray<RowAttribute>::iterator it = rowAttributes.begin(), endIT = rowAttributes.end();
+				gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
 				it != endIT;
 				++it, ++row
 			)
 			{
-				bool	isCaption = (col < fixedCols || row < fixedRows);
+				bool	isCaption = (col < m_fixedCols || row < m_fixedRows);
 				int	top = it->top;
 				int	bottom = it->bottom;
-				if( vertOffset && row >= fixedRows )
+				if( m_vertOffset && row >= m_fixedRows )
 				{
-					top -= vertOffset;
-					bottom -= vertOffset;
+					top -= m_vertOffset;
+					bottom -= m_vertOffset;
 				}
 				if( top < position.y && position.y < bottom )
 				{
@@ -848,27 +856,27 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 
 					focus();
 					createCaret( caretLeft+1, top, bottom-top );
-					editCol = col;
-					editRow = row;
-					editCell = &getCell( col, row );
-					selPos = editPos = 0;
-					editOffset = 0;
-					caretOffsetPixel = 0;
+					m_editCol = col;
+					m_editRow = row;
+					m_editCell = &getCellData( col, row );
+					m_selPos = m_editPos = 0;
+					m_editOffset = 0;
+					m_caretOffsetPixel = 0;
 /*v*/				break;
 				}
 			}
 		}
-		if( lastEditCell != editCell )
+		if( lastEditCell != m_editCell )
 		{
-			if( !editCell )
+			if( !m_editCell )
 				destroyCaret();
 			invalidateWindow();
 		}
 
 	}
-	else if( leftButton == lbUP && mouseState == msDO_COL_SIZER )
+	else if( leftButton == lbUP && m_mouseState == msDO_COL_SIZER )
 	{
-		mouseState = msSTART_COL_SIZER;
+		m_mouseState = msSTART_COL_SIZER;
 		releaseMouse();
 		return psPROCESSED;
 	}
@@ -878,7 +886,7 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 
 ProcessStatus GridViewer::handleKeyDown( int key )
 {
-	if( editCell )
+	if( m_editCell )
 	{
 		DrawDevice hDC( this );
 
@@ -889,7 +897,7 @@ ProcessStatus GridViewer::handleKeyDown( int key )
 					drawEditCell( hDC );
 				break;
 			case VK_END:
-				if( moveCursor( hDC, editCell->strlen(), !isShiftKey() ) )
+				if( moveCursor( hDC, m_editCell->text.strlen(), !isShiftKey() ) )
 					drawEditCell( hDC );
 				break;
 			case VK_RIGHT:
@@ -907,29 +915,29 @@ ProcessStatus GridViewer::handleKeyDown( int key )
 					paste();
 				break;
 			case VK_DELETE:
-				if( editPos < editCell->strlen() || selPos < editCell->strlen() )
+				if( m_editPos < m_editCell->text.strlen() || m_selPos < m_editCell->text.strlen() )
 				{
-					if( editPos != selPos )
+					if( m_editPos != m_selPos )
 					{
 						if( isShiftKey() )
 							copy();
 						deleteSelection();
 					}
 					else
-						editCell->delChar( editPos );
+						m_editCell->text.delChar( m_editPos );
 					drawEditCell( hDC );
 					notifyParent();
 				}
 				break;
 			case VK_BACK:
-				if( editPos || selPos )
+				if( m_editPos || m_selPos )
 				{
-					if( editPos != selPos )
+					if( m_editPos != m_selPos )
 						deleteSelection();
 					else
 					{
 						moveCursorLeft( hDC, true );
-						editCell->delChar( editPos );
+						m_editCell->text.delChar( m_editPos );
 					}
 					drawEditCell( hDC );
 					notifyParent();
@@ -943,19 +951,19 @@ ProcessStatus GridViewer::handleKeyDown( int key )
 				break;
 			case VK_RETURN:
 			{
-				size_t	newEditRow = editRow+1;
+				size_t	newEditRow = m_editRow+1;
 
-				if( newEditRow >= data.getNumRows() )
+				if( newEditRow >= m_data.getNumRows() )
 				{
 					if( getStyle() & gvROW_CREATE )
 						setNumRows( newEditRow+1 );
 					else
 					{
-						newEditRow = editRow;
+						newEditRow = m_editRow;
 					}
 				}
 
-				moveCursor( editCol, newEditRow );
+				moveCursor( m_editCol, newEditRow );
 				break;
 			}
 			default:
@@ -969,7 +977,7 @@ ProcessStatus GridViewer::handleKeyDown( int key )
 
 ProcessStatus GridViewer::handleCharacterInput( int c )
 {
-	if( editCell )
+	if( m_editCell )
 	{
 		if( c == 'C' - 'A' + 1 )
 		{
@@ -992,10 +1000,10 @@ ProcessStatus GridViewer::handleCharacterInput( int c )
 
 			hideCaret();
 
-			if( editPos != selPos )
+			if( m_editPos != m_selPos )
 				deleteSelection();
 
-			editCell->insChar( editPos, char(c) );
+			m_editCell->text.insChar( m_editPos, char(c) );
 			moveCursorRight( context, true );
 			drawEditCell( context );
 
@@ -1016,27 +1024,27 @@ ProcessStatus GridViewer::handleCharacterInput( int c )
 
 void GridViewer::setColWidth( size_t col, unsigned colWidth )
 {
-	if( col < data.getNumCols() )
+	if( col < m_data.getNumCols() )
 	{
-		colAttributes[col].width = colWidth;
+		m_colAttributes[col].width = colWidth;
 	}
-	if( col == editCol && editCell )
+	if( col == m_editCol && m_editCell )
 	{
 		DrawDevice dc( this );
-		moveCursor( dc, editPos, false );
+		moveCursor( dc, m_editPos, false );
 	}
 	calcDimensions();
 }
 
 void GridViewer::clear( void )
 {
-	if( editCell && editPos != selPos )
+	if( m_editCell && m_editPos != m_selPos )
 	{
-		size_t	start = math::min( editPos, selPos );
-		size_t	end = math::max( editPos, selPos );
+		size_t	start = math::min( m_editPos, m_selPos );
+		size_t	end = math::max( m_editPos, m_selPos );
 
-		editCell->delStr( start, end-start );
-		selPos = editPos;
+		m_editCell->text.delStr( start, end-start );
+		m_selPos = m_editPos;
 		DrawDevice dc( this );
 		drawEditCell( dc );
 		notifyParent();
@@ -1045,15 +1053,15 @@ void GridViewer::clear( void )
 
 void GridViewer::copy ( void )
 {
-	if( editCell && editPos != selPos )
+	if( m_editCell && m_editPos != m_selPos )
 	{
 		Clipboard	clip( this );
 		if( clip )
 		{
-			size_t	start = math::min( editPos, selPos );
-			size_t	end = math::max( editPos, selPos );
+			size_t	start = math::min( m_editPos, m_selPos );
+			size_t	end = math::max( m_editPos, m_selPos );
 
-			STRING	text = editCell->subString( start, end-start );
+			STRING	text = m_editCell->text.subString( start, end-start );
 			WindowsBuffer	clipBuff;
 			oWindowsStream	winStream( clipBuff );
 			winStream << text << '\0';
@@ -1066,7 +1074,7 @@ void GridViewer::copy ( void )
 
 void GridViewer::paste( void )
 {
-	if( editCell )
+	if( m_editCell )
 	{
 		Clipboard	clip( this, CF_TEXT );
 		if( clip )
@@ -1074,20 +1082,20 @@ void GridViewer::paste( void )
 			ClipboardMemory	clipData( CF_TEXT );
 			if( clipData.is_open() )
 			{
-				size_t	start = math::min( editPos, selPos );
-				size_t	end = math::max( editPos, selPos );
+				size_t	start = math::min( m_editPos, m_selPos );
+				size_t	end = math::max( m_editPos, m_selPos );
 				size_t	len = end - start;
 
 				if( len )
-					editCell->delStr( start, end-start );
+					m_editCell->text.delStr( start, end-start );
 
 				STRING				text;
 				iClipboardStream	clipStream( clipData );
 				clipStream >> text;
 
-				editCell->insStr( editPos, text );
+				m_editCell->text.insStr( m_editPos, text );
 				DrawDevice	hDC( this );
-				moveCursor( hDC, editPos + text.strlen(), true ); 
+				moveCursor( hDC, m_editPos + text.strlen(), true ); 
 				drawEditCell( hDC );
 				notifyParent();
 			}

@@ -145,6 +145,11 @@ void TranslateForm::loadNewDict( const STRING &newLanguage )
 			if( translation.isEmpty() )
 			{
 				translation = original;
+				translationsGrid->setCellColor( 1, i, 0xAAAAFF );
+			}
+			else
+			{
+				translationsGrid->setCellColor( 1, i, 0xAAFFAA );
 			}
 			translationsGrid->setCell( 1, i, translation );
 		}
