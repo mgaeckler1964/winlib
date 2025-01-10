@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GuiBuilder\DesignerForm.h" />
+    <ClInclude Include="GuiBuilder\guiBuilder.gui.h" />
     <ClInclude Include="GuiBuilder\GuiBuilderWindow.h" />
     <ClInclude Include="GuiBuilder\guiBuilder_rc.h" />
     <ClInclude Include="GuiBuilder\StringListEditor.h" />

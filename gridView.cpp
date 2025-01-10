@@ -3,10 +3,10 @@
 		Module:			gridView.cpp
 		Description:	A control diosplaying data in a grid
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -41,6 +41,7 @@
 #include <WINLIB/gridView.h>
 #include <WINLIB\DEVICE.H>
 #include <WINLIB/RAW_DATA.H>
+#include <WINLIB/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -308,14 +309,22 @@ void GridViewer::moveCursor( size_t newEditCol, size_t newEditRow )
 	assert( newEditCol < m_data.getNumCols() );
 	assert( newEditRow < m_data.getNumRows() );
 
-	if( newEditRow != m_editRow  || newEditCol != m_editCol )
+	if( !m_editCell || newEditRow != m_editRow  || newEditCol != m_editCol )
 	{
+		if( m_editCell )
+		{
+			getParent()->postMessage(WM_GRID_ITEM_EXIT, getId(), MAKELPARAM(m_editCol, m_editRow) );
+		}
 		m_selPos = m_editPos = 0;
 		m_editOffset = 0;
 		m_caretOffsetPixel = 0;
 		m_editCell = &m_data( newEditCol, newEditRow );
 		m_editRow = newEditRow;
 		m_editCol = newEditCol;
+		if( m_editCell )
+		{
+			getParent()->postMessage(WM_GRID_ITEM_ENTER, getId(), MAKELPARAM(m_editCol, m_editRow) );
+		}
 
 		if( newEditCol >= m_fixedCols && newEditRow >= m_fixedRows )
 		{
@@ -807,6 +816,9 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 	else if( leftButton == lbDOWN && m_mouseState == msNORMAL && (style & (gvEDITABLE|gvCAPTION_EDITABLE)) )
 	{
 		TheCell	*lastEditCell = m_editCell;
+		size_t lastCol = m_editCol;
+		size_t lastRow = m_editRow;
+
 		m_editCell = NULL;
 		int		caretLeft;
 		size_t	col = 0;
@@ -868,8 +880,20 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 		}
 		if( lastEditCell != m_editCell )
 		{
-			if( !m_editCell )
+			if( lastEditCell )
+			{
+				getParent()->postMessage(WM_GRID_ITEM_EXIT, getId(), MAKELPARAM(lastCol, lastRow) );
+			}
+
+			if( m_editCell )
+			{
+				getParent()->postMessage(WM_GRID_ITEM_ENTER, getId(), MAKELPARAM(m_editCol, m_editRow) );
+			}
+			else
+			{
 				destroyCaret();
+			}
+
 			invalidateWindow();
 		}
 

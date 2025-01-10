@@ -1,7 +1,7 @@
 /*
-		Project:		GUI Builder
-		Module:			TranslateForm.cpp
-		Description:	The translator
+		Project:		Windows Class Library
+		Module:			messages.h
+		Description:	User defined windows messages
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -30,6 +30,9 @@
 */
 
 
+#ifndef WINLIB_MESSAGES_H
+#define WINLIB_MESSAGES_H
+
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -37,10 +40,6 @@
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
-
-#include "TranslateForm.h"
-
-#include <WINLIB/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -57,11 +56,20 @@
 #	pragma option -pc
 #endif
 
+namespace winlib
+{
+
 // --------------------------------------------------------------------- //
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-// --------------------------------------------------------------------- //
+static const UINT WM_XML_ITEM_CLICK		= WM_USER;
+static const UINT WM_XML_ITEM_CHANGED	= WM_USER+1;
+
+static const UINT WM_GRID_ITEM_ENTER	= WM_USER+20;
+static const UINT WM_GRID_ITEM_EXIT		= WM_USER+21;
+
+	// --------------------------------------------------------------------- //
 // ----- macros -------------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
@@ -109,56 +117,6 @@
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-void TranslateForm::saveDict( void )
-{
-	size_t max = m_captions.size();
-
-	if( m_currentDict )
-	{
-		for( size_t i=0; i<max; ++i )
-		{
-			STRING	original = translationsGrid->getCell( 0, i ),
-					translation = translationsGrid->getCell( 1, i );
-			if( translation.isEmpty() || translation == original )
-			{
-				m_currentDict->removeElementByKey( original );
-			}
-			else
-			{
-				(*m_currentDict)[original] = translation;
-			}
-		}
-	}
-}
-
-void TranslateForm::loadNewDict( const STRING &newLanguage )
-{
-	size_t max = m_captions.size();
-
-	saveDict();
-
-	if( !newLanguage.isEmpty() )
-	{
-		m_currentDict = &m_dictionarys[newLanguage];
-		for( size_t i=0; i<max; ++i )
-		{
-			STRING	original = translationsGrid->getCell( 0, i );
-			STRING	translation = (*m_currentDict)[original];
-			if( translation.isEmpty() )
-			{
-				translation = original;
-				translationsGrid->setCellColor( 1, i, 0xAAAAFF );
-			}
-			else
-			{
-				translationsGrid->setCellColor( 1, i, 0xAAFFAA );
-			}
-			translationsGrid->setCell( 1, i, translation );
-		}
-		translationsGrid->invalidateWindow();
-	}
-}
-
 // --------------------------------------------------------------------- //
 // ----- class protected ----------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -166,93 +124,7 @@ void TranslateForm::loadNewDict( const STRING &newLanguage )
 // --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-
-ProcessStatus TranslateForm::handleCreate( void )
-{
-	size_t	row = 0;
-	translationsGrid->createData( 2, m_captions.size() );
-	translationsGrid->setFixedCols( 1 );
-	for(
-		Captions::const_iterator	it = m_captions.cbegin(), endIT = m_captions.cend();
-		it != endIT;
-		++it
-	)
-	{
-		translationsGrid->setCell( 0, row++, *it );
-	}
-
-	for(
-		Dictionarys::const_iterator it = m_dictionarys.cbegin(), endIT = m_dictionarys.cend();
-		it != endIT;
-		++it
-	)
-	{
-		targetLanguageCombo->addEntry( it->getKey() );
-	}
-	targetLanguageCombo->selectEntry( 0 );
-	handleSelectionChange( targetLanguageCombo_id );
-	return TranslationForm_form::handleCreate();
-}
    
-ProcessStatus TranslateForm::handleEditChange( int control )
-{
-	if( control == targetLanguageCombo_id )
-	{
-		STRING	newLanguage = targetLanguageCombo->getText();
-		loadNewDict( newLanguage );
-		targetLanguageCombo->addEntry( targetLanguageCombo->getText() );
-		return psPROCESSED;
-	}
-	else
-	{
-		return TranslationForm_form::handleEditChange( control );
-	}
-}
-
-
-ProcessStatus TranslateForm::handleOk()
-{
-	saveDict();
-
-	return TranslationForm_form::handleOk();
-}
-
-ProcessStatus TranslateForm::handleSelectionChange( int control )
-{
-	if( control == targetLanguageCombo_id )
-	{
-		STRING	newLanguage = targetLanguageCombo->getSelectedText();
-		loadNewDict( newLanguage );
-		return psPROCESSED;
-	}
-	else
-	{
-		return TranslationForm_form::handleSelectionChange( control );
-	}
-}
-
-ProcessStatus TranslateForm::handleMessage( UINT msg, WPARAM control, LPARAM lParam )
-{
-	if( control == translationsGrid_id && msg == WM_GRID_ITEM_EXIT )
-	{
-		int col = LOWORD(lParam);
-		int row = HIWORD(lParam);
-
-		STRING	original = translationsGrid->getCell( 0, row ),
-				translation = translationsGrid->getCell( 1, row );
-		if( translation.isEmpty() || translation == original )
-		{
-			translationsGrid->setCellColor( 1, row, 0xAAAAFF );
-		}
-		else
-		{
-			translationsGrid->setCellColor( 1, row, 0xAAFFAA );
-		}
-		return psPROCESSED;
-	}
-	return TranslationForm_form::handleMessage( msg, control, lParam );
-}
-
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -261,6 +133,8 @@ ProcessStatus TranslateForm::handleMessage( UINT msg, WPARAM control, LPARAM lPa
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+}	// namespace winlib
+
 #ifdef __BORLANDC__
 #	pragma option -RT.
 #	pragma option -b.
@@ -268,3 +142,4 @@ ProcessStatus TranslateForm::handleMessage( UINT msg, WPARAM control, LPARAM lPa
 #	pragma option -p.
 #endif
 
+#endif

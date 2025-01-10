@@ -3,10 +3,10 @@
 		Module:			xmlEditorChild.cpp
 		Description:	A control used to edit XML data
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -46,6 +46,7 @@
 
 #include <winlib/xmlEditorChild.h>
 #include <winlib/device.h>
+#include <WINLIB/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -897,7 +898,7 @@ ProcessStatus XMLeditorChild::handleLeftButton(
 		);
 		if( theElement )
 		{
-			getParent()->postMessage( WM_XML_ITEM_CLICK, 0, (long)theElement );
+			getParent()->postMessage( WM_XML_ITEM_CLICK, 0, (LPARAM)theElement );
 			enableCursor();
 		}
 		else
@@ -980,7 +981,7 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 							&cursorPos
 						);
 					}
-					getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (long)xmlText );
+					getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
 				}
 				break;
 			}
@@ -1005,7 +1006,7 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 								&cursorPos
 							);
 						}
-						getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (long)xmlText );
+						getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
 					}
 				}
 				break;
@@ -1036,7 +1037,7 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 
 		xml::Element *newElement = cursorPos.getElement();
 		if( newElement != oldElement )
-			getParent()->postMessage( WM_XML_ITEM_CLICK, 0, (long)newElement );
+			getParent()->postMessage( WM_XML_ITEM_CLICK, 0, (LPARAM)newElement );
 
 	}
 	return handled;
@@ -1064,7 +1065,7 @@ ProcessStatus XMLeditorChild::handleCharacterInput( int c )
 					&cursorPos
 				);
 			}
-			getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (long)xmlText );
+			getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
 		}
 	}
 
@@ -1121,11 +1122,11 @@ xml::XmlText *XML_VIEWER_BOX::insertCharacter(
 			size_t			insertPos = cursorPos->getInsertPos();
 			xml::XmlText	*theElement = theChunk.getTextElement();
 
-			theChunk.getTextPtr()->insChar( insertPos, c );
+			theChunk.getTextPtr()->insChar( insertPos, char(c) );
 			theChunk.len++;
 
 			createFont( context, theElement, false );
-			context.getTextExtent( c, &size );
+			context.getTextExtent( char(c), &size );
 			cursorPos->movePosition( 1, size.width );
 			xmlText = theElement;
 

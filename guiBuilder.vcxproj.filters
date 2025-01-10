@@ -33,6 +33,9 @@
     <ClInclude Include="GuiBuilder\TranslateForm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="GuiBuilder\guiBuilder.gui.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GuiBuilder\DesignerForm.cpp">
