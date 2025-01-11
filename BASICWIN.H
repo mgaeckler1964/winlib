@@ -926,6 +926,7 @@ class BasicWindow : public ForeignWindow
 	int 				m_controlId;
 
 	STRING				m_caption;
+	STRING				m_toolHelp;
 
 	LayoutData			*m_layoutData;
 	bool				m_autoWidth, m_autoHeight;
@@ -1129,6 +1130,10 @@ class BasicWindow : public ForeignWindow
 		{
 			initHandle( m_parent, controlId );
 		}
+		if( m_toolHelp.isEmpty() )
+		{
+			m_toolHelp = appObject->loadString( controlId );
+		}
 	}
 	int getId( void ) const
 	{
@@ -1178,15 +1183,31 @@ class BasicWindow : public ForeignWindow
 		title
 	*/
 	using ForeignWindow::setText;
-	void setText( const STRING &title )
+	BasicWindow &setText( const STRING &title )
 	{
 		m_caption = title;
 		ForeignWindow::setText( title );
 		checkSize( m_width, m_height );
+
+		return *this;
 	}
-	STRING getTitle( void ) const
+	const STRING &getTitle( void ) const
 	{
 		return m_caption;
+	}
+
+	/*
+		tool help
+	*/
+	const STRING &getToolhelp( void ) const
+	{
+		return m_toolHelp;
+	}
+	BasicWindow &setToolhelp( const STRING &help )
+	{
+		m_toolHelp = help;
+
+		return *this;
 	}
 
 	/*

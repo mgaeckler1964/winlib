@@ -380,6 +380,8 @@ namespace winlibGUI {
 	static const int GuiBuilderStrings_count = 2;
 	extern const int GuiFilterList_ids[];
 	static const int GuiFilterList_count = 1;
+	extern const int ToolHelpStrings_ids[];
+	static const int ToolHelpStrings_count = 2;
 }	// namespace winlibGUI
 
 #endif // C__CRESD_SOURCE_WINLIB_GUIBUILDER_GUIBUILDER_GUI_H

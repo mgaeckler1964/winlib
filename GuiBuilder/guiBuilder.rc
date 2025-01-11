@@ -46,6 +46,7 @@
 BUTTON_PUSH			ICON "button.ico"
 CHECKBOX_PUSH		ICON "checkbox.ico"
 COMBO_PUSH			ICON "combobox.ico"
+DATETIMEPICKER_PUSH	ICON "dateTimePicker.ico"
 EDIT_PUSH			ICON "editControl.ico"
 FRAME_PUSH			ICON "frame.ico"
 GRIDVIEW_PUSH		ICON "grid.ico"
@@ -59,10 +60,32 @@ SCROLLBAR_PUSH		ICON "scrollbar.ico"
 SCROLLER_PUSH		ICON "scroller.ico"
 SELECT_PUSH			ICON "select.ico"
 TRACKBAR_PUSH		ICON "trackbar.ico"
-DATETIMEPICKER_PUSH	ICON "dateTimePicker.ico"
 TREEVIEW_PUSH		ICON "treeview.ico"
 UPDPOWN_PUSH		ICON "updownButton.ico"
 XMLVIEW_PUSH		ICON "xmlViewer.ico"
+
+STRINGTABLE
+BEGIN
+	BUTTON_PUSH			, "Pushbutton"
+	CHECKBOX_PUSH		, "Checkbox"
+	COMBO_PUSH			, "Combobox.ico"
+	DATETIMEPICKER_PUSH	, "DateTimePicker"
+	EDIT_PUSH			, "EditControl"
+	FRAME_PUSH			, "Frame"
+	GRIDVIEW_PUSH		, "Grid"
+	GROUPBOX_PUSH		, "GroupBox"
+	LIST_PUSH			, "Listbox"
+	MEMO_PUSH			, "Memo"
+	RADIOBUTTON_PUSH	, "RadioButton"
+	SCROLLBAR_PUSH		, "ScrollBar"
+	SCROLLER_PUSH		, "Scroller"
+	SELECT_PUSH			, "Select"
+	TRACKBAR_PUSH		, "TrackBar"
+	TREEVIEW_PUSH		, "TreeView.ico"
+	UPDPOWN_PUSH		, "UpDownButton"
+	XMLVIEW_PUSH		, "XmlViewer"
+END
+
 
 /* --------------------------------------------------------------------- */
 /* ----- bitmaps ------------------------------------------------------- */

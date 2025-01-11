@@ -237,11 +237,17 @@ void ControlWindow::restoreProc( void )
 
 SuccessCode ControlWindow::close( void )
 {
-	BasicWindow *parent = const_cast<BasicWindow*>(getParent());
+	SuccessCode result = scSUCCESS;
+	if( handle() )
+	{
+		result = BasicWindow::close();
 
-	SuccessCode result = BasicWindow::close();
-	parent->handleChildClose( this, false );
-	
+		BasicWindow *parent = const_cast<BasicWindow*>(getParent());
+		if( parent )
+		{
+			parent->handleChildClose( this, false );
+		}
+	}
 	return result;
 }
 

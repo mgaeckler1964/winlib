@@ -479,5 +479,9 @@
 <list name="GuiFilterList">
 <string name="GuiDefinitions" caption="Gui definitions (*.gui)|*.gui|" id="268" />
 </list>
+<list name="ToolHelpStrings">
+<string name="upBUTTON" caption="Früher erstellen" id="259" />
+<string name="downBUTTON" caption="Später erstellen" id="261" />
+</list>
 </strings>
 </gui>

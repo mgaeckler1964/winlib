@@ -128,6 +128,11 @@ class ControlWindow : public BasicWindow
 				message( WM_SETFONT, WPARAM(HFONT(font)), true );
 			}
 		}
+		if( m_subclassCounter && !m_wpOrigControlProc )
+		{
+			subclassControl();
+			--m_subclassCounter;
+		}
 		return error;
 	}
 	SuccessCode create( CallbackWindow *parent, int x, int y, int w, int h )

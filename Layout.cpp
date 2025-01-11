@@ -154,7 +154,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 		const LayoutData	*childLayout = child->getLayoutData();
 		if( childLayout && child->isVisible() )
 		{
-			int		row = childLayout->yPos;
+//			int		row = childLayout->yPos;
 			Size	childSize = child->getSize();
 
 			unsigned width = (childSize.width + childLayout->padding.left + childLayout->padding.right) / childLayout->width;

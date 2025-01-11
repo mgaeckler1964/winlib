@@ -680,9 +680,9 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			{
 				handleTimer();
 			}
-			else
+			else if( wParam == TOOL_WIN_TIMER_ID )
 			{
-				removeToolHelp();
+				processTooltipTimer();
 			}
 			break;
 
@@ -1077,8 +1077,15 @@ void CallbackWindow::showHelp( int , int controlId )
 {
 	m_toolWin = new ToolTipWindow;
 
-	m_toolWin->create( this, controlId );
-	createTimer( 5000, false );
+	if( m_toolWin->create( this, controlId ) == scERROR )
+	{
+		delete m_toolWin;
+		m_toolWin = NULL;
+	}
+	else
+	{
+		createToolTimer();
+	}
 }
 
 void CallbackWindow::handleTimer( void )
@@ -1188,19 +1195,72 @@ void CallbackWindow::showToolHelp( const char *text )
 		m_toolWin = new ToolTipWindow;
 
 		m_toolWin->create( this, text );
-		createTimer( 5000, false );
+		if( !m_toolWinTimer )
+		{
+			createToolTimer();
+		}
+		SetWindowPos( m_toolWin->handle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
+		focus();
 	}
 }
 
 void CallbackWindow::removeToolHelp( void )
 {
-	if( m_toolWin )
+	if( m_toolWin && !m_toolWin->active() )
 	{
 		m_toolWin->close();
 		delete m_toolWin;
-		m_toolWin = 0;
-		removeTimer( false );
+		m_toolWin = NULL;
 	}
+}
+
+void CallbackWindow::processTooltipTimer()
+{
+	static BasicWindow *lastChild = NULL;
+	static BasicWindow *lastTipChild = NULL;
+
+	doEnterFunction("CallbackWindow::processTooltipTimer");
+
+	removeToolHelp();
+	Point p;
+	GetCursorPos(&p);
+	ScreenToClient( handle(), &p );
+	BasicWindow *child = findChild(p);
+	if( lastChild && lastChild==child )
+	{
+		STRING help = child->getToolhelp();
+		if( help.isEmpty() )
+		{
+			int id = child->getId();
+			if( id > 0 )
+			{
+				help = appObject->loadString(id);
+			}
+		}
+#ifndef NDEBUG
+		if( help.isEmpty() )
+		{
+			int id = child->getId();
+			if( id > 0 )
+			{
+				help = gak::formatNumber(id);
+			}
+			else
+			{
+				help = gak::formatNumber(long(child->handle()));
+			}
+		}
+		if( help.isEmpty() )
+			help = "Hello world";
+#endif
+		if( !help.isEmpty() && lastTipChild != child )
+		{
+			showToolHelp(help);
+			lastTipChild = child;
+		}
+		lastChild = NULL;
+	}
+	lastChild = child;
 }
 
 void CallbackWindow::addStatusBar( void )

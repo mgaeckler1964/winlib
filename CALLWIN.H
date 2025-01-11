@@ -384,14 +384,17 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	virtual ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
 	virtual LRESULT doDefault( UINT, WPARAM, LPARAM );
 
-			void handleFindReplace( FINDREPLACE *buffer );
-			void checkModifiers( unsigned msg, WPARAM wParam, LPARAM lParam );
-			void checkModifiers( const MSG &msg )
-			{
-				checkModifiers( msg.message, msg.wParam, msg.lParam );
-			}
-			LRESULT callBack( const unsigned msg, const WPARAM wParam, const LPARAM lParam );
-
+	void handleFindReplace( FINDREPLACE *buffer );
+	void checkModifiers( unsigned msg, WPARAM wParam, LPARAM lParam );
+	void checkModifiers( const MSG &msg )
+	{
+		checkModifiers( msg.message, msg.wParam, msg.lParam );
+	}
+	LRESULT callBack( const unsigned msg, const WPARAM wParam, const LPARAM lParam );
+	bool active() const
+	{
+		return m_callBackCount > 0;
+	}
 	static	LRESULT dispatch( HWND handle, unsigned msg, WPARAM wParam, LPARAM lParam );
 
 	virtual bool handleTreeViewDrag( TreeView *m_dragTreeView, TreeNode *m_dragItem, TreeNode *dragOver );
@@ -522,6 +525,10 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 			removeTimer( appTimer );
 	}
 	public:
+	void createToolTimer()
+	{
+		createTimer( 3000, false );
+	}
 	void setTimer( int milliSeconds )
 	{
 		createTimer( milliSeconds, true );
@@ -540,6 +547,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	*/
 	void showToolHelp( const char *text );
 	void removeToolHelp( void );
+	void processTooltipTimer();
 
 	/*
 		status bar

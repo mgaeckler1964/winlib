@@ -492,6 +492,10 @@ namespace winlibGUI {
 "<list name=\"GuiFilterList\">\n"
 "<string name=\"GuiDefinitions\" caption=\"Gui definitions (*.gui)|*.gui|\" id=\"268\" />\n"
 "</list>\n"
+"<list name=\"ToolHelpStrings\">\n"
+"<string name=\"upBUTTON\" caption=\"Create Sooner\" id=\"259\" />\n"
+"<string name=\"downBUTTON\" caption=\"Create Later\" id=\"261\" />\n"
+"</list>\n"
 "</strings>\n"
 "</gui>";
 			return Application::getGuiDoc( xmlSrc );
@@ -649,5 +653,9 @@ namespace winlibGUI {
 	};
 	const int GuiFilterList_ids[] = {
 		GuiDefinitions_id,
+	};
+	const int ToolHelpStrings_ids[] = {
+		upBUTTON_id,
+		downBUTTON_id,
 	};
 }	// namespace winlibGUI

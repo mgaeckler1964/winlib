@@ -2619,6 +2619,8 @@ SuccessCode GuiBuilderWindow::create( void )
 		treeSelect.setLayoutData( (new LayoutData)->setAttachment( LayoutData::ATTACH_LEFT )->setGrowHeight( 1 ) );
 		catchControl( &treeSelect );
 
+		createToolTimer();
+
 		if( (error=propertiesScroller.create( &mainArea )) == scSUCCESS )
 		{
 			propertiesScroller.setLayoutData( (new LayoutData)->setAttachment( LayoutData::ATTACH_CLIENT )->setGrowHeight( 1 )->setGrowWidth( 1 ) );
