@@ -861,6 +861,33 @@ class TrackBar : public ControlWindow
 	void setTics( const short *position, size_t numTicks );
 };
 
+class DateTimePicker : public ControlWindow
+{
+	virtual STRING getWindowClassName( void ) const;
+
+	public:
+	static const char className[];
+
+	DateTimePicker( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
+
+	long getSystemTime(SYSTEMTIME &result)
+	{
+		return DateTime_GetSystemtime(handle(), &result ); 
+	}
+	long setSystemTime(const SYSTEMTIME &time)
+	{
+		return DateTime_SetSystemtime(handle(), GDT_VALID, &time ); 
+	}
+	long setMinTime(const SYSTEMTIME &time)
+	{
+		return DateTime_SetRange( handle(), GDTR_MIN, &time );
+	}
+	long setMaxTime(const SYSTEMTIME &time)
+	{
+		return DateTime_SetRange( handle(), GDTR_MAX, &time );
+	}
+};
+
 class TreeNode
 {
 	friend class TreeView;

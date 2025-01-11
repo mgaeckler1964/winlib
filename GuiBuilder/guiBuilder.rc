@@ -59,8 +59,10 @@ SCROLLBAR_PUSH		ICON "scrollbar.ico"
 SCROLLER_PUSH		ICON "scroller.ico"
 SELECT_PUSH			ICON "select.ico"
 TRACKBAR_PUSH		ICON "trackbar.ico"
+DATETIMEPICKER_PUSH	ICON "dateTimePicker.ico"
 TREEVIEW_PUSH		ICON "treeview.ico"
 UPDPOWN_PUSH		ICON "updownButton.ico"
+XMLVIEW_PUSH		ICON "xmlViewer.ico"
 
 /* --------------------------------------------------------------------- */
 /* ----- bitmaps ------------------------------------------------------- */

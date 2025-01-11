@@ -213,6 +213,7 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 	ComboBox		*comboBox = NULL;
 	ListBox			*listBox = NULL;
 	TrackBar		*trackBar = NULL;
+	DateTimePicker	*dateTimePicker = NULL;
 	ScrollBar		*scrollBar = NULL;
 	UpDownButton	*upDownButton = NULL;
 	TreeView		*treeView = NULL;
@@ -252,6 +253,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		newBasicChild = treeView = new TreeView( parent );
 	else if( type == TrackBar::className )
 		newBasicChild = trackBar = new TrackBar( parent );
+	else if( type == DateTimePicker::className )
+		newBasicChild = dateTimePicker = new DateTimePicker( parent );
 	else if( type == ScrollBar::className )
 		newBasicChild = scrollBar = new ScrollBar( parent );
 	else if( type == UpDownButton::className )
@@ -313,6 +316,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 			treeView->create( parent );
 		else if( trackBar )
 			trackBar->create( parent );
+		else if( dateTimePicker )
+			dateTimePicker->create( parent );
 		else if( scrollBar )
 			scrollBar->create( parent );
 		else if( upDownButton )

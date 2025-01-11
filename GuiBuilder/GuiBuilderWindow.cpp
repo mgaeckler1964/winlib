@@ -2232,6 +2232,7 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		case LIST_PUSH:
 		case TREEVIEW_PUSH:
 		case TRACKBAR_PUSH:
+		case DATETIMEPICKER_PUSH:
 		case SCROLLBAR_PUSH:
 		case UPDPOWN_PUSH:
 		case COMBO_PUSH:
@@ -2460,6 +2461,19 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 			}
 			break;
 
+		case MenuTestModalPopup_id:
+		{
+			TestModalPoup_form	myForm(NULL);
+			myForm.create( this );
+			break;
+		}
+		case MenuTestPopup_id:
+		{
+			TestPopup_form	*myForm = new TestPopup_form(this);
+			myForm->create( this );
+			break;
+		}
+
 		case MENU_INFO_id:
 		{
 			MyAboutForm	theForm;
@@ -2549,6 +2563,10 @@ SuccessCode GuiBuilderWindow::create( void )
 		btnCreateTrackBar.setId( TRACKBAR_PUSH );
 		btnCreateTrackBar.create( &toolbar );
 
+		btnCreateDateTimePicker.setText( DateTimePicker::className );
+		btnCreateDateTimePicker.setId( DATETIMEPICKER_PUSH );
+		btnCreateDateTimePicker.create( &toolbar );
+	
 		btnCreateScrollBar.setText( ScrollBar::className );
 		btnCreateScrollBar.setId( SCROLLBAR_PUSH );
 		btnCreateScrollBar.create( &toolbar );

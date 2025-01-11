@@ -92,6 +92,7 @@ const char ListBox::className[] = "ListBox";
 const char ComboBox::className[] = "ComboBox";
 const char ScrollBar::className[] = "ScrollBar";
 const char TrackBar::className[] = "TrackBar";
+const char DateTimePicker::className[] = "DateTimePicker";
 const char UpDownButton::className[] = "UpDownButton";
 const char TreeView::className[] = "TreeView";
 
@@ -252,6 +253,11 @@ STRING Button::getWindowClassName( void ) const
 STRING TrackBar::getWindowClassName( void ) const
 {
 	return TRACKBAR_CLASS;	// "msctls_trackbar32";
+}
+
+STRING DateTimePicker::getWindowClassName( void ) const
+{
+	return DATETIMEPICK_CLASS;	// "SysDateTimePick32";
 }
 
 STRING UpDownButton::getWindowClassName( void ) const

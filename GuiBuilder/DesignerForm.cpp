@@ -678,6 +678,12 @@ void DesignerForm::createControl( const Point *position )
 		newCaption = "";
 		type = TrackBar::className;
 	}
+	else if(m_theGuiBuilder->getCurrentId() == DATETIMEPICKER_PUSH )
+	{
+		newWindow = newControl = new DateTimePicker( parent );
+		newCaption = "";
+		type = DateTimePicker::className;
+	}
 	else if(m_theGuiBuilder->getCurrentId() == SCROLLBAR_PUSH )
 	{
 		newWindow = newControl = new ScrollBar( parent );
