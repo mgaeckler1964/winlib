@@ -782,7 +782,7 @@ void XMLeditorChild::handleTimer( void )
 
 ProcessStatus XMLeditorChild::handleRepaint( Device &hDC )
 {
-	doEnterFunction("XMLeditorChild::handleRepaint");
+	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleRepaint");
 
 	if( theViewerBox )
 	{
@@ -797,7 +797,7 @@ ProcessStatus XMLeditorChild::handleRepaint( Device &hDC )
 
 ProcessStatus XMLeditorChild::handleResize( const Size &size )
 {
-	doEnterFunction("XMLeditorChild::handleResize");
+	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleResize");
 
 	this->size = size;
 	if( theViewerBox )
@@ -879,7 +879,7 @@ ProcessStatus XMLeditorChild::handleLeftButton(
 	LeftButton leftButton, WPARAM modifier, const Point &position
 )
 {
-	doEnterFunction("XMLeditorChild::handleLeftButton");
+	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleLeftButton");
 
 	if( leftButton == lbUP && !modifier && bool(theViewerBox) )
 	{
@@ -1261,7 +1261,7 @@ xml::Element *XML_VIEWER_BOX::locateFirstElement(
 	XML_CURSOR_POS *cursorPos
 ) const
 {
-	doEnterFunction("xml::Element *XML_VIEWER_BOX::locateFirstElement(...)");
+	doEnterFunctionEx(gakLogging::llDetail, "xml::Element *XML_VIEWER_BOX::locateFirstElement(...)");
 
 	xml::Element	*theElement = NULL;
 
@@ -1320,7 +1320,7 @@ xml::Element *XML_VIEWER_BOX::locateLastElement(
 	XML_CURSOR_POS *cursorPos
 ) const
 {
-	doEnterFunction("xml::Element *XML_VIEWER_BOX::locateLastElement(...)");
+	doEnterFunctionEx(gakLogging::llDetail, "xml::Element *XML_VIEWER_BOX::locateLastElement(...)");
 
 	xml::Element	*theElement = NULL;
 
@@ -2014,7 +2014,7 @@ bool XML_VIEWER_BOX::findElementScreenPosition(
 	XML_CURSOR_POS *cursorPos
 ) const
 {
-	doEnterFunction("bool XML_VIEWER_BOX::findElement(xml::Element*,...)");
+	doEnterFunctionEx(gakLogging::llDetail, "bool XML_VIEWER_BOX::findElement(xml::Element*,...)");
 	bool	found = false;
 
 	size_t line, chunk, numLines, numChunks, numSubboxes, numChildboxes;
@@ -2118,7 +2118,7 @@ xml::Element *XML_VIEWER_BOX::findElementOnScreen(
 	XML_CURSOR_POS *cursorPos
 ) const
 {
-	doEnterFunction("xml::Element *XML_VIEWER_BOX::findElementOnScreen(...)");
+	doEnterFunctionEx(gakLogging::llDetail, "xml::Element *XML_VIEWER_BOX::findElementOnScreen(...)");
 
 	size_t line, chunk, numLines, numChunks, numSubboxes, numChildboxes;
 
@@ -2366,7 +2366,7 @@ int XML_TABLE_VIEWER_BOX::calcSize(
 	int windowWidth, int windowHeight, RectBorder *screen
 )
 {
-	doEnterFunction("XML_TABLE_VIEWER_BOX::calcSize");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_TABLE_VIEWER_BOX::calcSize");
 
 	XML_VIEWER_BOX	*groupBox;
 	RectBorder		groupRect;
@@ -2464,7 +2464,7 @@ int XML_TABLE_GROUP_VIEWER_BOX::calcSize(
 )
 {
 
-	doEnterFunction("XML_TABLE_GROUP_VIEWER_BOX::calcSize");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_TABLE_GROUP_VIEWER_BOX::calcSize");
 	XML_VIEWER_BOX	*rowBox;
 	RectBorder		rowRect;
 	int				rowHeight, boxHeight = 0;
@@ -2517,7 +2517,7 @@ int XML_TABLE_ROW_VIEWER_BOX::calcSize(
 )
 {
 
-	doEnterFunction("XML_TABLE_ROW_VIEWER_BOX::calcSize");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_TABLE_ROW_VIEWER_BOX::calcSize");
 	XML_VIEWER_BOX	*cellBox;
 	RectBorder		cellRect;
 	int				cellHeight, columnWidth, innerWidth;
@@ -2578,7 +2578,7 @@ int XML_TABLE_CELL_VIEWER_BOX::calcSize(
 	Device &context, int left, int top, int maxWidth, int windowWidth, int windowHeight, RectBorder *screen
 )
 {
-	doEnterFunction("XML_TABLE_CELL_VIEWER_BOX::calcSize");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_TABLE_CELL_VIEWER_BOX::calcSize");
 	int boxHeight;
 	try
 	{
@@ -2598,7 +2598,7 @@ int XML_VIEWER_BOX::calcSize(
 	Device &context, int left, int top, int maxWidth, int windowWidth, int windowHeight, RectBorder *screen
 )
 {
-	doEnterFunction("XML_VIEWER_BOX::calcSize");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_VIEWER_BOX::calcSize");
 
 	RectBorder		childBoxRect;
 	int 			childBoxHeight, childBoxWidth;
@@ -3341,7 +3341,7 @@ void XML_VIEWER_BOX::drawLine(
 
 void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 {
-	doEnterFunction("XML_VIEWER_BOX::draw");
+	doEnterFunctionEx(gakLogging::llDetail, "XML_VIEWER_BOX::draw");
 
 	Size	size;
 	STRING	text;
@@ -3958,7 +3958,7 @@ void XML_VIEWER_BOX::buildBoxTree(
 */
 void XMLeditorChild::setDocument( xml::Document *newDocument )
 {
-	doEnterFunction("XMLeditorChild::setDocument");
+	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::setDocument");
 
 	if( theViewerBox )
 	{
@@ -3984,7 +3984,7 @@ void XMLeditorChild::setDocument( xml::Document *newDocument )
 
 void XMLeditorChild::refresh( void )
 {
-	doEnterFunction("XMLeditorChild::refresh");
+	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::refresh");
 
 	if( theViewerBox )
 	{

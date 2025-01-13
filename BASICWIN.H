@@ -999,7 +999,7 @@ class BasicWindow : public ForeignWindow
 	APIENTRY OFNHookProc( HWND, UINT, WPARAM, LPARAM );
 	void setHandle( HWND handle )	// called by WindowProc
 	{
-		doEnterFunction( "BasicWindow::setHandle" );
+		doEnterFunctionEx( gakLogging::llDetail, "BasicWindow::setHandle" );
 
 		ForeignWindow::setHandle( handle );
 		readWindowData();
