@@ -14,7 +14,7 @@
       ..\..\Object\Winlib\bcb\AREA.obj ..\..\Object\Winlib\bcb\POPUP.obj 
       ..\..\Object\Winlib\bcb\Layout.obj ..\..\Object\Winlib\bcb\resource.obj 
       ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj 
-      ..\..\Object\Winlib\bcb\version.obj"/>
+      ..\..\Object\Winlib\bcb\version.obj ..\..\Object\Winlib\bcb\menu.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -124,7 +124,7 @@ RemotePath=
 RemoteDebug=0
 
 [Compiler]
-ShowInfoMsgs=0
+ShowInfoMsgs=1
 LinkDebugVcl=0
 LinkCGLIB=0
 

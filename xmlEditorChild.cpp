@@ -274,20 +274,16 @@ bool XML_VIEWER_BOX::findCharPosInLine(
 				const XML_VIEWER_BOX	*inlineBox = theChunk.getInlineBox();
 				size_t					numLines = inlineBox->getNumLines();
 #if DEBUG_LOG
-				doEnableLog();
-
 				xml::Element	*myElement = getElement();
 				xml::Element	*chunkElement = inlineBox->getElement();
 				if( myElement )
 				{
-					doLogValue( myElement->getTag() );
+					doLogValueEx( gakLogging::llDetail, myElement->getTag() );
 				}
 				if( chunkElement )
 				{
-					doLogValue( chunkElement->getTag() );
+					doLogValueEx( gakLogging::llDetail, chunkElement->getTag() );
 				}
-
-				doDisableLog();
 #endif
 				if( numLines )
 				{

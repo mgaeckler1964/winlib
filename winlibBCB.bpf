@@ -21,6 +21,7 @@ USEUNIT("resource.cpp");
 USEUNIT("splash.cpp");
 USEUNIT("barcode.c");
 USEUNIT("version.cpp");
+USEUNIT("menu.cpp");
 //---------------------------------------------------------------------------
 #define Library
 
