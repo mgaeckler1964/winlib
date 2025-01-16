@@ -84,6 +84,7 @@
     <ClInclude Include="MANAGER.H" />
     <ClInclude Include="MDIWIN.H" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="messages.h" />
     <ClInclude Include="OLESRVR.H" />
     <ClInclude Include="palette.h" />
     <ClInclude Include="pen.h" />
