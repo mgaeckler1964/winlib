@@ -39,12 +39,12 @@
   <OPTIONS>
     <IDLCFLAGS value="-I$(BCB)\include -I$(BCB)\include\vcl -I.. -I..\GAKLIB\Include -src_suffix 
       cpp -DNDEBUG -boa"/>
-    <CFLAG1 value="-O2 -H=..\..\Object\winlib\winlib_bcb.csm -Hc -w -Vx -Ve -X- -a8 -6 -b- -d 
-      -k- -vi -c -tW -tWM"/>
+    <CFLAG1 value="-O2 -H=..\..\Object\winlib\winlib_bcb.csm -Hc -Q -w -Vx -Ve -X- -a8 -6 -b- 
+      -d -k- -vi -c -tW -tWM"/>
     <PFLAGS value="-N2..\..\Object\Winlib\bcb -N0..\..\Object\Winlib\bcb -$Y- -$L- -$D- -v 
       -JPHNE -M"/>
     <AFLAGS value="/mx /w2 /zn"/>
-    <LFLAGS value="/P64"/>
+    <LFLAGS value="/P128"/>
   </OPTIONS>
   <LINKER>
     <ALLOBJ value="$(OBJFILES)"/>
@@ -108,10 +108,11 @@ Item0=..\..\Object\Winlib\
 Item1=..\..\Object\Winlib
 
 [HistoryLists\hlTlibPageSize]
-Count=3
-Item0=0x0040
-Item1=0x0020
-Item2=0x0010
+Count=4
+Item0=0x0080
+Item1=0x0040
+Item2=0x0020
+Item3=0x0010
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

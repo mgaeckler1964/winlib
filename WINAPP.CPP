@@ -315,6 +315,7 @@ Application::Application( const char *newIconName )
 	m_company = "gak";
 	appObject = this;
 	m_iconName = newIconName;
+	m_applicationIcon = NULL;
 }
 
 Application::Application( int newIconID )
@@ -327,6 +328,7 @@ Application::Application( int newIconID )
 		m_iconName = MAKEINTRESOURCE( newIconID );
 	else
 		m_iconName = NULL;
+	m_applicationIcon = NULL;
 }
 
 Application::~Application()

@@ -32,16 +32,18 @@
 #include <gak/gaklib.h>
 #include <gak/fmtNumber.h>
 
-#include <WINLIB\WINAPP.H>
-#include <WINLIB\popup.h>
-#include <WINLIB\CONTROLW.H>
+#include <WINLIB/WINAPP.H>
+#include <WINLIB/popup.h>
+#include <WINLIB/CONTROLW.H>
+#include <WINLIB/xmlEditorChild.h>
 
 using namespace winlib;
 
 class TestWindow : public PopupWindow
 {
-	PushButton	myButton;
-	EditControl	myResult;
+	PushButton		myButton;
+	EditControl		myResult;
+	XMLeditorChild	myXmlChild;
 
 	void doRepaint()
 	{
@@ -60,8 +62,8 @@ class TestWindow : public PopupWindow
 	{
 		OverlappedWindow	*popup = new OverlappedWindow( NULL );
 		Label *label = new Label( popup );
-		label->setTitle( "POPUP with WS_POPUP && CAPTION" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with WS_POPUP && CAPTION" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_POPUP|WS_CAPTION );
 		popup->move( 0, 0 );
@@ -70,8 +72,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP with WS_POPUP && Parent && DLG" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with WS_POPUP && Parent && DLG" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_POPUP|WS_DLGFRAME );
 		popup->move( 0, 100 );
@@ -80,8 +82,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->move( 0, 200 );
 		popup->create( NULL, 300, 100 );
@@ -89,8 +91,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP with parent" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with parent" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->move( 0, 300 );
 		popup->create( this, 300, 100 );
@@ -98,8 +100,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP with parent thick" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with parent thick" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_THICKFRAME );
 		popup->move( 0, 300 );
@@ -108,8 +110,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP with parent dlg" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with parent dlg" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_DLGFRAME );
 		popup->move( 0, 300 );
@@ -119,8 +121,8 @@ class TestWindow : public PopupWindow
 
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
-		label->setTitle( "POPUP with parent dlg&thick" );
-		popup->setTitle( "Overlapped" );
+		label->setText( "POPUP with parent dlg&thick" );
+		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_DLGFRAME|WS_THICKFRAME );
 		popup->move( 0, 300 );
@@ -141,21 +143,24 @@ class TestWindow : public PopupWindow
 		return psDO_DEFAULT;
 	}
 	public:
-	TestWindow() : PopupWindow( NULL ) {}
+	TestWindow() : PopupWindow( NULL ), myXmlChild(NULL) {}
 	void create( void )
 	{
 		addStyle( WS_CLIPCHILDREN );
 
-		setTitle( "Test" );
+		setText( "Test" );
 		SuccessCode error = PopupWindow::create( NULL, 300, 200 );
 		if( error == scSUCCESS)
 		{
 			myButton.setId( IDOK );
-			myButton.setTitle( "Start" );
+			myButton.setText( "Start" );
 			myButton.removeStyle( WS_CHILD );
 			myButton.create( this, 10, 10, 30, 25 );
-		}
 			myResult.create( this, 50, 10, 60, 25 );
+
+			myXmlChild.sizeNmove(10, 50, 50, 50);
+			myXmlChild.create( this );
+		}
 	}
 };
 
