@@ -372,25 +372,32 @@ void RowManager::doLayout( const ChildWindows &children, const Size &newSize )
 {
 	size_t	numVisible = 0;
 	for( size_t i=0; i<children.size(); i++ )
-		if( children[i]->isVisible() )
-			numVisible++;
-
-	RectSize	freeArea( newSize );
-	freeArea.substractBorder( margin );
-	freeArea.width /= int(numVisible);
-
-	for( size_t i=0; i<children.size(); i++ )
 	{
-		BasicWindow *child = children[i];
-		if( child->isVisible() )
+		if( children[i]->isVisible() )
 		{
-			RectSize	childDim = freeArea;
-			LayoutData	*layoutData = child->getLayoutData();
-			if( layoutData )
-				childDim.substractBorder( layoutData->padding );
+			numVisible++;
+		}
+	}
 
-			child->sizeNmove( childDim );
-			freeArea.x += freeArea.width;
+	if( numVisible )
+	{
+		RectSize	freeArea( newSize );
+		freeArea.substractBorder( margin );
+		freeArea.width /= int(numVisible);
+
+		for( size_t i=0; i<children.size(); i++ )
+		{
+			BasicWindow *child = children[i];
+			if( child->isVisible() )
+			{
+				RectSize	childDim = freeArea;
+				LayoutData	*layoutData = child->getLayoutData();
+				if( layoutData )
+					childDim.substractBorder( layoutData->padding );
+
+				child->sizeNmove( childDim );
+				freeArea.x += freeArea.width;
+			}
 		}
 	}
 }

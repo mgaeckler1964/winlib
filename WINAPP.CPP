@@ -397,7 +397,7 @@ void Application::deleteMainWindow( BasicWindow * )
 
 int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdShow )
 {
-	doEnterFunction("Application::AppMain");
+	doEnterFunctionEx(gakLogging::llInfo, "Application::AppMain");
 
 	setInstance( hInstance );
 
@@ -624,7 +624,7 @@ using namespace winlib;
 int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 							LPSTR cmdLine, int nCmdShow)
 {
-	doEnterFunction("WinMain");
+	doEnterFunctionEx(gakLogging::llInfo, "WinMain");
 	int	result = 0;
 
 	if( appObject )

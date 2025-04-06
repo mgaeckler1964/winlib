@@ -291,6 +291,15 @@ class Device
 	/*
 		paint operations
 	*/
+	void polyline( POINT *points, size_t cnt ) const
+	{
+		Polyline( device, points, cnt );
+	}
+	void polygon( POINT *points, size_t cnt ) const
+	{
+		Polygon( device, points, cnt );
+	}
+
 	void lineTo( int x, int y ) const
 	{
 		LineTo( device, x, y );

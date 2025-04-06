@@ -138,8 +138,8 @@ static GuiBuilderApplication	theApp;
    
 CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *, int  )
 {
-	doEnableLogEx(gakLogging::llWarn);
-	doEnterFunction("GuiBuilderApplication::createMainWindow");
+	//doEnableLogEx(gakLogging::llError);
+	doEnterFunctionEx(gakLogging::llInfo, "GuiBuilderApplication::createMainWindow");
 
 	GuiBuilderWindow *theWindow = new GuiBuilderWindow;
 	try

@@ -104,7 +104,7 @@ SearchDialog	*CallbackWindow::s_findDialog	= NULL;
 CallbackWindow::CallbackWindow( BasicWindow *owner )
 : BasicWindow( CallbackWindowFlag, owner )
 {
-	doEnterFunction("CallbackWindow::CallbackWindow");
+	doEnterFunctionEx(gakLogging::llDetail, "CallbackWindow::CallbackWindow");
 #ifndef NDEBUG
 	m_watchMe = false;
 #endif
@@ -173,7 +173,7 @@ void CallbackWindow::registerSearchDialog( SearchDialog *newFindDialog )
 
 LRESULT CallbackWindow::dispatch( HWND handle, unsigned msg, WPARAM wParam, LPARAM lParam )
 {
-	doEnterFunction("CallbackWindow::dispatch");
+	doEnterFunctionEx(gakLogging::llDetail, "CallbackWindow::dispatch");
 	CallbackWindow	*curWindow;
 	ListCursor		cursor;
 	LRESULT			returnVal = true;
@@ -348,7 +348,7 @@ bool CallbackWindow::isDialogMessage( MSG &msg )
 
 LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wParam, const LPARAM lParam )
 {
-//	doEnterFunction("CallbackWindow::callBack");
+	doEnterFunctionEx(gakLogging::llDetail, "CallbackWindow::callBack");
 
 	ProcessStatus	msgStatus = psPROCESSED;
 
@@ -1219,7 +1219,7 @@ void CallbackWindow::processTooltipTimer()
 	static BasicWindow *lastChild = NULL;
 	static BasicWindow *lastTipChild = NULL;
 
-	doEnterFunction("CallbackWindow::processTooltipTimer");
+	doEnterFunctionEx(gakLogging::llDetail, "CallbackWindow::processTooltipTimer");
 
 	removeToolHelp();
 	Point p;
