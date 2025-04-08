@@ -899,6 +899,42 @@ TreeNode *TreeView::moveItem( TreeNode *item, TreeNode *parent, size_t index )
 
 	return newItem;
 }
+
+/*
+--------------------------------------------------------------------------------
+	DateTimePicker
+--------------------------------------------------------------------------------
+*/
+long DateTimePicker::setStopWatch(const gak::StopWatch &watch)
+{
+	SYSTEMTIME systime;
+	memset( &systime, 0, sizeof(systime));
+	gak::Seconds<> timer = watch.get<gak::Seconds<>>();
+	systime.wDay = 1;
+	systime.wMonth = 1;
+	systime.wYear = 1970;
+	systime.wHour = WORD(timer.hoursPart());
+	systime.wMinute = WORD(timer.minutesPart());
+	systime.wSecond = WORD(timer.secondsPart());
+
+	return setSystemTime(systime);; 
+}
+
+long DateTimePicker::setTimeT( time_t seconds )
+{
+	gak::DateTime dt(seconds);
+	SYSTEMTIME systime;
+	memset( &systime, 0, sizeof(systime));
+	systime.wDay = dt.getDay();
+	systime.wMonth = WORD(dt.getMonth());
+	systime.wYear = dt.getYear();
+	systime.wHour = dt.getHour();
+	systime.wMinute = dt.getMinute();
+	systime.wSecond = dt.getSecond();
+
+	return setSystemTime(systime);; 
+}
+
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //

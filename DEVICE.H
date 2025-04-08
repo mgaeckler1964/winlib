@@ -291,11 +291,11 @@ class Device
 	/*
 		paint operations
 	*/
-	void polyline( POINT *points, size_t cnt ) const
+	void polyline( POINT *points, int cnt ) const
 	{
 		Polyline( device, points, cnt );
 	}
-	void polygon( POINT *points, size_t cnt ) const
+	void polygon( POINT *points, int cnt ) const
 	{
 		Polygon( device, points, cnt );
 	}

@@ -59,10 +59,11 @@
 
 #include <gak/t_string.h>
 #include <gak/array.h>
+#include <gak/stopWatch.h>
 
-#include <winlib\dialogwi.h>
-#include <winlib\font.h>
-#include <WINLIB/DEVICE.H>
+#include <winlib/dialogwi.h>
+#include <winlib/font.h>
+#include <winlib/DEVICE.H>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -883,6 +884,9 @@ class DateTimePicker : public ControlWindow
 	{
 		return DateTime_SetSystemtime(handle(), GDT_VALID, &time ); 
 	}
+	long setStopWatch(const gak::StopWatch &watch);
+	long setTimeT( time_t seconds );
+
 	long setMinTime(const SYSTEMTIME &time)
 	{
 		return DateTime_SetRange( handle(), GDTR_MIN, &time );
