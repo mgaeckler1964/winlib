@@ -61,7 +61,8 @@
 #include <winlib/dialogwi.h>
 #include <winlib/stddlg.h>
 #include <winlib/tooltip.h>
-#include <WINLIB/CONTROLW.H>
+#include <winlib/CONTROLW.H>
+#include <winlib/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -765,6 +766,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			msgStatus = psPROCESSED;
 			break;
 
+		case WM_ASYNC_TASK_END:
+			handleAsyncTaskEnd( reinterpret_cast<void*>(lParam) );
+			break;
+
 		// The special (rarely used) messages
 		default:
 			msgStatus = handleMessage( message, wParam, lParam );
@@ -1042,6 +1047,10 @@ void CallbackWindow::handleFind( const char *, bool, bool, bool )
 
 void CallbackWindow::handleReplace( const char *, const char *,
 								bool, bool, bool )
+{
+}
+
+void CallbackWindow::handleAsyncTaskEnd( void * /*data*/ )
 {
 }
 

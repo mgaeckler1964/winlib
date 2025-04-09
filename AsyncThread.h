@@ -1,7 +1,7 @@
 /*
-		Project:		Windows Class Library
-		Module:			messages.h
-		Description:	User defined windows messages
+		Project:		WINLIB
+		Module:			AsyncThread.h
+		Description:	Asynchronious tasks 
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -30,9 +30,6 @@
 */
 
 
-#ifndef WINLIB_MESSAGES_H
-#define WINLIB_MESSAGES_H
-
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -40,6 +37,11 @@
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
+
+#include <gak/thread.h>
+
+#include <WINLIB/CALLWIN.H>
+#include <WINLIB/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -63,14 +65,6 @@ namespace winlib
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-static const UINT WM_XML_ITEM_CLICK		= WM_USER;
-static const UINT WM_XML_ITEM_CHANGED	= WM_USER+1;
-
-static const UINT WM_GRID_ITEM_ENTER	= WM_USER+20;
-static const UINT WM_GRID_ITEM_EXIT		= WM_USER+21;
-
-static const UINT WM_ASYNC_TASK_END		= WM_USER+30;
-
 // --------------------------------------------------------------------- //
 // ----- macros -------------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -82,6 +76,24 @@ static const UINT WM_ASYNC_TASK_END		= WM_USER+30;
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+class AsyncThread : public gak::Thread
+{
+	CallbackWindow	*m_callwin;
+	void			*m_data;
+
+	public:
+	AsyncThread(CallbackWindow *callWin, void *data=NULL, bool autoDelete = true) 
+		: Thread( autoDelete ), m_callwin(callWin), m_data(data)  {}
+
+	virtual void ExecuteTask( void ) = 0;
+	virtual void ExecuteThread( void )
+	{
+		ExecuteTask();
+		m_callwin->postMessage(WM_ASYNC_TASK_END, 0, LPARAM(m_data));
+	}
+
+};
 
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
@@ -144,4 +156,3 @@ static const UINT WM_ASYNC_TASK_END		= WM_USER+30;
 #	pragma option -p.
 #endif
 
-#endif

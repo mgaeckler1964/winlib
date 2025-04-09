@@ -380,6 +380,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	// WM_KILLFOCUS
 	virtual void handleKillFocus( void );
 
+	// WM_ASYNC_TASK_END
+	virtual void handleAsyncTaskEnd( void *data );
+
 	// all other messages
 	virtual ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
 	virtual LRESULT doDefault( UINT, WPARAM, LPARAM );

@@ -222,6 +222,9 @@
     <ClInclude Include="messages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AsyncThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
