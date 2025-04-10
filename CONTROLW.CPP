@@ -5,10 +5,10 @@
 						The "Control Window Class" describes a window, which is
 						a windows defined control e.g. button
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -17,7 +17,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -49,6 +49,7 @@
 #include <gak/string.h>
 #include <gak/textReader.h>
 #include <gak/strFiles.h>
+#include <gak/stdlib.h>
 
 #include <winlib/controlw.h>
 #include <winlib/device.h>
@@ -483,30 +484,27 @@ STRING ListBox::getSelectedItems( void ) const
 
 	if( selCount )
 	{
-		char	*tmpBuff = NULL;
-		size_t	oldSize = 0;
+		gak::Buffer<char>	tmpBuff = NULL;
+		size_t				oldSize = 0;
 
 		for( size_t i = 0; i<selCount; i++ )
 		{
 			size_t newSize = message( LB_GETTEXTLEN, selected[i] );
 			if( newSize > oldSize )
 			{
-				tmpBuff = (char *)realloc( tmpBuff, newSize+1 );
+				tmpBuff.resize(newSize+1);
 				if( tmpBuff )
 					oldSize = newSize;
 			}
 
 			if( tmpBuff )
 			{
-				message( LB_GETTEXT, selected[i], LPARAM(tmpBuff) );
+				message( LB_GETTEXT, selected[i], LPARAM(static_cast<char*>(tmpBuff)) );
 				if( !selectedItems.isEmpty() )
 					selectedItems += '\n';
 				selectedItems += tmpBuff;
 			}
 		}
-
-		if( tmpBuff )
-			free( tmpBuff );
 	}
 
 	return selectedItems;
