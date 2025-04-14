@@ -419,6 +419,30 @@ int ListBox::getSelection( void ) const
 	return index;
 }
 
+size_t	ListBox::getNumVisible( void ) const
+{
+	int itemHeigth = message( LB_GETITEMHEIGHT );
+	int myHeight = getSize().height;
+	return size_t(myHeight/itemHeigth);
+}
+
+void ListBox::setVisible( size_t item ) const
+{
+	size_t first = getFirstVisible();
+	if( item < first )
+	{
+		setFirstVisible(item);
+	}
+	else
+	{
+		size_t numVisible = getNumVisible();
+		if( item > first+numVisible )
+		{
+			setFirstVisible(item-numVisible);
+		}
+	}
+}
+
 void ListBox::setItems( T_STRING items )
 {
 	STRING	selItem;

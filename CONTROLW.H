@@ -465,8 +465,23 @@ class ListBox : public ControlWindow
 	}
 	size_t	getNumEntries( void ) const
 	{
-		return size_t(message( LB_GETCOUNT, 0, 0 ));
+		return size_t(message( LB_GETCOUNT ));
 	}
+	size_t	getNumVisible( void ) const;
+	size_t	getFirstVisible( void ) const
+	{
+		return message( LB_GETTOPINDEX );
+	}
+	void setFirstVisible( size_t first ) const
+	{
+		message( LB_SETTOPINDEX, first );
+	}
+	void setVisible( size_t item ) const;
+	void showLast() const
+	{
+		setVisible(getNumEntries());
+	}
+
 
 	void	setItems( T_STRING items );
 	void	setSelectedItems( T_STRING items );
