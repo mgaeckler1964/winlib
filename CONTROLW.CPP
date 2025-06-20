@@ -508,7 +508,7 @@ STRING ListBox::getSelectedItems( void ) const
 
 	if( selCount )
 	{
-		gak::Buffer<char>	tmpBuff = NULL;
+		gak::Buffer<char>	tmpBuff(NULL);
 		size_t				oldSize = 0;
 
 		for( size_t i = 0; i<selCount; i++ )
@@ -526,7 +526,7 @@ STRING ListBox::getSelectedItems( void ) const
 				message( LB_GETTEXT, selected[i], LPARAM(static_cast<char*>(tmpBuff)) );
 				if( !selectedItems.isEmpty() )
 					selectedItems += '\n';
-				selectedItems += tmpBuff;
+				selectedItems += static_cast<const char*>(tmpBuff);
 			}
 		}
 	}
@@ -931,7 +931,7 @@ long DateTimePicker::setStopWatch(const gak::StopWatch &watch)
 {
 	SYSTEMTIME systime;
 	memset( &systime, 0, sizeof(systime));
-	gak::Seconds<> timer = watch.get<gak::Seconds<>>();
+	gak::Seconds<> timer = watch.get< gak::Seconds<> >();
 	systime.wDay = 1;
 	systime.wMonth = 1;
 	systime.wYear = 1970;
