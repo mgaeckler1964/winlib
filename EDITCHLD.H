@@ -110,7 +110,7 @@ class EditChild : public ManagerChild
 		if( fileName )
 		{
 			this->fileName = fileName;
-			setText( fileName );
+			setTitle( fileName );
 		}
 		errorFlag = getControl()->saveToFile( this->fileName );
 
@@ -287,9 +287,17 @@ class EditChild : public ManagerChild
 	{
 		control->setText( text );
 	}
+	void setTitle( const STRING &text )
+	{
+		ManagerChild::setText( text );
+	}
 	void setText( int textId )
 	{
 		control->setText( textId );
+	}
+	void setTitle( int textId )
+	{
+		ManagerChild::setText( textId );
 	}
 
 	void indent( void )
