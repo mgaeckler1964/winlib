@@ -508,7 +508,7 @@ STRING ListBox::getSelectedItems( void ) const
 
 	if( selCount )
 	{
-		gak::Buffer<char>	tmpBuff(NULL);
+		gak::Buffer<char>	tmpBuff(nullptr);
 		size_t				oldSize = 0;
 
 		for( size_t i = 0; i<selCount; i++ )
