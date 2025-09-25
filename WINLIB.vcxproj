@@ -47,6 +47,7 @@
     <ClCompile Include="MDIWIN.CPP" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="POPUP.CPP" />
+    <ClCompile Include="Processor.cpp" />
     <ClCompile Include="REGEDIT.CPP" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scrollFrame.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="palette.h" />
     <ClInclude Include="pen.h" />
     <ClInclude Include="POPUP.H" />
+    <ClInclude Include="Processor.h" />
     <ClInclude Include="RAW_DATA.H" />
     <ClInclude Include="rectangle.h" />
     <ClInclude Include="REGEDIT.H" />

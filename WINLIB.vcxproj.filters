@@ -94,6 +94,9 @@
     <ClCompile Include="version.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Processor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AREA.H">
@@ -223,6 +226,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AsyncThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

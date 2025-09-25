@@ -244,7 +244,7 @@ class ForeignWindow
 	}
 
 	public:
-	ForeignWindow( HWND theHandle )
+	ForeignWindow( HWND theHandle=0 )
 	{
 		m_windowType = ForeignWindowFlag;
 		m_winHandle	= theHandle;
@@ -651,13 +651,22 @@ class ForeignWindow
 		GetWindowRect( m_winHandle, &rect );
 		return rect;
 	}
+	HWND getParentHandle() const
+	{
+		return GetParent( m_winHandle );
+	}
+	bool isWindowVisible() const
+	{
+		return IsWindowVisible(m_winHandle);
+	}
+	
 	RectBorder getRelativeRectangle( void ) const
 	{
 		RectBorder rect = getWindowRectangle();
 
 		HWND	parent;
 
-		parent = GetParent( m_winHandle );
+		parent = getParentHandle();
 		if( parent )
 		{
 			Point	corner = rect.getTopLeft();
