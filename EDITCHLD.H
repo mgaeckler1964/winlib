@@ -65,7 +65,7 @@ class EditChild : public ManagerChild
 	std::time_t	m_modifyTime;
 	bool		m_autoReload;
 
-	time_t getModifyTime( void ) const
+	time_t getModifyTime() const
 	{
 		if( !m_fileName.isEmpty() )
 		{
@@ -80,7 +80,7 @@ class EditChild : public ManagerChild
 /*@*/		return 0;
 	}
 
-	virtual void handleTimer( void );
+	virtual void handleTimer();
 	public:
 	EditChild() : ManagerChild( new MemoControl )
 	{
@@ -88,7 +88,7 @@ class EditChild : public ManagerChild
 		m_autoReload = false;
 	}
 
-	MemoControl *getControl( void ) 
+	MemoControl *getControl() 
 	{
 		return static_cast<MemoControl*>(control);
 	}
@@ -107,17 +107,27 @@ class EditChild : public ManagerChild
 	{
 		return m_autoReload;
 	}
-
-	void reloadFile( void )
+	private:
+	void reloadFile( bool restorePosition )
 	{
+		size_t start, end;
+		if( restorePosition )
+			getControl()->getSelection(&start, &end);
 		getControl()->readFromFile( m_fileName );
+		if( restorePosition )
+			getControl()->setSelection(start, end);
 
 		storeModifyTime();
+	}
+	public:
+	void reloadFile()
+	{
+		reloadFile(true);
 	}
 	void readFromFile( const char *fileName )
 	{
 		m_fileName = fileName;
-		reloadFile();
+		reloadFile(false);
 	}
 	bool saveToFile( const char *fileName = NULL )
 	{
@@ -134,11 +144,11 @@ class EditChild : public ManagerChild
 
 		return errorFlag;
 	}
-	bool checkModifyTime( void )
+	bool checkModifyTime()
 	{
 		return (m_modifyTime != 0 && m_modifyTime != getModifyTime()) ? true : false;
 	}
-	void storeModifyTime( void )
+	void storeModifyTime()
 	{
 		m_modifyTime = getModifyTime();
 	}
@@ -150,23 +160,23 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->setTabWidth( width );
 	}
-	void setEditable( void )
+	void setEditable()
 	{
 		static_cast<EDIT*>(control)->setEditable();
 	}
-	void setReadonly( void )
+	void setReadonly()
 	{
 		static_cast<EDIT*>(control)->setReadonly();
 	}
-	bool isEditable( void ) const
+	bool isEditable() const
 	{
 		return static_cast<EDIT*>(control)->isEditable();
 	}
-	bool isChanged( void ) const
+	bool isChanged() const
 	{
 		return static_cast<EDIT*>(control)->isChanged();
 	}
-	void setChanged( void )
+	void setChanged()
 	{
 		static_cast<EDIT*>(control)->setChanged();
 	}
@@ -175,34 +185,34 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->setLineEnd(newLineEnd);
 	}
-	RLINE_ENDS getLineEnd( void ) const
+	RLINE_ENDS getLineEnd() const
 	{
 		return static_cast<EDIT*>(control)->getLineEnd();
 	}
 /*
-	void setOemConvert( void ) const
+	void setOemConvert() const
 	{
 		static_cast<EDIT*>(control)->setOemConvert();
 	}
-	void clearOemConvert( void ) const
+	void clearOemConvert() const
 	{
 		static_cast<EDIT*>(control)->clearOemConvert();
 	}
 */
-	void setCharset( enum EDIT::EditCharset newCharset )
+	void setCharset( EDIT::EditCharset newCharset )
 	{
 		static_cast<EDIT*>(control)->setCharset(newCharset);
 	}
-	void convertCharset( enum EDIT::EditCharset newCharset )
+	void convertCharset( EDIT::EditCharset newCharset )
 	{
 		static_cast<EDIT*>(control)->convertCharset(newCharset);
 	}
 
-	bool isOemConvert( void ) const
+	bool isOemConvert() const
 	{
 		static_cast<EDIT*>(control)->isOemConvert();
 	}
-	enum EDIT::EditCharset getCharset( void ) const
+	enum EDIT::EditCharset getCharset() const
 	{
 		return static_cast<EDIT*>(control)->getCharset();
 	}
@@ -225,35 +235,35 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->replaceSelection( replace );
 	}
-	STRING getFileName( void ) const
+	const STRING &getFileName() const
 	{
 		return m_fileName;
 	}
-	void cut( void )
+	void cut()
 	{
 		static_cast<EDIT*>(control)->cut();
 	}
-	void copy( void )
+	void copy()
 	{
 		static_cast<EDIT*>(control)->copy();
 	}
-	void paste( void )
+	void paste()
 	{
 		static_cast<EDIT*>(control)->paste();
 	}
-	void clear( void )
+	void clear()
 	{
 		static_cast<EDIT*>(control)->clear();
 	}
-	void selectAll( void )
+	void selectAll()
 	{
 		static_cast<EDIT*>(control)->selectAll();
 	}
-	void deleteLine( void )
+	void deleteLine()
 	{
 		static_cast<EDIT*>(control)->deleteLine();
 	}
-	void undo( void )
+	void undo()
 	{
 		static_cast<EDIT*>(control)->undo();
 	}
@@ -263,15 +273,15 @@ class EditChild : public ManagerChild
 
 		static_cast<EDIT*>(control)->print( fileName, device );
 	}
-	void setLineBreak( void )
+	void setLineBreak()
 	{
 		static_cast<EDIT*>(control)->setLineBreak();
 	}
-	void clrLineBreak( void )
+	void clrLineBreak()
 	{
 		static_cast<EDIT*>(control)->clrLineBreak();
 	}
-	bool isLineBreak( void ) const
+	bool isLineBreak() const
 	{
 		return static_cast<EDIT*>(control)->isLineBreak();
 	}
@@ -279,7 +289,7 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->setSelection( startPos, endPos );
 	}
-	STRING getSelection( void ) const
+	STRING getSelection() const
 	{
 		return static_cast<EDIT*>(control)->getSelection();
 	}
@@ -291,11 +301,11 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->getCursorPosition( line, col );
 	}
-	operator STRING( void ) const
+	operator STRING() const
 	{
 		return STRING(*static_cast<EDIT*>(control));
 	}
-	STRING getText( void ) const
+	STRING getText() const
 	{
 		return control->getText();
 	}
@@ -316,20 +326,20 @@ class EditChild : public ManagerChild
 		ManagerChild::setText( textId );
 	}
 
-	void indent( void )
+	void indent()
 	{
 		static_cast<EDIT*>(control)->indent();
 	}
-	void unindent( void )
+	void unindent()
 	{
 		static_cast<EDIT*>(control)->unindent();
 	}
 
-	void setAutoIndent( void )
+	void setAutoIndent()
 	{
 		static_cast<EDIT*>(control)->setAutoIndent();
 	}
-	void clrAutoIndent( void )
+	void clrAutoIndent()
 	{
 		static_cast<EDIT*>(control)->clrAutoIndent();
 	}

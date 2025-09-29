@@ -64,8 +64,8 @@ class ManagerChild : public MDIchildWindow
 	protected:
 	ControlWindow 	*control;
 
-	virtual ProcessStatus handleCreate( void );
-	virtual void handleFocus( void );
+	virtual ProcessStatus handleCreate();
+	virtual void handleFocus();
 
 	public:
 	ManagerChild()
@@ -83,7 +83,7 @@ class ManagerChild : public MDIchildWindow
 		if( control )
 			delete control;
 	}
-	virtual SuccessCode close( void );
+	virtual SuccessCode close();
 };
 
 }	// namespace winlib

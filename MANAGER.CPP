@@ -56,7 +56,7 @@ using namespace gak;
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-ProcessStatus ManagerChild::handleCreate( void )
+ProcessStatus ManagerChild::handleCreate()
 {
 	if( control )
 	{
@@ -68,20 +68,20 @@ ProcessStatus ManagerChild::handleCreate( void )
 	return psPROCESSED;
 }
 
-void ManagerChild::handleFocus( void )
+void ManagerChild::handleFocus()
 {
 	if( control )
 		control->focus();
 }
 
-SuccessCode ManagerChild::close( void )
+SuccessCode ManagerChild::close()
 {
 	if( control )
 		control->close();
 	return MDIchildWindow::close();
 }
 
-void EditChild::handleTimer( void )
+void EditChild::handleTimer()
 {
 	if( m_autoReload && !isChanged() && checkModifyTime() )
 	{
