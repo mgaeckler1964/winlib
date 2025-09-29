@@ -110,12 +110,18 @@ class EditChild : public ManagerChild
 	private:
 	void reloadFile( bool restorePosition )
 	{
-		size_t start, end;
+		size_t start, end, line;
 		if( restorePosition )
+		{
+			line = getControl()->getFirstVisible();
 			getControl()->getSelection(&start, &end);
+		}
 		getControl()->readFromFile( m_fileName );
 		if( restorePosition )
+		{
+			getControl()->setFirstVisible(line);
 			getControl()->setSelection(start, end);
+		}
 
 		storeModifyTime();
 	}

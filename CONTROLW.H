@@ -661,6 +661,16 @@ class EDIT : public ControlWindow
 		return m_charSet;
 	}
 
+	std::size_t getFirstVisible()
+	{
+		return message(EM_GETFIRSTVISIBLELINE);
+	}
+	void setFirstVisible( std::size_t line )
+	{
+		/// TODO check, whether setSelection is required
+		setSelection( 0, 0 );
+		message(EM_LINESCROLL, 0, line);
+	}
 	STRING getSelection() const;
 	void getSelection( size_t *start, size_t *end = NULL ) const;
 	void getCursorPosition( size_t *line, size_t *colum ) const;
