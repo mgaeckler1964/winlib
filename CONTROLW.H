@@ -559,21 +559,21 @@ class EDIT : public ControlWindow
 	//private:
 
 	public:
-	enum editCharset { CS_ANSI, CS_OEM, CS_UTF8 };
+	enum EditCharset { csANSI, csOEM, csUTF8 };
 
 	private:
-	enum editCharset	charSet;
-	bool				editable;
-	int					tabWidth;
-	RLINE_ENDS			lineEnd;
+	enum EditCharset	m_charSet;
+	bool				m_editable;
+	int					m_tabWidth;
+	RLINE_ENDS			m_lineEnd;
 
 	public:
 	EDIT( BasicWindow *owner=NULL ) : ControlWindow( owner )
 	{
-		lineEnd		= RL_END_CRLF;
-		tabWidth	= 8;
-		editable	= true;
-		charSet		= CS_ANSI;
+		m_lineEnd	= RL_END_CRLF;
+		m_tabWidth	= 8;
+		m_editable	= true;
+		m_charSet	= csANSI;
 
 		addStyle( WS_BORDER|ES_NOHIDESEL|ES_AUTOHSCROLL );
 	}
@@ -596,14 +596,14 @@ class EDIT : public ControlWindow
 	{
 		ControlWindow::setFont( font );
 
-		setTabWidth( tabWidth );
+		setTabWidth( m_tabWidth );
 	}
 	void setTabWidth( unsigned int numChar )
 	{
 		Size		charWidth;
 		DrawDevice	hDC( this );
 		hDC.getTextExtent( " ", 1, &charWidth );
-		tabWidth = numChar;
+		m_tabWidth = numChar;
 		unsigned int numPixels = numChar * charWidth.width;
 		numPixels = numPixels*4 / LOWORD(GetDialogBaseUnits());
 		message( EM_SETTABSTOPS, 1, LPARAM(&numPixels) );
@@ -611,65 +611,65 @@ class EDIT : public ControlWindow
 	}
 	int getTabWidth( void ) const
 	{
-		return tabWidth;
+		return m_tabWidth;
 	}
 	void setEditable( void )
 	{
-		editable = true;
+		m_editable = true;
 		message( EM_SETREADONLY, false );
 	}
 	void setReadonly( void )
 	{
-		editable = false;
+		m_editable = false;
 		message( EM_SETREADONLY, true );
 	}
 	bool isEditable( void ) const
 	{
-		return editable;
+		return m_editable;
 	}
-	bool isChanged( void ) const
+	bool isChanged() const
 	{
 		return message( EM_GETMODIFY ) ? true : false;
 	}
-	void setChanged( void )
+	void setChanged()
 	{
 		message( EM_SETMODIFY, true );
 	}
 
-	void setLineEnd( RLINE_ENDS newLineEnd )
+	void setLineEnd( RLINE_ENDS lineEnd )
 	{
-		if( editable && lineEnd != newLineEnd )
+		if( m_editable && m_lineEnd != lineEnd )
 		{
-			lineEnd = newLineEnd;
+			m_lineEnd = lineEnd;
 			setChanged();
 		}
 	}
-	RLINE_ENDS getLineEnd( void ) const
+	RLINE_ENDS getLineEnd() const
 	{
-		return lineEnd;
+		return m_lineEnd;
 	}
 
-	void setCharset( enum editCharset newCharset );
-	void convertCharset( enum editCharset newCharset );
+	void setCharset( EditCharset charset );
+	void convertCharset( EditCharset charset );
 
-	bool isOemConvert( void ) const
+	bool isOemConvert() const
 	{
-		return charSet == CS_OEM;
+		return m_charSet == csOEM;
 	}
-	enum editCharset getCharset( void ) const
+	enum EditCharset getCharset() const
 	{
-		return charSet;
+		return m_charSet;
 	}
 
-	STRING getSelection( void ) const;
+	STRING getSelection() const;
 	void getSelection( size_t *start, size_t *end = NULL ) const;
 	void getCursorPosition( size_t *line, size_t *colum ) const;
 	void setSelection( size_t start, size_t end );
-	void hideSelection( void )
+	void hideSelection()
 	{
 		removeStyle( ES_NOHIDESEL );
 	}
-	void showSelection( void )
+	void showSelection()
 	{
 		addStyle( ES_NOHIDESEL );
 	}

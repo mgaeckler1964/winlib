@@ -586,38 +586,38 @@ void ListBox::unselectEntry( int entryId )
 	EDIT
 --------------------------------------------------------------------------------
 */
-void EDIT::setCharset( enum editCharset newCharset )
+void EDIT::setCharset( EditCharset charset )
 {
-	if( newCharset != charSet )
+	if( charset != m_charSet )
 	{
 		STRING	text = *this;
 
-		if( newCharset == CS_OEM )
+		if( charset == csOEM )
 			addStyle( ES_OEMCONVERT );
-		else if( charSet == CS_OEM )
+		else if( m_charSet == csOEM )
 			removeStyle( ES_OEMCONVERT );
 
-		if( newCharset == CS_UTF8 )
+		if( charset == csUTF8 )
 			text = text.decodeUTF8();
-		else if( charSet == CS_UTF8 )
+		else if( m_charSet == csUTF8 )
 			text = text.encodeUTF8();
 
-		charSet = newCharset;
+		m_charSet = charset;
 
 		*this = text;
 	}
 }
 
-void EDIT::convertCharset( enum editCharset newCharset )
+void EDIT::convertCharset( EditCharset charset )
 {
-	if( newCharset != charSet )
+	if( charset != m_charSet )
 	{
-		if( newCharset == CS_OEM )
+		if( charset == csOEM )
 			addStyle( ES_OEMCONVERT );
-		else if( charSet == CS_OEM )
+		else if( m_charSet == csOEM )
 			removeStyle( ES_OEMCONVERT );
 
-		charSet = newCharset;
+		m_charSet = charset;
 		setChanged();
 	}
 }
@@ -781,12 +781,12 @@ void EDIT::readFromFile( const char *fileName )
 	if( !strAccess( fileName, 0 ) )
 	{
 		file.readFromFile( fileName );
-		lineEnd = file.getLineEnds();
+		m_lineEnd = file.getLineEnds();
 
-		if( lineEnd != RL_END_CRLF )
+		if( m_lineEnd != RL_END_CRLF )
 			file.replaceLineEnds(RL_END_CRLF);
 
-		if( charSet == CS_UTF8 )
+		if( m_charSet == csUTF8 )
 			file = file.decodeUTF8(  );
 		else if( isOemConvert() )
 			file.setCharSet( STR_OEM );
@@ -802,10 +802,10 @@ bool EDIT::saveToFile( const char *fileName )
 	bool	errorFlag;
 
 	text = getText( isOemConvert() );
-	if( lineEnd != RL_END_CRLF )
-		text.replaceLineEnds( lineEnd );
+	if( m_lineEnd != RL_END_CRLF )
+		text.replaceLineEnds( m_lineEnd );
 
-	if( charSet == CS_UTF8 )
+	if( m_charSet == csUTF8 )
 		text = text.encodeUTF8();
 
 	errorFlag = text.writeToFile( fileName );
@@ -884,7 +884,7 @@ void EDIT::print( const char *fileName, PrintDevice *printer )
 	STRING	cp;
 
 	cp = getText();
-	printer->setTabWidth( tabWidth );
+	printer->setTabWidth( m_tabWidth );
 	printer->printText( fileName, cp );
 }
 

@@ -3,10 +3,10 @@
 		Module: 		EDITCHLD.H
 		Description:	Declaration of EditChild a MDI-Child with Editcontrol
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		HoFmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -61,18 +61,17 @@ namespace winlib
 
 class EditChild : public ManagerChild
 {
-	STRING	fileName;
-	time_t	modifyTime;
-
-	private:
+	gak::STRING	m_fileName;
+	std::time_t	m_modifyTime;
+	bool		m_autoReload;
 
 	time_t getModifyTime( void ) const
 	{
-		if( !fileName.isEmpty() )
+		if( !m_fileName.isEmpty() )
 		{
 			struct stat	statbuf;
 
-			if( !strStat( fileName, &statbuf ) )
+			if( !strStat( m_fileName, &statbuf ) )
 /***/			return statbuf.st_mtime;
 			else
 /*@*/			return 0;
@@ -81,10 +80,12 @@ class EditChild : public ManagerChild
 /*@*/		return 0;
 	}
 
+	virtual void handleTimer( void );
 	public:
 	EditChild() : ManagerChild( new MemoControl )
 	{
-		modifyTime = 0;
+		m_modifyTime = 0;
+		m_autoReload = false;
 	}
 
 	MemoControl *getControl( void ) 
@@ -92,15 +93,30 @@ class EditChild : public ManagerChild
 		return static_cast<MemoControl*>(control);
 	}
 
+	void enableAutoReload()
+	{
+		m_autoReload = true;
+		setTimer(1000);
+	}
+	void disableAutoReload()
+	{
+		m_autoReload = false;
+		removeTimer();
+	}
+	bool autoReload() const
+	{
+		return m_autoReload;
+	}
+
 	void reloadFile( void )
 	{
-		getControl()->readFromFile( fileName );
+		getControl()->readFromFile( m_fileName );
 
 		storeModifyTime();
 	}
 	void readFromFile( const char *fileName )
 	{
-		this->fileName = fileName;
+		m_fileName = fileName;
 		reloadFile();
 	}
 	bool saveToFile( const char *fileName = NULL )
@@ -109,10 +125,10 @@ class EditChild : public ManagerChild
 
 		if( fileName )
 		{
-			this->fileName = fileName;
+			m_fileName = fileName;
 			setTitle( fileName );
 		}
-		errorFlag = getControl()->saveToFile( this->fileName );
+		errorFlag = getControl()->saveToFile( m_fileName );
 
 		storeModifyTime();
 
@@ -120,11 +136,11 @@ class EditChild : public ManagerChild
 	}
 	bool checkModifyTime( void )
 	{
-		return (modifyTime != 0 && modifyTime != getModifyTime()) ? true : false;
+		return (m_modifyTime != 0 && m_modifyTime != getModifyTime()) ? true : false;
 	}
 	void storeModifyTime( void )
 	{
-		modifyTime = getModifyTime();
+		m_modifyTime = getModifyTime();
 	}
 	void setFont( Font &font )
 	{
@@ -173,11 +189,11 @@ class EditChild : public ManagerChild
 		static_cast<EDIT*>(control)->clearOemConvert();
 	}
 */
-	void setCharset( enum EDIT::editCharset newCharset )
+	void setCharset( enum EDIT::EditCharset newCharset )
 	{
 		static_cast<EDIT*>(control)->setCharset(newCharset);
 	}
-	void convertCharset( enum EDIT::editCharset newCharset )
+	void convertCharset( enum EDIT::EditCharset newCharset )
 	{
 		static_cast<EDIT*>(control)->convertCharset(newCharset);
 	}
@@ -186,7 +202,7 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(control)->isOemConvert();
 	}
-	enum EDIT::editCharset getCharset( void ) const
+	enum EDIT::EditCharset getCharset( void ) const
 	{
 		return static_cast<EDIT*>(control)->getCharset();
 	}
@@ -211,7 +227,7 @@ class EditChild : public ManagerChild
 	}
 	STRING getFileName( void ) const
 	{
-		return fileName;
+		return m_fileName;
 	}
 	void cut( void )
 	{
