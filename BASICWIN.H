@@ -211,7 +211,7 @@ class ForeignWindow
 	friend class RepaintDevice;
 	friend class Font;
 	
-	HDC getDC( void ) const
+	HDC getDC() const
 	{
 		return GetDC( m_winHandle );
 	}
@@ -284,7 +284,7 @@ class ForeignWindow
 	{
 		m_winHandle = handle;
 	}
-	void clrHandle( void )			// for the dialog & child windows
+	void clrHandle()			// for the dialog & child windows
 	{
 		m_winHandle = HWND(-1);		// to ensure, that this object
 									// no longer recieves messages
@@ -293,16 +293,16 @@ class ForeignWindow
 	{
 		return int(m_winHandle)>0;
 	}
-	HWND handle( void ) const
+	HWND handle() const
 	{
 		return m_winHandle;
 	}
-	virtual SuccessCode close( void );
-	operator bool ( void ) const
+	virtual SuccessCode close();
+	operator bool () const
 	{
 		return isValid();
 	}
-	bool operator ! ( void ) const
+	bool operator ! () const
 	{
 		return !isValid();
 	}
@@ -317,7 +317,7 @@ class ForeignWindow
 			SetWindowLong( m_winHandle, GWL_ID, controlId );
 		}
 	}
-	int getId( void ) const
+	int getId() const
 	{
 		return isValid() ? GetWindowLong( m_winHandle, GWL_ID ) : -1;
 	}
@@ -325,8 +325,8 @@ class ForeignWindow
 	/*
 		window types
 	*/
-	virtual STRING getWindowClassName( void ) const;
-	WindowClass_t getWindowClass( void ) const
+	virtual STRING getWindowClassName() const;
+	WindowClass_t getWindowClass() const
 	{
 		return m_windowType;
 	}
@@ -436,15 +436,15 @@ class ForeignWindow
 			hideHorizScrollBar();
 #endif
 	}
-	void hide( void )
+	void hide()
 	{
 		show( SW_HIDE );
 	}
-	void minimize( void )
+	void minimize()
 	{
 		show( SW_MINIMIZE );
 	}
-	void maximize( void )
+	void maximize()
 	{
 		show( SW_MAXIMIZE );
 	}
@@ -456,7 +456,7 @@ class ForeignWindow
 	/*
 		focus/enable/disable control
 	*/
-	void focus( void )
+	void focus()
 	{
 		if( IsIconic( m_winHandle ) )
 		{
@@ -464,19 +464,19 @@ class ForeignWindow
 		}
 		SetFocus( m_winHandle );
 	}
-	bool hasFocus( void ) const
+	bool hasFocus() const
 	{
 		return GetForegroundWindow() == handle();
 	}
-	void enable( void ) const
+	void enable() const
 	{
 		EnableWindow( m_winHandle, true );
 	}
-	void disable( void ) const
+	void disable() const
 	{
 		EnableWindow( m_winHandle, false );
 	}
-	bool isEnabled( void ) const
+	bool isEnabled() const
 	{
 		return IsWindowEnabled( m_winHandle ) ? true : false;
 	}
@@ -497,11 +497,11 @@ class ForeignWindow
 		the style
 		=========
 	*/
-	unsigned long getStyle( void ) const
+	unsigned long getStyle() const
 	{
 		return isValid() ? GetWindowLong( m_winHandle, GWL_STYLE ) : m_style;
 	}
-	unsigned long getExStyle( void ) const
+	unsigned long getExStyle() const
 	{
 		return isValid() ? GetWindowLong( m_winHandle, GWL_EXSTYLE ) : m_exStyle;
 	}
@@ -582,7 +582,7 @@ class ForeignWindow
 		the caption/text
 		================
 	*/
-	int getTextLength( void ) const
+	int getTextLength() const
 	{
 		return int(message( WM_GETTEXTLENGTH ));
 	}
@@ -625,7 +625,7 @@ class ForeignWindow
 		}
 	}
 
-	Size getClientSize( void ) const
+	Size getClientSize() const
 	{
 		if( isValid() )
 		{
@@ -638,14 +638,14 @@ class ForeignWindow
 		}
 	}
 
-	RectBorder getClientRectangle( void ) const
+	RectBorder getClientRectangle() const
 	{
 		RectBorder rect;
 		GetClientRect( m_winHandle, &rect );
 		return rect;
 	}
 
-	RectBorder getWindowRectangle( void ) const
+	RectBorder getWindowRectangle() const
 	{
 		RectBorder rect;
 		GetWindowRect( m_winHandle, &rect );
@@ -660,7 +660,7 @@ class ForeignWindow
 		return IsWindowVisible(m_winHandle);
 	}
 	
-	RectBorder getRelativeRectangle( void ) const
+	RectBorder getRelativeRectangle() const
 	{
 		RectBorder rect = getWindowRectangle();
 
@@ -680,7 +680,7 @@ class ForeignWindow
 
 		return rect;
 	}
-	Size getSize( void ) const
+	Size getSize() const
 	{
 		if( isValid() )
 		{
@@ -704,12 +704,12 @@ class ForeignWindow
 		*xPos = rect.left;
 		*yPos = rect.top;
 	}
-	Point getPosition( void ) const
+	Point getPosition() const
 	{
 		RectBorder	rect = getWindowRectangle();
 		return Point( rect.left, rect.top );
 	}
-	Point getRelativePosition( void ) const
+	Point getRelativePosition() const
 	{
 		RectBorder	rect = getRelativeRectangle();
 		return Point( rect.left, rect.top );
@@ -726,21 +726,21 @@ class ForeignWindow
 		Frames/Borders
 		==============
 	*/
-	void addBorder( void )
+	void addBorder()
 	{
 		addStyle( WS_BORDER );
 	}
-	void remoweBorder( void )
+	void remoweBorder()
 	{
 		removeStyle( WS_BORDER );
 	}
 
 	// wtf is that here? this is for static controls!!!
-	void addFrame( void )
+	void addFrame()
 	{
 		addStyle( SS_BLACKFRAME );
 	}
-	void remoweFrame( void )
+	void remoweFrame()
 	{
 		removeStyle( SS_BLACKFRAME );
 	}
@@ -757,14 +757,14 @@ class ForeignWindow
 		SetScrollRange( m_winHandle, SB_VERT, min, max, true );
 		ShowScrollBar( m_winHandle, SB_VERT, true );
 	}
-	void hideVertScrollBar( void )
+	void hideVertScrollBar()
 	{
 #if !WIN_SCROLL
 		vScroll = false;
 #endif
 		ShowScrollBar( m_winHandle, SB_VERT, false );
 	}
-	int getVertScrollPos( void ) const
+	int getVertScrollPos() const
 	{
 		return GetScrollPos( m_winHandle, SB_VERT );
 	}
@@ -772,7 +772,7 @@ class ForeignWindow
 	{
 		return SetScrollPos( m_winHandle, SB_VERT, newPos, true );
 	}
-	bool hasVertScrollBar( void ) const
+	bool hasVertScrollBar() const
 	{
 #if WIN_SCROLL
 		bool	vScroll;
@@ -805,14 +805,14 @@ class ForeignWindow
 		hScroll = true;
 #endif
 	}
-	void hideHorizScrollBar( void )
+	void hideHorizScrollBar()
 	{
 		ShowScrollBar( m_winHandle, SB_HORZ, false );
 #if !WIN_SCROLL
 		hScroll = false;
 #endif
 	}
-	int getHorizScrollPos( void ) const
+	int getHorizScrollPos() const
 	{
 		return GetScrollPos( m_winHandle, SB_HORZ );
 	}
@@ -820,7 +820,7 @@ class ForeignWindow
 	{
 		return SetScrollPos( m_winHandle, SB_HORZ, newPos, true );
 	}
-	bool hasHorizScrollBar( void ) const
+	bool hasHorizScrollBar() const
 	{
 #if WIN_SCROLL
 		bool	hScroll;
@@ -854,7 +854,7 @@ class ForeignWindow
 	}
 
 	// Class Style
-	void redrawResize( void ) const
+	void redrawResize() const
 	{
 		DWORD classStyle;
 
@@ -862,7 +862,7 @@ class ForeignWindow
 		classStyle |= CS_HREDRAW|CS_VREDRAW;
 		SetClassLong( m_winHandle, GCL_STYLE, classStyle );
 	}
-	void noRedrawResize( void ) const
+	void noRedrawResize() const
 	{
 		DWORD classStyle;
 
@@ -890,7 +890,7 @@ class ForeignWindow
 	/*
 		Caret
 	*/
-	bool hasCaret( void ) const
+	bool hasCaret() const
 	{
 		return m_caret;
 	}
@@ -901,7 +901,7 @@ class ForeignWindow
 		SetCaretPos( x, y );
 		ShowCaret( m_winHandle );
 	}
-	void showCaret( void ) const
+	void showCaret() const
 	{
 		ShowCaret( m_winHandle );
 	}
@@ -909,11 +909,11 @@ class ForeignWindow
 	{
 		SetCaretPos( x, y );
 	}
-	void hideCaret( void ) const
+	void hideCaret() const
 	{
 		HideCaret( m_winHandle );
 	}
-	void destroyCaret( void )
+	void destroyCaret()
 	{
 		m_caret = false;
 		DestroyCaret();
