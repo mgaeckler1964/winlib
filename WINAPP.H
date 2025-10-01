@@ -243,6 +243,7 @@ class Application
 	long	GetProfile( const char *section, const char *variable, long defaultVal );
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, const char *value );
 	void	WriteProfile( bool publicVal, const char *section, const char *variable, long value );
+	void	DeleteProfile( bool publicVal, const char *section, const char *variable );
 
 	template <class RESULT_MENU, class MENU_T>
 	RESULT_MENU *loadMenuNew( MENU_T menuName )

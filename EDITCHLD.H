@@ -114,7 +114,7 @@ class EditChild : public ManagerChild
 		if( restorePosition )
 		{
 			line = getControl()->getFirstVisible();
-			getControl()->getSelection(&start, &end);
+			getSelection(&start, &end);
 			textLength = getControl()->getTextLength();
 		}
 		getControl()->readFromFile( m_fileName );
@@ -123,12 +123,12 @@ class EditChild : public ManagerChild
 			getControl()->setFirstVisible(line);
 			if( start != end || end <  textLength )
 			{
-				getControl()->setSelection(start, end);
+				setSelection(start, end);
 			}
 			else
 			{
 				textLength = getControl()->getTextLength();
-				getControl()->setSelection(textLength, textLength);
+				setSelection(textLength, textLength);
 			}
 		}
 

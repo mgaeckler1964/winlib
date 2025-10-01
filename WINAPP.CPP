@@ -50,6 +50,10 @@
 #include <winlib/menu.h>
 
 // --------------------------------------------------------------------- //
+// ----- imported datas ------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
 
@@ -66,6 +70,24 @@ namespace winlib
 using namespace gak;
 
 // --------------------------------------------------------------------- //
+// ----- constants ----------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+static const char SOFTWARE[] = "SOFTWARE";
+
+// --------------------------------------------------------------------- //
+// ----- macros -------------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- type definitions ---------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- class definitions --------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
@@ -79,9 +101,12 @@ HINSTANCE Application::m_appInstance = 0;
 HINSTANCE Application::m_resInstance = 0;
 
 // --------------------------------------------------------------------- //
-// ----- module functions ---------------------------------------------- //
+// ----- prototypes ---------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+// --------------------------------------------------------------------- //
+// ----- module functions ---------------------------------------------- //
+// --------------------------------------------------------------------- //
 
 template <typename RESULTTYPE>
 struct ResultTraits
@@ -153,38 +178,39 @@ static RESULTTYPE readRegistration( const char *company, const char *app, const 
 
 	long		openResult;
 	HKEY		softKey;
-	HKEY		companyKey;
-	HKEY		appKey;
-	HKEY		sectionKey;
-
-	DWORD		typeVar;
 	char		valueBuff[10240];
-	DWORD		valueSize;
+	DWORD		valueSize= sizeof( valueBuff ) -1;
 	bool		valueFound = false;
 	RESULTTYPE	result;
 
-	valueSize = sizeof( valueBuff ) -1;
-
 	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
 											: HKEY_CURRENT_USER,
-								"SOFTWARE", 0,
+								SOFTWARE, 0,
 								KEY_READ, &softKey );
 	if( openResult == ERROR_SUCCESS )
 	{
+		HKEY	companyKey;
+
 		openResult = RegOpenKeyEx(	softKey,
 									company, 0,
 									KEY_READ,
 									&companyKey );
 		if( openResult == ERROR_SUCCESS )
 		{
+			HKEY	appKey;
+
 			openResult = RegOpenKeyEx(	companyKey,
 										app, 0,
 										KEY_READ,
 										&appKey );
 			if( openResult == ERROR_SUCCESS )
 			{
+				DWORD	typeVar;
+
 				if( section && *section )
 				{
+					HKEY	sectionKey;
+
 					openResult = RegOpenKeyEx(	appKey,
 												section, 0,
 												KEY_READ,
@@ -238,27 +264,18 @@ static RESULTTYPE readRegistration( const char *company, const char *app, const 
 template <class INPUTTYPE>
 static void writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const INPUTTYPE &i_value )
 {
-	typedef InputTraits<INPUTTYPE>	tInputTraits;
-
-	DWORD			dummy;
-	long			openResult;
-	HKEY			softKey;
-	HKEY			companyKey;
-	HKEY			appKey;
-	HKEY			sectionKey;
-
-	DWORD			valueSize;
-
-	tInputTraits	value(i_value);
-
-	valueSize = DWORD(value.GetValueSize());
+	long	openResult;
+	HKEY	softKey;
 
 	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
 											: HKEY_CURRENT_USER,
-								"SOFTWARE", 0,
+								SOFTWARE, 0,
 								KEY_CREATE_SUB_KEY, &softKey );
 	if( openResult == ERROR_SUCCESS )
 	{
+		HKEY	companyKey;
+		DWORD	dummy;
+
 		openResult = RegCreateKeyEx(	softKey, company, 0, "",
 										REG_OPTION_NON_VOLATILE,
 										KEY_ALL_ACCESS,
@@ -267,6 +284,8 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 										&dummy );
 		if( openResult == ERROR_SUCCESS )
 		{
+			HKEY	appKey;
+
 			openResult = RegCreateKeyEx(	companyKey, app, 0, "",
 											REG_OPTION_NON_VOLATILE,
 											KEY_ALL_ACCESS,
@@ -275,8 +294,14 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 											&dummy );
 			if( openResult == ERROR_SUCCESS )
 			{
+				typedef InputTraits<INPUTTYPE>	tInputTraits;
+				tInputTraits	value(i_value);
+				DWORD			valueSize = DWORD(value.GetValueSize());
+
 				if( section && *section )
 				{
+					HKEY	sectionKey;
+
 					openResult = RegCreateKeyEx(	appKey, section, 0, "",
 													REG_OPTION_NON_VOLATILE,
 													KEY_ALL_ACCESS,
@@ -303,6 +328,75 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 	}
 }
 
+static inline bool isEmpty(const char *val)
+{
+	return !val || !*val;
+}
+
+static inline bool isOK(const char *val)
+{
+	return val && *val;
+}
+
+static void deleteRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var )
+{
+	long	openResult;
+	HKEY	softKey;
+
+	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
+											: HKEY_CURRENT_USER,
+								SOFTWARE, 0,
+								KEY_CREATE_SUB_KEY, &softKey );
+	if( openResult == ERROR_SUCCESS )
+	{
+		if( isEmpty(app) )
+		{
+			RegDeleteKey(softKey, company);
+		}
+		else
+		{
+			HKEY	companyKey;
+
+			openResult = RegOpenKeyEx( softKey, company, 0, KEY_ALL_ACCESS, &companyKey );
+			if( openResult == ERROR_SUCCESS )
+			{
+				if( isEmpty(section) && isEmpty( var ) )
+				{
+					RegDeleteKey(companyKey, app);
+				}
+				else
+				{
+					HKEY appKey;
+					openResult = RegOpenKeyEx( companyKey, app, 0, KEY_ALL_ACCESS, &appKey );
+					if( openResult == ERROR_SUCCESS )
+					{
+						if( isOK(section) )
+						{
+							HKEY sectionKey;
+							openResult = RegOpenKeyEx(	appKey, section, 0, KEY_ALL_ACCESS, &sectionKey );
+							if( openResult == ERROR_SUCCESS )
+							{
+								RegDeleteValue( sectionKey, var );
+								RegCloseKey( sectionKey );
+							}
+						}
+						else
+						{
+							RegDeleteValue(appKey, var);
+						}
+						RegCloseKey( appKey );
+					}
+				}
+				RegCloseKey( companyKey );
+			}
+		}
+		RegCloseKey( softKey );
+	}
+}
+
+// --------------------------------------------------------------------- //
+// ----- class inlines ------------------------------------------------- //
+// --------------------------------------------------------------------- //
 
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //
@@ -611,6 +705,11 @@ void Application::WriteProfile( bool publicVal, const char *section, const char 
 void Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
 {
 	writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
+}
+
+void Application::DeleteProfile( bool publicVal, const char *section, const char *variable )
+{
+	deleteRegistration( publicVal, m_company, getApplication(), section, variable );
 }
 
 // --------------------------------------------------------------------- //
