@@ -1,7 +1,7 @@
 /*
 		Project:		GAKLIB
 		Module:			WinAppTest.h
-		Description:	Unit test for winlib::Applicatoin
+		Description:	Unit test for winlib::Application
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -80,6 +80,8 @@ class WinApp : public winlib::Application
 {
 };
 
+static char theKeyName[] = "theKeyName";
+
 class WinAppTest : public UnitTest
 {
 	WinApp	m_appObject;
@@ -93,6 +95,56 @@ class WinAppTest : public UnitTest
 		doEnterFunctionEx(gakLogging::llInfo, "WinAppTest::PerformTest");
 		TestScope scope( "PerformTest" );
 		UT_ASSERT_EQUAL( winlib::appObject, &m_appObject );
+
+		m_appObject.setComapny("GakWinlibUnitTester");
+		m_appObject.setApplication("UnitTestApp");
+
+		long tester = m_appObject.GetProfile("", theKeyName, 666);
+		UT_ASSERT_EQUAL( tester, 666 );
+		long result = m_appObject.WriteProfile(false, "", theKeyName, 333);
+		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		tester = m_appObject.GetProfile("", theKeyName, 666);
+		UT_ASSERT_EQUAL( tester, 333 );
+
+		result = m_appObject.DeleteProfile(false);
+		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		result = m_appObject.DeleteProfile(false);
+		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+		tester = m_appObject.GetProfile("", theKeyName, 666);
+		UT_ASSERT_EQUAL( tester, 666 );
+
+		result = m_appObject.WriteProfile(true, "", theKeyName, 999);
+		if( result == ERROR_SUCCESS )
+		{
+			std::cout << "Admintest" << std::endl;
+
+			tester = m_appObject.GetProfile("", theKeyName, 666);
+			UT_ASSERT_EQUAL( tester, 999 );
+			result = m_appObject.WriteProfile(false, "", theKeyName, 333);
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			tester = m_appObject.GetProfile("", theKeyName, 666);
+			UT_ASSERT_EQUAL( tester, 333 );
+
+			/// TODO: check for WinXP. (newer versions will delete this automatically)
+			result = m_appObject.DeleteProfile(true);
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			result = m_appObject.DeleteProfile(false);
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			result = m_appObject.DeleteCompanyProfile( true );
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			result = m_appObject.DeleteCompanyProfile( true );
+			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+		}
+		else
+		{
+			std::cout << "No Admintest" << std::endl;
+		}
+
+		result = m_appObject.DeleteCompanyProfile( false );
+		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		result = m_appObject.DeleteCompanyProfile( false );
+		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 	}
 };
 

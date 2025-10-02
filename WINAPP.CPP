@@ -262,7 +262,7 @@ static RESULTTYPE readRegistration( const char *company, const char *app, const 
 }
 
 template <class INPUTTYPE>
-static void writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const INPUTTYPE &i_value )
+static long writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const INPUTTYPE &i_value )
 {
 	long	openResult;
 	HKEY	softKey;
@@ -310,13 +310,13 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 													&dummy );
 					if( openResult == ERROR_SUCCESS )
 					{
-						RegSetValueEx( sectionKey, (char *)var, 0,
+						openResult = RegSetValueEx( sectionKey, (char *)var, 0,
 							tInputTraits::sRegistryType, value.GetAdress(), valueSize );
 						RegCloseKey( sectionKey );
 					}
 				}
 				else
-					RegSetValueEx( appKey, (char *)var, 0,
+					openResult = RegSetValueEx( appKey, (char *)var, 0,
 									tInputTraits::sRegistryType, value.GetAdress(), valueSize );
 
 				RegCloseKey( appKey );
@@ -326,6 +326,8 @@ static void writeRegistration( bool publicVal, const char *company, const char *
 		}
 		RegCloseKey( softKey );
 	}
+
+	return openResult;
 }
 
 static inline bool isEmpty(const char *val)
@@ -338,7 +340,7 @@ static inline bool isOK(const char *val)
 	return val && *val;
 }
 
-static void deleteRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var )
+static long deleteRegistration( bool publicVal, const char *company, const char *app="", const char *section="", const char *var="" )
 {
 	long	openResult;
 	HKEY	softKey;
@@ -346,12 +348,12 @@ static void deleteRegistration( bool publicVal, const char *company, const char 
 	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
 											: HKEY_CURRENT_USER,
 								SOFTWARE, 0,
-								KEY_CREATE_SUB_KEY, &softKey );
+								KEY_ALL_ACCESS, &softKey );
 	if( openResult == ERROR_SUCCESS )
 	{
 		if( isEmpty(app) )
 		{
-			RegDeleteKey(softKey, company);
+			openResult = RegDeleteKey(softKey, company);
 		}
 		else
 		{
@@ -362,7 +364,7 @@ static void deleteRegistration( bool publicVal, const char *company, const char 
 			{
 				if( isEmpty(section) && isEmpty( var ) )
 				{
-					RegDeleteKey(companyKey, app);
+					openResult = RegDeleteKey(companyKey, app);
 				}
 				else
 				{
@@ -376,13 +378,13 @@ static void deleteRegistration( bool publicVal, const char *company, const char 
 							openResult = RegOpenKeyEx(	appKey, section, 0, KEY_ALL_ACCESS, &sectionKey );
 							if( openResult == ERROR_SUCCESS )
 							{
-								RegDeleteValue( sectionKey, var );
+								openResult = RegDeleteValue( sectionKey, var );
 								RegCloseKey( sectionKey );
 							}
 						}
 						else
 						{
-							RegDeleteValue(appKey, var);
+							openResult = RegDeleteValue(appKey, var);
 						}
 						RegCloseKey( appKey );
 					}
@@ -392,6 +394,8 @@ static void deleteRegistration( bool publicVal, const char *company, const char 
 		}
 		RegCloseKey( softKey );
 	}
+
+	return openResult;
 }
 
 // --------------------------------------------------------------------- //
@@ -697,19 +701,24 @@ long Application::GetProfile( const char *section, const char *variable, long de
 #pragma argsused
 #endif
 
-void Application::WriteProfile( bool publicVal, const char *section, const char *variable, const char *value )
+long Application::WriteProfile( bool publicVal, const char *section, const char *variable, const char *value )
 {
-	writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
+	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
 }
 
-void Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
+long Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
 {
-	writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
+	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
 }
 
-void Application::DeleteProfile( bool publicVal, const char *section, const char *variable )
+long Application::DeleteProfile( bool publicVal, const char *section, const char *variable )
 {
-	deleteRegistration( publicVal, m_company, getApplication(), section, variable );
+	return deleteRegistration( publicVal, m_company, getApplication(), section, variable );
+}
+
+long Application::DeleteCompanyProfile( bool publicVal )
+{
+	return deleteRegistration( publicVal, m_company );
 }
 
 // --------------------------------------------------------------------- //
