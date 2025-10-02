@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WINLIB", "WINLIB.vcxproj", "{60204F49-CD6A-2A89-3893-45EBD164B8D7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "guiBuilder", "guiBuilder.vcxproj", "{DF4C6A5E-F4FD-4F4D-9E05-11D4F73D9EE2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "guiBuilder", "GuiBuilder\guiBuilder.vcxproj", "{DF4C6A5E-F4FD-4F4D-9E05-11D4F73D9EE2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{60204F49-CD6A-2A89-3893-45EBD164B8D7} = {60204F49-CD6A-2A89-3893-45EBD164B8D7}
 	EndProjectSection
@@ -14,6 +14,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "GuiTest\test.vcxpro
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{BCE7B760-5629-442F-91F2-E850B366B020}"
+	ProjectSection(ProjectDependencies) = postProject
+		{60204F49-CD6A-2A89-3893-45EBD164B8D7} = {60204F49-CD6A-2A89-3893-45EBD164B8D7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

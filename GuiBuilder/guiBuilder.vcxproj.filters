@@ -15,106 +15,106 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GuiBuilder\DesignerForm.h">
+    <ClInclude Include="DesignerForm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\guiBuilder_rc.h">
+    <ClInclude Include="guiBuilder_rc.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\GuiBuilderWindow.h">
+    <ClInclude Include="GuiBuilderWindow.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\StringListEditor.h">
+    <ClInclude Include="StringListEditor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\StyleDialog.h">
+    <ClInclude Include="StyleDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\TranslateForm.h">
+    <ClInclude Include="TranslateForm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiBuilder\guiBuilder.gui.h">
+    <ClInclude Include="guiBuilder.gui.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GuiBuilder\DesignerForm.cpp">
+    <ClCompile Include="DesignerForm.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\guiBuilder.cpp">
+    <ClCompile Include="guiBuilder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\GuiBuilderWindow.cpp">
+    <ClCompile Include="GuiBuilderWindow.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\StringListEditor.cpp">
+    <ClCompile Include="StringListEditor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\StyleDialog.cpp">
+    <ClCompile Include="StyleDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\TranslateForm.cpp">
+    <ClCompile Include="TranslateForm.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBuilder\guiBuilder.gui.cpp">
+    <ClCompile Include="guiBuilder.gui.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="GuiBuilder\guiBuilder.rc">
+    <ResourceCompile Include="guiBuilder.rc">
       <Filter>Ressourcendateien</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GuiBuilder\button.ico">
+    <None Include="button.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\checkbox.ico">
+    <None Include="checkbox.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\combobox.ico">
+    <None Include="combobox.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\editControl.ico">
+    <None Include="editControl.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\frame.ico">
+    <None Include="frame.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\grid.ico">
+    <None Include="grid.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\groupBox.ico">
+    <None Include="groupBox.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\guiBuilder.ico">
+    <None Include="guiBuilder.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\listbox.ico">
+    <None Include="listbox.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\memoControl.ico">
+    <None Include="memoControl.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\radiobutton.ico">
+    <None Include="radiobutton.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\scrollbar.ico">
+    <None Include="scrollbar.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\scroller.ico">
+    <None Include="scroller.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\select.ico">
+    <None Include="select.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\trackbar.ico">
+    <None Include="trackbar.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\treeview.ico">
+    <None Include="treeview.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="GuiBuilder\updownButton.ico">
+    <None Include="updownButton.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
   </ItemGroup>

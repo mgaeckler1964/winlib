@@ -46,24 +46,24 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="..\DebugSettings.props" />
-    <Import Project="..\CommonSettings.props" />
-    <Import Project="..\Common32Settings.props" />
+    <Import Project="..\..\DebugSettings.props" />
+    <Import Project="..\..\CommonSettings.props" />
+    <Import Project="..\..\Common32Settings.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="..\DebugSettings.props" />
-    <Import Project="..\CommonSettings.props" />
-    <Import Project="..\Common64Settings.props" />
+    <Import Project="..\..\DebugSettings.props" />
+    <Import Project="..\..\CommonSettings.props" />
+    <Import Project="..\..\Common64Settings.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="..\ReleaseSettings.props" />
-    <Import Project="..\CommonSettings.props" />
-    <Import Project="..\Common32Settings.props" />
+    <Import Project="..\..\ReleaseSettings.props" />
+    <Import Project="..\..\CommonSettings.props" />
+    <Import Project="..\..\Common32Settings.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="..\ReleaseSettings.props" />
-    <Import Project="..\CommonSettings.props" />
-    <Import Project="..\Common64Settings.props" />
+    <Import Project="..\..\ReleaseSettings.props" />
+    <Import Project="..\..\CommonSettings.props" />
+    <Import Project="..\..\Common64Settings.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -79,7 +79,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)GuiBuilder\*.gui $(OutDir)</Command>
+      <Command>copy $(ProjectDir)*.gui $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>copy gui definitions to target</Message>
@@ -94,7 +94,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)GuiBuilder\*.gui $(OutDir)</Command>
+      <Command>copy $(ProjectDir)*.gui $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>copy gui definitions to target</Message>
@@ -109,7 +109,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)GuiBuilder\*.gui $(OutDir)</Command>
+      <Command>copy $(ProjectDir)*.gui $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>copy gui definitions to target</Message>
@@ -124,51 +124,51 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)GuiBuilder\*.gui $(OutDir)</Command>
+      <Command>copy $(ProjectDir)*.gui $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>copy gui definitions to target</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GuiBuilder\DesignerForm.h" />
-    <ClInclude Include="GuiBuilder\guiBuilder.gui.h" />
-    <ClInclude Include="GuiBuilder\GuiBuilderWindow.h" />
-    <ClInclude Include="GuiBuilder\guiBuilder_rc.h" />
-    <ClInclude Include="GuiBuilder\StringListEditor.h" />
-    <ClInclude Include="GuiBuilder\StyleDialog.h" />
-    <ClInclude Include="GuiBuilder\TranslateForm.h" />
+    <ClInclude Include="DesignerForm.h" />
+    <ClInclude Include="guiBuilder.gui.h" />
+    <ClInclude Include="GuiBuilderWindow.h" />
+    <ClInclude Include="guiBuilder_rc.h" />
+    <ClInclude Include="StringListEditor.h" />
+    <ClInclude Include="StyleDialog.h" />
+    <ClInclude Include="TranslateForm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GuiBuilder\DesignerForm.cpp" />
-    <ClCompile Include="GuiBuilder\guiBuilder.cpp" />
-    <ClCompile Include="GuiBuilder\guiBuilder.gui.cpp" />
-    <ClCompile Include="GuiBuilder\GuiBuilderWindow.cpp" />
-    <ClCompile Include="GuiBuilder\StringListEditor.cpp" />
-    <ClCompile Include="GuiBuilder\StyleDialog.cpp" />
-    <ClCompile Include="GuiBuilder\TranslateForm.cpp" />
+    <ClCompile Include="DesignerForm.cpp" />
+    <ClCompile Include="guiBuilder.cpp" />
+    <ClCompile Include="guiBuilder.gui.cpp" />
+    <ClCompile Include="GuiBuilderWindow.cpp" />
+    <ClCompile Include="StringListEditor.cpp" />
+    <ClCompile Include="StyleDialog.cpp" />
+    <ClCompile Include="TranslateForm.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="GuiBuilder\guiBuilder.rc" />
+    <ResourceCompile Include="guiBuilder.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GuiBuilder\button.ico" />
-    <None Include="GuiBuilder\checkbox.ico" />
-    <None Include="GuiBuilder\combobox.ico" />
-    <None Include="GuiBuilder\editControl.ico" />
-    <None Include="GuiBuilder\frame.ico" />
-    <None Include="GuiBuilder\grid.ico" />
-    <None Include="GuiBuilder\groupBox.ico" />
-    <None Include="GuiBuilder\guiBuilder.ico" />
-    <None Include="GuiBuilder\listbox.ico" />
-    <None Include="GuiBuilder\memoControl.ico" />
-    <None Include="GuiBuilder\radiobutton.ico" />
-    <None Include="GuiBuilder\scrollbar.ico" />
-    <None Include="GuiBuilder\scroller.ico" />
-    <None Include="GuiBuilder\select.ico" />
-    <None Include="GuiBuilder\trackbar.ico" />
-    <None Include="GuiBuilder\treeview.ico" />
-    <None Include="GuiBuilder\updownButton.ico" />
+    <None Include="button.ico" />
+    <None Include="checkbox.ico" />
+    <None Include="combobox.ico" />
+    <None Include="editControl.ico" />
+    <None Include="frame.ico" />
+    <None Include="grid.ico" />
+    <None Include="groupBox.ico" />
+    <None Include="guiBuilder.ico" />
+    <None Include="listbox.ico" />
+    <None Include="memoControl.ico" />
+    <None Include="radiobutton.ico" />
+    <None Include="scrollbar.ico" />
+    <None Include="scroller.ico" />
+    <None Include="select.ico" />
+    <None Include="trackbar.ico" />
+    <None Include="treeview.ico" />
+    <None Include="updownButton.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
