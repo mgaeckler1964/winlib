@@ -63,6 +63,7 @@
 #include <WINLIB/WINLIB.H>
 #include <WINLIB/bitmap.h>
 #include <WINLIB/resourceTags.h>
+#include <WINLIB/menu.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -90,7 +91,6 @@ namespace winlib
 
 class CallbackWindow;
 class BasicWindow;
-class Menu;
 
 #ifdef _MSC_VER
 #	pragma warning( push )
