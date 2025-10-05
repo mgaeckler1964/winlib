@@ -64,6 +64,7 @@ class EditChild : public ManagerChild
 	gak::STRING	m_fileName;
 	std::time_t	m_modifyTime;
 	bool		m_autoReload;
+	bool		m_withBOM;
 
 	time_t getModifyTime() const
 	{
@@ -85,7 +86,7 @@ class EditChild : public ManagerChild
 	EditChild() : ManagerChild( new MemoControl )
 	{
 		m_modifyTime = 0;
-		m_autoReload = false;
+		m_withBOM = m_autoReload = false;
 	}
 
 	MemoControl *getControl() 
@@ -93,6 +94,10 @@ class EditChild : public ManagerChild
 		return static_cast<MemoControl*>(control);
 	}
 
+	bool &withBOM()
+	{
+		return m_withBOM;
+	}
 	void enableAutoReload()
 	{
 		m_autoReload = true;
@@ -117,7 +122,13 @@ class EditChild : public ManagerChild
 			getSelection(&start, &end);
 			textLength = getControl()->getTextLength();
 		}
+		EDIT::EditCharset	cs1 = getControl()->getCharset();
 		getControl()->readFromFile( m_fileName );
+		EDIT::EditCharset	cs2 = getControl()->getCharset();
+		if( cs1 != EDIT::csUTF8 && cs2 == EDIT::csUTF8 )
+		{
+			withBOM() = true;
+		}
 		if( restorePosition )
 		{
 			getControl()->setFirstVisible(line);
@@ -144,7 +155,7 @@ class EditChild : public ManagerChild
 		m_fileName = fileName;
 		reloadFile(false);
 	}
-	bool saveToFile( const char *fileName = NULL )
+	bool saveToFile( const char *fileName=nullptr )
 	{
 		bool errorFlag;
 
@@ -153,7 +164,7 @@ class EditChild : public ManagerChild
 			m_fileName = fileName;
 			setTitle( fileName );
 		}
-		errorFlag = getControl()->saveToFile( m_fileName );
+		errorFlag = getControl()->saveToFile( m_fileName, m_withBOM );
 
 		storeModifyTime();
 

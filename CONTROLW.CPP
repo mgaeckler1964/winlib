@@ -782,21 +782,31 @@ void EDIT::readFromFile( const char *fileName )
 	{
 		file.readFromFile( fileName );
 		m_lineEnd = file.getLineEnds();
+		if( file.getCharSet() == STR_UTF8 )
+		{
+			m_charSet = csUTF8;
+		}
 
 		if( m_lineEnd != RL_END_CRLF )
+		{
 			file.replaceLineEnds(RL_END_CRLF);
+		}
 
 		if( m_charSet == csUTF8 )
+		{
 			file = file.decodeUTF8(  );
+		}
 		else if( isOemConvert() )
+		{
 			file.setCharSet( STR_OEM );
+		}
 
 		setText( file );
 		message( EM_SETMODIFY, false, 0l );
 	}
 }
 
-bool EDIT::saveToFile( const char *fileName )
+bool EDIT::saveToFile( const char *fileName, bool withBOM )
 {
 	STRING	text;
 	bool	errorFlag;
@@ -808,7 +818,7 @@ bool EDIT::saveToFile( const char *fileName )
 	if( m_charSet == csUTF8 )
 		text = text.encodeUTF8();
 
-	errorFlag = text.writeToFile( fileName );
+	errorFlag = text.writeToFile( fileName, withBOM );
 	if( !errorFlag )
 		message( EM_SETMODIFY, false, 0l );
 

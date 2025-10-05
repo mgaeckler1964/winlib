@@ -330,16 +330,6 @@ static long writeRegistration( bool publicVal, const char *company, const char *
 	return openResult;
 }
 
-static inline bool isEmpty(const char *val)
-{
-	return !val || !*val;
-}
-
-static inline bool isOK(const char *val)
-{
-	return val && *val;
-}
-
 static long deleteRegistration( bool publicVal, const char *company, const char *app="", const char *section="", const char *var="" )
 {
 	long	openResult;
@@ -372,7 +362,7 @@ static long deleteRegistration( bool publicVal, const char *company, const char 
 					openResult = RegOpenKeyEx( companyKey, app, 0, KEY_ALL_ACCESS, &appKey );
 					if( openResult == ERROR_SUCCESS )
 					{
-						if( isOK(section) )
+						if( !isEmpty(section) )
 						{
 							HKEY sectionKey;
 							openResult = RegOpenKeyEx(	appKey, section, 0, KEY_ALL_ACCESS, &sectionKey );
