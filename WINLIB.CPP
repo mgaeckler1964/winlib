@@ -3,10 +3,10 @@
 		Module:			WINLIB.CPP
 		Description:	Some utility functions
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -56,11 +56,17 @@
 
 #include <winlib\winlib.h>
 
+namespace winlib
+{
+	extern const char ADDR_WIDTH_32[] = "32-Bit";
+	extern const char ADDR_WIDTH_64[] = "64-Bit";
+}
+
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void idleLoop( void )
+void idleLoop()
 {
 	MSG		msg;
 
@@ -120,3 +126,22 @@ unsigned int SyncExec( const char *command, const char *arguments, unsigned int 
 	return 0;
 }
 
+
+namespace winlib
+{
+STRING getWindowsVersion()
+{
+	DWORD version = GetVersion();
+	gak::uint8 major = gak::uint8(LOBYTE(LOWORD(version)));
+	gak::uint8 minor = gak::uint8(HIBYTE(LOWORD(version)));
+	gak::uint16 build = version < 0x80000000 ? gak::uint16(HIWORD(version)) : 0; 
+
+	return gak::formatNumber(major)+'.'+gak::formatNumber(minor)+'.'+gak::formatNumber(build);
+}
+
+STRING getWindowsWidth()
+{
+	return getWindowsVersion() + " (" + getAdressWidth() + ')';
+}
+
+}
