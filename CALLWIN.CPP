@@ -482,6 +482,10 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 						}
 					}
 				}
+				else if( notify->code == DTN_DATETIMECHANGE )
+				{
+					msgStatus = handleSelectionChange( int(notify->idFrom) );
+				}
 			}
 			break;
 		}
