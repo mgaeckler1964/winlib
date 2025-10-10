@@ -160,7 +160,7 @@ bool Font::selectFont(
 
 	if( ok )
 	{
-		setFontSize( fontDlg.fontDlg.iPointSize/10 );
+		setFontSize( fontDlg.m_fontDlg.iPointSize/10 );
 
 		if( allwaysCreate && !isAssigned() )
 			create();

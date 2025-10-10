@@ -91,7 +91,7 @@ static const char SOFTWARE[] = "SOFTWARE";
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-Application	*appObject = NULL;
+Application	*appObject = nullptr;
 
 // --------------------------------------------------------------------- //
 // ----- class statics ------------------------------------------------- //
@@ -433,7 +433,7 @@ Application::~Application()
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING Application::getApplicationFromFile( void )
+STRING Application::getApplicationFromFile()
 {
 	STRING			applicationName;
 
@@ -507,7 +507,7 @@ int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdSho
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-xml::Document *Application::getGuiDoc( void )
+xml::Document *Application::getGuiDoc()
 {
 	if( !m_guiDoc )
 	{
@@ -639,7 +639,7 @@ STRING Application::loadString( int textId )
 	return m_resourceStrings[textId];
 }
 
-const STRING &Application::getApplication( void )
+const STRING &Application::getApplication()
 {
 	if( m_applicationName.isEmpty() )
 	{
@@ -649,7 +649,7 @@ const STRING &Application::getApplication( void )
 	return m_applicationName;
 }
 
-const F_STRING &Application::getFileName( void )
+const F_STRING &Application::getFileName()
 {
 	if( m_fileName.isEmpty() )
 	{
@@ -662,7 +662,7 @@ const F_STRING &Application::getFileName( void )
 	return m_fileName;
 }
 
-const F_STRING &Application::getPathName( void )
+const F_STRING &Application::getPathName()
 {
 	if( m_pathName.isEmpty() )
 	{

@@ -88,16 +88,16 @@ const int DEFAULT_FONT_SIZE=14;
 
 class ResizeException
 {
-	int incWidth;
+	int m_incWidth;
 
 	public:
 	ResizeException( int incWidth )
 	{
-		this->incWidth = incWidth;
+		m_incWidth = incWidth;
 	}
-	int getIncWidth( void ) const
+	int getIncWidth() const
 	{
-		return incWidth;
+		return m_incWidth;
 	}
 };
 
@@ -129,10 +129,10 @@ const char XMLeditorChild::className[] = "XMLeditorChild";
 
 inline void XML_LINE_CHUNK::moveBy( int x, int y )
 {
-	position.x += x;
-	position.y += y;
-	if( theInlineBlockBox )
-		theInlineBlockBox->moveBy( x, y );
+	m_position.x += x;
+	m_position.y += y;
+	if( m_theInlineBlockBox )
+		m_theInlineBlockBox->moveBy( x, y );
 }
 
 // --------------------------------------------------------------------- //
@@ -143,7 +143,7 @@ inline void XML_LINE_CHUNK::moveBy( int x, int y )
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void XMLeditorChild::registerClass( void )
+void XMLeditorChild::registerClass()
 {
 	static bool registered = false;
 
@@ -242,12 +242,12 @@ bool XML_VIEWER_BOX::findCharPosInLine(
 	bool	found = false;
 	int		newPosition;
 
-	const XML_LINE	&theLine = theContent[line];
-	size_t			numChunks = theLine.theLine.size();
+	const XML_LINE	&theLine = m_theContent[line];
+	size_t			numChunks = theLine.m_theLine.size();
 
 	for( size_t chunk = 0; chunk <numChunks; chunk++ )
 	{
-		const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+		const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 
 		if( theChunk.getPosition().x <= screenPosition
 		&& theChunk.getPosition().x + theChunk.width >= screenPosition )
@@ -311,12 +311,12 @@ bool XML_VIEWER_BOX::findCharPosInLine(
 		}
 	}
 
-	if( !found && screenPosition < theLine.position.x )
+	if( !found && screenPosition < theLine.m_position.x )
 	{
 		// set the cursor to the first text chunk we found
 		for( size_t chunk = 0; chunk <numChunks; chunk++ )
 		{
-			const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+			const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 
 			if( theChunk.isTextElement() )
 			{
@@ -329,12 +329,12 @@ bool XML_VIEWER_BOX::findCharPosInLine(
 			}
 		}
 	}
-	if( !found && screenPosition > theLine.position.x+theLine.lineWidth )
+	if( !found && screenPosition > theLine.m_position.x+theLine.m_lineWidth )
 	{
 		// set the cursor to the last text chunk we found
 		for( size_t chunk = numChunks-1; chunk != -1; chunk-- )
 		{
-			const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+			const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 
 			if( theChunk.isTextElement() )
 			{
@@ -540,26 +540,26 @@ int XML_VIEWER_BOX::findTop( int y, int boxWidth, int innerLeft, int innerRight 
 	leftBorder = innerLeft;
 	rightBorder = innerRight;
 
-	while( leftRectIdx < leftBoxes.size()
-	|| rightRectIdx < rightBoxes.size() )
+	while( leftRectIdx < m_leftBoxes.size()
+	|| rightRectIdx < m_rightBoxes.size() )
 	{
 		leftRectIdx = findLeftBox( y );
 		rightRectIdx = findRightBox( y );
 
 
-		if( leftRectIdx < leftBoxes.size() )
+		if( leftRectIdx < m_leftBoxes.size() )
 		{
-			const RectBorder &leftRect = leftBoxes[leftRectIdx];
+			const RectBorder &leftRect = m_leftBoxes[leftRectIdx];
 			leftBorder = leftRect.right;
 			nextY = leftRect.bottom;
 		}
 
-		if( rightRectIdx < rightBoxes.size() )
+		if( rightRectIdx < m_rightBoxes.size() )
 		{
-			const RectBorder &rightRect = rightBoxes[rightRectIdx];
+			const RectBorder &rightRect = m_rightBoxes[rightRectIdx];
 			rightBorder = rightRect.left;
 			if( rightRect.bottom < nextY
-			|| leftRectIdx >= leftBoxes.size())
+			|| leftRectIdx >= m_leftBoxes.size())
 				nextY = rightRect.bottom;
 		}
 
@@ -582,9 +582,9 @@ size_t XML_VIEWER_BOX::findLeftBox( int y )
 	size_t	leftBoxIdx = (size_t)-1;
 	int		left = 0;
 
-	for( size_t i=0; i<leftBoxes.size(); i++ )
+	for( size_t i=0; i<m_leftBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = leftBoxes[i];
+		const RectBorder &boxRect = m_leftBoxes[i];
 		if( boxRect.top <= y && boxRect.bottom > y )
 		{
 			if( boxRect.right > left )
@@ -601,9 +601,9 @@ size_t XML_VIEWER_BOX::findLeftBox( int y )
 int XML_VIEWER_BOX::findLeft( int y, int minLeft )
 {
 	int left = minLeft;
-	for( size_t i=0; i<leftBoxes.size(); i++ )
+	for( size_t i=0; i<m_leftBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = leftBoxes[i];
+		const RectBorder &boxRect = m_leftBoxes[i];
 		if( boxRect.top <= y && boxRect.bottom > y )
 		{
 			if( boxRect.right > left )
@@ -617,11 +617,11 @@ int XML_VIEWER_BOX::findLeft( int y, int minLeft )
 size_t XML_VIEWER_BOX::findRightBox( int y )
 {
 	size_t	rightBoxIdx = (size_t)-1;;
-	int		right = docPosition.right;
+	int		right = m_docPosition.right;
 
-	for( size_t i=0; i<rightBoxes.size(); i++ )
+	for( size_t i=0; i<m_rightBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = rightBoxes[i];
+		const RectBorder &boxRect = m_rightBoxes[i];
 		if( boxRect.top <= y && boxRect.bottom > y )
 		{
 			if( boxRect.left < right )
@@ -638,9 +638,9 @@ size_t XML_VIEWER_BOX::findRightBox( int y )
 int XML_VIEWER_BOX::findRight( int y, int maxRight )
 {
 	int right = maxRight;
-	for( size_t i=0; i<rightBoxes.size(); i++ )
+	for( size_t i=0; i<m_rightBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = rightBoxes[i];
+		const RectBorder &boxRect = m_rightBoxes[i];
 		if( boxRect.top <= y && boxRect.bottom > y )
 		{
 			if( boxRect.left < right )
@@ -659,7 +659,7 @@ int XML_VIEWER_BOX::findRight( int y, int maxRight )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING XMLeditorChild::getWindowClassName( void ) const
+STRING XMLeditorChild::getWindowClassName() const
 {
 	return className;
 }
@@ -672,19 +672,19 @@ ProcessStatus XMLeditorChild::handleVertScroll( VertScrollCode scrollCode, int n
 			nPos = 0;
 			break;
 		case vscLINE_UP:
-			nPos = vertOffset - 20;
+			nPos = m_vertOffset - 20;
 			break;
 		case vscPAGE_UP:
-			nPos = vertOffset - size.height;
+			nPos = m_vertOffset - m_size.height;
 			break;
 		case vscLINE_DOWN:
-			nPos = vertOffset + 20;
+			nPos = m_vertOffset + 20;
 			break;
 		case vscPAGE_DOWN:
-			nPos = vertOffset + size.height;
+			nPos = m_vertOffset + m_size.height;
 			break;
 		case vscBOTTOM:
-			nPos = boxSize.bottom - size.height;
+			nPos = m_boxSize.bottom - m_size.height;
 			break;
 
 		case vscTHUMB_POSITION:
@@ -697,11 +697,11 @@ ProcessStatus XMLeditorChild::handleVertScroll( VertScrollCode scrollCode, int n
 
 	if( nPos < 0 )
 		nPos = 0;
-	else if( nPos > boxSize.bottom - size.height )
-		nPos = boxSize.bottom - size.height;
+	else if( nPos > m_boxSize.bottom - m_size.height )
+		nPos = m_boxSize.bottom - m_size.height;
 
 	setVertScrollPos( nPos );
-	vertOffset = nPos;
+	m_vertOffset = nPos;
 
 	invalidateWindow();
 
@@ -716,19 +716,19 @@ ProcessStatus XMLeditorChild::handleHorizScroll( HorizScrollCode scrollCode, int
 			nPos = 0;
 			break;
 		case hscLINE_LEFT:
-			nPos = horizOffset - 20;
+			nPos = m_horizOffset - 20;
 			break;
 		case hscPAGE_LEFT:
-			nPos = horizOffset - size.width;
+			nPos = m_horizOffset - m_size.width;
 			break;
 		case hscLINE_RIGHT:
-			nPos = horizOffset + 20;
+			nPos = m_horizOffset + 20;
 			break;
 		case hscPAGE_RIGHT:
-			nPos = horizOffset + size.width;
+			nPos = m_horizOffset + m_size.width;
 			break;
 		case hscRIGHT:
-			nPos = boxSize.right - size.width;
+			nPos = m_boxSize.right - m_size.width;
 			break;
 
 		case hscTHUMB_POSITION:
@@ -741,11 +741,11 @@ ProcessStatus XMLeditorChild::handleHorizScroll( HorizScrollCode scrollCode, int
 
 	if( nPos < 0 )
 		nPos = 0;
-	else if( nPos > boxSize.right - size.width )
-		nPos = boxSize.right - size.width;
+	else if( nPos > m_boxSize.right - m_size.width )
+		nPos = m_boxSize.right - m_size.width;
 
 	setHorizScrollPos( nPos );
-	horizOffset = nPos;
+	m_horizOffset = nPos;
 
 	invalidateWindow();
 
@@ -754,26 +754,26 @@ ProcessStatus XMLeditorChild::handleHorizScroll( HorizScrollCode scrollCode, int
 
 void XMLeditorChild::drawCursor( Device &context )
 {
-	if( cursorPos.getViewerBox() && cursorPos.getLine() != -1 && cursorPos.getChunk() != -1 )
+	if( m_cursorPos.getViewerBox() && m_cursorPos.getLine() != -1 && m_cursorPos.getChunk() != -1 )
 	{
-		cursorVisible = !cursorVisible;
+		m_cursorVisible = !m_cursorVisible;
 
-		const XML_LINE			&theLine = cursorPos.getViewerBox()->getLine(cursorPos.getLine());
-		const XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos.getChunk()];
+		const XML_LINE			&theLine = m_cursorPos.getViewerBox()->getLine(m_cursorPos.getLine());
+		const XML_LINE_CHUNK	&theChunk = theLine.m_theLine[m_cursorPos.getChunk()];
 
 		context.getPen().selectPen( Pen::spBlack );
 		int old = context.setROP2( R2_NOT );
 
 		context.verticalLine(
-			theChunk.getPosition().x-horizOffset+cursorPos.getHorizOffset(),
-			theChunk.getPosition().y-vertOffset,
-			theChunk.getPosition().y+theLine.lineHeight-vertOffset
+			theChunk.getPosition().x-m_horizOffset+m_cursorPos.getHorizOffset(),
+			theChunk.getPosition().y-m_vertOffset,
+			theChunk.getPosition().y+theLine.m_lineHeight-m_vertOffset
 		);
 		context.setROP2( old );
 	}
 }
 
-void XMLeditorChild::handleTimer( void )
+void XMLeditorChild::handleTimer()
 {
 	DrawDevice	context( this );
 
@@ -784,11 +784,11 @@ ProcessStatus XMLeditorChild::handleRepaint( Device &hDC )
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleRepaint");
 
-	if( theViewerBox )
+	if( m_theViewerBox )
 	{
-		cursorVisible = false;
+		m_cursorVisible = false;
 
-		theViewerBox->draw( hDC, this );
+		m_theViewerBox->draw( hDC, this );
 
 		drawCursor( hDC );
 	}
@@ -799,8 +799,8 @@ ProcessStatus XMLeditorChild::handleResize( const Size &size )
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleResize");
 
-	this->size = size;
-	if( theViewerBox )
+	m_size = size;
+	if( m_theViewerBox )
 	{
 		DrawDevice	context( this );
 
@@ -815,8 +815,8 @@ ProcessStatus XMLeditorChild::handleResize( const Size &size )
 		{
 			try
 			{
-				theViewerBox->calcSize(
-					context, 0, 0, maxWidth, maxWidth, size.height, &boxSize
+				m_theViewerBox->calcSize(
+					context, 0, 0, maxWidth, maxWidth, size.height, &m_boxSize
 				);
 				break;
 			}
@@ -830,23 +830,23 @@ ProcessStatus XMLeditorChild::handleResize( const Size &size )
 			}
 		}
 
-		if( boxSize.bottom > size.height )
+		if( m_boxSize.bottom > size.height )
 		{
-			showVertScrollBar( 0, boxSize.bottom - size.height );
+			showVertScrollBar( 0, m_boxSize.bottom - size.height );
 		}
 		else
 		{
-			vertOffset = 0;
+			m_vertOffset = 0;
 			hideVertScrollBar();
 		}
 
-		if( boxSize.right > size.width )
+		if( m_boxSize.right > size.width )
 		{
-			showHorizScrollBar( 0, boxSize.right - size.width );
+			showHorizScrollBar( 0, m_boxSize.right - size.width );
 		}
 		else
 		{
-			horizOffset = 0;
+			m_horizOffset = 0;
 			hideHorizScrollBar();
 		}
 
@@ -858,17 +858,17 @@ ProcessStatus XMLeditorChild::handleResize( const Size &size )
 	return psDO_DEFAULT;
 }
 
-void XMLeditorChild::handleFocus( void )
+void XMLeditorChild::handleFocus()
 {
-	if( !cursorPos.getViewerBox() )
+	if( !m_cursorPos.getViewerBox() )
 	{
-		theViewerBox->locateFirstElement( &cursorPos );
+		m_theViewerBox->locateFirstElement( &m_cursorPos );
 	}
 
 	enableCursor();
 }
 
-void XMLeditorChild::handleKillFocus( void )
+void XMLeditorChild::handleKillFocus()
 {
 	DrawDevice	context( this );
 
@@ -881,16 +881,16 @@ ProcessStatus XMLeditorChild::handleLeftButton(
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleLeftButton");
 
-	if( leftButton == lbUP && !modifier && bool(theViewerBox) )
+	if( leftButton == lbUP && !modifier && bool(m_theViewerBox) )
 	{
 		DrawDevice	context( this );
 
 		hideCursor( context );
 
-		xml::Element *theElement = theViewerBox->findElementOnScreen(
+		xml::Element *theElement = m_theViewerBox->findElementOnScreen(
 			context,
-			position.x, position.y, horizOffset, vertOffset,
-			&cursorPos
+			position.x, position.y, m_horizOffset, m_vertOffset,
+			&m_cursorPos
 		);
 		if( theElement )
 		{
@@ -909,53 +909,53 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 {
 	ProcessStatus	handled = psDO_DEFAULT;
 
-	if( cursorPos.getViewerBox() )
+	if( m_cursorPos.getViewerBox() )
 	{
 		DrawDevice	context( this );
-		xml::Element *oldElement = cursorPos.getElement();
+		xml::Element *oldElement = m_cursorPos.getElement();
 
 		handled = psPROCESSED;
 		switch( key )
 		{
 			case VK_DOWN:
 				hideCursor( context );
-				cursorPos.getViewerBox()->moveCursorDown( context, &cursorPos );
+				m_cursorPos.getViewerBox()->moveCursorDown( context, &m_cursorPos );
 				break;
 			case VK_UP:
 				hideCursor( context );
-				cursorPos.getViewerBox()->moveCursorUp( context, &cursorPos );
+				m_cursorPos.getViewerBox()->moveCursorUp( context, &m_cursorPos );
 				break;
 
 			case VK_RIGHT:
 				hideCursor( context );
 				if( !isControlKey() )
-					cursorPos.getViewerBox()->moveCursorRight( context, &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorRight( context, &m_cursorPos );
 				else
-					cursorPos.getViewerBox()->moveCursorRightWord( context, &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorRightWord( context, &m_cursorPos );
 				break;
 
 			case VK_LEFT:
 				hideCursor( context );
 				if( !isControlKey() )
-					cursorPos.getViewerBox()->moveCursorLeft( context, &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorLeft( context, &m_cursorPos );
 				else
-					cursorPos.getViewerBox()->moveCursorLeftWord( context, &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorLeftWord( context, &m_cursorPos );
 				break;
 
 			case VK_HOME:
 				hideCursor( context );
 				if( !isControlKey() )
-					cursorPos.getViewerBox()->moveCursorStart( &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorStart( &m_cursorPos );
 				else
-					theViewerBox->locateFirstElement( &cursorPos );
+					m_theViewerBox->locateFirstElement( &m_cursorPos );
 				break;
 
 			case VK_END:
 				hideCursor( context );
 				if( !isControlKey() )
-					cursorPos.getViewerBox()->moveCursorEnd( &cursorPos );
+					m_cursorPos.getViewerBox()->moveCursorEnd( &m_cursorPos );
 				else
-					theViewerBox->locateLastElement( &cursorPos );
+					m_theViewerBox->locateLastElement( &m_cursorPos );
 				break;
 
 
@@ -964,17 +964,17 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 				bool	doWrap;
 
 				hideCursor( context );
-				xml::XmlText *xmlText = cursorPos.getViewerBox()->deleteCharacter(
-					context, this, &cursorPos, &doWrap
+				xml::XmlText *xmlText = m_cursorPos.getViewerBox()->deleteCharacter(
+					context, this, &m_cursorPos, &doWrap
 				);
 				if( xmlText )
 				{
 					if( doWrap )
 					{
-						handleResize( size );
-						cursorPos.getViewerBox()->findLineNChunk(
-							context, xmlText, cursorPos.getInsertPos(),
-							&cursorPos
+						handleResize( m_size );
+						m_cursorPos.getViewerBox()->findLineNChunk(
+							context, xmlText, m_cursorPos.getInsertPos(),
+							&m_cursorPos
 						);
 					}
 					getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
@@ -987,19 +987,19 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 				bool	doWrap;
 
 				hideCursor( context );
-				if( cursorPos.getViewerBox()->moveCursorLeft( context, &cursorPos ) )
+				if( m_cursorPos.getViewerBox()->moveCursorLeft( context, &m_cursorPos ) )
 				{
-					xml::XmlText *xmlText = cursorPos.getViewerBox()->deleteCharacter(
-						context, this, &cursorPos, &doWrap
+					xml::XmlText *xmlText = m_cursorPos.getViewerBox()->deleteCharacter(
+						context, this, &m_cursorPos, &doWrap
 					);
 					if( xmlText )
 					{
 						if( doWrap )
 						{
-							handleResize( size );
-							cursorPos.getViewerBox()->findLineNChunk(
-								context, xmlText, cursorPos.getInsertPos(),
-								&cursorPos
+							handleResize( m_size );
+							m_cursorPos.getViewerBox()->findLineNChunk(
+								context, xmlText, m_cursorPos.getInsertPos(),
+								&m_cursorPos
 							);
 						}
 						getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
@@ -1012,26 +1012,26 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 				handled = psDO_DEFAULT;
 		}
 
-		if( cursorPos.getViewerBox() )
+		if( m_cursorPos.getViewerBox() )
 		{
-			const XML_LINE			&theLine = cursorPos.getViewerBox()->getLine(cursorPos.getLine());
-			const XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos.getChunk()];
+			const XML_LINE			&theLine = m_cursorPos.getViewerBox()->getLine(m_cursorPos.getLine());
+			const XML_LINE_CHUNK	&theChunk = theLine.m_theLine[m_cursorPos.getChunk()];
 
-			int x = theChunk.getPosition().x-horizOffset+cursorPos.getHorizOffset();
-			int yTop = theChunk.getPosition().y-vertOffset;
-			int yBot = theChunk.getPosition().y+theLine.lineHeight-vertOffset;
+			int x = theChunk.getPosition().x-m_horizOffset+m_cursorPos.getHorizOffset();
+			int yTop = theChunk.getPosition().y-m_vertOffset;
+			int yBot = theChunk.getPosition().y+theLine.m_lineHeight-m_vertOffset;
 
 			if( yTop<0 )
-				scrollVertical(  vertOffset+yTop );
-			else if( yBot > size.height )
-				scrollVertical(  vertOffset+(yBot-size.height) );
+				scrollVertical(  m_vertOffset+yTop );
+			else if( yBot > m_size.height )
+				scrollVertical(  m_vertOffset+(yBot-m_size.height) );
 			if( x<0 )
-				scrollHorizontal( horizOffset+x );
-			else if( x>size.width )
-				scrollHorizontal( horizOffset+(x-size.width) );
+				scrollHorizontal( m_horizOffset+x );
+			else if( x>m_size.width )
+				scrollHorizontal( m_horizOffset+(x-m_size.width) );
 		}
 
-		xml::Element *newElement = cursorPos.getElement();
+		xml::Element *newElement = m_cursorPos.getElement();
 		if( newElement != oldElement )
 			getParent()->postMessage( WM_XML_ITEM_CLICK, 0, (LPARAM)newElement );
 
@@ -1041,24 +1041,24 @@ ProcessStatus XMLeditorChild::handleKeyDown( int key )
 
 ProcessStatus XMLeditorChild::handleCharacterInput( int c )
 {
-	if( cursorPos.getViewerBox() && c >= ' ' )
+	if( m_cursorPos.getViewerBox() && c >= ' ' )
 	{
 		bool		doWrap;
 		DrawDevice	context( this );
 
 		hideCursor( context );
 
-		xml::XmlText *xmlText = cursorPos.getViewerBox()->insertCharacter(
-			context, this, &cursorPos, c, &doWrap
+		xml::XmlText *xmlText = m_cursorPos.getViewerBox()->insertCharacter(
+			context, this, &m_cursorPos, c, &doWrap
 		);
 		if( xmlText )
 		{
 			if( doWrap )
 			{
-				handleResize( size );
-				cursorPos.getViewerBox()->findLineNChunk(
-					context, xmlText, cursorPos.getInsertPos(),
-					&cursorPos
+				handleResize( m_size );
+				m_cursorPos.getViewerBox()->findLineNChunk(
+					context, xmlText, m_cursorPos.getInsertPos(),
+					&m_cursorPos
 				);
 			}
 			getParent()->postMessage( WM_XML_ITEM_CHANGED, 0, (LPARAM)xmlText );
@@ -1072,11 +1072,11 @@ ProcessStatus XMLeditorChild::handleCharacterInput( int c )
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-css::Styles *XML_VIEWER_BOX::getCssStyle( void )
+css::Styles *XML_VIEWER_BOX::getCssStyle()
 {
-	css::Styles		*theStyles = NULL;
+	css::Styles		*theStyles = nullptr;
 	XML_VIEWER_BOX	*theBox = this;
-	xml::Element	*theElement = theBox->theElement;
+	xml::Element	*theElement = theBox->m_theElement;
 
 	while( theBox && !theStyles )
 	{
@@ -1086,8 +1086,8 @@ css::Styles *XML_VIEWER_BOX::getCssStyle( void )
 			break;
 		}
 
-		theBox = theBox->parentBox;
-		theElement = theBox->theElement;
+		theBox = theBox->m_parentBox;
+		theElement = theBox->m_theElement;
 	}
 
 	return theStyles;
@@ -1104,14 +1104,14 @@ xml::XmlText *XML_VIEWER_BOX::insertCharacter(
 	bool *doWrap
 )
 {
-	xml::XmlText	*xmlText = NULL;
+	xml::XmlText	*xmlText = nullptr;
 
 	*doWrap = false;
 
 	if( cursorPos->getViewerBox() )
 	{
-		XML_LINE &theLine = theContent[cursorPos->getLine()];
-		XML_LINE_CHUNK &theChunk = theLine.theLine[cursorPos->getChunk()];
+		XML_LINE &theLine = m_theContent[cursorPos->getLine()];
+		XML_LINE_CHUNK &theChunk = theLine.m_theLine[cursorPos->getChunk()];
 		if( theChunk.isTextElement() )
 		{
 			Size			size;
@@ -1126,38 +1126,38 @@ xml::XmlText *XML_VIEWER_BOX::insertCharacter(
 			cursorPos->movePosition( 1, size.width );
 			xmlText = theElement;
 
-			if( theLine.lineWidth + size.width <= theLine.maxWidth )
+			if( theLine.m_lineWidth + size.width <= theLine.m_maxWidth )
 			{
 				// yeah we do not need an eintire refresh
 				// move the cursor right
-				theLine.lineWidth += size.width;
+				theLine.m_lineWidth += size.width;
 				theChunk.width += size.width;
 
 				// move other junks right
 				bool otherElementsFound = false;
 				for(
 					size_t chunk = cursorPos->getChunk()+1;
-					chunk < theLine.theLine.size();
+					chunk < theLine.m_theLine.size();
 					chunk++ )
 				{
-					XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+					XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 					theChunk.moveRight( size.width );
 					otherElementsFound = true;
 				}
 
 				for(
 					size_t line=cursorPos->getLine()+1;
-					!otherElementsFound && line < theContent.size();
+					!otherElementsFound && line < m_theContent.size();
 					line++
 				)
 				{
-					XML_LINE &theLine = theContent[line];
+					XML_LINE &theLine = m_theContent[line];
 					for(
 						size_t chunk = 0;
-						!otherElementsFound && chunk < theLine.theLine.size();
+						!otherElementsFound && chunk < theLine.m_theLine.size();
 						chunk++ )
 					{
-						XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+						XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 						if( theChunk.getTextElement() == theElement )
 							theChunk.startPos++;
 						else
@@ -1182,14 +1182,14 @@ xml::XmlText *XML_VIEWER_BOX::deleteCharacter(
 	bool *doWrap
 )
 {
-	xml::XmlText	*xmlText = NULL;
+	xml::XmlText	*xmlText = nullptr;
 
 	*doWrap = false;
 
 	if( cursorPos->getViewerBox() )
 	{
-		XML_LINE		&theLine = theContent[cursorPos->getLine()];
-		XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos->getChunk()];
+		XML_LINE		&theLine = m_theContent[cursorPos->getLine()];
+		XML_LINE_CHUNK	&theChunk = theLine.m_theLine[cursorPos->getChunk()];
 		xml::XmlText	*theElement = theChunk.getTextElement();
 		size_t			insertPos = cursorPos->getInsertPos();
 
@@ -1209,34 +1209,34 @@ xml::XmlText *XML_VIEWER_BOX::deleteCharacter(
 			context.getTextExtent( text, 1, &size );
 
 			// move the rest of the line one position left
-			theLine.lineWidth -= size.width;
+			theLine.m_lineWidth -= size.width;
 			theChunk.width -= size.width;
 
 			// move other junks left
 			bool otherElementsFound = false;
 			for(
 				size_t chunk = cursorPos->getChunk()+1;
-				chunk < theLine.theLine.size();
+				chunk < theLine.m_theLine.size();
 				chunk++ )
 			{
-				XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+				XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 				theChunk.moveRight( -size.width );
 				otherElementsFound = true;
 			}
 
 			for(
 				size_t line=cursorPos->getLine()+1;
-				!otherElementsFound && line < theContent.size();
+				!otherElementsFound && line < m_theContent.size();
 				line++
 			)
 			{
-				XML_LINE &theLine = theContent[line];
+				XML_LINE &theLine = m_theContent[line];
 				for(
 					size_t chunk = 0;
-					!otherElementsFound && chunk < theLine.theLine.size();
+					!otherElementsFound && chunk < theLine.m_theLine.size();
 					chunk++ )
 				{
-					XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+					XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 					if( theChunk.getTextElement() == theElement )
 						theChunk.startPos--;
 					else
@@ -1263,14 +1263,14 @@ xml::Element *XML_VIEWER_BOX::locateFirstElement(
 {
 	doEnterFunctionEx(gakLogging::llDetail, "xml::Element *XML_VIEWER_BOX::locateFirstElement(...)");
 
-	xml::Element	*theElement = NULL;
+	xml::Element	*theElement = nullptr;
 
-	if( theContent.size() )
+	if( m_theContent.size() )
 	{
-		const XML_LINE &theLine = theContent[0];
-		if( theLine.theLine.size() )
+		const XML_LINE &theLine = m_theContent[0];
+		if( theLine.m_theLine.size() )
 		{
-			const XML_LINE_CHUNK	&theChunk = theLine.theLine[0];
+			const XML_LINE_CHUNK	&theChunk = theLine.m_theLine[0];
 
 			theElement = theChunk.getTextElement();
 			if( theElement )
@@ -1286,10 +1286,10 @@ xml::Element *XML_VIEWER_BOX::locateFirstElement(
 
 	if( !theElement )
 	{
-		size_t	numSubBoxes = subBoxes.size();
+		size_t	numSubBoxes = m_subBoxes.size();
 		for( size_t i=0; i<numSubBoxes; i++ )
 		{
-			theElement = (*subBoxes[i]).locateFirstElement( cursorPos );
+			theElement = m_subBoxes[i]->locateFirstElement( cursorPos );
 			if( theElement )
 				break;
 		}
@@ -1297,10 +1297,10 @@ xml::Element *XML_VIEWER_BOX::locateFirstElement(
 
 	if( !theElement )
 	{
-		size_t numChildBoxes = childElements.size();
+		size_t numChildBoxes = m_childElements.size();
 		for( size_t i=0; i<numChildBoxes; i++ )
 		{
-			const XML_VIEWER_ITEM	&theItem = childElements[i];
+			const XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox )
@@ -1322,16 +1322,16 @@ xml::Element *XML_VIEWER_BOX::locateLastElement(
 {
 	doEnterFunctionEx(gakLogging::llDetail, "xml::Element *XML_VIEWER_BOX::locateLastElement(...)");
 
-	xml::Element	*theElement = NULL;
+	xml::Element	*theElement = nullptr;
 
-	size_t	numLines = theContent.size();
+	size_t	numLines = m_theContent.size();
 	if( numLines )
 	{
 		size_t					line = numLines-1;
-		const XML_LINE			&theLine = theContent[line];
-		size_t					chunk = theLine.theLine.size()-1;
+		const XML_LINE			&theLine = m_theContent[line];
+		size_t					chunk = theLine.m_theLine.size()-1;
 
-		const XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+		const XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 
 		theElement = theChunk.getTextElement();
 		if( theElement )
@@ -1350,10 +1350,10 @@ xml::Element *XML_VIEWER_BOX::locateLastElement(
 
 	if( !theElement )
 	{
-		size_t	numSubBoxes = subBoxes.size();
+		size_t	numSubBoxes = m_subBoxes.size();
 		for( size_t i=numSubBoxes-1; i!=-1; i-- )
 		{
-			theElement = subBoxes[i]->locateLastElement( cursorPos );
+			theElement = m_subBoxes[i]->locateLastElement( cursorPos );
 			if( theElement )
 			{
 				break;
@@ -1363,10 +1363,10 @@ xml::Element *XML_VIEWER_BOX::locateLastElement(
 
 	if( !theElement )
 	{
-		size_t numChildBoxes = childElements.size();
+		size_t numChildBoxes = m_childElements.size();
 		for( size_t i=numChildBoxes; i!=-1; i-- )
 		{
-			const XML_VIEWER_ITEM	&theItem = childElements[i];
+			const XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox )
@@ -1390,21 +1390,21 @@ bool XML_VIEWER_BOX::locateNextLine(
 {
 	bool	found = false;
 
-	size_t numLines = theContent.size();
+	size_t numLines = m_theContent.size();
 	if( numLines > 1 )
 	{
 		numLines--;
 		for( size_t	line=0; line < numLines && !found; line++ )
 		{
-			XML_LINE &curLine = theContent[line];
-			size_t numChunks = curLine.theLine.size();
+			XML_LINE &curLine = m_theContent[line];
+			size_t numChunks = curLine.m_theLine.size();
 			for(
 				size_t chunk=0;
 				chunk < numChunks && !found;
 				chunk++
 			)
 			{
-				XML_LINE_CHUNK	&theChunk = curLine.theLine[chunk];
+				XML_LINE_CHUNK	&theChunk = curLine.m_theLine[chunk];
 				if( theChunk.getInlineBox() == current )
 				{
 					// yeah we got it
@@ -1417,9 +1417,9 @@ bool XML_VIEWER_BOX::locateNextLine(
 		}
 	}
 
-	if( !found && bool(parentBox) )
+	if( !found && bool(m_parentBox) )
 	{
-		found = parentBox->locateNextLine( context, this, cursorPos, oldPosition );
+		found = m_parentBox->locateNextLine( context, this, cursorPos, oldPosition );
 	}
 	return found;
 }
@@ -1432,20 +1432,20 @@ bool XML_VIEWER_BOX::locatePrevLine(
 {
 	bool	found = false;
 
-	size_t numLines = theContent.size();
+	size_t numLines = m_theContent.size();
 	if( numLines > 1 )
 	{
 		for( size_t	line=numLines-1; line != -1 && !found; line-- )
 		{
-			XML_LINE &curLine = theContent[line];
-			size_t numChunks = curLine.theLine.size();
+			XML_LINE &curLine = m_theContent[line];
+			size_t numChunks = curLine.m_theLine.size();
 			for(
 				size_t chunk=numChunks-1;
 				chunk != -1 && !found;
 				chunk--
 			)
 			{
-				XML_LINE_CHUNK	&theChunk = curLine.theLine[chunk];
+				XML_LINE_CHUNK	&theChunk = curLine.m_theLine[chunk];
 				if( theChunk.getInlineBox() == current )
 				{
 					// yeah we got it
@@ -1462,9 +1462,9 @@ bool XML_VIEWER_BOX::locatePrevLine(
 		}
 	}
 
-	if( !found && bool(parentBox) )
+	if( !found && bool(m_parentBox) )
 	{
-		found = parentBox->locatePrevLine( context, this, cursorPos, oldPosition );
+		found = m_parentBox->locatePrevLine( context, this, cursorPos, oldPosition );
 	}
 
 	return found;
@@ -1477,23 +1477,23 @@ bool XML_VIEWER_BOX::locateNextChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 
 	size_t	numSubBoxes, numLines, numChunks;
 
-	size_t	numElements = childElements.size();
+	size_t	numElements = m_childElements.size();
 	if( numElements > 1 )
 	{
 		numElements--;
 		for( size_t i=0; i<numElements && !found; i++ )
 		{
-			XML_VIEWER_ITEM			&theItem = childElements[i];
+			XML_VIEWER_ITEM			&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox == current )
 			{
 				i++;
-				XML_VIEWER_ITEM			&theItem = childElements[i];
+				XML_VIEWER_ITEM			&theItem = m_childElements[i];
 				const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 				if( theBox )
 				{
-					found = theBox->locateFirstElement( cursorPos ) != NULL;
+					found = theBox->locateFirstElement( cursorPos ) != nullptr;
 				}
 				break;
 			}
@@ -1502,18 +1502,18 @@ bool XML_VIEWER_BOX::locateNextChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 
 	if( !found )
 	{
-		numSubBoxes = subBoxes.size();
+		numSubBoxes = m_subBoxes.size();
 		if( numSubBoxes > 1 )
 		{
 			numSubBoxes--;
 			for( size_t i=0; i<numSubBoxes; i++ )
 			{
-				XML_VIEWER_BOX *theBox = subBoxes[i];
+				XML_VIEWER_BOX *theBox = m_subBoxes[i];
 				if( theBox == current )
 				{
 					i++;
-					theBox = subBoxes[i];
-					found = theBox->locateFirstElement( cursorPos ) != NULL;
+					theBox = m_subBoxes[i];
+					found = theBox->locateFirstElement( cursorPos ) != nullptr;
 					break;
 				}
 			}
@@ -1523,24 +1523,24 @@ bool XML_VIEWER_BOX::locateNextChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 	// first we need the position of the current CHUNK
 	if( !found )
 	{
-		numLines = theContent.size();
+		numLines = m_theContent.size();
 		for( size_t	line=0; line < numLines && !found; line++ )
 		{
-			XML_LINE &theLine = theContent[line];
-			numChunks = theLine.theLine.size();
+			XML_LINE &theLine = m_theContent[line];
+			numChunks = theLine.m_theLine.size();
 			for(
 				size_t chunk=0;
 				chunk < numChunks && !found;
 				chunk++
 			)
 			{
-				XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+				XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 				if( theChunk.getInlineBox() == current )
 				{
 					// yeah we got it
 					if( ++chunk < numChunks )
 					{
-						XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+						XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 
 						if( theChunk.getTextElement() )
 						{
@@ -1551,13 +1551,13 @@ bool XML_VIEWER_BOX::locateNextChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 						}
 						else
 						{
-							found = locateFirstElement( cursorPos ) != NULL;
+							found = locateFirstElement( cursorPos ) != nullptr;
 						}
 					}
 					else if( ++line < numLines )
 					{
-						XML_LINE		&theLine = theContent[line];
-						XML_LINE_CHUNK	&theChunk = theLine.theLine[0];
+						XML_LINE		&theLine = m_theContent[line];
+						XML_LINE_CHUNK	&theChunk = theLine.m_theLine[0];
 
 						if( theChunk.getTextElement() )
 						{
@@ -1568,16 +1568,16 @@ bool XML_VIEWER_BOX::locateNextChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 						}
 						else
 						{
-							found = locateFirstElement( cursorPos ) != NULL;
+							found = locateFirstElement( cursorPos ) != nullptr;
 						}
 					}
 				}
 			}
 		}
 	}
-	if( !found && bool(parentBox) )
+	if( !found && bool(m_parentBox) )
 	{
-		found = parentBox->locateNextChunk( this, cursorPos );
+		found = m_parentBox->locateNextChunk( this, cursorPos );
 	}
 	return found;
 }
@@ -1589,22 +1589,22 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 
 	size_t	numSubBoxes, numLines, numChunks;
 
-	size_t	numElements = childElements.size();
+	size_t	numElements = m_childElements.size();
 	if( numElements > 1 )
 	{
 		for( size_t i=numElements-1; i && !found; i-- )
 		{
-			XML_VIEWER_ITEM			&theItem = childElements[i];
+			XML_VIEWER_ITEM			&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox == current )
 			{
 				i--;
-				XML_VIEWER_ITEM			&theItem = childElements[i];
+				XML_VIEWER_ITEM			&theItem = m_childElements[i];
 				const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 				if( theBox )
 				{
-					found = theBox->locateLastElement( cursorPos ) != NULL;
+					found = theBox->locateLastElement( cursorPos ) != nullptr;
 				}
 				break;
 			}
@@ -1613,17 +1613,17 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 
 	if( !found )
 	{
-		numSubBoxes = subBoxes.size();
+		numSubBoxes = m_subBoxes.size();
 		if( numSubBoxes > 1 )
 		{
 			for( size_t i=numSubBoxes-1; i; i-- )
 			{
-				XML_VIEWER_BOX *theBox = subBoxes[i];
+				XML_VIEWER_BOX *theBox = m_subBoxes[i];
 				if( theBox == current )
 				{
 					i--;
-					theBox = subBoxes[i];
-					found = theBox->locateLastElement( cursorPos ) != NULL;
+					theBox = m_subBoxes[i];
+					found = theBox->locateLastElement( cursorPos ) != nullptr;
 					break;
 				}
 			}
@@ -1633,26 +1633,26 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 	// first we need the position of the current CHUNK
 	if( !found )
 	{
-		numLines = theContent.size();
+		numLines = m_theContent.size();
 		if( numLines > 1 )
 		{
 			for( size_t	line=numLines-1; line != -1 && !found; line-- )
 			{
-				XML_LINE &theLine = theContent[line];
-				numChunks = theLine.theLine.size();
+				XML_LINE &theLine = m_theContent[line];
+				numChunks = theLine.m_theLine.size();
 				for(
 					size_t chunk=numChunks-1;
 					chunk != -1 && !found;
 					chunk--
 				)
 				{
-					XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+					XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 					if( theChunk.getInlineBox() == current )
 					{
 						// yeah we got it
 						if( --chunk != -1 )
 						{
-							XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+							XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 
 							if( theChunk.getTextElement() )
 							{
@@ -1664,16 +1664,16 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 								);
 							}
 							else
-								found = locateFirstElement( cursorPos ) != NULL;
+								found = locateFirstElement( cursorPos ) != nullptr;
 						}
 						else if( --line != -1 )
 						{
-							XML_LINE		&theLine = theContent[line];
-							size_t			numChunks = theLine.theLine.size();
+							XML_LINE		&theLine = m_theContent[line];
+							size_t			numChunks = theLine.m_theLine.size();
 							if( numChunks )
 							{
 								numChunks--;
-								XML_LINE_CHUNK	&theChunk = theLine.theLine[numChunks];
+								XML_LINE_CHUNK	&theChunk = theLine.m_theLine[numChunks];
 
 								if( theChunk.getTextElement() )
 								{
@@ -1687,7 +1687,7 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 								}
 								else
 								{
-									found = locateLastElement( cursorPos ) != NULL;
+									found = locateLastElement( cursorPos ) != nullptr;
 								}
 							}
 						}
@@ -1696,9 +1696,9 @@ bool XML_VIEWER_BOX::locatePrevChunk( XML_VIEWER_BOX *current, XML_CURSOR_POS *c
 			}
 		}
 	}
-	if( !found && bool(parentBox) )
+	if( !found && bool(m_parentBox) )
 	{
-		found = parentBox->locatePrevChunk( this, cursorPos );
+		found = m_parentBox->locatePrevChunk( this, cursorPos );
 	}
 	return found;
 }
@@ -1711,8 +1711,8 @@ bool XML_VIEWER_BOX::moveCursorRight( Device &context, XML_CURSOR_POS *cursorPos
 	bool			moved = true;
 	size_t			line = cursorPos->getLine();
 	size_t			chunk = cursorPos->getChunk();
-	XML_LINE		&curLine = theContent[line];
-	XML_LINE_CHUNK	&curChunk = curLine.theLine[chunk];
+	XML_LINE		&curLine = m_theContent[line];
+	XML_LINE_CHUNK	&curChunk = curLine.m_theLine[chunk];
 
 	if( cursorPos->getInsertPos() < curChunk.startPos + curChunk.len )
 	{
@@ -1725,27 +1725,27 @@ bool XML_VIEWER_BOX::moveCursorRight( Device &context, XML_CURSOR_POS *cursorPos
 
 		cursorPos->movePosition( 1, size.width );
 	}
-	else if( ++chunk < curLine.theLine.size() )
+	else if( ++chunk < curLine.m_theLine.size() )
 	{
-		XML_LINE_CHUNK	&nextChunk = curLine.theLine[chunk];
+		XML_LINE_CHUNK	&nextChunk = curLine.m_theLine[chunk];
 
 		if( nextChunk.getTextElement() )
 			cursorPos->setPosition( chunk, nextChunk.startPos, 0 );
 		else
 			nextChunk.getInlineBox()->locateFirstElement( cursorPos );
 	}
-	else if( ++line < theContent.size() )
+	else if( ++line < m_theContent.size() )
 	{
-		XML_LINE		&nextLine = theContent[line];
-		XML_LINE_CHUNK	&nextChunk = nextLine.theLine[0];
+		XML_LINE		&nextLine = m_theContent[line];
+		XML_LINE_CHUNK	&nextChunk = nextLine.m_theLine[0];
 
 		if( nextChunk.getTextElement() )
 			cursorPos->setPosition( line, chunk, nextChunk.startPos, 0 );
 		else
 			nextChunk.getInlineBox()->locateFirstElement( cursorPos );
 	}
-	else if( parentBox )
-		parentBox->locateNextChunk( this, cursorPos );
+	else if( m_parentBox )
+		m_parentBox->locateNextChunk( this, cursorPos );
 	else
 		moved = false;
 
@@ -1759,8 +1759,8 @@ bool XML_VIEWER_BOX::moveCursorRightWord( Device &context, XML_CURSOR_POS *curso
 	char			c;
 	bool			moved, spaceFound;
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&theLine = theContent[line];
-	XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos->getChunk()];
+	XML_LINE		&theLine = m_theContent[line];
+	XML_LINE_CHUNK	&theChunk = theLine.m_theLine[cursorPos->getChunk()];
 	size_t			insertPos = cursorPos->getInsertPos();
 	size_t			maxPos = theChunk.startPos + theChunk.len;
 
@@ -1807,8 +1807,8 @@ bool XML_VIEWER_BOX::moveCursorLeft( Device &context, XML_CURSOR_POS *cursorPos 
 	bool			found = true;
 	size_t			line = cursorPos->getLine();
 	size_t			chunk = cursorPos->getChunk();
-	XML_LINE		&theLine = theContent[line];
-	XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+	XML_LINE		&theLine = m_theContent[line];
+	XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 
 	if( cursorPos->getInsertPos() > theChunk.startPos )
 	{
@@ -1825,7 +1825,7 @@ bool XML_VIEWER_BOX::moveCursorLeft( Device &context, XML_CURSOR_POS *cursorPos 
 	else if( chunk )
 	{
 		chunk--;
-		XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+		XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 		if( theChunk.getTextElement() )
 		{
 			cursorPos->setPosition(
@@ -1839,10 +1839,10 @@ bool XML_VIEWER_BOX::moveCursorLeft( Device &context, XML_CURSOR_POS *cursorPos 
 	}
 	else if( line )
 	{
-		XML_LINE		&theLine = theContent[--line];
+		XML_LINE		&theLine = m_theContent[--line];
 
-		chunk = theLine.theLine.size()-1;
-		XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos->getChunk()];
+		chunk = theLine.m_theLine.size()-1;
+		XML_LINE_CHUNK	&theChunk = theLine.m_theLine[cursorPos->getChunk()];
 
 		if( theChunk.getTextElement() )
 		{
@@ -1855,8 +1855,8 @@ bool XML_VIEWER_BOX::moveCursorLeft( Device &context, XML_CURSOR_POS *cursorPos 
 		else
 			found = theChunk.getInlineBox()->locateLastElement( cursorPos );
 	}
-	else if( parentBox )
-		found = (*parentBox).locatePrevChunk( this, cursorPos );
+	else if( m_parentBox )
+		found = m_parentBox->locatePrevChunk( this, cursorPos );
 	else
 		found = false;
 
@@ -1870,8 +1870,8 @@ bool XML_VIEWER_BOX::moveCursorLeftWord( Device &context, XML_CURSOR_POS *cursor
 	char			c;
 	bool			moved, inWord;
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&theLine = theContent[line];
-	XML_LINE_CHUNK	&theChunk = theLine.theLine[cursorPos->getChunk()];
+	XML_LINE		&theLine = m_theContent[line];
+	XML_LINE_CHUNK	&theChunk = theLine.m_theLine[cursorPos->getChunk()];
 	size_t			insertPos = cursorPos->getInsertPos();
 
 	if( insertPos > theChunk.startPos )
@@ -1907,8 +1907,8 @@ bool XML_VIEWER_BOX::moveCursorLeftWord( Device &context, XML_CURSOR_POS *cursor
 void XML_VIEWER_BOX::moveCursorStart( XML_CURSOR_POS *cursorPos )
 {
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&theLine = theContent[line];
-	XML_LINE_CHUNK	&theChunk = theLine.theLine[0];
+	XML_LINE		&theLine = m_theContent[line];
+	XML_LINE_CHUNK	&theChunk = theLine.m_theLine[0];
 
 	cursorPos->setPosition( 0, theChunk.startPos, 0 );
 }
@@ -1916,9 +1916,9 @@ void XML_VIEWER_BOX::moveCursorStart( XML_CURSOR_POS *cursorPos )
 void XML_VIEWER_BOX::moveCursorEnd( XML_CURSOR_POS *cursorPos )
 {
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&theLine = theContent[line];
-	size_t			chunk = theLine.theLine.size()-1;
-	XML_LINE_CHUNK	&theChunk = theLine.theLine[chunk];
+	XML_LINE		&theLine = m_theContent[line];
+	size_t			chunk = theLine.m_theLine.size()-1;
+	XML_LINE_CHUNK	&theChunk = theLine.m_theLine[chunk];
 
 	cursorPos->setPosition(
 		chunk,
@@ -1930,8 +1930,8 @@ void XML_VIEWER_BOX::moveCursorEnd( XML_CURSOR_POS *cursorPos )
 bool XML_VIEWER_BOX::moveCursorUp( Device &context, XML_CURSOR_POS *cursorPos )
 {
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&oldLine = theContent[line];
-	XML_LINE_CHUNK	&oldChunk = oldLine.theLine[cursorPos->getChunk()];
+	XML_LINE		&oldLine = m_theContent[line];
+	XML_LINE_CHUNK	&oldChunk = oldLine.m_theLine[cursorPos->getChunk()];
 	int 			oldPosition = oldChunk.getPosition().x + cursorPos->getHorizOffset();
 	bool			found = false;
 
@@ -1943,8 +1943,8 @@ bool XML_VIEWER_BOX::moveCursorUp( Device &context, XML_CURSOR_POS *cursorPos )
 			cursorPos, CURSOR_UP
 		);
 	}
-	else if( parentBox )
-		found = (*parentBox).locatePrevLine( context, this, cursorPos, oldPosition );
+	else if( m_parentBox )
+		found = m_parentBox->locatePrevLine( context, this, cursorPos, oldPosition );
 
 	return found;
 }
@@ -1952,12 +1952,12 @@ bool XML_VIEWER_BOX::moveCursorUp( Device &context, XML_CURSOR_POS *cursorPos )
 bool XML_VIEWER_BOX::moveCursorDown( Device &context, XML_CURSOR_POS *cursorPos )
 {
 	size_t			line = cursorPos->getLine();
-	XML_LINE		&oldLine = theContent[line];
-	XML_LINE_CHUNK	&oldChunk = oldLine.theLine[cursorPos->getChunk()];
+	XML_LINE		&oldLine = m_theContent[line];
+	XML_LINE_CHUNK	&oldChunk = oldLine.m_theLine[cursorPos->getChunk()];
 	int 			oldPosition = oldChunk.getPosition().x + cursorPos->getHorizOffset();
 	bool			found = false;
 
-	if( line+1 < theContent.size() )
+	if( line+1 < m_theContent.size() )
 	{
 		line++;
 
@@ -1966,8 +1966,8 @@ bool XML_VIEWER_BOX::moveCursorDown( Device &context, XML_CURSOR_POS *cursorPos 
 			cursorPos, CURSOR_DOWN
 		);
 	}
-	else if( parentBox )
-		found = (*parentBox).locateNextLine( context, this, cursorPos, oldPosition );
+	else if( m_parentBox )
+		found = m_parentBox->locateNextLine( context, this, cursorPos, oldPosition );
 
 	return found;
 }
@@ -1978,15 +1978,15 @@ bool XML_VIEWER_BOX::findLineNChunk(
 )
 {
 	bool	found = false;
-	size_t	numChunks, numLines = theContent.size();
+	size_t	numChunks, numLines = m_theContent.size();
 	for( size_t	line=0; !found && line<numLines; line++ )
 	{
-		XML_LINE	&theLine = theContent[line];
+		XML_LINE	&theLine = m_theContent[line];
 
-		numChunks = theLine.theLine.size();
+		numChunks = theLine.m_theLine.size();
 		for( size_t chunk=0; !found && chunk<numChunks; chunk++ )
 		{
-			XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+			XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 			if( theChunk.getTextElement() == xmlText
 			&& theChunk.startPos <= insertPos
 			&& theChunk.startPos + theChunk.len > insertPos )
@@ -2019,18 +2019,18 @@ bool XML_VIEWER_BOX::findElementScreenPosition(
 
 	size_t line, chunk, numLines, numChunks, numSubboxes, numChildboxes;
 
-	if( theElement == this->theElement )
+	if( theElement == m_theElement )
 	{
 		// find the first text chunk
-		numLines = theContent.size();
+		numLines = m_theContent.size();
 		for( line=0; line<numLines; line++ )
 		{
-			const XML_LINE	&theLine = theContent[line];
+			const XML_LINE	&theLine = m_theContent[line];
 
-			numChunks = theLine.theLine.size();
+			numChunks = theLine.m_theLine.size();
 			for( chunk=0;  chunk<numChunks; chunk++ )
 			{
-				const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+				const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 				if( theChunk.isTextElement() )
 				{
 					cursorPos->setPosition(
@@ -2048,14 +2048,14 @@ bool XML_VIEWER_BOX::findElementScreenPosition(
 
 	if( !found )
 	{
-		numLines = theContent.size();
+		numLines = m_theContent.size();
 		for( line=0; line<numLines; line++ )
 		{
-			const XML_LINE	&theLine = theContent[line];
-			numChunks = theLine.theLine.size();
+			const XML_LINE	&theLine = m_theContent[line];
+			numChunks = theLine.m_theLine.size();
 			for( chunk=0;  chunk<numChunks; chunk++ )
 			{
-				const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+				const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 				if( theChunk.isTextElement()
 				&& theChunk.getTextElement() == theElement)
 				{
@@ -2073,10 +2073,10 @@ bool XML_VIEWER_BOX::findElementScreenPosition(
 
 	if( !found )
 	{
-		numSubboxes = subBoxes.size();
+		numSubboxes = m_subBoxes.size();
 		for( size_t i=0; i<numSubboxes; i++ )
 		{
-			found = subBoxes[i]->findElementScreenPosition(
+			found = m_subBoxes[i]->findElementScreenPosition(
 				theElement,
 				x, y, cursorPos
 			);
@@ -2089,10 +2089,10 @@ bool XML_VIEWER_BOX::findElementScreenPosition(
 
 	if( !found )
 	{
-		numChildboxes = childElements.size();
+		numChildboxes = m_childElements.size();
 		for( size_t i=0; i<numChildboxes; i++ )
 		{
-			const XML_VIEWER_ITEM	&theItem = childElements[i];
+			const XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox )
@@ -2122,14 +2122,14 @@ xml::Element *XML_VIEWER_BOX::findElementOnScreen(
 
 	size_t line, chunk, numLines, numChunks, numSubboxes, numChildboxes;
 
-	xml::Element	*theElement = NULL;
+	xml::Element	*theElement = nullptr;
 
 	if( !theElement )
 	{
-		numSubboxes = subBoxes.size();
+		numSubboxes = m_subBoxes.size();
 		for( size_t i=0; i<numSubboxes; i++ )
 		{
-			theElement = subBoxes[i]->findElementOnScreen(
+			theElement = m_subBoxes[i]->findElementOnScreen(
 				context,
 				x, y, horizOffset, vertOffset, cursorPos
 			);
@@ -2142,10 +2142,10 @@ xml::Element *XML_VIEWER_BOX::findElementOnScreen(
 
 	if( !theElement )
 	{
-		numChildboxes = childElements.size();
+		numChildboxes = m_childElements.size();
 		for( size_t i=0; i<numChildboxes; i++ )
 		{
-			const XML_VIEWER_ITEM	&theItem = childElements[i];
+			const XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			const XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 			if( theBox )
@@ -2164,25 +2164,25 @@ xml::Element *XML_VIEWER_BOX::findElementOnScreen(
 
 	if( !theElement )
 	{
-		if( position != css::POS_FIXED )
+		if( m_position != css::POS_FIXED )
 		{
 			x += horizOffset;
 			y += vertOffset;
 		}
 
-		numLines = theContent.size();
+		numLines = m_theContent.size();
 		for( line=0; line<numLines; line++ )
 		{
-			const XML_LINE	&theLine = theContent[line];
-			if( theLine.position.x <= x
-			&& theLine.position.x + theLine.lineWidth >=x
-			&&  theLine.position.y <= y
-			&& theLine.position.y + theLine.lineHeight >=y )
+			const XML_LINE	&theLine = m_theContent[line];
+			if( theLine.m_position.x <= x
+			&& theLine.m_position.x + theLine.m_lineWidth >=x
+			&&  theLine.m_position.y <= y
+			&& theLine.m_position.y + theLine.m_lineHeight >=y )
 			{
-				numChunks = theLine.theLine.size();
+				numChunks = theLine.m_theLine.size();
 				for( chunk=0; chunk<numChunks; chunk++ )
 				{
-					const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+					const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 					if( theChunk.getPosition().x <= x
 					&& theChunk.getPosition().x + theChunk.width >= x
 					&& theChunk.isTextElement() )
@@ -2212,23 +2212,23 @@ xml::Element *XML_VIEWER_BOX::findElementOnScreen(
 
 	if( !theElement )
 	{
-		if( docPosition.left <= x
-		&& docPosition.right >= x
-		&& docPosition.top <= y
-		&& docPosition.bottom >= y )
+		if( m_docPosition.left <= x
+		&& m_docPosition.right >= x
+		&& m_docPosition.top <= y
+		&& m_docPosition.bottom >= y )
 		{
 			// find the last text chunk
 			for(
-				line=theContent.size()-1;
-				line!=theContent.no_index && !theElement;
+				line=m_theContent.size()-1;
+				line!=m_theContent.no_index && !theElement;
 				line--
 			)
 			{
-				const XML_LINE	&theLine = theContent[line];
+				const XML_LINE	&theLine = m_theContent[line];
 
-				for( chunk = theLine.theLine.size()-1; chunk != -1; chunk-- )
+				for( chunk = theLine.m_theLine.size()-1; chunk != -1; chunk-- )
 				{
-					const XML_LINE_CHUNK &theChunk = theLine.theLine[chunk];
+					const XML_LINE_CHUNK &theChunk = theLine.m_theLine[chunk];
 					if( theChunk.isTextElement() )
 					{
 						theElement = theChunk.getTextElement();
@@ -2255,10 +2255,10 @@ void XML_TABLE_VIEWER_BOX::calcColumnWidth(
 	Device &context, int windowWidth, int windowHeight
 )
 {
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i = 0; i<numSubBoxes; i++ )
 	{
-		XML_TABLE_GROUP_VIEWER_BOX *rowBox = (XML_TABLE_GROUP_VIEWER_BOX *)(XML_VIEWER_BOX *)subBoxes[i];
+		XML_TABLE_GROUP_VIEWER_BOX *rowBox = (XML_TABLE_GROUP_VIEWER_BOX *)(XML_VIEWER_BOX *)m_subBoxes[i];
 
 		rowBox->calcColumnWidth(
 			context, windowWidth, windowHeight
@@ -2270,10 +2270,10 @@ void XML_TABLE_GROUP_VIEWER_BOX::calcColumnWidth(
 	Device &context, int windowWidth, int windowHeight
 )
 {
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i = 0; i<numSubBoxes; i++ )
 	{
-		XML_TABLE_ROW_VIEWER_BOX *rowBox = (XML_TABLE_ROW_VIEWER_BOX *)(XML_VIEWER_BOX *)subBoxes[i];
+		XML_TABLE_ROW_VIEWER_BOX *rowBox = (XML_TABLE_ROW_VIEWER_BOX *)(XML_VIEWER_BOX *)m_subBoxes[i];
 
 		rowBox->calcColumnWidth(
 			context, windowWidth, windowHeight
@@ -2287,16 +2287,16 @@ void XML_TABLE_ROW_VIEWER_BOX::calcColumnWidth(
 {
 	RectBorder	cellRect;
 
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i = 0; i<numSubBoxes; i++ )
 	{
-		XML_VIEWER_BOX *cellBox = subBoxes[i];
-		int innerWidth = cellBox->innerWidth;
+		XML_VIEWER_BOX *cellBox = m_subBoxes[i];
+		int innerWidth = cellBox->m_innerWidth;
 
 		if( innerWidth > 0 )
 			setStyleWidth( cellBox->getItemNumber(), innerWidth );
 
-		cellBox->innerWidth = -1;
+		cellBox->m_innerWidth = -1;
 
 		try
 		{
@@ -2307,10 +2307,10 @@ void XML_TABLE_ROW_VIEWER_BOX::calcColumnWidth(
 		}
 		catch( ... )
 		{
-			cellBox->innerWidth = innerWidth;
+			cellBox->m_innerWidth = innerWidth;
 /*@*/		throw;
 		}
-		cellBox->innerWidth = innerWidth;
+		cellBox->m_innerWidth = innerWidth;
 		int columnWidth = cellRect.right - cellRect.left;
 		setColumnWidth( cellBox->getItemNumber(), columnWidth );
 	}
@@ -2324,24 +2324,24 @@ void XML_TABLE_ROW_VIEWER_BOX::calcColumnWidth(
 */
 void XML_LINE::moveBy( int x, int y )
 {
-	position.x += x;
-	position.y += y;
+	m_position.x += x;
+	m_position.y += y;
 
-	for( size_t i=0; i<theLine.size(); i++ )
-		theLine[i].moveBy( x, y );
+	for( size_t i=0; i<m_theLine.size(); i++ )
+		m_theLine[i].moveBy( x, y );
 }
 
 void XML_VIEWER_BOX::moveBy( int x, int y )
 {
-	docPosition.left += x;
-	docPosition.top += y;
-	docPosition.right += x;
-	docPosition.bottom += y;
+	m_docPosition.left += x;
+	m_docPosition.top += y;
+	m_docPosition.right += x;
+	m_docPosition.bottom += y;
 
-	size_t numChildBoxes = childElements.size();
+	size_t numChildBoxes = m_childElements.size();
 	for( size_t i=0; i<numChildBoxes; i++ )
 	{
-		XML_VIEWER_ITEM	&theItem = childElements[i];
+		XML_VIEWER_ITEM	&theItem = m_childElements[i];
 		XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 		if( theBox
@@ -2351,14 +2351,14 @@ void XML_VIEWER_BOX::moveBy( int x, int y )
 		}
 	}
 
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i=0; i<numSubBoxes; i++ )
 	{
-		subBoxes[i]->moveBy( x, y );
+		m_subBoxes[i]->moveBy( x, y );
 	}
-	for( size_t i=0; i<theContent.size(); i++ )
+	for( size_t i=0; i<m_theContent.size(); i++ )
 	{
-		theContent[i].moveBy( x, y );
+		m_theContent[i].moveBy( x, y );
 	}
 }
 int XML_TABLE_VIEWER_BOX::calcSize(
@@ -2371,25 +2371,25 @@ int XML_TABLE_VIEWER_BOX::calcSize(
 	XML_VIEWER_BOX	*groupBox;
 	RectBorder		groupRect;
 	int 			groupHeight, boxHeight = 0;
-	size_t 			numColumns = columnWidths.size();
+	size_t 			numColumns = m_columnWidths.size();
 	int 			totalWidth = 0;
 	int 			totalStyleWidth = 0;
 	double			widthPercent;
 
-	docPosition.left = left;
-	docPosition.top = top;
-	docPosition.right = left+maxWidth;
-	docPosition.bottom = top+windowHeight;
+	m_docPosition.left = left;
+	m_docPosition.top = top;
+	m_docPosition.right = left+maxWidth;
+	m_docPosition.bottom = top+windowHeight;
 
 	calcColumnWidth( context, windowWidth, windowHeight );
 
 	for( size_t i=0; i<numColumns; i++ )
 	{
-		if( columnWidths[i] < styleWidths[i]  )
-			columnWidths[i] = styleWidths[i];
+		if( m_columnWidths[i] < m_styleWidths[i]  )
+			m_columnWidths[i] = m_styleWidths[i];
 
-		totalStyleWidth += styleWidths[i];
-		totalWidth += columnWidths[i];
+		totalStyleWidth += m_styleWidths[i];
+		totalWidth += m_columnWidths[i];
 	}
 
 	if(	totalStyleWidth > maxWidth )
@@ -2403,13 +2403,13 @@ int XML_TABLE_VIEWER_BOX::calcSize(
 		totalWidth = 0;
 		for( size_t i=0; i<numColumns; i++ )
 		{
-			totalWidth += columnWidths[i]-styleWidths[i];
+			totalWidth += m_columnWidths[i]-m_styleWidths[i];
 		}
 
 		for( size_t i=0; i<numColumns; i++ )
 		{
-			widthPercent = (double)(columnWidths[i]-styleWidths[i])/(double)totalWidth;
-			columnWidths[i] = int(styleWidths[i]+widthPercent*double(maxWidth-totalStyleWidth));
+			widthPercent = double(m_columnWidths[i]-m_styleWidths[i])/double(totalWidth);
+			m_columnWidths[i] = int(m_styleWidths[i]+widthPercent*double(maxWidth-totalStyleWidth));
 		}
 
 		totalWidth = maxWidth;
@@ -2419,25 +2419,25 @@ int XML_TABLE_VIEWER_BOX::calcSize(
 	{
 		try
 		{
-			size_t	numSubBoxes = subBoxes.size();
+			size_t	numSubBoxes = m_subBoxes.size();
 			for( size_t i = 0; i<numSubBoxes; i++ )
 			{
-				groupBox = subBoxes[i];
+				groupBox = m_subBoxes[i];
 
 				groupHeight = groupBox->calcSize(
 					context, left, top, maxWidth, windowWidth, windowHeight,
 					&groupRect
 				);
 
-				XML_LINE		&theLine = theContent[i];
-				XML_LINE_CHUNK	&theChunk = theLine.theLine[0];
+				XML_LINE		&theLine = m_theContent[i];
+				XML_LINE_CHUNK	&theChunk = theLine.m_theLine[0];
 				theChunk.setBlockElement( groupBox );
 				theChunk.setPosition( left, top );
 				theChunk.width = totalWidth;
-				theLine.lineWidth = totalWidth;
-				theLine.lineHeight = groupHeight;
-				theLine.position.x = left;
-				theLine.position.y = top;
+				theLine.m_lineWidth = totalWidth;
+				theLine.m_lineHeight = groupHeight;
+				theLine.m_position.x = left;
+				theLine.m_position.y = top;
 
 
 				top += groupHeight;
@@ -2451,9 +2451,9 @@ int XML_TABLE_VIEWER_BOX::calcSize(
 		}
 	}
 
-	docPosition.right = left+totalWidth;
-	docPosition.bottom = top+boxHeight;
-	*screen = docPosition;
+	m_docPosition.right = left+totalWidth;
+	m_docPosition.bottom = top+boxHeight;
+	*screen = m_docPosition;
 
 	return boxHeight;
 }
@@ -2469,32 +2469,32 @@ int XML_TABLE_GROUP_VIEWER_BOX::calcSize(
 	RectBorder		rowRect;
 	int				rowHeight, boxHeight = 0;
 
-	docPosition.left = left;
-	docPosition.top = top;
-	docPosition.right = left+maxWidth;
-	docPosition.bottom = top+windowHeight;
+	m_docPosition.left = left;
+	m_docPosition.top = top;
+	m_docPosition.right = left+maxWidth;
+	m_docPosition.bottom = top+windowHeight;
 
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i = 0; i<numSubBoxes; i++ )
 	{
 		try
 		{
-			rowBox = subBoxes[i];
+			rowBox = m_subBoxes[i];
 
 			rowHeight = rowBox->calcSize(
 				context, left, top, maxWidth, windowWidth, windowHeight,
 				&rowRect
 			);
 
-			XML_LINE		&theLine = theContent[i];
-			XML_LINE_CHUNK	&theChunk = theLine.theLine[0];
+			XML_LINE		&theLine = m_theContent[i];
+			XML_LINE_CHUNK	&theChunk = theLine.m_theLine[0];
 			theChunk.setBlockElement( rowBox );
 			theChunk.setPosition( left, top );
 			theChunk.width = maxWidth;
-			theLine.lineWidth = maxWidth;
-			theLine.lineHeight = rowHeight;
-			theLine.position.x = left;
-			theLine.position.y = top;
+			theLine.m_lineWidth = maxWidth;
+			theLine.m_lineHeight = rowHeight;
+			theLine.m_position.x = left;
+			theLine.m_position.y = top;
 
 			top += rowHeight;
 			boxHeight += rowHeight;
@@ -2505,8 +2505,8 @@ int XML_TABLE_GROUP_VIEWER_BOX::calcSize(
 		}
 	}
 
-	docPosition.bottom = top+boxHeight;
-	*screen = docPosition;
+	m_docPosition.bottom = top+boxHeight;
+	*screen = m_docPosition;
 
 	return boxHeight;
 }
@@ -2523,33 +2523,33 @@ int XML_TABLE_ROW_VIEWER_BOX::calcSize(
 	int				cellHeight, columnWidth, innerWidth;
 	int				maxHeight = 0;
 
-	docPosition.left = left;
-	docPosition.top = top;
-	docPosition.right = left+maxWidth;
-	docPosition.bottom = top+windowHeight;
+	m_docPosition.left = left;
+	m_docPosition.top = top;
+	m_docPosition.right = left+maxWidth;
+	m_docPosition.bottom = top+windowHeight;
 
-	size_t		numSubBoxes = subBoxes.size();
-	XML_LINE	&theLine = theContent[0];
-	theLine.position.x = left;
-	theLine.position.y = top;
-	theLine.lineWidth = maxWidth;
+	size_t		numSubBoxes = m_subBoxes.size();
+	XML_LINE	&theLine = m_theContent[0];
+	theLine.m_position.x = left;
+	theLine.m_position.y = top;
+	theLine.m_lineWidth = maxWidth;
 
 	for( size_t i = 0; i<numSubBoxes; i++ )
 	{
 		try
 		{
-			cellBox = subBoxes[i];
+			cellBox = m_subBoxes[i];
 
 			columnWidth = getColumnWidth(cellBox->getItemNumber());
-			innerWidth = cellBox->innerWidth;
-			cellBox->innerWidth = columnWidth;
+			innerWidth = cellBox->m_innerWidth;
+			cellBox->m_innerWidth = columnWidth;
 			cellHeight = cellBox->calcSize(
 				context, left, top, columnWidth, windowWidth, windowHeight,
 				&cellRect
 			);
-			cellBox->innerWidth = innerWidth;
+			cellBox->m_innerWidth = innerWidth;
 
-			XML_LINE_CHUNK	&theChunk = theLine.theLine[i];
+			XML_LINE_CHUNK	&theChunk = theLine.m_theLine[i];
 			theChunk.setBlockElement( cellBox );
 			theChunk.setPosition( left, top );
 			theChunk.width = columnWidth;
@@ -2561,15 +2561,15 @@ int XML_TABLE_ROW_VIEWER_BOX::calcSize(
 		}
 		catch( ... )
 		{
-			cellBox->innerWidth = innerWidth;
+			cellBox->m_innerWidth = innerWidth;
 /*@*/		throw;
 		}
 	}
 
-	theLine.lineHeight = maxHeight;
+	theLine.m_lineHeight = maxHeight;
 
-	docPosition.bottom = top+maxHeight;
-	*screen = docPosition;
+	m_docPosition.bottom = top+maxHeight;
+	*screen = m_docPosition;
 
 	return maxHeight;
 }
@@ -2606,7 +2606,7 @@ int XML_VIEWER_BOX::calcSize(
 	XML_VIEWER_BOX	*childBox, *previousBox;
 
 	int	right = left+maxWidth;
-	int bottom = parentBox ? (*parentBox).docPosition.bottom : windowHeight;
+	int bottom = m_parentBox ? m_parentBox->m_docPosition.bottom : windowHeight;
 
 	css::Styles *style = getCssStyle();
 
@@ -2615,86 +2615,86 @@ int XML_VIEWER_BOX::calcSize(
 	STRING cssTop =  style->getTop();
 	STRING cssBottom =  style->getBottom();
 
-	if( position <= css::POS_STATIC )
+	if( m_position <= css::POS_STATIC )
 	{
 		// do normal layout
 	}
-	else if( position == css::POS_RELATIVE )
+	else if( m_position == css::POS_RELATIVE )
 	{
 		if( !cssLeft.isEmpty() )
-			left = left + cssSizeToPixel( context, cssLeft, theElement );
+			left = left + cssSizeToPixel( context, cssLeft, m_theElement );
 		if( !cssTop.isEmpty() )
-			top = top + cssSizeToPixel( context, cssTop, theElement );
+			top = top + cssSizeToPixel( context, cssTop, m_theElement );
 
 		if( !cssRight.isEmpty() )
 		{
-			if( parentBox )
-				right = (*parentBox).docPosition.right -
-					cssSizeToPixel( context, cssRight, theElement )
+			if( m_parentBox )
+				right = m_parentBox->m_docPosition.right -
+					cssSizeToPixel( context, cssRight, m_theElement )
 				;
 			else
 				right = left + maxWidth -
-					cssSizeToPixel( context, cssRight, theElement )
+					cssSizeToPixel( context, cssRight, m_theElement )
 				;
 		}
 		if( !cssBottom.isEmpty() )
 		{
-			if( parentBox )
-				bottom = (*parentBox).docPosition.bottom -
-					cssSizeToPixel( context, cssBottom, theElement )
+			if( m_parentBox )
+				bottom = m_parentBox->m_docPosition.bottom -
+					cssSizeToPixel( context, cssBottom, m_theElement )
 				;
 			else
 				bottom = top + windowHeight -
-					cssSizeToPixel( context, cssBottom, theElement )
+					cssSizeToPixel( context, cssBottom, m_theElement )
 				;
 		}
 	}
-	else if( position >= css::POS_ABSOLUTE )
+	else if( m_position >= css::POS_ABSOLUTE )
 	{
 		if( !cssLeft.isEmpty() )
-			left = cssSizeToPixel( context, cssLeft, theElement );
+			left = cssSizeToPixel( context, cssLeft, m_theElement );
 		if( !cssTop.isEmpty() )
-			top = cssSizeToPixel( context, cssTop, theElement );
+			top = cssSizeToPixel( context, cssTop, m_theElement );
 
 		if( !cssRight.isEmpty() )
 		{
-			if( parentBox )
-				right = (*parentBox).docPosition.right -
-					cssSizeToPixel( context, cssRight, theElement )
+			if( m_parentBox )
+				right = m_parentBox->m_docPosition.right -
+					cssSizeToPixel( context, cssRight, m_theElement )
 				;
 			else
 				right = left + maxWidth -
-					cssSizeToPixel( context, cssRight, theElement )
+					cssSizeToPixel( context, cssRight, m_theElement )
 				;
 		}
 		if( !cssBottom.isEmpty() )
 		{
-			if( parentBox )
-				bottom = (*parentBox).docPosition.bottom -
-					cssSizeToPixel( context, cssBottom, theElement )
+			if( m_parentBox )
+				bottom = m_parentBox->m_docPosition.bottom -
+					cssSizeToPixel( context, cssBottom, m_theElement )
 				;
 			else
 				bottom = top + windowHeight -
-					cssSizeToPixel( context, cssBottom, theElement )
+					cssSizeToPixel( context, cssBottom, m_theElement )
 				;
 		}
 	}
 
 	if( cssLeft.isEmpty() || cssRight.isEmpty() )
 	{
-		if( this->innerWidth > 0 )
+		if( m_innerWidth > 0 )
 		{
-			maxWidth = this->innerWidth +
-				padding_left + margin_left + padding_right + margin_right
+			maxWidth = m_innerWidth +
+				m_padding_left + m_margin_left + m_padding_right + m_margin_right
 			;
 		}
-		else if( this->innerWidthPercent > 0 )
+		else if( m_innerWidthPercent > 0 )
 		{
 			maxWidth =
-				((parentBox
-					? (*parentBox).maxWidth
+				((m_parentBox
+					? m_parentBox->m_maxWidth
 					: maxWidth
-				) * this->innerWidthPercent) /100
+				) * m_innerWidthPercent) /100
 			;
 		}
 		if( cssLeft.isEmpty() && !cssRight.isEmpty() )
@@ -2705,59 +2705,59 @@ int XML_VIEWER_BOX::calcSize(
 
 	if( cssTop.isEmpty() || cssBottom.isEmpty() )
 	{
-		if( this->innerHeight > 0 )
+		if( m_innerHeight > 0 )
 		{
-			maxHeight = this->innerHeight +
-				padding_top + margin_top + padding_bottom + margin_bottom
+			m_maxHeight = m_innerHeight +
+				m_padding_top + m_margin_top + m_padding_bottom + m_margin_bottom
 			;
-			if( border_style_top > css::BORD_NONE )
-				maxHeight += border_width_top;
-			if( border_style_bottom > css::BORD_NONE )
-				maxHeight += border_width_bottom;
+			if( m_border_style_top > css::BORD_NONE )
+				m_maxHeight += m_border_width_top;
+			if( m_border_style_bottom > css::BORD_NONE )
+				m_maxHeight += m_border_width_bottom;
 		}
-		else if( this->innerHeightPercent > 0 )
+		else if( m_innerHeightPercent > 0 )
 		{
-			maxHeight =
-				((parentBox
-					? (*parentBox).maxHeight
+			m_maxHeight =
+				((m_parentBox
+					? m_parentBox->m_maxHeight
 					: windowHeight
-				) * this->innerHeightPercent) /100
+				) * m_innerHeightPercent) /100
 			;
-			if( border_style_top > css::BORD_NONE )
-				maxHeight += border_width_top;
-			if( border_style_bottom > css::BORD_NONE )
-				maxHeight += border_width_bottom;
+			if( m_border_style_top > css::BORD_NONE )
+				m_maxHeight += m_border_width_top;
+			if( m_border_style_bottom > css::BORD_NONE )
+				m_maxHeight += m_border_width_bottom;
 		}
 		else
-			maxHeight = windowHeight;
+			m_maxHeight = windowHeight;
 
 		if( cssTop.isEmpty() && !cssBottom.isEmpty() )
-			top = bottom-maxHeight;
+			top = bottom-m_maxHeight;
 		else
-			bottom = top+maxHeight;
+			bottom = top+m_maxHeight;
 	}
 
-	docPosition.left = left;
-	docPosition.top = top;
-	docPosition.right = right;
-	docPosition.bottom = bottom;
+	m_docPosition.left = left;
+	m_docPosition.top = top;
+	m_docPosition.right = right;
+	m_docPosition.bottom = bottom;
 
 	Size	size;
 	int		lineHeight;
 
-	int innerLeft = left + padding_left + margin_left;
-	if( border_style_left > css::BORD_NONE )
-		innerLeft += border_width_left;
+	int innerLeft = left + m_padding_left + m_margin_left;
+	if( m_border_style_left > css::BORD_NONE )
+		innerLeft += m_border_width_left;
 
-	int innerRight = right - padding_right - margin_right;
-	if( border_style_right > css::BORD_NONE )
-		innerRight -= border_width_right;
+	int innerRight = right - m_padding_right - m_margin_right;
+	if( m_border_style_right > css::BORD_NONE )
+		innerRight -= m_border_width_right;
 
-	int innerTop = top + padding_top + margin_top;
-	if( border_style_top > css::BORD_NONE )
-		innerTop += border_width_top;
+	int innerTop = top + m_padding_top + m_margin_top;
+	if( m_border_style_top > css::BORD_NONE )
+		innerTop += m_border_width_top;
 
-	int innerWidth = maxWidth = this->maxWidth = innerRight - innerLeft;
+	int innerWidth = maxWidth = m_maxWidth = innerRight - innerLeft;
 
 	if( maxWidth < 0 )
 	{
@@ -2773,18 +2773,18 @@ int XML_VIEWER_BOX::calcSize(
 
 	css::TextAlign	text_align = style->getTextAlign();
 
-	leftBoxes.clear();
-	rightBoxes.clear();
-	theContent.clear();
+	m_leftBoxes.clear();
+	m_rightBoxes.clear();
+	m_theContent.clear();
 
 #if DEBUG_LOG
-	STRING	tag = theElement->getTag();
+	STRING	tag = m_theElement->getTag();
 	if( tag == "long" )
 	{
 		doLogValue( tag );
 	}
 #endif
-	size_t	i=0, numElements = childElements.size();
+	size_t	i=0, numElements = m_childElements.size();
 	size_t	numLines = 0;
 	size_t	chunkLen, wrapPos = 0, numChunks;
 
@@ -2801,7 +2801,7 @@ int XML_VIEWER_BOX::calcSize(
 		lineHeight = 0;
 		while( i<numElements )
 		{
-			XML_VIEWER_ITEM		&theItem = childElements[i];
+			XML_VIEWER_ITEM		&theItem = m_childElements[i];
 			xml::Element			*theElement = theItem.getXmlElement();
 
 			if( theElement )
@@ -2813,9 +2813,9 @@ int XML_VIEWER_BOX::calcSize(
 				xml::XmlText *theText = dynamic_cast<xml::XmlText *>(theElement);
 				if( theText )
 				{
-					XML_LINE	&currentLine = theContent[numLines];
+					XML_LINE	&currentLine = m_theContent[numLines];
 
-					numChunks = currentLine.theLine.size();
+					numChunks = currentLine.m_theLine.size();
 
 					if( !numChunks )
 					{
@@ -2827,12 +2827,12 @@ int XML_VIEWER_BOX::calcSize(
 							x += text_indent;
 							maxWidth -= text_indent;
 						}
-						currentLine.position.x = x;
-						currentLine.position.y = y;
-						currentLine.maxWidth = maxWidth;
+						currentLine.m_position.x = x;
+						currentLine.m_position.y = y;
+						currentLine.m_maxWidth = maxWidth;
 					}
 
-					XML_LINE_CHUNK	&newChunk = currentLine.theLine[
+					XML_LINE_CHUNK	&newChunk = currentLine.m_theLine[
 						numChunks
 					];
 
@@ -2849,10 +2849,10 @@ int XML_VIEWER_BOX::calcSize(
 					createFont( context, theText, false );
 
 					lineHeight = getLineHeight( context, theText );
-					if( lineHeight > currentLine.lineHeight )
-						currentLine.lineHeight = lineHeight;
+					if( lineHeight > currentLine.m_lineHeight )
+						currentLine.m_lineHeight = lineHeight;
 					else
-						lineHeight = currentLine.lineHeight;
+						lineHeight = currentLine.m_lineHeight;
 
 					const STRING &text = newChunk.getText();
 					if( preserveBreaks )
@@ -2873,21 +2873,21 @@ int XML_VIEWER_BOX::calcSize(
 						wrapPos, chunkLen,
 						&size
 					);
-					if( currentLine.lineWidth + size.width > maxWidth )
+					if( currentLine.m_lineWidth + size.width > maxWidth )
 					{
 						if( !autoWrap )
 						{
 /*@*/						throw ResizeException(
-								currentLine.lineWidth + size.width - maxWidth
+								currentLine.m_lineWidth + size.width - maxWidth
 							);
 						}
 						newChunk.width = findWrapPos(
-							context, maxWidth-currentLine.lineWidth, !numChunks,
+							context, maxWidth-currentLine.m_lineWidth, !numChunks,
 							newChunk.getText(), wrapPos, &chunkLen
 						);
 
 						// we did not get space for even one character
-						if( !newChunk.width && !currentLine.lineWidth )
+						if( !newChunk.width && !currentLine.m_lineWidth )
 						{
 							context.getTextExtent(
 								text,
@@ -2898,11 +2898,11 @@ int XML_VIEWER_BOX::calcSize(
 /*@*/						throw ResizeException( size.width-maxWidth );
 						}
 						newChunk.len = chunkLen;
-						currentLine.lineWidth += newChunk.width;
+						currentLine.m_lineWidth += newChunk.width;
 
 						maxRight = innerRight;
 
-						y += currentLine.lineHeight;
+						y += currentLine.m_lineHeight;
 						x = findLeft( y, innerLeft );
 						maxWidth = findRight( y, innerRight ) - x;
 
@@ -2920,7 +2920,7 @@ int XML_VIEWER_BOX::calcSize(
 
 						newChunk.width = size.width;
 						newChunk.len = chunkLen;
-						currentLine.lineWidth += size.width;
+						currentLine.m_lineWidth += size.width;
 
 						if( !preserveBreaks || newLinePos == -1 )
 						{
@@ -2929,7 +2929,7 @@ int XML_VIEWER_BOX::calcSize(
 						}
 						else
 						{
-							y += currentLine.lineHeight;
+							y += currentLine.m_lineHeight;
 							x = findLeft( y, innerLeft );
 							maxWidth = findRight( y, innerRight ) - x;
 							numLines++;
@@ -2954,17 +2954,17 @@ int XML_VIEWER_BOX::calcSize(
 		// *****************************
 		// check (inline) block elements
 		// *****************************
-		previousBox = NULL;
+		previousBox = nullptr;
 		while( i<numElements )
 		{
-			XML_VIEWER_ITEM	&theItem = childElements[i];
+			XML_VIEWER_ITEM	&theItem = m_childElements[i];
 
 			childBox = theItem.getViewerBox();
 
 			if( childBox )
 			{
 				i++;
-				childBoxStyle = (*childBox).getCssStyle();
+				childBoxStyle = childBox->getCssStyle();
 				css::Display	display = childBoxStyle->getDisplay();
 				if( display == css::DSP_BLOCK
 				|| display == css::DSP_TABLE
@@ -2983,16 +2983,16 @@ int XML_VIEWER_BOX::calcSize(
 					{
 						// merge the margins
 						int maxMargin = math::max(
-							previousBox->margin_bottom, childBox->margin_top
+							previousBox->m_margin_bottom, childBox->m_margin_top
 						);
-						childBox->margin_top = maxMargin
-							- previousBox->margin_bottom
+						childBox->m_margin_top = maxMargin
+							- previousBox->m_margin_bottom
 						;
 					}
 					previousBox = childBox;
 				}
 				else
-					previousBox = NULL;
+					previousBox = nullptr;
 
 				childBoxHeight = childBox->calcSize(
 					context, x, y, maxWidth, windowWidth, windowHeight,
@@ -3006,36 +3006,36 @@ int XML_VIEWER_BOX::calcSize(
 				if( display == css::DSP_INLINE_BLOCK
 				|| display == css::DSP_INLINE_TABLE )
 				{
-					XML_LINE	&currentLine = theContent[numLines];
+					XML_LINE	&currentLine = m_theContent[numLines];
 
-					if( childBoxWidth <= maxWidth-currentLine.lineWidth )
+					if( childBoxWidth <= maxWidth-currentLine.m_lineWidth )
 					{
 						// add this block to the current line
 
-						numChunks = currentLine.theLine.size();
+						numChunks = currentLine.m_theLine.size();
 
 						if( !numChunks )
 						{
-							currentLine.position.x = x;
-							currentLine.position.y = y;
-							currentLine.maxWidth = maxWidth;
+							currentLine.m_position.x = x;
+							currentLine.m_position.y = y;
+							currentLine.m_maxWidth = maxWidth;
 						}
-						XML_LINE_CHUNK	&newChunk = currentLine.theLine[
+						XML_LINE_CHUNK	&newChunk = currentLine.m_theLine[
 							numChunks
 						];
 
 						newChunk.setPosition( x, y );
 						newChunk.width = childBoxWidth;
 						newChunk.setBlockElement( childBox );
-						if( currentLine.lineHeight < childBoxHeight )
-							currentLine.lineHeight = childBoxHeight;
-						lineHeight = currentLine.lineHeight;
-						currentLine.lineWidth += childBoxWidth;
+						if( currentLine.m_lineHeight < childBoxHeight )
+							currentLine.m_lineHeight = childBoxHeight;
+						lineHeight = currentLine.m_lineHeight;
+						currentLine.m_lineWidth += childBoxWidth;
 					}
 					else
 					{
 						// the box is too large for this position move it down
-						y += currentLine.lineHeight;
+						y += currentLine.m_lineHeight;
 						y = findTop( y, childBoxWidth, innerLeft, innerRight );
 						x = findLeft( y, innerLeft );
 						maxWidth = findRight( y, innerRight ) - x;
@@ -3045,21 +3045,21 @@ int XML_VIEWER_BOX::calcSize(
 						childBoxRect.right = x+childBoxWidth;
 						childBoxRect.bottom = y + childBoxHeight;
 
-						(*childBox).moveBy(
-							childBoxRect.left - (*childBox).docPosition.left,
-							childBoxRect.top - (*childBox).docPosition.top
+						childBox->moveBy(
+							childBoxRect.left - childBox->m_docPosition.left,
+							childBoxRect.top - childBox->m_docPosition.top
 						);
 
 						// add this block to a new line
-						XML_LINE	&currentLine = theContent[++numLines];
-						currentLine.position.x = x;
-						currentLine.position.y = y;
-						currentLine.maxWidth = maxWidth;
-						currentLine.lineHeight = childBoxHeight;
-						currentLine.lineWidth = childBoxWidth;
+						XML_LINE	&currentLine = m_theContent[++numLines];
+						currentLine.m_position.x = x;
+						currentLine.m_position.y = y;
+						currentLine.m_maxWidth = maxWidth;
+						currentLine.m_lineHeight = childBoxHeight;
+						currentLine.m_lineWidth = childBoxWidth;
 						lineHeight = childBoxHeight;
 
-						XML_LINE_CHUNK	&newChunk = currentLine.theLine[0];
+						XML_LINE_CHUNK	&newChunk = currentLine.m_theLine[0];
 						newChunk.setPosition( x, y );
 						newChunk.setBlockElement( childBox );
 						newChunk.width = childBoxWidth;
@@ -3075,8 +3075,8 @@ int XML_VIEWER_BOX::calcSize(
 						y = findTop( y, childBoxWidth, innerLeft, innerRight );
 						childBoxRect.top = y;
 						childBoxRect.bottom = y + childBoxHeight;
-						(*childBox).moveDown(
-							childBoxRect.top - (*childBox).docPosition.top
+						childBox->moveDown(
+							childBoxRect.top - childBox->m_docPosition.top
 						);
 					}
 
@@ -3090,11 +3090,11 @@ int XML_VIEWER_BOX::calcSize(
 							{
 								childBoxRect.left = x;
 								childBoxRect.right = x+childBoxWidth;
-								(*childBox).moveRight(
-									childBoxRect.left - (*childBox).docPosition.left
+								childBox->moveRight(
+									childBoxRect.left - childBox->m_docPosition.left
 								);
 							}
-							leftBoxes += childBoxRect;
+							m_leftBoxes += childBoxRect;
 						}
 						else if( cssFloat == css::FLT_RIGHT )
 						{
@@ -3103,11 +3103,11 @@ int XML_VIEWER_BOX::calcSize(
 							{
 								childBoxRect.right = x;
 								childBoxRect.left = x - childBoxWidth;
-								(*childBox).moveRight(
-									childBoxRect.left - (*childBox).docPosition.left
+								childBox->moveRight(
+									childBoxRect.left - childBox->m_docPosition.left
 								);
 							}
-							rightBoxes += childBoxRect;
+							m_rightBoxes += childBoxRect;
 						}
 
 
@@ -3121,19 +3121,19 @@ int XML_VIEWER_BOX::calcSize(
 					{
 						// add this block to a new line
 
-						XML_LINE		&newLine = theContent[numLines++];
-						XML_LINE_CHUNK	&newChunk = newLine.theLine[
+						XML_LINE		&newLine = m_theContent[numLines++];
+						XML_LINE_CHUNK	&newChunk = newLine.m_theLine[
 							0
 						];
 
-						newLine.position.x = x;
-						newLine.position.y = y;
-						newLine.maxWidth = maxWidth;
+						newLine.m_position.x = x;
+						newLine.m_position.y = y;
+						newLine.m_maxWidth = maxWidth;
 
 						newChunk.setPosition( x, y );
 						newChunk.setBlockElement( childBox );
-						newLine.lineHeight = childBoxHeight;
-						newChunk.width = newLine.lineWidth = childBoxWidth;
+						newLine.m_lineHeight = childBoxHeight;
+						newChunk.width = newLine.m_lineWidth = childBoxWidth;
 
 						if( childBoxRect.right > maxRight )
 							maxRight = childBoxRect.right;
@@ -3150,15 +3150,15 @@ int XML_VIEWER_BOX::calcSize(
 	/*
 		do horizontal alignment for content lines
 	*/
-	numLines = theContent.size();
+	numLines = m_theContent.size();
 	if( text_align == css::ALIGN_CENTER || text_align == css::ALIGN_RIGHT )
 	{
 		for( size_t i=0; i<numLines; i++ )
 		{
-			XML_LINE	&currentLine = theContent[i];
-			int 		offset = findRight( currentLine.position.y, innerRight );
-			offset -= currentLine.position.x;
-			offset -= currentLine.lineWidth;
+			XML_LINE	&currentLine = m_theContent[i];
+			int 		offset = findRight( currentLine.m_position.y, innerRight );
+			offset -= currentLine.m_position.x;
+			offset -= currentLine.m_lineWidth;
 
 			if( text_align == css::ALIGN_CENTER )
 				offset /= 2;
@@ -3171,19 +3171,19 @@ int XML_VIEWER_BOX::calcSize(
 	*/
 	for( size_t i=0; i<numLines; i++ )
 	{
-		XML_LINE	&currentLine = theContent[i];
-		for( size_t j=0; j<currentLine.theLine.size(); j++ )
+		XML_LINE	&currentLine = m_theContent[i];
+		for( size_t j=0; j<currentLine.m_theLine.size(); j++ )
 		{
-			XML_LINE_CHUNK	&theChunk = currentLine.theLine[j];
+			XML_LINE_CHUNK	&theChunk = currentLine.m_theLine[j];
 			if( theChunk.isBlockElement() )
 			{
 				childBoxHeight =
-					(*theChunk.getInlineBox()).docPosition.bottom -
-					(*theChunk.getInlineBox()).docPosition.top
+					theChunk.getInlineBox()->m_docPosition.bottom -
+					theChunk.getInlineBox()->m_docPosition.top
 				;
-				if( childBoxHeight < currentLine.lineHeight )
+				if( childBoxHeight < currentLine.m_lineHeight )
 				{
-					theChunk.moveBy( 0, currentLine.lineHeight - childBoxHeight );
+					theChunk.moveBy( 0, currentLine.m_lineHeight - childBoxHeight );
 				}
 
 			}
@@ -3195,11 +3195,11 @@ int XML_VIEWER_BOX::calcSize(
 	{
 		for( size_t i = numLines-1; i!= -1; i-- )
 		{
-			XML_LINE	&currentLine = theContent[i];
-			if( !currentLine.lineHeight
-			|| !currentLine.theLine.size() )
+			XML_LINE	&currentLine = m_theContent[i];
+			if( !currentLine.m_lineHeight
+			|| !currentLine.m_theLine.size() )
 			{
-				theContent.removeElementAt( i );
+				m_theContent.removeElementAt( i );
 				numLines--;
 			}
 		}
@@ -3207,56 +3207,56 @@ int XML_VIEWER_BOX::calcSize(
 
 	if( numLines )
 	{
-		XML_LINE	&currentLine = theContent[numLines-1];
-		if( maxBottom < currentLine.position.y + currentLine.lineHeight )
+		XML_LINE	&currentLine = m_theContent[numLines-1];
+		if( maxBottom < currentLine.m_position.y + currentLine.m_lineHeight )
 		{
-			maxBottom = currentLine.position.y + currentLine.lineHeight;
+			maxBottom = currentLine.m_position.y + currentLine.m_lineHeight;
 		}
 	}
-	for( size_t i=0; i<leftBoxes.size(); i++ )
+	for( size_t i=0; i<m_leftBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = leftBoxes[i];
+		const RectBorder &boxRect = m_leftBoxes[i];
 		if( boxRect.bottom > maxBottom )
 			maxBottom = boxRect.bottom;
 	}
-	for( size_t i=0; i<rightBoxes.size(); i++ )
+	for( size_t i=0; i<m_rightBoxes.size(); i++ )
 	{
-		const RectBorder &boxRect = rightBoxes[i];
+		const RectBorder &boxRect = m_rightBoxes[i];
 		if( boxRect.bottom > maxBottom )
 			maxBottom = boxRect.bottom;
 	}
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i=0; i<numSubBoxes; i++ )
 	{
-		XML_VIEWER_BOX	*subBox = subBoxes[i];
-		(*subBox).calcSize(
+		XML_VIEWER_BOX	*subBox = m_subBoxes[i];
+		subBox->calcSize(
 			context,
 			0, 0, windowWidth, windowWidth, windowHeight,
 			&childBoxRect
 		);
-		if( ((*subBox).position == css::POS_ABSOLUTE || (*subBox).display >= css::DSP_TABLE)  
+		if( (subBox->m_position == css::POS_ABSOLUTE || subBox->m_display >= css::DSP_TABLE)  
 		&& childBoxRect.bottom > maxBottom )
 			maxBottom = childBoxRect.bottom;
 	}
 
 	int boxHeight = maxBottom - innerTop;
 
-	boxHeight += padding_top + margin_top + padding_bottom + margin_bottom;
-	if( border_style_top > css::BORD_NONE )
-		boxHeight += border_width_top;
-	if( border_style_bottom > css::BORD_NONE )
-		boxHeight += border_width_bottom;
+	boxHeight += m_padding_top + m_margin_top + m_padding_bottom + m_margin_bottom;
+	if( m_border_style_top > css::BORD_NONE )
+		boxHeight += m_border_width_top;
+	if( m_border_style_bottom > css::BORD_NONE )
+		boxHeight += m_border_width_bottom;
 
-	if( this->innerWidth <= 0
-	&& this->innerWidthPercent <= 0
+	if( m_innerWidth <= 0
+	&& m_innerWidthPercent <= 0
 	&& cssRight.isEmpty()
-	&& (style->getCssFloat() > css::FLT_NONE || this->display == css::DSP_CELL) )
-		docPosition.right = maxRight + padding_right + margin_right;
+	&& (style->getCssFloat() > css::FLT_NONE || m_display == css::DSP_CELL) )
+		m_docPosition.right = maxRight + m_padding_right + m_margin_right;
 
-	if( this->innerHeight <= 0 && this->innerHeightPercent <= 0 && cssBottom.isEmpty() )
-		docPosition.bottom = docPosition.top + boxHeight;
+	if( m_innerHeight <= 0 && m_innerHeightPercent <= 0 && cssBottom.isEmpty() )
+		m_docPosition.bottom = m_docPosition.top + boxHeight;
 
-	*screen = docPosition;
+	*screen = m_docPosition;
 
 	return boxHeight;
 }
@@ -3278,7 +3278,7 @@ void XML_VIEWER_BOX::drawLine(
 
 	int vertOffset, horizOffset;
 
-	if( position == css::POS_FIXED )
+	if( m_position == css::POS_FIXED )
 		vertOffset = horizOffset = 0;
 	else
 	{
@@ -3291,7 +3291,7 @@ void XML_VIEWER_BOX::drawLine(
 		css::Styles		*cssStyle;
 		css::Color		color;
 		bool			colorFound = false;
-		xml::Element	*theElement = this->theElement;
+		xml::Element	*theElement = m_theElement;
 		while( theElement )
 		{
 			cssStyle = theElement->getCssStyle();
@@ -3306,16 +3306,16 @@ void XML_VIEWER_BOX::drawLine(
 			context.getBrush().create( 255, 255, 255 );
 		context.getPen().selectPen( Pen::spNull );
 		context.rectangle(
-			theLine.position.x-horizOffset,
-			theLine.position.y-vertOffset,
-			theLine.position.x-horizOffset+theLine.maxWidth+1,
-			theLine.position.y-vertOffset+theLine.lineHeight+1
+			theLine.m_position.x-horizOffset,
+			theLine.m_position.y-vertOffset,
+			theLine.m_position.x-horizOffset+theLine.m_maxWidth+1,
+			theLine.m_position.y-vertOffset+theLine.m_lineHeight+1
 		);
 	}
 
-	for( size_t i=0; i<theLine.theLine.size(); i++ )
+	for( size_t i=0; i<theLine.m_theLine.size(); i++ )
 	{
-		XML_LINE_CHUNK	&theChunk = theLine.theLine[i];
+		XML_LINE_CHUNK	&theChunk = theLine.m_theLine[i];
 		xml::XmlText	*theText = theChunk.getTextElement();
 		if( theText )
 		{
@@ -3328,7 +3328,7 @@ void XML_VIEWER_BOX::drawLine(
 
 			context.moveTo(
 				theChunk.getPosition().x-horizOffset,
-				theChunk.getPosition().y+theLine.lineHeight-size.height-vertOffset
+				theChunk.getPosition().y+theLine.m_lineHeight-size.height-vertOffset
 			);
 			context.printText( text );
 		}
@@ -3350,7 +3350,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 
 	int vertOffset, horizOffset;
 
-	if( position == css::POS_FIXED )
+	if( m_position == css::POS_FIXED )
 		vertOffset = horizOffset = 0;
 	else
 	{
@@ -3358,18 +3358,18 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 		horizOffset = xmlEditorWindow->getHorizOffset();
 	}
 
-	int left = docPosition.left;
-	int right = docPosition.right;
-	int top = docPosition.top;
-	int bottom = docPosition.bottom;
+	int left = m_docPosition.left;
+	int right = m_docPosition.right;
+	int top = m_docPosition.top;
+	int bottom = m_docPosition.bottom;
 
-	int borderLeft = left + margin_left;
-	int borderRight = right - margin_right;
-	int borderTop = top + margin_top;
-	int borderBottom = bottom - margin_bottom;
+	int borderLeft = left + m_margin_left;
+	int borderRight = right - m_margin_right;
+	int borderTop = top + m_margin_top;
+	int borderBottom = bottom - m_margin_bottom;
 
 
-	if( theElement )
+	if( m_theElement )
 	{
 		css::Styles	*cssStyle = getCssStyle();
 
@@ -3383,62 +3383,62 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 				borderRight-horizOffset+1, borderBottom-vertOffset+1
 			);
 		}
-		if( border_style_left > css::BORD_HIDDEN && border_width_left > 0 )
+		if( m_border_style_left > css::BORD_HIDDEN && m_border_width_left > 0 )
 		{
 			cssStyle->getBorderColorLeft( &color );
 			context.getPen().setColor( color.red, color.green, color.blue, false )
-				.setWidth( border_width_left, false ).setStyle( border_style_left, true )
+				.setWidth( m_border_width_left, false ).setStyle( m_border_style_left, true )
 			;
 			context.verticalLine(
-				borderLeft-horizOffset+border_width_left/2,
+				borderLeft-horizOffset+m_border_width_left/2,
 				borderTop-vertOffset,
 				borderBottom-vertOffset
 			);
 		}
-		if( border_style_right > css::BORD_HIDDEN && border_width_right > 0 )
+		if( m_border_style_right > css::BORD_HIDDEN && m_border_width_right > 0 )
 		{
 			cssStyle->getBorderColorRight( &color );
 			context.getPen().setColor( color.red, color.green, color.blue, false )
-				.setWidth( border_width_right, false )
-				.setStyle( border_style_right, true )
+				.setWidth( m_border_width_right, false )
+				.setStyle( m_border_style_right, true )
 			;
 			context.verticalLine(
-				borderRight-horizOffset-border_width_right/2,
+				borderRight-horizOffset-m_border_width_right/2,
 				borderTop-vertOffset,
 				borderBottom-vertOffset
 			);
 		}
-		if( border_style_top > css::BORD_HIDDEN && border_width_top > 0 )
+		if( m_border_style_top > css::BORD_HIDDEN && m_border_width_top > 0 )
 		{
 			cssStyle->getBorderColorTop( &color );
 			context.getPen().setColor( color.red, color.green, color.blue, false )
-				.setWidth( border_width_top, false )
-				.setStyle( border_style_top, true )
+				.setWidth( m_border_width_top, false )
+				.setStyle( m_border_style_top, true )
 			;
 			context.horizontalLine(
 				borderLeft-horizOffset,
 				borderRight-horizOffset,
-				borderTop-vertOffset+border_width_top/2
+				borderTop-vertOffset+m_border_width_top/2
 			);
 		}
-		if( border_style_bottom > css::BORD_HIDDEN && border_width_bottom > 0 )
+		if( m_border_style_bottom > css::BORD_HIDDEN && m_border_width_bottom > 0 )
 		{
 			cssStyle->getBorderColorBottom( &color );
 			context.getPen().setColor( color.red, color.green, color.blue, false )
-				.setWidth( border_width_bottom, false )
-				.setStyle( border_style_bottom, true )
+				.setWidth( m_border_width_bottom, false )
+				.setStyle( m_border_style_bottom, true )
 			;
 			context.horizontalLine(
 				borderLeft-horizOffset,
 				borderRight-horizOffset,
-				borderBottom-vertOffset-border_width_bottom/2
+				borderBottom-vertOffset-m_border_width_bottom/2
 			);
 		}
 
 		// draw the curcle for list items
-		if( display == css::DSP_LIST_ITEM && listStyle > css::LIST_NONE )
+		if( m_display == css::DSP_LIST_ITEM && m_listStyle > css::LIST_NONE )
 		{
-			if( listStyle <= css::LIST_SQUARE )
+			if( m_listStyle <= css::LIST_SQUARE )
 			{
 				if( cssStyle->getColor( &color ) )
 				{
@@ -3450,12 +3450,12 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 					context.getBrush().create( 0, 0, 0 );
 					context.getPen().setColor( color.red, color.green, color.blue, false );
 				}
-				if( listStyle == css::LIST_DISC )
+				if( m_listStyle == css::LIST_DISC )
 				{
 					context.getPen().selectPen( Pen::spNull );
 					context.ellipse( left-16-horizOffset, top-vertOffset, left-8-horizOffset, top+8-vertOffset );
 				}
-				else if( listStyle == css::LIST_CIRCLE )
+				else if( m_listStyle == css::LIST_CIRCLE )
 				{
 					context.getPen().setWidth( 1, false );
 					context.getPen().setStyle( Pen::psSolid, true );
@@ -3463,7 +3463,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 					context.getBrush().selectBrush( Brush::sbNull );
 					context.ellipse( left-16-horizOffset, top-vertOffset, left-8-horizOffset, top+8-vertOffset );
 				}
-				else if( listStyle == css::LIST_SQUARE )
+				else if( m_listStyle == css::LIST_SQUARE )
 				{
 					context.getPen().setWidth( 1, false );
 					context.getPen().setStyle( Pen::psSolid, true );
@@ -3476,18 +3476,18 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 			{
 				Size	size;
 				char	tmpBuffer[16];
-				int		listNumber = itemNumber+1;
+				int		listNumber = m_itemNumber+1;
 
-				createFont( context, theElement, true );
-				if( listStyle == css::LIST_ZERO_DECIMAL )
+				createFont( context, m_theElement, true );
+				if( m_listStyle == css::LIST_ZERO_DECIMAL )
 				{
 					sprintf( tmpBuffer, "%02d. ", listNumber%100 );
 				}
-				else if( listStyle == css::LIST_UPPER )
+				else if( m_listStyle == css::LIST_UPPER )
 				{
 					sprintf( tmpBuffer, "%c. ", 'A'-1 + listNumber%26 );
 				}
-				else if( listStyle == css::LIST_LOWER )
+				else if( m_listStyle == css::LIST_LOWER )
 				{
 					sprintf( tmpBuffer, "%c. ", 'a'-1 + listNumber%26 );
 				}
@@ -3501,18 +3501,18 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 				context.printText( tmpBuffer );
 			}
 		}
-		for( size_t i=0; i<theContent.size(); i++ )
+		for( size_t i=0; i<m_theContent.size(); i++ )
 		{
-			XML_LINE	&theLine = theContent[i];
+			XML_LINE	&theLine = m_theContent[i];
 			drawLine( context, xmlEditorWindow, theLine, false );
 		}
 
 	}
 
-	size_t numChildBoxes = childElements.size();
+	size_t numChildBoxes = m_childElements.size();
 	for( size_t i=0; i<numChildBoxes; i++ )
 	{
-		XML_VIEWER_ITEM	&theItem = childElements[i];
+		XML_VIEWER_ITEM	&theItem = m_childElements[i];
 		XML_VIEWER_BOX	*theBox = theItem.getViewerBox();
 
 		if( theBox )  
@@ -3541,7 +3541,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 		context.setDefaultFont();
 		context.setTextColor( 0, 0, 0 );
 		context.setBackgroundColor( 255, 255, 200 );
-		text = theElement ? theElement->getTag() : STRING("auto");
+		text = m_theElement ? m_theElement->getTag() : STRING("auto");
 		context.getTextExtent( text, text.strlen(), &size );
 
 		context.moveTo( left-horizOffset, top-vertOffset );
@@ -3557,10 +3557,10 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 		context.printText( text );
 	}
 
-	size_t	numSubBoxes = subBoxes.size();
+	size_t	numSubBoxes = m_subBoxes.size();
 	for( size_t i=0; i<numSubBoxes; i++ )
 	{
-		(*subBoxes[i]).draw( context, xmlEditorWindow );
+		m_subBoxes[i]->draw( context, xmlEditorWindow );
 	}
 }
 
@@ -3619,17 +3619,17 @@ void XML_VIEWER_BOX::createBox(
 
 	if( childPosition >= css::POS_ABSOLUTE
 	||	childDisplay > css::DSP_TABLE
-	||	(display >= css::DSP_INLINE_TABLE && display < css::DSP_CELL) )
+	||	(m_display >= css::DSP_INLINE_TABLE && m_display < css::DSP_CELL) )
 	{
-		subBoxes += childBox;
+		m_subBoxes += childBox;
 	}
 	else
 	{
-		XML_VIEWER_ITEM	&theItem = childElements.createElement();
+		XML_VIEWER_ITEM	&theItem = m_childElements.createElement();
 		theItem.setViewerBox( childBox );
 	}
 
-	(*childBox).buildBoxTree( context, theRoot, this );
+	childBox->buildBoxTree( context, theRoot, this );
 }
 
 void XML_VIEWER_BOX::findBoxes( const Device &context, xml::Element *theElement )
@@ -3646,7 +3646,7 @@ void XML_VIEWER_BOX::findBoxes( const Device &context, xml::Element *theElement 
 	{
 		bool			autoWrap, preserveBlanks, preserveBreaks;
 		STRING			value = theText->getValue( xml::PLAIN_MODE );
-		css::WhiteSpace	whiteSpace = this->theElement->getCssStyle()->getWhiteSpace();
+		css::WhiteSpace	whiteSpace = m_theElement->getCssStyle()->getWhiteSpace();
 
 		switch( whiteSpace )
 		{
@@ -3674,7 +3674,7 @@ void XML_VIEWER_BOX::findBoxes( const Device &context, xml::Element *theElement 
 		}
 
 		value = prepareText( value, preserveBlanks, preserveBreaks );
-		XML_VIEWER_ITEM	&theItem = childElements.createElement();
+		XML_VIEWER_ITEM	&theItem = m_childElements.createElement();
 		theItem.setXmlElement(
 			theText, value, autoWrap, preserveBlanks, preserveBreaks
 		);
@@ -3694,7 +3694,7 @@ void XML_VIEWER_BOX::findBoxes( const Device &context, xml::Element *theElement 
 				if( childPosition >= css::POS_ABSOLUTE
 				|| childDisplay >= css::DSP_INLINE_BLOCK
 				|| childStyle->getCssFloat() > css::FLT_NONE
-				|| (display >= css::DSP_INLINE_TABLE && display < css::DSP_CELL)   )
+				|| (m_display >= css::DSP_INLINE_TABLE && m_display < css::DSP_CELL)   )
 				{
 					createBox( context, xmlChild, childDisplay, childPosition, itemNumber );
 					if( childDisplay >= css::DSP_LIST_ITEM )
@@ -3723,11 +3723,11 @@ void XML_TABLE_VIEWER_BOX::buildBoxTree(
 			we are an anonymous element - it's me
 		*/
 
-		theElement = NULL;
-		parentBox = container;
-		this->display = css::DSP_TABLE;
+		m_theElement = nullptr;
+		m_parentBox = container;
+		m_display = css::DSP_TABLE;
 
-		createBox( context, theRoot, display, theStyle->getPosition(), itemNumber );
+		createBox( context, theRoot, display, theStyle->getPosition(), m_itemNumber );
 	}
 	else if( display >= css::DSP_INLINE_TABLE && display <= css::DSP_TABLE )
 	{
@@ -3735,7 +3735,7 @@ void XML_TABLE_VIEWER_BOX::buildBoxTree(
 			this element is either a table or an inline-table
 		*/
 		XML_VIEWER_BOX::buildBoxTree( context, theRoot, container );
-		this->display = display;
+		m_display = display;
 	}
 	else
 		; // ignore this item (should never occure)
@@ -3751,10 +3751,10 @@ void XML_TABLE_GROUP_VIEWER_BOX::buildBoxTree(
 	if( display > css::DSP_FOOTER_GROUP || display < css::DSP_HEADER_GROUP )
 	{
 		// we need an anonymous element - it's me
-		theElement = NULL;
-		parentBox = container;
-		this->display = css::DSP_ROW_GROUP;
-		createBox( context, theRoot, display, theStyle->getPosition(), itemNumber );
+		m_theElement = nullptr;
+		m_parentBox = container;
+		m_display = css::DSP_ROW_GROUP;
+		createBox( context, theRoot, display, theStyle->getPosition(), m_itemNumber );
 	}
 	else
 		XML_VIEWER_BOX::buildBoxTree( context, theRoot, container );
@@ -3769,10 +3769,10 @@ void XML_TABLE_ROW_VIEWER_BOX::buildBoxTree(
 	if( display != css::DSP_ROW )
 	{
 		// we need an anonymous element - it's me
-		theElement = NULL;
-		parentBox = container;
-		this->display = css::DSP_ROW;
-		createBox( context, theRoot, display, theStyle->getPosition(), itemNumber );
+		m_theElement = nullptr;
+		m_parentBox = container;
+		m_display = css::DSP_ROW;
+		createBox( context, theRoot, display, theStyle->getPosition(), m_itemNumber );
 	}
 	else
 		XML_VIEWER_BOX::buildBoxTree( context, theRoot, container );
@@ -3785,21 +3785,21 @@ void XML_TABLE_CELL_VIEWER_BOX::buildBoxTree(
 	css::Styles		*theStyle = theRoot->getCssStyle();
 	css::Display	display = theStyle->getDisplay();
 
-	parentBox = container;
+	m_parentBox = container;
 	initColumn();
 
 
 	if( display >= css::DSP_INLINE_TABLE && display < css::DSP_CELL )
 	{
 		// we need an anonymous element - it's me
-		theElement = NULL;
-		this->display = css::DSP_CELL;
-		createBox( context, theRoot, display, theStyle->getPosition(), itemNumber );
+		m_theElement = nullptr;
+		m_display = css::DSP_CELL;
+		createBox( context, theRoot, display, theStyle->getPosition(), m_itemNumber );
 	}
 	else
 	{
 		XML_VIEWER_BOX::buildBoxTree( context, theRoot, container );
-		this->display = css::DSP_CELL;
+		m_display = css::DSP_CELL;
 	}
 }
 
@@ -3807,30 +3807,30 @@ void XML_VIEWER_BOX::buildBoxTree(
 	const Device &context, xml::Element *theRoot, XML_VIEWER_BOX *container
 )
 {
-	theElement = theRoot;
-	parentBox = container;
+	m_theElement = theRoot;
+	m_parentBox = container;
 
 	css::Styles *cssStyle = theRoot->getCssStyle();
 
-	margin_left = cssSizeToPixel( context, cssStyle->getMarginLeft(), theRoot );
-	margin_right = cssSizeToPixel(
+	m_margin_left = cssSizeToPixel( context, cssStyle->getMarginLeft(), theRoot );
+	m_margin_right = cssSizeToPixel(
 		context, cssStyle->getMarginRight(), theRoot
 	);
-	margin_top = cssSizeToPixel( context, cssStyle->getMarginTop(), theRoot );
-	margin_bottom = cssSizeToPixel(
+	m_margin_top = cssSizeToPixel( context, cssStyle->getMarginTop(), theRoot );
+	m_margin_bottom = cssSizeToPixel(
 		context, cssStyle->getMarginBottom(), theRoot
 	);
 
-	padding_left = cssSizeToPixel(
+	m_padding_left = cssSizeToPixel(
 		context, cssStyle->getPaddingLeft(), theRoot
 	);
-	padding_right = cssSizeToPixel(
+	m_padding_right = cssSizeToPixel(
 		context, cssStyle->getPaddingRight(), theRoot
 	);
-	padding_top = cssSizeToPixel(
+	m_padding_top = cssSizeToPixel(
 		context, cssStyle->getPaddingTop(), theRoot
 	);
-	padding_bottom = cssSizeToPixel(
+	m_padding_bottom = cssSizeToPixel(
 		context, cssStyle->getPaddingBottom(), theRoot
 	);
 
@@ -3838,57 +3838,57 @@ void XML_VIEWER_BOX::buildBoxTree(
 
 	if( cssValue.isEmpty() )
 	{
-		innerWidth = -1;
-		innerWidthPercent = -1;
+		m_innerWidth = -1;
+		m_innerWidthPercent = -1;
 	}
 	else if( cssValue.endsWith( '%' ) )
 	{
-		innerWidth = -1;
-		innerWidthPercent = atoi( cssValue );
+		m_innerWidth = -1;
+		m_innerWidthPercent = atoi( cssValue );
 	}
 	else
 	{
-		innerWidthPercent = -1;
-		innerWidth = cssSizeToPixel( context, cssValue, theRoot );
+		m_innerWidthPercent = -1;
+		m_innerWidth = cssSizeToPixel( context, cssValue, theRoot );
 	}
 
 	cssValue = cssStyle->getHeight();
 
 	if( cssValue.isEmpty() )
 	{
-		innerHeight = -1;
-		innerHeightPercent = -1;
+		m_innerHeight = -1;
+		m_innerHeightPercent = -1;
 	}
 	else if( cssValue.endsWith( '%' ) )
 	{
-		innerHeight = -1;
-		innerHeightPercent = atoi( cssValue );
+		m_innerHeight = -1;
+		m_innerHeightPercent = atoi( cssValue );
 	}
 	else
 	{
-		innerHeightPercent = -1;
-		innerHeight = cssSizeToPixel( context, cssValue, theRoot );
+		m_innerHeightPercent = -1;
+		m_innerHeight = cssSizeToPixel( context, cssValue, theRoot );
 	}
 
-	position = cssStyle->getPosition();
-	display = cssStyle->getDisplay();
-	listStyle = cssStyle->getListStyle();
+	m_position = cssStyle->getPosition();
+	m_display = cssStyle->getDisplay();
+	m_listStyle = cssStyle->getListStyle();
 
-	border_style_left = cssStyle->getBorderStyleLeft();
-	border_style_right = cssStyle->getBorderStyleRight();
-	border_style_top = cssStyle->getBorderStyleTop();
-	border_style_bottom = cssStyle->getBorderStyleBottom();
+	m_border_style_left = cssStyle->getBorderStyleLeft();
+	m_border_style_right = cssStyle->getBorderStyleRight();
+	m_border_style_top = cssStyle->getBorderStyleTop();
+	m_border_style_bottom = cssStyle->getBorderStyleBottom();
 
-	border_width_left = cssSizeToPixel(
+	m_border_width_left = cssSizeToPixel(
 		context, cssStyle->getBorderWidthLeft(), theRoot
 	);
-	border_width_right = cssSizeToPixel(
+	m_border_width_right = cssSizeToPixel(
 		context, cssStyle->getBorderWidthRight(), theRoot
 	);
-	border_width_top = cssSizeToPixel(
+	m_border_width_top = cssSizeToPixel(
 		context, cssStyle->getBorderWidthTop(), theRoot
 	);
-	border_width_bottom = cssSizeToPixel(
+	m_border_width_bottom = cssSizeToPixel(
 		context, cssStyle->getBorderWidthBottom(), theRoot
 	);
 
@@ -3899,12 +3899,12 @@ void XML_VIEWER_BOX::buildBoxTree(
 	bool	blankFound = false;
 	size_t	blankIndex = 0;
 	size_t 	i=0;
-	size_t 	numElements = childElements.size();
+	size_t 	numElements = m_childElements.size();
 	STRING	xmlText;
 
 	while( i<numElements )
 	{
-		XML_VIEWER_ITEM		&theItem = childElements[i];
+		XML_VIEWER_ITEM		&theItem = m_childElements[i];
 		xml::Element			*theElement = theItem.getXmlElement();
 
 		if( theElement )
@@ -3915,7 +3915,7 @@ void XML_VIEWER_BOX::buildBoxTree(
 			{
 				if( removeBlanks )
 				{
-					childElements.removeElementAt( i );
+					m_childElements.removeElementAt( i );
 					numElements--;
 					blankFound = false;
 				}
@@ -3940,7 +3940,7 @@ void XML_VIEWER_BOX::buildBoxTree(
 		{
 			if( blankFound )
 			{
-				childElements.removeElementAt( blankIndex );
+				m_childElements.removeElementAt( blankIndex );
 				numElements--;
 				blankFound = false;
 				removeBlanks = true;
@@ -3960,71 +3960,71 @@ void XMLeditorChild::setDocument( xml::Document *newDocument )
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::setDocument");
 
-	if( theViewerBox )
+	if( m_theViewerBox )
 	{
-		theViewerBox = NULL;
+		m_theViewerBox = nullptr;
 	}
 
 	if( newDocument )
 	{
 		DrawDevice	context( this );
 
-		theViewerBox = new XML_VIEWER_BOX;
-		theViewerBox->buildBoxTree( context, newDocument->getRoot(), NULL );
+		m_theViewerBox = new XML_VIEWER_BOX;
+		m_theViewerBox->buildBoxTree( context, newDocument->getRoot(), nullptr );
 
-		horizOffset = vertOffset = 0;
+		m_horizOffset = m_vertOffset = 0;
 
-		if( size.width && size.height )
-			handleResize( size );
+		if( m_size.width && m_size.height )
+			handleResize( m_size );
 #ifdef _DEBUG
 		dump();
 #endif
 	}
 }
 
-void XMLeditorChild::refresh( void )
+void XMLeditorChild::refresh()
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::refresh");
 
-	if( theViewerBox )
+	if( m_theViewerBox )
 	{
-		xml::Element	*theRoot = (*theViewerBox).getElement();
+		xml::Element	*theRoot = m_theViewerBox->getElement();
 
 		if( theRoot )
 		{
 			DrawDevice	context( this );
 
 			disableCursor( context );
-			theViewerBox = new XML_VIEWER_BOX;
-			theViewerBox->buildBoxTree( context, theRoot, NULL );
+			m_theViewerBox = new XML_VIEWER_BOX;
+			m_theViewerBox->buildBoxTree( context, theRoot, nullptr );
 
-			handleResize( size );
+			handleResize( m_size );
 		}
 	}
 }
 
 void XMLeditorChild::showElement( xml::Element *theElement )
 {
-	if( theViewerBox )
+	if( m_theViewerBox )
 	{
 		int			x, y;
 		DrawDevice	context( this );
 
 		hideCursor( context );
-		bool found = (*theViewerBox).findElementScreenPosition(
-			theElement, &x, &y, &cursorPos
+		bool found = m_theViewerBox->findElementScreenPosition(
+			theElement, &x, &y, &m_cursorPos
 		);
 		if( found )
 		{
-			if( x<horizOffset || x>horizOffset+size.width )
+			if( x<m_horizOffset || x>m_horizOffset+m_size.width )
 			{
-				horizOffset = x;
+				m_horizOffset = x;
 				setHorizScrollPos( x );
 				invalidateWindow();
 			}
-			if( y<vertOffset || y>vertOffset+size.height )
+			if( y<m_vertOffset || y>m_vertOffset+m_size.height )
 			{
-				vertOffset = y;
+				m_vertOffset = y;
 				setVertScrollPos( y );
 				invalidateWindow();
 			}

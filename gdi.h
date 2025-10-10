@@ -3,10 +3,10 @@
 		Module:			GDI.H
 		Description:	Windows GDI handles
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -123,7 +123,7 @@ class GdiHandle
 		return *this;
 	}
 
-	const GdiType &getHandle( void ) const
+	const GdiType &getHandle() const
 	{
 		return m_handle;
 	}
@@ -152,7 +152,7 @@ class GdiObject
 	GdiObjectHandle<GdiType>	*m_handle;
 	HDC							m_deviceContext;
 
-	void remove( void )
+	void remove()
 	{
 		if( m_handle && !--m_handle->m_usageCounter )
 			delete m_handle;
@@ -164,15 +164,15 @@ class GdiObject
 	}
 
 	protected:
-	GdiObject( HDC newDevice = NULL )
+	GdiObject( HDC newDevice = nullptr )
 	{
-		m_handle = NULL;
+		m_handle = nullptr;
 		m_deviceContext = newDevice;
 	}
 	GdiObject( GdiType newHandle )
 	{
-		m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : NULL;
-		m_deviceContext = NULL;
+		m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr;
+		m_deviceContext = nullptr;
 	}
 	const GdiObject & operator = ( GdiType src )
 	{
@@ -207,10 +207,10 @@ class GdiObject
 		remove();
 	}
 
-	void clear( void )
+	void clear()
 	{
 		remove();
-		m_handle = NULL;
+		m_handle = nullptr;
 	}
 	void setHandle( const GdiType &newHandle )
 	{
@@ -222,11 +222,11 @@ class GdiObject
 				SelectObject( m_deviceContext, newHandle );
 		}
 		else
-			m_handle = NULL;
+			m_handle = nullptr;
 	}
-	GdiType getHandle( void ) const
+	GdiType getHandle() const
 	{
-		return m_handle ? m_handle->getHandle() : NULL;
+		return m_handle ? m_handle->getHandle() : nullptr;
 	}
 
 	public:
@@ -237,21 +237,21 @@ class GdiObject
 		if( handle )
 			SelectObject( m_deviceContext, handle );
 	}
-	void disconnect( void )
+	void disconnect()
 	{
-		m_deviceContext = NULL;
+		m_deviceContext = nullptr;
 	}
-	HDC getConnection( void ) const
+	HDC getConnection() const
 	{
 		return m_deviceContext;
 	}
 	operator bool () const
 	{
-		return getHandle() != NULL;
+		return getHandle() != nullptr;
 	}
 	bool operator ! () const
 	{
-		return getHandle() == NULL;
+		return getHandle() == nullptr;
 	}
 };
 

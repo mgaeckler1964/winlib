@@ -17,7 +17,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -900,7 +900,7 @@ void CallbackWindow::handleTreeViewDrop( TreeView *m_dragTreeView, TreeNode *m_d
 	}
 }
 
-SuccessCode CallbackWindow::close( void )
+SuccessCode CallbackWindow::close()
 {
 	removeTimer();
 	removeToolHelp();
@@ -911,26 +911,26 @@ SuccessCode CallbackWindow::close( void )
 	return BasicWindow::close();
 }
 
-ProcessStatus CallbackWindow::handleShow( void )
+ProcessStatus CallbackWindow::handleShow()
 {
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleHide( void )
+ProcessStatus CallbackWindow::handleHide()
 {
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleCreate( void )
+ProcessStatus CallbackWindow::handleCreate()
 {
 	return psPROCESSED;			// don't call default funtion
 }
 
-void CallbackWindow::getControls( void )
+void CallbackWindow::getControls()
 {
 }
 
-SuccessCode CallbackWindow::handleClose( void )
+SuccessCode CallbackWindow::handleClose()
 {
 	if( canClose() )
 		return close();
@@ -938,7 +938,7 @@ SuccessCode CallbackWindow::handleClose( void )
 	return scERROR;
 }
 
-ProcessStatus CallbackWindow::handleDestroy( void )
+ProcessStatus CallbackWindow::handleDestroy()
 {
 	return psPROCESSED;
 }
@@ -1021,7 +1021,7 @@ ProcessStatus CallbackWindow::handleHorizScroll( HorizScrollCode , int , HWND sc
 		return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleMouseRelease( void )
+ProcessStatus CallbackWindow::handleMouseRelease()
 {
 	return psDO_DEFAULT;
 }
@@ -1101,17 +1101,17 @@ void CallbackWindow::showHelp( int , int controlId )
 	}
 }
 
-void CallbackWindow::handleTimer( void )
+void CallbackWindow::handleTimer()
 {
 }
 
 
 
-void CallbackWindow::handleFocus( void )
+void CallbackWindow::handleFocus()
 {
 }
 
-void CallbackWindow::handleKillFocus( void )
+void CallbackWindow::handleKillFocus()
 {
 }
 
@@ -1145,7 +1145,7 @@ void CallbackWindow::postControlCallback( BasicWindow * /*control*/, unsigned /*
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void CallbackWindow::mainLoop( void )
+void CallbackWindow::mainLoop()
 {
 	MSG 			msg;
 	CallbackWindow	*curWindow;
@@ -1217,7 +1217,7 @@ void CallbackWindow::showToolHelp( const char *text )
 	}
 }
 
-void CallbackWindow::removeToolHelp( void )
+void CallbackWindow::removeToolHelp()
 {
 	if( m_toolWin && !m_toolWin->active() )
 	{
@@ -1276,7 +1276,7 @@ void CallbackWindow::processTooltipTimer()
 	lastChild = child;
 }
 
-void CallbackWindow::addStatusBar( void )
+void CallbackWindow::addStatusBar()
 {
 	if( !m_statusBar )
 	{
@@ -1298,7 +1298,7 @@ void CallbackWindow::setStatusText( const STRING &value )
 		*m_statusBar = value;
 }
 
-void CallbackWindow::removeStatusBar( void )
+void CallbackWindow::removeStatusBar()
 {
 	if( m_statusBar )
 	{

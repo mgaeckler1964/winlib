@@ -100,13 +100,13 @@ LRESULT _export pascal StartupWindowProc( HWND window, UINT msg, WPARAM wParam, 
 /* ----- module statics ------------------------------------------------ */
 /* --------------------------------------------------------------------- */
 
-static const char 	szStartupClass[] = "STARTUP";
-static int		menuHeight		= 0;
-static HWND		hwndStartWin	= 0;
-static HDC		hdcMemory		= 0;
+static const char	s_StartupClass[] = "STARTUP";
+static int			s_menuHeight	= 0;
+static HWND			s_hwndStartWin	= 0;
+static HDC			s_hdcMemory		= 0;
 
-static int		bitmapWidth, bitmapHeight;
-static char		*textBuffer		= NULL;
+static int			s_bitmapWidth, s_bitmapHeight;
+static char			*s_textBuffer	= nullptr;
 
 /* --------------------------------------------------------------------- */
 /* ----- exported datas ------------------------------------------------ */
@@ -116,7 +116,7 @@ static char		*textBuffer		= NULL;
 /* ----- module functions ---------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-static bool RegisterStartupWindow( void )
+static bool RegisterStartupWindow()
 {
 	static bool	startupRegistered = false;
 
@@ -139,14 +139,14 @@ static bool RegisterStartupWindow( void )
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
 	wc.lpszMenuName  = NULL;
 
-	wc.lpszClassName = szStartupClass;
+	wc.lpszClassName = s_StartupClass;
 
 	if( !RegisterClass(&wc) )
 	{
 		return startupRegistered;
 	}
 
-	menuHeight = GetSystemMetrics( SM_CYMENU );
+	s_menuHeight = GetSystemMetrics( SM_CYMENU );
 
 	startupRegistered = true;
 	return startupRegistered;
@@ -154,19 +154,19 @@ static bool RegisterStartupWindow( void )
 
 static void DrawWindow( HDC hdc )
 {
-	BitBlt( hdc, 0, menuHeight, bitmapWidth, bitmapHeight, hdcMemory, 0, 0, SRCCOPY );
-	if( textBuffer )
+	BitBlt( hdc, 0, s_menuHeight, s_bitmapWidth, s_bitmapHeight, s_hdcMemory, 0, 0, SRCCOPY );
+	if( s_textBuffer )
 	{
 		SIZE	size;
-		int		len = (int)strlen( textBuffer );
+		int		len = (int)strlen( s_textBuffer );
 
 		SetTextAlign( hdc, TA_TOP );
-		TextOut( hdc, 0, 0, textBuffer, len );
+		TextOut( hdc, 0, 0, s_textBuffer, len );
 
-		GetTextExtentPoint32( hdc, textBuffer, len, &size );
+		GetTextExtentPoint32( hdc, s_textBuffer, len, &size );
 		SelectObject( hdc, GetStockObject( WHITE_BRUSH ) );
 		SelectObject( hdc, GetStockObject( WHITE_PEN ) );
-		Rectangle( hdc, size.cx, 0, bitmapWidth, size.cy );
+		Rectangle( hdc, size.cx, 0, s_bitmapWidth, size.cy );
 	}
 }
 
@@ -176,7 +176,7 @@ static void DrawWindow( HDC hdc )
 
 LRESULT _export pascal StartupWindowProc( HWND window, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-	if( msg == WM_PAINT && (window == hwndStartWin || hwndStartWin == NULL) )
+	if( msg == WM_PAINT && (window == s_hwndStartWin || s_hwndStartWin == nullptr) )
 	{
 		PAINTSTRUCT	ps;
 		HDC	hDC = BeginPaint( window, &ps );
@@ -195,7 +195,7 @@ void openStartup( const char *title, const char *bitmap )
 	HGLOBAL		hBitmap;
 	BITMAPINFO	*pBitmap;
 	long		i, numColors;
-	LOGPALETTE	*lPal = 0;
+	gak::Buffer<LOGPALETTE>	_lPal(nullptr);
 	HPALETTE	hPal = 0;
 	void		*bitmapData = 0;
 
@@ -217,22 +217,22 @@ void openStartup( const char *title, const char *bitmap )
 
 	if( numColors && numColors <= 256 )
 	{
-		lPal = (LOGPALETTE *)malloc( sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ) );
-		lPal->palVersion = 0x300;
-		lPal->palNumEntries = (WORD)numColors;
+		_lPal = malloc( sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ) );
+		_lPal->palVersion = 0x300;
+		_lPal->palNumEntries = (WORD)numColors;
 		for( i=0; i<numColors; i++ )
 		{
-			lPal->palPalEntry[i].peRed = pBitmap->bmiColors[i].rgbRed;
-			lPal->palPalEntry[i].peGreen = pBitmap->bmiColors[i].rgbGreen;
-			lPal->palPalEntry[i].peBlue = pBitmap->bmiColors[i].rgbBlue;
-			lPal->palPalEntry[i].peFlags = 0;
+			_lPal->palPalEntry[i].peRed = pBitmap->bmiColors[i].rgbRed;
+			_lPal->palPalEntry[i].peGreen = pBitmap->bmiColors[i].rgbGreen;
+			_lPal->palPalEntry[i].peBlue = pBitmap->bmiColors[i].rgbBlue;
+			_lPal->palPalEntry[i].peFlags = 0;
 		}
-		hPal = CreatePalette( lPal );
+		hPal = CreatePalette( _lPal );
 		bitmapData = (void*)&(pBitmap->bmiColors[i]);
 	}
 
-	bitmapWidth = pBitmap->bmiHeader.biWidth;
-	bitmapHeight = pBitmap->bmiHeader.biHeight;
+	s_bitmapWidth = pBitmap->bmiHeader.biWidth;
+	s_bitmapHeight = pBitmap->bmiHeader.biHeight;
 
 	maxX  = GetSystemMetrics( SM_CXFULLSCREEN );
 	width = pBitmap->bmiHeader.biWidth;
@@ -248,25 +248,25 @@ void openStartup( const char *title, const char *bitmap )
 	}
 
 	/* Create the window. */
-	hwndStartWin = CreateWindow( szStartupClass, title,
+	s_hwndStartWin = CreateWindow( s_StartupClass, title,
 								 title && *title ? WS_OVERLAPPED : WS_POPUP, (int)xPos, (int)yPos,
-								 (int)width, (int)height+menuHeight, NULL, NULL,
+								 (int)width, (int)height+s_menuHeight, NULL, NULL,
 								 GetInstanceId(), NULL );
 
-	textBuffer = strdup("Loading program, please wait");
-	ShowWindow( hwndStartWin, SW_SHOW );
+	s_textBuffer = strdup("Loading program, please wait");
+	ShowWindow( s_hwndStartWin, SW_SHOW );
 
 	// SetWindowPos( hwndStartWin, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
 
-	hdc = GetDC( hwndStartWin );
+	hdc = GetDC( s_hwndStartWin );
 
 	SelectPalette( hdc, hPal, TRUE );
 	RealizePalette( hdc );
 
 	hbmpMyBitmap = CreateDIBitmap( hdc, &pBitmap->bmiHeader, CBM_INIT, bitmapData, pBitmap, DIB_RGB_COLORS );
 
-	hdcMemory = CreateCompatibleDC( hdc );
-	SelectObject( hdcMemory, hbmpMyBitmap );
+	s_hdcMemory = CreateCompatibleDC( hdc );
+	SelectObject( s_hdcMemory, hbmpMyBitmap );
 
 	DrawWindow( hdc );
 
@@ -275,12 +275,9 @@ void openStartup( const char *title, const char *bitmap )
 	if( hPal )
 		DeleteObject( hPal );
 
-	if( lPal )
-		free( lPal );
-
 	FreeResource( hBitmap );
 
-	ReleaseDC( hwndStartWin, hdc );
+	ReleaseDC( s_hwndStartWin, hdc );
 }
 
 void print2StartWindow( const char *format, ... )
@@ -288,39 +285,39 @@ void print2StartWindow( const char *format, ... )
 	va_list		args;
 	char		logBuffer[10240];
 
-	if( !hwndStartWin )
+	if( !s_hwndStartWin )
 /***/	return;
 
 	va_start( args, format );
 	vsprintf( logBuffer, format, args );
 	va_end( args );
 
-	if( textBuffer )
-		free( textBuffer );
-	textBuffer = strdup(logBuffer);
+	if( s_textBuffer )
+		free( s_textBuffer );
+	s_textBuffer = strdup(logBuffer);
 
 	{
-		HDC	hdc = GetDC( hwndStartWin );
+		HDC	hdc = GetDC( s_hwndStartWin );
 		DrawWindow( hdc );
-		ReleaseDC( hwndStartWin, hdc );
-//		UpdateWindow( hwndStartWin );
+		ReleaseDC( s_hwndStartWin, hdc );
+//		UpdateWindow( s_hwndStartWin );
 		idleLoop();
 	}
 }
 
-void closeStartup( void )
+void closeStartup()
 {
-	DestroyWindow( hwndStartWin );
+	DestroyWindow( s_hwndStartWin );
 
-	DeleteDC( hdcMemory );
+	DeleteDC( s_hdcMemory );
 
-	if( textBuffer )
-		free( textBuffer );
+	if( s_textBuffer )
+		free( s_textBuffer );
 
-	hwndStartWin = NULL;
-	hdcMemory = NULL;
+	s_hwndStartWin = nullptr;
+	s_hdcMemory = nullptr;
 
-	textBuffer = NULL;
+	s_textBuffer = nullptr;
 }
 
 #ifdef __BORLANDC__

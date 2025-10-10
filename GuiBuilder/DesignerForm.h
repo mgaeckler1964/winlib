@@ -3,10 +3,10 @@
 		Module:			DesignerForm.h
 		Description:	The form designer
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		HoFmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -125,10 +125,10 @@ class DesignerForm : public OverlappedWindow
 	bool checkUnique( const gak::PODmatrix<BasicWindow*>::ArrayType &line, BasicWindow *child );
 	bool checkRectangle( const gak::PODmatrix<BasicWindow*>::ArrayType &children, RectBorder *rectangle );
 	void findChildren( RectBorder *area, gak::PODmatrix<BasicWindow*> *children );
-	void restoreChildren( void );
+	void restoreChildren();
 	void performTableDrag( const Point &position );
-	void endTableDrag( void );
-	void endDragging( void );
+	void endTableDrag();
+	void endDragging();
 	void performStandardDrag( const Point &position );
 	void performResize( const Point &position );
 	void createControl( const Point *position );
@@ -678,10 +678,10 @@ class DesignerForm : public OverlappedWindow
 				LayoutManager	*m_layoutManager = child->getLayoutManager();
 				if( m_layoutManager )
 				{
-					m_layoutManager->margin.left = marginLeft;
-					m_layoutManager->margin.right = marginRight;
-					m_layoutManager->margin.top = marginTop;
-					m_layoutManager->margin.bottom = marginBottom;
+					m_layoutManager->m_margin.left = marginLeft;
+					m_layoutManager->m_margin.right = marginRight;
+					m_layoutManager->m_margin.top = marginTop;
+					m_layoutManager->m_margin.bottom = marginBottom;
 				}
 				gak::xml::Element		*resource = child->getResource();
 				if( resource )

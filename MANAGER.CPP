@@ -58,11 +58,11 @@ using namespace gak;
 
 ProcessStatus ManagerChild::handleCreate()
 {
-	if( control )
+	if( m_control )
 	{
 		Size	size = getClientSize();
-		control->create( this, 0, 0, size.width, size.height );
-		control->focus();
+		m_control->create( this, 0, 0, size.width, size.height );
+		m_control->focus();
 	}
 
 	return psPROCESSED;
@@ -70,14 +70,14 @@ ProcessStatus ManagerChild::handleCreate()
 
 void ManagerChild::handleFocus()
 {
-	if( control )
-		control->focus();
+	if( m_control )
+		m_control->focus();
 }
 
 SuccessCode ManagerChild::close()
 {
-	if( control )
-		control->close();
+	if( m_control )
+		m_control->close();
 	return MDIchildWindow::close();
 }
 

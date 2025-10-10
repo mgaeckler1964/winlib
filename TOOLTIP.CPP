@@ -57,17 +57,17 @@ using namespace gak;
 // --------------------------------------------------------------------- //
 
 STRING	ToolTipWindow::className;
-Brush	ToolTipWindow::brush;
+Brush	ToolTipWindow::s_brush;
 
 // --------------------------------------------------------------------- //
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void ToolTipWindow::registerClass( void )
+void ToolTipWindow::registerClass()
 {
-	static bool registered = false;
+	static bool s_registered = false;
 
-	if( !registered )
+	if( !s_registered )
 	{
 		WNDCLASS wc;
 
@@ -75,10 +75,10 @@ void ToolTipWindow::registerClass( void )
 		className += "_TOOL_TIP_WINDOW";
 
 		fillDefaultClass( &wc );
-		brush.create( 255, 255, 128 );
-		wc.hbrBackground	= brush;
+		s_brush.create( 255, 255, 128 );
+		wc.hbrBackground	= s_brush;
 		wc.lpszClassName = className;
-		registered = CallbackWindow::registerClass( &wc );
+		s_registered = CallbackWindow::registerClass( &wc );
 	}
 }
 
@@ -86,12 +86,12 @@ void ToolTipWindow::registerClass( void )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING ToolTipWindow::getWindowClassName( void ) const
+STRING ToolTipWindow::getWindowClassName() const
 {
 	return className;
 }
 
-ProcessStatus ToolTipWindow::handleDestroy( void )
+ProcessStatus ToolTipWindow::handleDestroy()
 {
 	return psDO_DEFAULT;
 }
@@ -103,8 +103,8 @@ void ToolTipWindow::changeText( const char *text )
 
 	device.getTextExtentWithBreak( text, &size );
 	resize( size.width+1, size.height );
-	textWindow.resize( size );
-	textWindow.setText( text );
+	m_textWindow.resize( size );
+	m_textWindow.setText( text );
 }
 
 SuccessCode ToolTipWindow::create( BasicWindow *parent, const char *text )
@@ -128,9 +128,9 @@ SuccessCode ToolTipWindow::create( BasicWindow *parent, const char *text )
 	SuccessCode	error = CallbackWindow::create( parent );
 	if( error == scSUCCESS )
 	{
-		textWindow.setBackgroundColor( 255, 255, 128 );
-		textWindow.create( this, 0, 0, size.width, size.height );
-		textWindow.setText( text );
+		m_textWindow.setBackgroundColor( 255, 255, 128 );
+		m_textWindow.create( this, 0, 0, size.width, size.height );
+		m_textWindow.setText( text );
 	}
 	return error;
 }
@@ -145,9 +145,9 @@ SuccessCode ToolTipWindow::create( BasicWindow *parent, int textId )
 		return scERROR;
 }
 
-SuccessCode ToolTipWindow::close( void )
+SuccessCode ToolTipWindow::close()
 {
-	textWindow.close();
+	m_textWindow.close();
 	return CallbackWindow::close();
 }
 

@@ -3,10 +3,10 @@
 		Module: 		MANAGER.H
 		Description:	Manager MDI-child (manages one control)
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		HoFmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -60,9 +60,8 @@ namespace winlib
 
 class ManagerChild : public MDIchildWindow
 {
-
 	protected:
-	ControlWindow 	*control;
+	ControlWindow 	*m_control;
 
 	virtual ProcessStatus handleCreate();
 	virtual void handleFocus();
@@ -70,18 +69,18 @@ class ManagerChild : public MDIchildWindow
 	public:
 	ManagerChild()
 	{
-		control = NULL;
+		m_control = nullptr;
 		setLayoutManager( new SingleChildManager );
 	}
-	ManagerChild( ControlWindow *newControl )
+	ManagerChild( ControlWindow *control )
 	{
-		control = newControl;
+		m_control = control;
 		setLayoutManager( new SingleChildManager );
 	}
 	~ManagerChild()
 	{
-		if( control )
-			delete control;
+		if( m_control )
+			delete m_control;
 	}
 	virtual SuccessCode close();
 };

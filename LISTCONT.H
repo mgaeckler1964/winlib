@@ -3,10 +3,10 @@
 		Module:			LISTCONT.H
 		Description:	Implementation of ListboxContainer
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -60,12 +60,12 @@ namespace winlib
 
 class ListObject
 {
-	STRING		value;
+	STRING		m_value;
 
 	public:
 	ListObject()
 	{
-		value = "";
+		m_value = "";
 	}
 	ListObject( const STRING &value )
 	{
@@ -75,11 +75,11 @@ class ListObject
 
 	void setValue( const STRING &value )
 	{
-		this->value = value;
+		m_value = value;
 	}
-	operator STRING ( void ) const
+	operator STRING () const
 	{
-		return value;
+		return m_value;
 	}
 };
 
@@ -87,13 +87,13 @@ class ListboxContainer
 {
 	typedef ListObject		*ListObjectPtr;
 
-	ListBox						*control;
-	gak::Array<ListObjectPtr>	data;
+	ListBox						*m_control;
+	gak::Array<ListObjectPtr>	m_data;
 
 	public:
 	ListboxContainer()
 	{
-		control = NULL;
+		m_control = nullptr;
 	}
 	ListboxContainer( ListBox *control )
 	{
@@ -103,25 +103,25 @@ class ListboxContainer
 
 	void setControl( ListBox *control )
 	{
-		this->control = control;
+		m_control = control;
 	}
 
-	size_t size( void ) const
+	size_t size() const
 	{
-		return data.size();
+		return m_data.size();
 	}
 	ListObjectPtr &operator [] ( size_t pos )
 	{
-		return data[pos];
+		return m_data[pos];
 	}
 
 	void addEntry( ListObjectPtr object )
 	{
-		data += object;
-		if( control )
-			control->addEntry( (STRING)*object );
+		m_data += object;
+		if( m_control )
+			m_control->addEntry( (STRING)*object );
 	}
-	ListObjectPtr	getSelectedEntry( void );
+	ListObjectPtr	getSelectedEntry();
 	void removeEntry( ListObjectPtr object );
 };
 

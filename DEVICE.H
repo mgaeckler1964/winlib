@@ -3,10 +3,10 @@
 		Module:			Device.H
 		Description:	Graphic devices
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -87,16 +87,16 @@ class Device
 	enum VerticalAlignment{ vaTop = TA_TOP, vaBaseline = TA_BASELINE , vaBottom = TA_BOTTOM };
 
 	protected:
-	HDC				device;
+	HDC				m_device;
 
 	private:
-	Pen				myPen;
-	Brush			myBrush;
+	Pen				m_pen;
+	Brush			m_brush;
 
-	Font			theFont;
-	int				tabWidth;
+	Font			m_font;
+	int				m_tabWidth;
 
-	GdiHandle<HRGN>	clipRegion;
+	GdiHandle<HRGN>	m_clipRegion;
 
 	private:
 	// disallow
@@ -106,18 +106,18 @@ class Device
 	private:
 	void connect()
 	{
-		myBrush.connect( device );
-		myPen.connect( device );
-		theFont.connect( device );
+		m_brush.connect( m_device );
+		m_pen.connect( m_device );
+		m_font.connect( m_device );
 	}
 
 	protected:
 	/*
 		the device is used for drawing on a printer or memory device
 	*/
-	Device( HDC context ) : myBrush( context ), myPen( context ), theFont( context )
+	Device( HDC context ) : m_brush( context ), m_pen( context ), m_font( context )
 	{
-		device = context;
+		m_device = context;
 
 		setTextAlignment( haLeft, vaTop );
 	}
@@ -125,48 +125,48 @@ class Device
 	//public:
 	friend class MemoryDevice;
 	friend class Bitmap;
-	operator HDC ( void ) const
+	operator HDC () const
 	{
-		return device;
+		return m_device;
 	}
 
 	public:
 	~Device()
 	{
-		if( device )
+		if( m_device )
 		{
-			DeleteDC( device );
+			DeleteDC( m_device );
 		}
 	}
 
 	operator bool () const
 	{
-		return device != NULL;
+		return m_device != nullptr;
 	}
 	bool operator ! () const
 	{
-		return device == NULL;
+		return m_device == nullptr;
 	}
 
 	void setTabWidth( int numChars )
 	{
 		TEXTMETRIC		tm;
 
-		GetTextMetrics( device, &tm );
-		tabWidth = numChars * tm.tmAveCharWidth;
+		GetTextMetrics( m_device, &tm );
+		m_tabWidth = numChars * tm.tmAveCharWidth;
 	}
-	int getTabWidth( void ) const
+	int getTabWidth() const
 	{
-		return tabWidth;
+		return m_tabWidth;
 	}
 	void printText( const char *text ) const;
-	int getCharWidth( void ) const;
-	int getNumLines( void ) const;
-	int getLineHeight( void ) const;
+	int getCharWidth() const;
+	int getNumLines() const;
+	int getLineHeight() const;
 
 	void moveTo( int x, int y ) const
 	{
-		MoveToEx( device, x, y, NULL );
+		MoveToEx( m_device, x, y, nullptr );
 	}
 	void moveTo( const Point &point ) const
 	{
@@ -177,7 +177,7 @@ class Device
 	{
 		Point	pos;
 
-		GetCurrentPositionEx( device, &pos );
+		GetCurrentPositionEx( m_device, &pos );
 
 		if( x )
 			*x = pos.x;
@@ -195,97 +195,97 @@ class Device
 		getTextExtent( &text, 1, size );
 	}
 
-	int	getxOffset( void ) const
+	int	getxOffset() const
 	{
-		return GetDeviceCaps( device, PHYSICALOFFSETX );
+		return GetDeviceCaps( m_device, PHYSICALOFFSETX );
 	}
-	int	getyOffset( void ) const
+	int	getyOffset() const
 	{
-		return GetDeviceCaps( device, PHYSICALOFFSETY );
+		return GetDeviceCaps( m_device, PHYSICALOFFSETY );
 	}
-	int	getxResolution( void ) const
+	int	getxResolution() const
 	{
-		return GetDeviceCaps( device, LOGPIXELSX );
+		return GetDeviceCaps( m_device, LOGPIXELSX );
 	}
-	int	getyResolution( void ) const
+	int	getyResolution() const
 	{
-		return GetDeviceCaps( device, LOGPIXELSY );
+		return GetDeviceCaps( m_device, LOGPIXELSY );
 	}
 
 
 	/*
 		brush
 	*/
-	void selectBrush( const Brush &newBrush )
+	void selectBrush( const Brush &brush )
 	{
-		myBrush = newBrush;
-		myBrush.connect( device );
+		m_brush = brush;
+		m_brush.connect( m_device );
 	}
-	Brush &getBrush( void )
+	Brush &getBrush()
 	{
-		return myBrush;
+		return m_brush;
 	}
 
 	/*
 		pen
 	*/
-	void selectPen( const Pen &newPen )
+	void selectPen( const Pen &pen )
 	{
-		myPen = newPen;
-		myPen.connect( device );
+		m_pen = pen;
+		m_pen.connect( m_device );
 	}
-	Pen &getPen( void )
+	Pen &getPen()
 	{
-		return myPen;
+		return m_pen;
 	}
 
 	/*
 		font
 	*/
 
-	void selectFont( void )
+	void selectFont()
 	{
-		if( !theFont.isAssigned() )
-			theFont.create();
+		if( !m_font.isAssigned() )
+			m_font.create();
 	}
 	void selectFont( const Font &newFont )
 	{
-		theFont = newFont;
-		theFont.connect( device );
+		m_font = newFont;
+		m_font.connect( m_device );
 		selectFont();
 	}
 	void setTextColor( unsigned char red, unsigned char green, unsigned char blue )
 	{
-		SetTextColor( device, RGB( red, green, blue ) ); 
+		SetTextColor( m_device, RGB( red, green, blue ) ); 
 	}
 	void setBackgroundColor( COLORREF color, int mode = OPAQUE )
 	{
-		SetBkMode( device,  mode );
-		SetBkColor( device, color );
+		SetBkMode( m_device,  mode );
+		SetBkColor( m_device, color );
 	}
 	void setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
 	{
 		setBackgroundColor( RGB( red, green, blue ), mode );
 	}
-	void clrBackgroundColor( void )
+	void clrBackgroundColor()
 	{
-		SetBkMode( device, TRANSPARENT );
+		SetBkMode( m_device, TRANSPARENT );
 	}
-	const Font &getFont( void ) const
+	const Font &getFont() const
 	{
-		return theFont;
+		return m_font;
 	}
-	Font &getFont( void )
+	Font &getFont()
 	{
-		return theFont;
+		return m_font;
 	}
-	void setDefaultFont( void )
+	void setDefaultFont()
 	{
-		SelectObject( device, GetStockObject( ANSI_VAR_FONT ) );
+		SelectObject( m_device, GetStockObject( ANSI_VAR_FONT ) );
 	}
 	int setLetterSpacing( int letterSpace )
 	{
-		return SetTextCharacterExtra( device, letterSpace );
+		return SetTextCharacterExtra( m_device, letterSpace );
 	}
 
 	/*
@@ -293,16 +293,16 @@ class Device
 	*/
 	void polyline( POINT *points, int cnt ) const
 	{
-		Polyline( device, points, cnt );
+		Polyline( m_device, points, cnt );
 	}
 	void polygon( POINT *points, int cnt ) const
 	{
-		Polygon( device, points, cnt );
+		Polygon( m_device, points, cnt );
 	}
 
 	void lineTo( int x, int y ) const
 	{
-		LineTo( device, x, y );
+		LineTo( m_device, x, y );
 	}
 	void lineTo( const Point &point ) const
 	{
@@ -331,27 +331,27 @@ class Device
 
 	void ellipse( int left, int top, int right, int bottom ) const
 	{
-		Ellipse( device, left, top, right, bottom );
+		Ellipse( m_device, left, top, right, bottom );
 	}
 	void ellipse( int x, int y, int radius ) const
 	{
-		Ellipse( device, x-radius, y-radius, x+radius, y+radius );
+		Ellipse( m_device, x-radius, y-radius, x+radius, y+radius );
 	}
 
 	void rectangle( int left, int top, int right, int bottom ) const
 	{
-		Rectangle( device, left, top, right, bottom );
+		Rectangle( m_device, left, top, right, bottom );
 	}
 	void rectangle( const RectBorder &rect ) const
 	{
-		Rectangle( device, rect.left, rect.top, rect.right, rect.bottom );
+		Rectangle( m_device, rect.left, rect.top, rect.right, rect.bottom );
 	}
 
 	void textOut( int x, int y, const STRING &text )
 	{
 		moveTo( x, y );
 		TextOut(
-			device,
+			m_device,
 			x, y,
 			text,
 			int(text.strlen())
@@ -361,7 +361,7 @@ class Device
 	{
 //		SetTextAlign( device, TA_TOP|TA_LEFT|TA_NOUPDATECP );
 		moveTo( rect.left, rect.top );
-		DrawText( device, text, int(len), const_cast<RectBorder *>(&rect), format );
+		DrawText( m_device, text, int(len), const_cast<RectBorder *>(&rect), format );
 	}
 	void drawText( const STRING &text, const RectBorder &rect, unsigned format )
 	{
@@ -373,30 +373,30 @@ class Device
 	*/
 	int setROP2( int drawMode ) const
 	{
-		return SetROP2( device, drawMode );
+		return SetROP2( m_device, drawMode );
 	}
 
 	void setTextAlignment( HorizontalAlignment ha, VerticalAlignment va ) const
 	{
-		SetTextAlign( device, int(ha)|int(va)|TA_UPDATECP );
+		SetTextAlign( m_device, int(ha)|int(va)|TA_UPDATECP );
 	}
 
-	void removeClipping( void )
+	void removeClipping()
 	{
-		SelectClipRgn( device, NULL );
+		SelectClipRgn( m_device, nullptr );
 	}
 	void setClipping(  int left, int top, int right, int bottom  )
 	{
-		clipRegion = CreateRectRgn( left, top, right, bottom );
-		SelectClipRgn( device, clipRegion.getHandle() );
+		m_clipRegion = CreateRectRgn( left, top, right, bottom );
+		SelectClipRgn( m_device, m_clipRegion.getHandle() );
 	}
 	/*
 		palette
 	*/
 	void selectPalette( const Palette &palette )
 	{
-		SelectPalette( device, palette, true );
-		RealizePalette( device );
+		SelectPalette( m_device, palette, true );
+		RealizePalette( m_device );
 	}
 
 	/*
@@ -405,7 +405,7 @@ class Device
 	void setDIBits( const Bitmap &bitmap, unsigned uStartScan, unsigned numLines, void *data, unsigned color )
 	{
 		SetDIBits(
-			device, bitmap, 
+			m_device, bitmap, 
 			uStartScan, numLines, 
 			data,
 			bitmap.getInfo(), color
@@ -415,7 +415,7 @@ class Device
 
 	void setPixel( int x, int y, COLORREF color ) const
 	{
-		SetPixel( device, x,y, color );
+		SetPixel( m_device, x,y, color );
 	}
 	void setPixel( int x, int y, unsigned char red, unsigned char green, unsigned char blue ) const
 	{
@@ -427,23 +427,23 @@ class Device
 	*/
 	int pointToPixel( int ptValue ) const
 	{
-		return MulDiv(ptValue, GetDeviceCaps(device, LOGPIXELSY), 72);
+		return MulDiv(ptValue, GetDeviceCaps(m_device, LOGPIXELSY), 72);
 	}
 	int picaToPixel( int pcValue ) const
 	{
-		return MulDiv(pcValue, GetDeviceCaps(device, LOGPIXELSY), 6);
+		return MulDiv(pcValue, GetDeviceCaps(m_device, LOGPIXELSY), 6);
 	}
 	int cmToPixel( int cmValue ) const
 	{
-		return MulDiv(cmValue, GetDeviceCaps(device, LOGPIXELSY)*100, 254);
+		return MulDiv(cmValue, GetDeviceCaps(m_device, LOGPIXELSY)*100, 254);
 	}
 	int mmToPixel( int mmValue ) const
 	{
-		return MulDiv(mmValue, GetDeviceCaps(device, LOGPIXELSY)*10, 254);
+		return MulDiv(mmValue, GetDeviceCaps(m_device, LOGPIXELSY)*10, 254);
 	}
 	int inToPixel( int inValue ) const
 	{
-		return inValue * GetDeviceCaps(device, LOGPIXELSY);
+		return inValue * GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 
 	/*
@@ -451,23 +451,23 @@ class Device
 	*/
 	int pointToPixel( double ptValue ) const
 	{
-		return int(ptValue * double(GetDeviceCaps(device, LOGPIXELSY)) / 72.0 +0.5);
+		return int(ptValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 72.0 +0.5);
 	}
 	int picaToPixel( double pcValue ) const
 	{
-		return int(pcValue * double(GetDeviceCaps(device, LOGPIXELSY)) / 6.0 +0.5);
+		return int(pcValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 6.0 +0.5);
 	}
 	int cmToPixel( double cmValue ) const
 	{
-		return int(cmValue * double(GetDeviceCaps(device, LOGPIXELSY)) / 2.54 +0.5);
+		return int(cmValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 2.54 +0.5);
 	}
 	int mmToPixel( double mmValue ) const
 	{
-		return int(mmValue * double(GetDeviceCaps(device, LOGPIXELSY)) / 25.4 +0.5);
+		return int(mmValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 25.4 +0.5);
 	}
 	int inToPixel( double inValue ) const
 	{
-		return int(inValue * double(GetDeviceCaps(device, LOGPIXELSY)) + 0.5);
+		return int(inValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) + 0.5);
 	}
 
 
@@ -476,32 +476,32 @@ class Device
 	*/
 	double pixelToPoint( int pxValue ) const
 	{
-		return (double)pxValue * 72.0 / (double)GetDeviceCaps(device, LOGPIXELSY);
+		return (double)pxValue * 72.0 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 	double pixelToPica( int pxValue ) const
 	{
-		return (double)pxValue * 6.0 / (double)GetDeviceCaps(device, LOGPIXELSY);
+		return (double)pxValue * 6.0 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 	double pixelToCM( int pxValue ) const
 	{
-		return (double)pxValue * 2.54 / (double)GetDeviceCaps(device, LOGPIXELSY);
+		return (double)pxValue * 2.54 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 	double pixelToMM( int pxValue ) const
 	{
-		return (double)pxValue * 25.4 / (double)GetDeviceCaps(device, LOGPIXELSY);
+		return (double)pxValue * 25.4 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 	double pixelToIN( int pxValue ) const
 	{
-		return (double)pxValue / (double)GetDeviceCaps(device, LOGPIXELSY);
+		return (double)pxValue / (double)GetDeviceCaps(m_device, LOGPIXELSY);
 	}
 };
 
 class WindowDevice : public Device
 {
 	protected:
-	const BasicWindow *theWindow;
+	const BasicWindow *m_window;
 	WindowDevice( const BasicWindow *theWindow, HDC context ) 
-	: Device( context ), theWindow( theWindow )
+	: Device( context ), m_window( theWindow )
 	{}
 };
 
@@ -515,25 +515,25 @@ class DrawDevice : public WindowDevice
 	}
 	~DrawDevice()
 	{
-		theWindow->releaseDC( device );
-		device = NULL;
+		m_window->releaseDC( m_device );
+		m_device = nullptr;
 	}
 };
 
 class RepaintDevice : public WindowDevice
 {
-	PAINTSTRUCT	ps;
+	PAINTSTRUCT	m_ps;
 
 	friend class CallbackWindow;
 
 	private:
 	RepaintDevice( const BasicWindow *theWindow ) 
-	: WindowDevice( theWindow, theWindow->beginPaint( &ps ) )
+	: WindowDevice( theWindow, theWindow->beginPaint( &m_ps ) )
 	{}
 	~RepaintDevice()
 	{
-		theWindow->endPaint( &ps );
-		device = NULL;
+		m_window->endPaint( &m_ps );
+		m_device = nullptr;
 	}
 };
 
@@ -545,37 +545,37 @@ class BackgroundDevice : public WindowDevice
 	{}
 	~BackgroundDevice()
 	{
-		device = NULL;		// don't delete
+		m_device = nullptr;		// don't delete
 	}
 };
 
 class MemoryDevice : public Device
 {
-	const Device	&target;
-	Bitmap			bitmap;
+	const Device	&m_target;
+	Bitmap			m_bitmap;
 
 	public:
 	MemoryDevice( const Device &target, const Size &size ) 
 	: Device( CreateCompatibleDC ( target ) ),
-	target( target ),
-	bitmap( *this )
+	m_target( target ),
+	m_bitmap( *this )
 	{
-		bitmap.create( target, size );
+		m_bitmap.create( target, size );
 	}
 	MemoryDevice( const Device &target, const Bitmap &bitmap ) 
 	: Device( CreateCompatibleDC ( target ) ),
-	target( target ),
-	bitmap( bitmap )
+	m_target( target ),
+	m_bitmap( bitmap )
 	{
-		this->bitmap.connect( *this );
+		m_bitmap.connect( *this );
 	}
 
-	void drawToWindow( void )
+	void drawToWindow()
 	{
-		BitBlt( target, 0, 0, bitmap.getWidth(), bitmap.getHeight(), *this, 0, 0, SRCCOPY );
+		BitBlt( m_target, 0, 0, m_bitmap.getWidth(), m_bitmap.getHeight(), *this, 0, 0, SRCCOPY );
 	}
 #if 0
-	void drawScaledToWindow( void )
+	void drawScaledToWindow()
 	{
 		SetMapMode( *this, GetMapMode( target ));
 
@@ -608,43 +608,43 @@ class PrintDevice : public Device
 		memset( &dInfo, 0, sizeof( dInfo ) );
 		dInfo.cbSize = sizeof( dInfo );
 		dInfo.lpszDocName = file;
-		StartDoc( device, &dInfo );
+		StartDoc( m_device, &dInfo );
 	}
-	void startPage( void )	const
+	void startPage()	const
 	{
-		StartPage( device );
+		StartPage( m_device );
 	}
-	void endPage( void )	const
+	void endPage()	const
 	{
-		EndPage( device );
+		EndPage( m_device );
 	}
-	void endDocument( void )	const
+	void endDocument()	const
 	{
-		EndDoc( device );
+		EndDoc( m_device );
 	}
 	void printText( const char *document, const char *text ) const;
 };
 
 class MetaDevice : public Device
 {
-	HMETAFILE		metaFile;
+	HMETAFILE		m_metaFile;
 	public:
-	MetaDevice( const char *fileName = NULL ) : Device( CreateMetaFile( fileName ) )
+	MetaDevice( const char *fileName = nullptr ) : Device( CreateMetaFile( fileName ) )
 	{
-		metaFile = NULL;
+		m_metaFile = nullptr;
 	}
 	~MetaDevice()
 	{
-//		if( metaFile )						// not yet
-//			DeleteMetaFile( metaFile );
+//		if( m_metaFile )						// not yet
+//			DeleteMetaFile( m_metaFile );
 	}
 
-	HMETAFILE createFile( void )
+	HMETAFILE createFile()
 	{
-		if( !metaFile )
-			metaFile = CloseMetaFile( device );
+		if( !m_metaFile )
+			m_metaFile = CloseMetaFile( m_device );
 
-		return metaFile;
+		return m_metaFile;
 	}
 };
 

@@ -92,12 +92,12 @@ typedef gak::SharedObjectPointer<XML_VIEWER_BOX>	XML_VIEWER_BOX_PTR;
 */
 class XML_LINE_CHUNK
 {
-	Point				position;
+	Point				m_position;
 
-	gak::xml::XmlText	*theElement;
-	STRING				*text;
+	gak::xml::XmlText	*m_theElement;
+	STRING				*m_text;
 
-	XML_VIEWER_BOX_PTR	theInlineBlockBox;
+	XML_VIEWER_BOX_PTR	m_theInlineBlockBox;
 
 	public:
 	int					width;
@@ -105,9 +105,9 @@ class XML_LINE_CHUNK
 
 	XML_LINE_CHUNK()
 	{
-		theInlineBlockBox = NULL;
-		theElement = NULL;
-		text = NULL;
+		m_theInlineBlockBox = nullptr;
+		m_theElement = nullptr;
+		m_text = nullptr;
 	}
 
 	void moveBy( int x, int y );
@@ -116,56 +116,56 @@ class XML_LINE_CHUNK
 		moveBy( x, 0 );
 	}
 
-	const Point &getPosition( void ) const
+	const Point &getPosition() const
 	{
-		return position;
+		return m_position;
 	}
 	void setPosition( int x, int y )
 	{
-		position.x = x;
-		position.y = y;
+		m_position.x = x;
+		m_position.y = y;
 	}
 
 	void setText( gak::xml::XmlText *theElement, STRING *text )
 	{
-		theInlineBlockBox = NULL;
-		this->theElement = theElement;
-		this->text = text;
+		m_theInlineBlockBox = nullptr;
+		m_theElement = theElement;
+		m_text = text;
 	}
-	gak::xml::XmlText *getTextElement( void ) const
+	gak::xml::XmlText *getTextElement() const
 	{
-		return theElement;
+		return m_theElement;
 	}
-	const STRING &getText( void ) const
+	const STRING &getText() const
 	{
-		return *text;
+		return *m_text;
 	}
-	STRING *getTextPtr( void ) const
+	STRING *getTextPtr() const
 	{
-		return text;
+		return m_text;
 	}
-	bool isTextElement( void ) const
+	bool isTextElement() const
 	{
-		return theElement && text;
+		return m_theElement && m_text;
 	}
 
-	const XML_VIEWER_BOX *getInlineBox( void ) const
+	const XML_VIEWER_BOX *getInlineBox() const
 	{
-		return theInlineBlockBox;
+		return m_theInlineBlockBox;
 	}
-	XML_VIEWER_BOX *getInlineBox( void )
+	XML_VIEWER_BOX *getInlineBox()
 	{
-		return theInlineBlockBox;
+		return m_theInlineBlockBox;
 	}
-	bool isBlockElement( void ) const
+	bool isBlockElement() const
 	{
-		return bool(theInlineBlockBox);
+		return bool(m_theInlineBlockBox);
 	}
 	void setBlockElement( XML_VIEWER_BOX *theInlineBlockBox )
 	{
-		this->theInlineBlockBox = theInlineBlockBox;
-		this->theElement = NULL;
-		this->text = NULL;
+		m_theInlineBlockBox = theInlineBlockBox;
+		m_theElement = nullptr;
+		m_text = nullptr;
 	}
 #ifdef _DEBUG
 	void dump( FILE *fp, unsigned level )
@@ -175,21 +175,21 @@ class XML_LINE_CHUNK
 		fprintf(
 			fp,
 			"Pos: %d,%d width: %d\n",
-			position.x, position.y,
+			m_position.x, m_position.y,
 			width
 		);
 
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
-		if( theElement )
-			fprintf( fp, "CHUNK Element %s", (const char *)theElement->getParent()->getTag() );
+		if( m_theElement )
+			fprintf( fp, "CHUNK Element %s", (const char *)m_theElement->getParent()->getTag() );
 		else
 			fputs( "No Element", fp );
 		fprintf( fp, "%p\n", getInlineBox() );
 
-		if( !theElement && !getInlineBox() )
+		if( !m_theElement && !getInlineBox() )
 			fputs( ">>> WARN: EMPTY CHUNK\n", fp );
-		else if( theElement && getInlineBox() )
+		else if( m_theElement && getInlineBox() )
 			fputs( ">>> WARN: OVERLOADED CHUNK\n", fp );
 	}
 #endif
@@ -200,15 +200,15 @@ class XML_LINE_CHUNK
 */
 struct XML_LINE
 {
-	Point						position;
-	int							lineWidth, lineHeight, maxWidth;
-	gak::Array<XML_LINE_CHUNK>	theLine;
+	Point						m_position;
+	int							m_lineWidth, m_lineHeight, m_maxWidth;
+	gak::Array<XML_LINE_CHUNK>	m_theLine;
 
 	XML_LINE()
 	{
-		position.x = 0;
-		position.y = 0;
-		maxWidth = lineWidth = lineHeight = 0;
+		m_position.x = 0;
+		m_position.y = 0;
+		m_maxWidth = m_lineWidth = m_lineHeight = 0;
 	}
 	void moveBy( int x, int y );
 	void moveRight( int x )
@@ -221,7 +221,7 @@ struct XML_LINE
 	}
 	const XML_LINE_CHUNK &getChunk( size_t chunk ) const
 	{
-		return theLine[chunk];
+		return m_theLine[chunk];
 	}
 #ifdef _DEBUG
 	void dump( FILE *fp, unsigned level )
@@ -232,15 +232,15 @@ struct XML_LINE
 		fprintf(
 			fp,
 			"Pos: %d,%d width: %d height: %d\n",
-			position.x, position.y,
-			lineWidth, lineHeight
+			m_position.x, m_position.y,
+			m_lineWidth, m_lineHeight
 		);
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
-		fprintf( fp, "Num Chunks: %d\n", (int)theLine.size() );
+		fprintf( fp, "Num Chunks: %d\n", int(m_theLine.size()) );
 
-		for( size_t i=0; i<theLine.size(); i++ )
-			theLine[i].dump( fp, newLevel );
+		for( size_t i=0; i<m_theLine.size(); i++ )
+			m_theLine[i].dump( fp, newLevel );
 
 	}
 #endif
@@ -249,12 +249,12 @@ struct XML_LINE
 
 class XML_CURSOR_POS
 {
-	XML_VIEWER_BOX_PTR	viewerBox;
-	size_t				line, chunk, insertPos;
-	int					horizOffset;
+	XML_VIEWER_BOX_PTR	m_viewerBox;
+	size_t				m_line, m_chunk, m_insertPos;
+	int					m_horizOffset;
 
 	public:
-	gak::xml::Element *getElement( void ) const;
+	gak::xml::Element *getElement() const;
 
 	void setPosition(
 		const XML_VIEWER_BOX_PTR	&viewerBox,
@@ -264,11 +264,11 @@ class XML_CURSOR_POS
 		int							horizOffset
 	)
 	{
-		this->viewerBox = viewerBox;
-		this->line = line;
-		this->chunk = chunk;
-		this->insertPos = insertPos;
-		this->horizOffset = horizOffset;
+		m_viewerBox = viewerBox;
+		m_line = line;
+		m_chunk = chunk;
+		m_insertPos = insertPos;
+		m_horizOffset = horizOffset;
 	}
 	void setPosition(
 		size_t	line,
@@ -277,10 +277,10 @@ class XML_CURSOR_POS
 		int		horizOffset
 	)
 	{
-		this->line = line;
-		this->chunk = chunk;
-		this->insertPos = insertPos;
-		this->horizOffset = horizOffset;
+		m_line = line;
+		m_chunk = chunk;
+		m_insertPos = insertPos;
+		m_horizOffset = horizOffset;
 	}
 	void setPosition(
 		size_t	chunk,
@@ -288,58 +288,58 @@ class XML_CURSOR_POS
 		int		horizOffset
 	)
 	{
-		this->chunk = chunk;
-		this->insertPos = insertPos;
-		this->horizOffset = horizOffset;
+		m_chunk = chunk;
+		m_insertPos = insertPos;
+		m_horizOffset = horizOffset;
 	}
 	void setPosition(
 		size_t insertPos,
 		int	   horizOffset
 	)
 	{
-		this->insertPos = insertPos;
-		this->horizOffset = horizOffset;
+		m_insertPos = insertPos;
+		m_horizOffset = horizOffset;
 	}
 	void movePosition(
 		int	insertPos,
 		int	horizOffset
 	)
 	{
-		this->insertPos += insertPos;
-		this->horizOffset += horizOffset;
+		m_insertPos += insertPos;
+		m_horizOffset += horizOffset;
 	}
-	void clear( void )
+	void clear()
 	{
-		this->viewerBox = NULL;
-		this->line = size_t(-1);
-		this->chunk = size_t(-1);
-		this->insertPos = 0;
-		this->horizOffset = 0;
+		m_viewerBox = nullptr;
+		m_line = size_t(-1);
+		m_chunk = size_t(-1);
+		m_insertPos = 0;
+		m_horizOffset = 0;
 	}
 
-	const XML_VIEWER_BOX *getViewerBox( void ) const
+	const XML_VIEWER_BOX *getViewerBox() const
 	{
-		return viewerBox;
+		return m_viewerBox;
 	}
-	XML_VIEWER_BOX *getViewerBox( void )
+	XML_VIEWER_BOX *getViewerBox()
 	{
-		return viewerBox;
+		return m_viewerBox;
 	}
-	size_t getLine( void ) const
+	size_t getLine() const
 	{
-		return line;
+		return m_line;
 	}
-	size_t getChunk( void ) const
+	size_t getChunk() const
 	{
-		return chunk;
+		return m_chunk;
 	}
-	size_t getInsertPos( void ) const
+	size_t getInsertPos() const
 	{
-		return insertPos;
+		return m_insertPos;
 	}
-	int getHorizOffset( void ) const
+	int getHorizOffset() const
 	{
-		return horizOffset;
+		return m_horizOffset;
 	}
 };
 
@@ -350,25 +350,25 @@ class XML_CURSOR_POS
 class XML_VIEWER_ITEM
 {
 	// the inline bloc element
-	XML_VIEWER_BOX_PTR	viewerBox;
+	XML_VIEWER_BOX_PTR	m_viewerBox;
 
 	// OR the XML Element
-	gak::xml::Element	*theElement;
-	bool				autoWrap, preserveBlanks, preserveBreaks;
-	STRING				text;
+	gak::xml::Element	*m_theElement;
+	bool				m_autoWrap, m_preserveBlanks, m_preserveBreaks;
+	STRING				m_text;
 
 	public:
 	XML_VIEWER_ITEM()
 	{
-		theElement = NULL;
+		m_theElement = nullptr;
 	}
 	~XML_VIEWER_ITEM()
 	{
 	}
-	void clear( void )
+	void clear()
 	{
-		viewerBox = NULL;
-		theElement = NULL;
+		m_viewerBox = nullptr;
+		m_theElement = nullptr;
 	}
 	/*
 		for line boxes
@@ -378,36 +378,36 @@ class XML_VIEWER_ITEM
 		bool autoWrap, bool preserveBlanks, bool preserveBreaks
 	)
 	{
-		viewerBox = NULL;
-		theElement = xmlElement;
-		this->text = text;
-		this->autoWrap = autoWrap;
-		this->preserveBlanks = preserveBlanks;
-		this->preserveBreaks = preserveBreaks;
+		m_viewerBox = nullptr;
+		m_theElement = xmlElement;
+		m_text = text;
+		m_autoWrap = autoWrap;
+		m_preserveBlanks = preserveBlanks;
+		m_preserveBreaks = preserveBreaks;
 	}
 	gak::xml::Element *getXmlElement( void  ) const
 	{
-		return theElement;
+		return m_theElement;
 	}
-	const STRING &getXmlText( void ) const
+	const STRING &getXmlText() const
 	{
-		return text;
+		return m_text;
 	}
-	STRING *getXmlTextPtr( void )
+	STRING *getXmlTextPtr()
 	{
-		return &text;
+		return &m_text;
 	}
-	bool getAutoWrap( void ) const
+	bool getAutoWrap() const
 	{
-		return autoWrap;
+		return m_autoWrap;
 	}
-	bool getPreserveBreaks( void ) const
+	bool getPreserveBreaks() const
 	{
-		return preserveBreaks;
+		return m_preserveBreaks;
 	}
-	bool getPreserveBlanks( void ) const
+	bool getPreserveBlanks() const
 	{
-		return preserveBlanks;
+		return m_preserveBlanks;
 	}
 
 	/*
@@ -415,16 +415,16 @@ class XML_VIEWER_ITEM
 	*/
 	void setViewerBox( XML_VIEWER_BOX *xmlViewerBox )
 	{
-		viewerBox = xmlViewerBox;
-		theElement = NULL;
+		m_viewerBox = xmlViewerBox;
+		m_theElement = nullptr;
 	}
 	const XML_VIEWER_BOX *getViewerBox( void  ) const
 	{
-		return viewerBox;
+		return m_viewerBox;
 	}
 	XML_VIEWER_BOX *getViewerBox( void  )
 	{
-		return viewerBox;
+		return m_viewerBox;
 	}
 };
 
@@ -439,46 +439,46 @@ class XML_VIEWER_BOX : public gak::SharedObject
 
 	enum CURSOR_DIRECTION { CURSOR_UP, CURSOR_DOWN };
 
-	RectBorder			docPosition;
-	gak::css::Position	position;
-	gak::css::Display	display;
-	gak::css::ListStyle	listStyle;
+	RectBorder			m_docPosition;
+	gak::css::Position	m_position;
+	gak::css::Display	m_display;
+	gak::css::ListStyle	m_listStyle;
 
-	int					itemNumber;
+	int					m_itemNumber;
 
-	int					margin_left,
-						margin_right,
-						margin_top,
-						margin_bottom;
+	int					m_margin_left,
+						m_margin_right,
+						m_margin_top,
+						m_margin_bottom;
 
-	int					padding_left,
-						padding_right,
-						padding_top,
-						padding_bottom;
+	int					m_padding_left,
+						m_padding_right,
+						m_padding_top,
+						m_padding_bottom;
 
-	int					border_width_left,
-						border_width_right,
-						border_width_top,
-						border_width_bottom;
+	int					m_border_width_left,
+						m_border_width_right,
+						m_border_width_top,
+						m_border_width_bottom;
 
-	gak::css::Border	border_style_left,
-						border_style_right,
-						border_style_top,
-						border_style_bottom;
+	gak::css::Border	m_border_style_left,
+						m_border_style_right,
+						m_border_style_top,
+						m_border_style_bottom;
 
-	int					maxWidth,
-						innerWidth,
-						innerWidthPercent;
+	int					m_maxWidth,
+						m_innerWidth,
+						m_innerWidthPercent;
 
-	int					maxHeight, innerHeight, innerHeightPercent;
+	int					m_maxHeight, m_innerHeight, m_innerHeightPercent;
 
-	gak::xml::Element	*theElement;
-	XML_VIEWER_BOX_PTR	parentBox;
+	gak::xml::Element	*m_theElement;
+	XML_VIEWER_BOX_PTR	m_parentBox;
 
-	gak::Array<XML_VIEWER_ITEM>		childElements;
-	gak::Array<XML_VIEWER_BOX_PTR>	subBoxes;
-	gak::Array<RectBorder>			leftBoxes, rightBoxes;
-	gak::Array<XML_LINE>			theContent;
+	gak::Array<XML_VIEWER_ITEM>		m_childElements;
+	gak::Array<XML_VIEWER_BOX_PTR>	m_subBoxes;
+	gak::Array<RectBorder>			m_leftBoxes, m_rightBoxes;
+	gak::Array<XML_LINE>			m_theContent;
 
 	static STRING prepareText(
 		const STRING &text, bool preserveBlanks, bool preserveBreaks
@@ -527,8 +527,8 @@ class XML_VIEWER_BOX : public gak::SharedObject
 		RectBorder *screenPosition
 	)
 	{
-		*screenPosition = docPosition;
-		if( position < gak::css::POS_FIXED )
+		*screenPosition = m_docPosition;
+		if( m_position < gak::css::POS_FIXED )
 		{
 			screenPosition->left -= horizOffset;
 			screenPosition->top -= vertOffset;;
@@ -539,10 +539,10 @@ class XML_VIEWER_BOX : public gak::SharedObject
 	public:
 	XML_VIEWER_BOX( int itemNumber=0 )
 	{
-		theElement = NULL;
-		parentBox = NULL;
-		memset( &docPosition, 0, sizeof( docPosition ) );
-		this->itemNumber = itemNumber;
+		m_theElement = nullptr;
+		m_parentBox = nullptr;
+		memset( &m_docPosition, 0, sizeof( m_docPosition ) );
+		m_itemNumber = itemNumber;
 	}
 	~XML_VIEWER_BOX()
 	{
@@ -563,7 +563,7 @@ class XML_VIEWER_BOX : public gak::SharedObject
 		XML_LINE &theLine, bool includeBlocks
 	);
 	void draw( Device &context, XMLeditorChild *theWindow );
-	gak::css::Styles *getCssStyle( void );
+	gak::css::Styles *getCssStyle();
 	void moveBy( int x, int y );
 
 	void moveRight( int x )
@@ -591,17 +591,17 @@ class XML_VIEWER_BOX : public gak::SharedObject
 		XML_CURSOR_POS *cursorPos
 	) const;
 
-	size_t getNumLines( void ) const
+	size_t getNumLines() const
 	{
-		return theContent.size();
+		return m_theContent.size();
 	}
 	const XML_LINE &getLine( size_t line ) const
 	{
-		return theContent[line];
+		return m_theContent[line];
 	}
-	gak::xml::Element *getElement( void ) const
+	gak::xml::Element *getElement() const
 	{
-		return theElement;
+		return m_theElement;
 	}
 	gak::xml::Element *getElement( size_t line, size_t chunk ) const
 	{
@@ -650,14 +650,14 @@ class XML_VIEWER_BOX : public gak::SharedObject
 		const XML_CURSOR_POS *cursorPos,
 		bool *doWrap
 	);
-	const XML_VIEWER_BOX *getParent( void ) const
+	const XML_VIEWER_BOX *getParent() const
 	{
-		return parentBox;
+		return m_parentBox;
 	}
 
-	int getItemNumber( void ) const
+	int getItemNumber() const
 	{
-		return itemNumber;
+		return m_itemNumber;
 	}
 
 #ifdef _DEBUG
@@ -667,29 +667,29 @@ class XML_VIEWER_BOX : public gak::SharedObject
 
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
-		if( theElement )
-			fprintf( fp, "%s\n", (const char *)theElement->getTag() );
+		if( m_theElement )
+			fprintf( fp, "%s\n", (const char *)m_theElement->getTag() );
 		else
 			fputs( "<NO ELEMENT>\n", fp );
 
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
-		fprintf( fp, "Num Lines: %d\n", (int)theContent.size() );
-		for( size_t i=0; i<theContent.size(); i++ )
-			theContent[i].dump( fp, newLevel );
+		fprintf( fp, "Num Lines: %d\n", (int)m_theContent.size() );
+		for( size_t i=0; i<m_theContent.size(); i++ )
+			m_theContent[i].dump( fp, newLevel );
 
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
 		fputs( "Subboxes:\n", fp );
-		for( size_t i=0; i<subBoxes.size(); i++ )
-			(*subBoxes[i]).dump( fp, newLevel );
+		for( size_t i=0; i<m_subBoxes.size(); i++ )
+			m_subBoxes[i]->dump( fp, newLevel );
 
 		for( unsigned i=0; i<level; i++ )
 			fputs( "    ", fp );
 		fputs( "Childboxes:\n", fp );
-		for( size_t i=0; i<childElements.size(); i++ )
+		for( size_t i=0; i<m_childElements.size(); i++ )
 		{
-			XML_VIEWER_ITEM	&theItem = childElements[i];
+			XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			XML_VIEWER_BOX	*childBox = theItem.getViewerBox();
 			if( childBox )
 				childBox->dump( fp, newLevel );
@@ -700,7 +700,7 @@ class XML_VIEWER_BOX : public gak::SharedObject
 
 class XML_TABLE_VIEWER_BOX : public XML_VIEWER_BOX
 {
-	gak::ArrayOfInts	styleWidths, columnWidths;
+	gak::ArrayOfInts	m_styleWidths, m_columnWidths;
 
 	public:
 	XML_TABLE_VIEWER_BOX(int itemNumber) : XML_VIEWER_BOX(itemNumber) {}
@@ -724,22 +724,22 @@ class XML_TABLE_VIEWER_BOX : public XML_VIEWER_BOX
 	);
 	void initColumn( int itemNumber )
 	{
-		columnWidths[itemNumber] = 0;
-		styleWidths[itemNumber] = 0;
+		m_columnWidths[itemNumber] = 0;
+		m_styleWidths[itemNumber] = 0;
 	}
 	int getColumnWidth( int itemNumber )
 	{
-		return columnWidths[itemNumber];
+		return m_columnWidths[itemNumber];
 	}
 	void setColumnWidth( int itemNumber, int width )
 	{
-		int &oldWidth = columnWidths[itemNumber];
+		int &oldWidth = m_columnWidths[itemNumber];
 		if( oldWidth < width )
 			oldWidth = width;
 	}
 	void setStyleWidth( int itemNumber, int width )
 	{
-		int &oldWidth = styleWidths[itemNumber];
+		int &oldWidth = m_styleWidths[itemNumber];
 		if( oldWidth < width )
 			oldWidth = width;
 	}
@@ -771,22 +771,22 @@ class XML_TABLE_GROUP_VIEWER_BOX : public XML_VIEWER_BOX
 
 	void initColumn( int itemNumber )
 	{
-		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		table->initColumn( itemNumber );
 	}
 	int getColumnWidth( int itemNumber )
 	{
-		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		return table->getColumnWidth( itemNumber );
 	}
 	void setColumnWidth( int itemNumber, int width )
 	{
-		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		table->setColumnWidth( itemNumber, width );
 	}
 	void setStyleWidth( int itemNumber, int width )
 	{
-		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_VIEWER_BOX *table = (XML_TABLE_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		table->setStyleWidth( itemNumber, width );
 	}
 };
@@ -815,22 +815,22 @@ class XML_TABLE_ROW_VIEWER_BOX : public XML_VIEWER_BOX
 	using XML_VIEWER_BOX::createBox;
 	void initColumn( int itemNumber )
 	{
-		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		group->initColumn( itemNumber );
 	}
 	int getColumnWidth( int itemNumber )
 	{
-		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		return group->getColumnWidth( itemNumber );
 	}
 	void setColumnWidth( int itemNumber, int width )
 	{
-		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		group->setColumnWidth( itemNumber, width );
 	}
 	void setStyleWidth( int itemNumber, int width )
 	{
-		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
+		XML_TABLE_GROUP_VIEWER_BOX *group = (XML_TABLE_GROUP_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		group->setStyleWidth( itemNumber, width );
 	}
 };
@@ -843,25 +843,25 @@ class XML_TABLE_CELL_VIEWER_BOX : public XML_VIEWER_BOX
 	virtual void buildBoxTree(
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
 	);
-	void initColumn( void )
+	void initColumn()
 	{
-		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
-		row->initColumn( itemNumber );
+		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
+		row->initColumn( m_itemNumber );
 	}
-	int getColumnWidth( void )
+	int getColumnWidth()
 	{
-		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
-		return row->getColumnWidth( itemNumber );
+		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
+		return row->getColumnWidth( m_itemNumber );
 	}
 	void setColumnWidth( int width )
 	{
-		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
-		row->setColumnWidth( itemNumber, width );
+		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
+		row->setColumnWidth( m_itemNumber, width );
 	}
 	void setStyleWidth( int width )
 	{
-		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)parentBox);
-		row->setStyleWidth( itemNumber, width );
+		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
+		row->setStyleWidth( m_itemNumber, width );
 	}
 	virtual int calcSize(
 		Device &context,
@@ -874,30 +874,30 @@ class XML_TABLE_CELL_VIEWER_BOX : public XML_VIEWER_BOX
 class XMLeditorChild : public ChildWindow
 {
 	private:
-	bool				xmlFrames;
-	XML_VIEWER_BOX_PTR	theViewerBox;
-	int					vertOffset, horizOffset;
-	Size				size;
-	RectBorder			boxSize;
+	bool				m_xmlFrames;
+	XML_VIEWER_BOX_PTR	m_theViewerBox;
+	int					m_vertOffset, m_horizOffset;
+	Size				m_size;
+	RectBorder			m_boxSize;
 
-	XML_CURSOR_POS		cursorPos;
-	bool				cursorVisible;
+	XML_CURSOR_POS		m_cursorPos;
+	bool				m_cursorVisible;
 
 #ifdef _DEBUG
-	void dump( void )
+	void dump()
 	{
 		STRING	tmp = getenv( "TEMP" );
 		tmp += "\\temp.txt";
 		FILE *fp = fopen( tmp, "w" );
-		theViewerBox->dump( fp, 0 );
+		m_theViewerBox->dump( fp, 0 );
 		fclose( fp );
 	}
 #endif
-	void enableCursor( void )
+	void enableCursor()
 	{
 		if( !hasTimer() )
 		{
-			cursorVisible = false;
+			m_cursorVisible = false;
 			setTimer( 500 );
 		}
 		focus();
@@ -907,84 +907,84 @@ class XMLeditorChild : public ChildWindow
 		if( hasTimer() )
 		{
 			hideCursor(context);
-			cursorPos.clear();
+			m_cursorPos.clear();
 			removeTimer();
 		}
 	}
 	void hideCursor( Device &context )
 	{
-		if( cursorVisible )
+		if( m_cursorVisible )
 			drawCursor( context );
 	}
 
-	static void registerClass( void );
-	virtual STRING getWindowClassName( void ) const;
+	static void registerClass();
+	virtual STRING getWindowClassName() const;
 	public:
 	static const char className[];
 	private:
 
 	void drawCursor( Device &context );
 
-	virtual void handleTimer( void );
+	virtual void handleTimer();
 	virtual ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar );
 	virtual ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND );
 	virtual ProcessStatus handleRepaint( Device &hDC );
 	virtual ProcessStatus handleResize( const Size &newSize );
 	virtual ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position );
-	virtual void handleFocus( void );
+	virtual void handleFocus();
 	virtual ProcessStatus handleKeyDown( int key );
 	virtual ProcessStatus handleCharacterInput( int c );
-	virtual void handleKillFocus( void );
+	virtual void handleKillFocus();
 
 	public:
 	XMLeditorChild( BasicWindow *owner ) 
 	: ChildWindow( owner )
 	{
 		registerClass();
-		theViewerBox = NULL;
-		xmlFrames = false;
-		cursorVisible = false;
-		vertOffset = horizOffset = 0;
+		m_theViewerBox = nullptr;
+		m_xmlFrames = false;
+		m_cursorVisible = false;
+		m_vertOffset = m_horizOffset = 0;
 	}
 
-	void refresh( void );
+	void refresh();
 	void setDocument( gak::xml::Document *newDocument );
 	void showElement( gak::xml::Element *theElement );
-	void enableXmlFrames( void )
+	void enableXmlFrames()
 	{
-		if( !xmlFrames )
+		if( !m_xmlFrames )
 		{
-			xmlFrames = true;
+			m_xmlFrames = true;
 			invalidateWindow();
 		}
 	}
-	void disableXmlFrames( void )
+	void disableXmlFrames()
 	{
-		if( xmlFrames )
+		if( m_xmlFrames )
 		{
-			xmlFrames = false;
+			m_xmlFrames = false;
 			invalidateWindow();
 		}
 	}
-	bool isXmlFrameEnabled( void ) const
+	bool isXmlFrameEnabled() const
 	{
-		return xmlFrames;
+		return m_xmlFrames;
 	}
-	int getVertOffset( void ) const
+	int getVertOffset() const
 	{
-		return vertOffset;
+		return m_vertOffset;
 	}
-	int getHorizOffset( void ) const
+	int getHorizOffset() const
 	{
-		return horizOffset;
+		return m_horizOffset;
 	}
-	int getWindowHeight( void ) const
+	int getWindowHeight() const
 	{
-		return size.height;
+		return m_size.height;
 	}
-	int getWindowWidth( void ) const
+	int getWindowWidth() const
 	{
-		return size.width;
+		return m_size.width;
 	}
 };
 
@@ -1012,9 +1012,9 @@ class XMLeditorChild : public ChildWindow
 // ----- class inlines ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-inline gak::xml::Element	*XML_CURSOR_POS::getElement( void ) const
+inline gak::xml::Element	*XML_CURSOR_POS::getElement() const
 {
-	return viewerBox->getElement( line, chunk );
+	return m_viewerBox->getElement( m_line, m_chunk );
 }
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //

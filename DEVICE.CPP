@@ -3,10 +3,10 @@
 		Module:			Device.CPP
 		Description:	Graphic devices
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -65,40 +65,40 @@ using namespace gak;
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-int Device::getLineHeight( void ) const
+int Device::getLineHeight() const
 {
 	TEXTMETRIC	tm;
 
-	GetTextMetrics( device, &tm );
+	GetTextMetrics( m_device, &tm );
 
 	return tm.tmHeight;
 }
 
-int Device::getCharWidth( void ) const
+int Device::getCharWidth() const
 {
 	TEXTMETRIC	tm;
 	int			pixels;
 
-	pixels = GetDeviceCaps( device, HORZRES	);
-	GetTextMetrics( device, &tm );
+	pixels = GetDeviceCaps( m_device, HORZRES	);
+	GetTextMetrics( m_device, &tm );
 
 	return pixels / tm.tmAveCharWidth;
 }
 
-int Device::getNumLines( void ) const
+int Device::getNumLines() const
 {
 	TEXTMETRIC	tm;
 	int			pixels;
 
-	pixels = GetDeviceCaps( device, VERTRES	);
-	GetTextMetrics( device, &tm );
+	pixels = GetDeviceCaps( m_device, VERTRES	);
+	GetTextMetrics( m_device, &tm );
 
 	return pixels / tm.tmHeight;
 }
 
 void Device::printText( const char *text ) const
 {
-	TextOut( device, 0, 0, text, int(strlen( text )) );
+	TextOut( m_device, 0, 0, text, int(strlen( text )) );
 }
 
 void Device::getTextExtentWithBreak( const char *text, Size *size )
@@ -114,7 +114,7 @@ void Device::getTextExtentWithBreak( const char *text, Size *size )
 		for( cp2 = cp1; *cp2 && *cp2 != '\n'; cp2++ )
 			;
 
-		GetTextExtentPoint32( device, cp1, int(cp2-cp1), &lineSize );
+		GetTextExtentPoint32( m_device, cp1, int(cp2-cp1), &lineSize );
 		size->height += lineSize.cy;
 
 		size->width   = math::max( size->width, int(lineSize.cx) );
@@ -128,7 +128,7 @@ void Device::getTextExtentWithBreak( const char *text, Size *size )
 void Device::getTextExtent( const char *text, size_t len, Size *size )
 {
 	SIZE	xSize;
-	GetTextExtentPoint32( device, text, int(len), &xSize );
+	GetTextExtentPoint32( m_device, text, int(len), &xSize );
 	size->width = xSize.cx;
 	size->height = xSize.cy;
 }

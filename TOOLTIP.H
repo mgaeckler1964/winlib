@@ -61,9 +61,9 @@ namespace winlib
 class ToolTipWindow : public CallbackWindow
 {
 	private:
-	static Brush	brush;
+	static Brush	s_brush;
 
-	Label			textWindow;
+	Label			m_textWindow;
 
 	private:
 	static STRING	className;

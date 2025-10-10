@@ -3,10 +3,10 @@
 		Module:			ressource.cpp
 		Description:	Create windows from a ressource file
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		HoFmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -369,10 +369,10 @@ static void createLayoutManager( xml::Element *resource, CallbackWindow *parent,
 
 	if( layoutManager )
 	{
-		layoutManager->margin.left = resource->getAttribute( LayoutManager::marginLeft ).getValueN<int>();
-		layoutManager->margin.right = resource->getAttribute( LayoutManager::marginRight ).getValueN<int>();
-		layoutManager->margin.top = resource->getAttribute( LayoutManager::marginTop ).getValueN<int>();
-		layoutManager->margin.bottom = resource->getAttribute( LayoutManager::marginBottom ).getValueN<int>();
+		layoutManager->m_margin.left = resource->getAttribute( LayoutManager::marginLeft ).getValueN<int>();
+		layoutManager->m_margin.right = resource->getAttribute( LayoutManager::marginRight ).getValueN<int>();
+		layoutManager->m_margin.top = resource->getAttribute( LayoutManager::marginTop ).getValueN<int>();
+		layoutManager->m_margin.bottom = resource->getAttribute( LayoutManager::marginBottom ).getValueN<int>();
 
 		parent->setLayoutManager( layoutManager );
 	}

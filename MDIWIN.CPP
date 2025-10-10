@@ -3,10 +3,10 @@
 		Module: 		MDIWIN.CPP
 		Description:	The MDI-window classes
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -64,7 +64,7 @@ STRING MDIchildWindow::className;
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void MDIchildWindow::registerClass( void )
+void MDIchildWindow::registerClass()
 {
 	static bool registered = false;
 
@@ -82,7 +82,7 @@ void MDIchildWindow::registerClass( void )
 	}
 }
 
-void MDIwindow::registerClass( void )
+void MDIwindow::registerClass()
 {
 	static bool registered = false;
 
@@ -109,7 +109,7 @@ void MDIwindow::registerClass( void )
 /*
 	MDIchildWindow
 */
-STRING MDIchildWindow::getWindowClassName( void ) const
+STRING MDIchildWindow::getWindowClassName() const
 {
 	return className;
 }
@@ -117,17 +117,17 @@ STRING MDIchildWindow::getWindowClassName( void ) const
 void MDIchildWindow::handleActivate( bool activate )
 {
 	if( activate )
-		myParent->setActiveWindow( this, m_menu, winMenu );
+		m_clientParent->setActiveWindow( this, m_menu, m_winMenu );
 	else
-		myParent->setNoWindow();
+		m_clientParent->setNoWindow();
 
-	(myParent->getParent())->drawMenuBar();
+	m_clientParent->getParent()->drawMenuBar();
 }
 
-ProcessStatus MDIchildWindow::handleDestroy( void )
+ProcessStatus MDIchildWindow::handleDestroy()
 {
 	// tell parent, that i'm leaving
-	myParent->removeChild( this );
+	m_clientParent->removeChild( this );
 
 	// remove from registered windows
 	clrHandle();
@@ -135,10 +135,10 @@ ProcessStatus MDIchildWindow::handleDestroy( void )
 	return psPROCESSED;
 }
 
-SuccessCode MDIchildWindow::close( void )
+SuccessCode MDIchildWindow::close()
 {
 	setClosedFlag();
-	myParent->delChild( this );
+	m_clientParent->delChild( this );
 
 	return scSUCCESS;
 }
@@ -151,12 +151,12 @@ LRESULT MDIchildWindow::doDefault( UINT message, WPARAM wParam, LPARAM lParam )
 /*
 	MDIwindow
 */
-STRING MDIwindow::getWindowClassName( void ) const
+STRING MDIwindow::getWindowClassName() const
 {
 	return className;
 }
 
-SuccessCode MDIwindow::handleClose( void )
+SuccessCode MDIwindow::handleClose()
 {
 	if( clientWindow.handleClose() == scSUCCESS )
 	{
@@ -204,7 +204,6 @@ SuccessCode MDIchildWindow::create(
 )
 {
 	MDICREATESTRUCT 	mdiCreate;
-	MDIclientWindow		*clientParent;
 	HWND				handle;
 
 	if( menuId )
@@ -212,9 +211,9 @@ SuccessCode MDIchildWindow::create(
 		const Menu *menu = setMenu( menuId );
 		if( !menu )
 			return scERROR;
-		this->winMenu = menu->getSubMenu( winMenu );
+		m_winMenu = menu->getSubMenu( winMenu );
 	}
-	myParent = clientParent = (MDIclientWindow *)parent->getClient();
+	m_clientParent = const_cast<MDIclientWindow *>(parent->getClient());
 	mdiCreate.szClass = className;
 	mdiCreate.szTitle = (LPSTR)title;
 	mdiCreate.hOwner  = appObject->getAppInstance();
@@ -225,11 +224,11 @@ SuccessCode MDIchildWindow::create(
 	mdiCreate.style   = 0;
 	mdiCreate.lParam  = LPARAM(this);
 
-	handle = clientParent->createChild( &mdiCreate );
+	handle = m_clientParent->createChild( &mdiCreate );
 
 	if( handle )
 	{
-		clientParent->newChild( this );
+		m_clientParent->newChild( this );
 		return scSUCCESS;
 	}
 	else
@@ -253,17 +252,17 @@ SuccessCode MDIchildWindow::create(
 /*
 	MDIclientWindow
 */
-STRING MDIclientWindow::getWindowClassName( void ) const
+STRING MDIclientWindow::getWindowClassName() const
 {
 	return "MDICLIENT";
 }
 
-void MDIclientWindow::closeAllChildren( void )
+void MDIclientWindow::closeAllChildren()
 {
 	MDIchildWindow	*current;
 	ListCursor 	cursor;
 
-	current = (MDIchildWindow *)((MdiChildList *)childList.getFirst( &cursor ));
+	current = (MDIchildWindow *)((MdiChildList *)m_childList.getFirst( &cursor ));
 	while( current )
 	{
 		delChild( current );
@@ -271,12 +270,12 @@ void MDIclientWindow::closeAllChildren( void )
 	}
 }
 
-SuccessCode MDIclientWindow::handleClose( void )
+SuccessCode MDIclientWindow::handleClose()
 {
 	MDIchildWindow	*current;
 	ListCursor	 	cursor;
 
-	current = (MDIchildWindow *)((MdiChildList *)childList.getFirst( &cursor ));
+	current = (MDIchildWindow *)((MdiChildList *)m_childList.getFirst( &cursor ));
 	while( current )
 	{
 		if( current->handleClose() == scERROR )
@@ -286,7 +285,7 @@ SuccessCode MDIclientWindow::handleClose( void )
 	return scSUCCESS;
 }
 
-SuccessCode MDIclientWindow::close( void )
+SuccessCode MDIclientWindow::close()
 {
 	closeAllChildren();
 	// DestroyMenu( menu );
@@ -302,16 +301,16 @@ SuccessCode MDIwindow::create( int menuId, int winMenu )
 	doEnterFunction("MDIwindow::create");
 
 	setMenu( menuId );
-	SuccessCode error = CallbackWindow::create( NULL );
+	SuccessCode error = CallbackWindow::create( nullptr );
 
 	if( error == scSUCCESS )
 	{
-		error = clientWindow.create(this, m_menu ? m_menu->getSubMenu( winMenu ) : NULL );
+		error = clientWindow.create(this, m_menu ? m_menu->getSubMenu( winMenu ) : nullptr );
 	}
 	return error;
 }
 
-SuccessCode MDIwindow::close( void )
+SuccessCode MDIwindow::close()
 {
 	clientWindow.close();
 	return CallbackWindow::close();

@@ -3,10 +3,10 @@
 		Module: 		STDDLG.CPP
 		Description:	Implementation of standard dialogs
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -96,21 +96,15 @@ APIENTRY OFNHookProc(
 // ----- class constructors/destructors -------------------------------- //
 // --------------------------------------------------------------------- //
 
-FileDialog::FileDialog() : BasicWindow( FileDialogFlag, NULL )
+FileDialog::FileDialog() : BasicWindow( FileDialogFlag, NULL ), m_fileBuffer(10240)
 {
-	fileBuffer = (char*)malloc( 10240 );
-	*fileBuffer = 0;
+	*m_fileBuffer = 0;
 
-	memset( &ofn,0, sizeof( OPENFILENAME ) );
-	ofn.lStructSize = sizeof( OPENFILENAME );
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile	 = fileBuffer;
-	ofn.nMaxFile	 = 10239;
-}
-
-FileDialog::~FileDialog()
-{
-	free( fileBuffer );
+	memset( &m_ofn,0, sizeof( OPENFILENAME ) );
+	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	m_ofn.nFilterIndex = 1;
+	m_ofn.lpstrFile	 = m_fileBuffer;
+	m_ofn.nMaxFile	 = 10239;
 }
 
 SaveFileAsDialog::SaveFileAsDialog()
@@ -125,19 +119,19 @@ SaveFileAsDialog::~SaveFileAsDialog()
 
 SearchDialog::SearchDialog() : BasicWindow( SearchDialogFlag, (BasicWindow*)NULL )
 {
-	memset( &findInfo, 0, sizeof( findInfo ) );
-	findInfo.lStructSize = sizeof( findInfo );
-	findText[0] = 0;
-	findInfo.lpstrFindWhat = findText;
-	findInfo.wFindWhatLen = sizeof( findText );
-	findInfo.Flags = FR_DOWN;
+	memset( &m_findInfo, 0, sizeof( m_findInfo ) );
+	m_findInfo.lStructSize = sizeof( m_findInfo );
+	m_findText[0] = 0;
+	m_findInfo.lpstrFindWhat = m_findText;
+	m_findInfo.wFindWhatLen = sizeof( m_findText );
+	m_findInfo.Flags = FR_DOWN;
 }
 
 ReplaceDialog::ReplaceDialog()
 {
-	replaceText[0] = 0;
-	findInfo.lpstrReplaceWith = replaceText;
-	findInfo.wReplaceWithLen = sizeof( replaceText );
+	m_replaceText[0] = 0;
+	m_findInfo.lpstrReplaceWith = m_replaceText;
+	m_findInfo.wReplaceWithLen = sizeof( m_replaceText );
 }
 
 // --------------------------------------------------------------------- //
@@ -192,15 +186,15 @@ bool ColorDialog::create(
 	COLORREF *value
 )
 {
-	cc.hwndOwner	= parent->handle();
-	cc.rgbResult	= *value;
-	cc.lpCustColors = palette;
+	m_cc.hwndOwner	= parent->handle();
+	m_cc.rgbResult	= *value;
+	m_cc.lpCustColors = m_palette;
 
-	cc.Flags		= CC_RGBINIT;
+	m_cc.Flags		= CC_RGBINIT;
 
-	if( ChooseColor( &cc ) )
+	if( ChooseColor( &m_cc ) )
 	{
-		*value = cc.rgbResult;
+		*value = m_cc.rgbResult;
 		return true;
 	}
 	return false;
@@ -224,14 +218,14 @@ bool ColorDialog::createWithPalette(
 	{
 		itoa( i, keyName + nameLen, 10 );
 		colorStr = appObject->GetProfile( NULL, keyName, "16777215" );
-		palette[i] = atol( color );
+		m_palette[i] = atol( color );
 	}
 	if( create( parent, value ) )
 	{
 		for( i=0; i<16; i++ )
 		{
 			itoa( i, keyName + nameLen, 10 );
-			ultoa( palette[i], color, 10 );
+			ultoa( m_palette[i], color, 10 );
 
 			appObject->WriteProfile( false, NULL, keyName, color );
 		}
@@ -247,8 +241,8 @@ bool SearchDialog::create( const CallbackWindow *parent, const char *text, bool 
 
 	if( text )
 	{
-		strncpy( findText, text, sizeof(findText) );
-		findText[sizeof(findText)-1] = 0;
+		strncpy( m_findText, text, sizeof(m_findText) );
+		m_findText[sizeof(m_findText)-1] = 0;
 	}
 	if( wholeWord )
 		flags |= FR_WHOLEWORD;
@@ -257,10 +251,10 @@ bool SearchDialog::create( const CallbackWindow *parent, const char *text, bool 
 	if( downSearch )
 		flags |= FR_DOWN;
 
-	findInfo.Flags = flags;
-	findInfo.hwndOwner = parent->handle();
+	m_findInfo.Flags = flags;
+	m_findInfo.hwndOwner = parent->handle();
 	parent->registerSearchDialog( this );
-	setHandle( FindText( &findInfo ) );
+	setHandle( FindText( &m_findInfo ) );
 
 	return false;
 }
@@ -271,43 +265,43 @@ bool ReplaceDialog::create( const CallbackWindow *parent, const char*newFindText
 
 	if( newFindText )
 	{
-		strncpy( findText, newFindText, sizeof(findText) );
-		findText[sizeof(findText)-1] = 0;
+		strncpy( m_findText, newFindText, sizeof(m_findText) );
+		m_findText[sizeof(m_findText)-1] = 0;
 	}
 	if( newReplaceText )
 	{
-		strncpy( replaceText, newReplaceText, sizeof(replaceText) );
-		replaceText[sizeof(replaceText)-1] = 0;
+		strncpy( m_replaceText, newReplaceText, sizeof(m_replaceText) );
+		m_replaceText[sizeof(m_replaceText)-1] = 0;
 	}
 	if( wholeWord )
 		flags |= FR_WHOLEWORD;
 	if( matchCase )
 		flags |= FR_MATCHCASE;
 
-	findInfo.Flags = flags;
-	findInfo.hwndOwner = parent->handle();
+	m_findInfo.Flags = flags;
+	m_findInfo.hwndOwner = parent->handle();
 	parent->registerSearchDialog( this );
-	setHandle( ReplaceText( &findInfo ) );
+	setHandle( ReplaceText( &m_findInfo ) );
 
 	return false;
 }
 
 bool PrinterDialog::create( const BasicWindow *parent )
 {
-	printDlg.hwndOwner = parent->handle();
-	printDlg.Flags = PD_ALLPAGES|PD_RETURNDC;
+	m_printDlg.hwndOwner = parent->handle();
+	m_printDlg.Flags = PD_ALLPAGES|PD_RETURNDC;
 
-	return (bool)PrintDlg( &printDlg );
+	return bool(PrintDlg( &m_printDlg ));
 }
 
 bool FontDialog::create( const BasicWindow *parent )
 {
-	fontDlg.hwndOwner = parent->handle();
-	if( !(fontDlg.Flags & CF_BOTH) )
-		fontDlg.Flags |= CF_BOTH;
-	fontDlg.Flags |= CF_INITTOLOGFONTSTRUCT;
+	m_fontDlg.hwndOwner = parent->handle();
+	if( !(m_fontDlg.Flags & CF_BOTH) )
+		m_fontDlg.Flags |= CF_BOTH;
+	m_fontDlg.Flags |= CF_INITTOLOGFONTSTRUCT;
 
-	return (bool)ChooseFont( &fontDlg );
+	return bool(ChooseFont( &m_fontDlg ));
 }
 
 }	// namespace winlib

@@ -3,10 +3,10 @@
 		Module: 		STREDIT.CPP
 		Description:	A popup window to edit one string
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -51,46 +51,46 @@ STRING StringEditor::create( BasicWindow *parent, const char *title, const char 
 {
 	int		labelWidth = int(strlen( title ) * 10);
 	int		controlHeight = singleLine ? 20 : 200;
-	theValue = string;
+	m_value = string;
 
 	setText( title );
 	if( ModalPopup::create( parent, labelWidth+430, controlHeight + 70 ) == scSUCCESS )
 	{
-		label.create( this, 8, 8, labelWidth, 20 );
-		label.setText( title );
+		m_label.create( this, 8, 8, labelWidth, 20 );
+		m_label.setText( title );
 
 		if( singleLine )
 		{
 			EditControl	*newControl = new EditControl( this );
 			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
-			theStringEdit = newControl;
+			m_theStringEdit = newControl;
 		}
 		else
 		{
 			MemoControl	*newControl = new MemoControl( this );
 			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
-			theStringEdit = newControl;
+			m_theStringEdit = newControl;
 		}
 
-		theStringEdit->setText( string );
+		m_theStringEdit->setText( string );
 
-		okButton.create( this, 8, controlHeight+16, 50, 20 );
-		okButton.setText( "OK" );
-		okButton.setId( IDOK );
+		m_okButton.create( this, 8, controlHeight+16, 50, 20 );
+		m_okButton.setText( "OK" );
+		m_okButton.setId( IDOK );
 
-		cancelButton.create( this, 66, controlHeight+16, 50, 20 );
-		cancelButton.setText( "Cancel" );
-		cancelButton.setId( IDCANCEL );
+		m_cancelButton.create( this, 66, controlHeight+16, 50, 20 );
+		m_cancelButton.setText( "Cancel" );
+		m_cancelButton.setId( IDCANCEL );
 
 		mainLoop();
 	}
 
-	return theValue;
+	return m_value;
 }
 
-ProcessStatus StringEditor::handleOk( void )
+ProcessStatus StringEditor::handleOk()
 {
-	theValue = theStringEdit->getString();
+	m_value = m_theStringEdit->getString();
 	return ModalPopup::handleOk();
 }
 

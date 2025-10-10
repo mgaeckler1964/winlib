@@ -3,10 +3,10 @@
 		Module: 		STDDLG.H
 		Description:	Windows Standard Dialogs
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -114,99 +114,98 @@ struct RessourceIDs<const int*>
 class FileDialog : public BasicWindow
 {
 	protected:
-	OPENFILENAME	ofn;
-	char			*fileBuffer;
-	STRING			title,
-					filter,
-					directory,
-					regName;
+	OPENFILENAME		m_ofn;
+	gak::Buffer<char>	m_fileBuffer;
+	STRING				m_title,
+						m_filter,
+						m_directory,
+						m_regName;
 
 	protected:
 	FileDialog();
-	~FileDialog();
 
 	template <typename IdType>
 	void init( const BasicWindow *parent, int titleId, IdType filterId, int numFilter );
-	void storeDirectory( void )
+	void storeDirectory()
 	{
-		if( fileBuffer && *fileBuffer )
+		if( bool(m_fileBuffer) && *m_fileBuffer )
 		{
-			directory = fileBuffer;
-			size_t slashPos = directory.searchRChar( DIRECTORY_DELIMITER );
+			m_directory = (char*)m_fileBuffer;
+			size_t slashPos = m_directory.searchRChar( DIRECTORY_DELIMITER );
 			if( slashPos != -1 )
 			{
-				directory.cut( slashPos );
-				ofn.lpstrInitialDir = (const char *)directory;
-				if( !regName.isEmpty() )
-					appObject->WriteProfile( false, "lastDirectory", regName, directory );
+				m_directory.cut( slashPos );
+				m_ofn.lpstrInitialDir = (const char *)m_directory;
+				if( !m_regName.isEmpty() )
+					appObject->WriteProfile( false, "lastDirectory", m_regName, m_directory );
 			}
 			else
 			{
-				directory = (const char *)NULL;
-				ofn.lpstrInitialDir = NULL;
+				m_directory = (const char *)NULL;
+				m_ofn.lpstrInitialDir = NULL;
 			}
 		}
 		else
 		{
-			directory = (const char *)NULL;
-			ofn.lpstrInitialDir = NULL;
+			m_directory = (const char *)NULL;
+			m_ofn.lpstrInitialDir = NULL;
 		}
 	}
 	public:
-	long getFilterIndex( void ) const
+	long getFilterIndex() const
 	{
-		return ofn.nFilterIndex;
+		return m_ofn.nFilterIndex;
 	}
 	void setFilterIndex( long idx )
 	{
-		ofn.nFilterIndex = idx;
+		m_ofn.nFilterIndex = idx;
 	}
 
-	const char *getFilename( void ) const
+	const char *getFilename() const
 	{
-		return fileBuffer;
+		return m_fileBuffer;
 	}
 	void setFilename( const STRING &filename )
 	{
 		size_t	len = filename.strlen();
 
-		if( len > ofn.nMaxFile-1 )
+		if( len > m_ofn.nMaxFile-1 )
 		{
-			fileBuffer		= (char *)realloc( fileBuffer, 2*strlen( filename ) );
-			ofn.lpstrFile	= fileBuffer;
-			ofn.nMaxFile	= DWORD(2*strlen( filename )-1);
+			m_fileBuffer.resize( 2*strlen( filename ) );
+			m_ofn.lpstrFile	= m_fileBuffer;
+			m_ofn.nMaxFile	= DWORD(2*strlen( filename )-1);
 		}
 		if( len )
 		{
 			size_t	slashPos = filename.searchRChar( DIRECTORY_DELIMITER );
 			if( slashPos != -1 )
 			{
-				directory = filename.leftString( slashPos );
-				ofn.lpstrInitialDir = (const char *)directory;
-				strcpy( fileBuffer, filename + (size_t)(slashPos + 1) );
+				m_directory = filename.leftString( slashPos );
+				m_ofn.lpstrInitialDir = (const char *)m_directory;
+				strcpy( m_fileBuffer, filename + (size_t)(slashPos + 1) );
 			}
 			else
 			{
-				directory = (const char *)NULL;
-				ofn.lpstrInitialDir = NULL;
-				strcpy( fileBuffer, filename );
+				m_directory = (const char *)NULL;
+				m_ofn.lpstrInitialDir = NULL;
+				strcpy( m_fileBuffer, filename );
 			}
 		}
 		else
 		{
-			*fileBuffer = 0;
-			directory = (const char *)NULL;
-			ofn.lpstrInitialDir = NULL;
+			*m_fileBuffer = 0;
+			m_directory = (const char *)NULL;
+			m_ofn.lpstrInitialDir = NULL;
 		}
 	}
-	const STRING &getDirectory( void ) const
+	const STRING &getDirectory() const
 	{
-		return directory;
+		return m_directory;
 	}
 	void setDirectory( const STRING &newDirectory )
 	{
-		directory = newDirectory;
-		ofn.lpstrInitialDir = (const char *)directory;
+		m_directory = newDirectory;
+		m_ofn.lpstrInitialDir = (const char *)m_directory;
 	}
 	void setDefaultDirectory( const STRING &regName )
 	{
@@ -238,26 +237,26 @@ class FileDialog : public BasicWindow
 	}
 	void setLastDirectory( const STRING &regName )
 	{
-		this->regName = regName;
+		m_regName = regName;
 		STRING lastDirectory = appObject->GetProfile( "lastDirectory", regName, "" );
 		if( !lastDirectory.isEmpty() )
 			setDirectory( lastDirectory );
 		else
 			setDefaultDirectory( regName );
 	}
-	void setPersonalFolder( void )
+	void setPersonalFolder()
 	{
 		setLastDirectory( "Personal" );
 	}
-	void setPersonalVideos( void )
+	void setPersonalVideos()
 	{
 		setLastDirectory( "My Video" );
 	}
-	void setPersonalMusic( void )
+	void setPersonalMusic()
 	{
 		setLastDirectory( "My Music" );
 	}
-	void setPersonalPictures( void )
+	void setPersonalPictures()
 	{
 		setLastDirectory( "My Pictures" );
 	}
@@ -309,14 +308,14 @@ class SaveFileAsDialog : public FileDialog
 class ColorDialog
 {
 	private:
-	CHOOSECOLOR cc;
-	COLORREF	palette[16];
+	CHOOSECOLOR m_cc;
+	COLORREF	m_palette[16];
 
 	public:
 	ColorDialog()
 	{
-		memset( &cc, 0, sizeof( cc ) );
-		cc.lStructSize = sizeof( cc );
+		memset( &m_cc, 0, sizeof( m_cc ) );
+		m_cc.lStructSize = sizeof( m_cc );
 	}
 
 	bool create( const BasicWindow *parent, COLORREF *result );
@@ -331,32 +330,32 @@ class ColorDialog
 class SearchDialog : public BasicWindow
 {
 	protected:
-	FINDREPLACE 	findInfo;
-	char			findText[128];
+	FINDREPLACE 	m_findInfo;
+	char			m_findText[256];
 
 	protected:
 	SearchDialog();
 	public:
-	static SearchDialog *create( void )
+	static SearchDialog *create()
 	{
 		return new SearchDialog;
 	}
 	bool create( const CallbackWindow *parent, const char *text, bool wholeWord, bool matchCase, bool downSearch );
-	const char *getFindText( void ) const
+	const char *getFindText() const
 	{
-		return findText;
+		return m_findText;
 	}
 };
 
 class ReplaceDialog : protected SearchDialog
 {
 	private:
-	char			replaceText[128];
+	char			m_replaceText[256];
 
 	private:
 	ReplaceDialog();
 	public:
-	static ReplaceDialog *create( void )
+	static ReplaceDialog *create()
 	{
 		return new ReplaceDialog;
 	}
@@ -367,27 +366,27 @@ class ReplaceDialog : protected SearchDialog
 		bool					wholeWord,
 		bool					matchCase
 	);
-	const char *getReplaceText( void ) const
+	const char *getReplaceText() const
 	{
-		return replaceText;
+		return m_replaceText;
 	}
 };
 
 class PrinterDialog
 {
 	private:
-	PRINTDLG	printDlg;
+	PRINTDLG	m_printDlg;
 
 	public:
 	PrinterDialog()
 	{
-		memset( &printDlg, 0, sizeof( printDlg ) );
-		printDlg.lStructSize = sizeof( printDlg );
+		memset( &m_printDlg, 0, sizeof( m_printDlg ) );
+		m_printDlg.lStructSize = sizeof( m_printDlg );
 	}
 	bool	create( const BasicWindow *parent );
-	PrintDevice	*getPrinter( void ) const
+	PrintDevice	*getPrinter() const
 	{
-		PrintDevice *printer = new PrintDevice( printDlg.hDC );
+		PrintDevice *printer = new PrintDevice( m_printDlg.hDC );
 		return printer;
 	}
 
@@ -397,15 +396,15 @@ class FontDialog
 {
 	friend class Font;
 
-	CHOOSEFONT	fontDlg;
+	CHOOSEFONT	m_fontDlg;
 
 	FontDialog( LOGFONT *font, unsigned long Flags )
 	{
-		memset( &fontDlg, 0, sizeof( fontDlg ) );
-		fontDlg.lStructSize = sizeof( fontDlg );
+		memset( &m_fontDlg, 0, sizeof( m_fontDlg ) );
+		m_fontDlg.lStructSize = sizeof( m_fontDlg );
 
-		fontDlg.Flags = Flags;
-		fontDlg.lpLogFont = font;
+		m_fontDlg.Flags = Flags;
+		m_fontDlg.lpLogFont = font;
 	}
 
 	bool create( const BasicWindow *parent );
@@ -415,21 +414,21 @@ class FontDialog
 template <typename IdType>
 void FileDialog::init( const BasicWindow *parent, int titleId, IdType filterID, int numFilter )
 {
-	title = titleId ? appObject->loadString( titleId ) : NULL_STRING;
-	filter = NULL_STRING;
+	m_title = titleId ? appObject->loadString( titleId ) : NULL_STRING;
+	m_filter = NULL_STRING;
 
 	if( filterID )
 	{
 		RessourceIDs<IdType>	ressourceID( filterID );
 		while( numFilter )
 		{
-			filter += appObject->loadString( ressourceID.getNextID() );
+			m_filter += appObject->loadString( ressourceID.getNextID() );
 			numFilter--;
 		}
-		if( !filter.isEmpty() )
+		if( !m_filter.isEmpty() )
 		{
-			char delimiter = filter.lastChar();
-			for( char *cp=const_cast<char*>(static_cast<const char *>(filter)); *cp ; cp++ )
+			char delimiter = m_filter.lastChar();
+			for( char *cp=const_cast<char*>(static_cast<const char *>(m_filter)); *cp ; cp++ )
 			{
 				if( *cp == delimiter )
 				{
@@ -439,9 +438,9 @@ void FileDialog::init( const BasicWindow *parent, int titleId, IdType filterID, 
 		}
 	}
 
-	ofn.hwndOwner	 = parent->handle();
-	ofn.lpstrTitle	 = title.isNullPtr() ? (const char *)NULL : (const char *)title;
-	ofn.lpstrFilter  = filter.isNullPtr() ? (const char *)NULL : (const char *)filter;
+	m_ofn.hwndOwner		= parent->handle();
+	m_ofn.lpstrTitle	= m_title.isNullPtr() ? (const char *)NULL : (const char *)m_title;
+	m_ofn.lpstrFilter	= m_filter.isNullPtr() ? (const char *)NULL : (const char *)m_filter;
 }
 
 template <typename IdType>
@@ -455,9 +454,9 @@ bool OpenFileDialog::create(
 {
 	FileDialog::init( parent, titleId, filterID, numIds );
 
-	ofn.Flags = flags;
+	m_ofn.Flags = flags;
 
-	bool okClicked = bool(GetOpenFileName( &ofn ));
+	bool okClicked = bool(GetOpenFileName( &m_ofn ));
 	if( okClicked )
 	{
 		storeDirectory();
@@ -476,15 +475,15 @@ bool SaveFileAsDialog::create(
 {
 	FileDialog::init( parent, titleId, filterID, numIds );
 
-	ofn.Flags = OFN_PATHMUSTEXIST|OFN_OVERWRITEPROMPT|OFN_HIDEREADONLY|OFN_LONGNAMES;
+	m_ofn.Flags = OFN_PATHMUSTEXIST|OFN_OVERWRITEPROMPT|OFN_HIDEREADONLY|OFN_LONGNAMES;
 	if( defaultExtensions.size() )
 	{
-		ofn.Flags |= OFN_ENABLEHOOK;
-		ofn.lpfnHook = OFNHookProc;
-		ofn.lCustData = (long)this;
+		m_ofn.Flags |= OFN_ENABLEHOOK;
+		m_ofn.lpfnHook = OFNHookProc;
+		m_ofn.lCustData = (long)this;
 	}
 
-	bool	okClicked = (bool)GetSaveFileName( &ofn );
+	bool	okClicked = (bool)GetSaveFileName( &m_ofn );
 	if( okClicked )
 	{
 		storeDirectory();
