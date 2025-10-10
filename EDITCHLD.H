@@ -91,7 +91,7 @@ class EditChild : public ManagerChild
 
 	MemoControl *getControl() 
 	{
-		return static_cast<MemoControl*>(control);
+		return static_cast<MemoControl*>(m_control);
 	}
 
 	bool &withBOM()
@@ -180,67 +180,67 @@ class EditChild : public ManagerChild
 	}
 	void setFont( Font &font )
 	{
-		static_cast<EDIT*>(control)->setFont( font );
+		static_cast<EDIT*>(m_control)->setFont( font );
 	}
 	void setTabWidth( unsigned int width )
 	{
-		static_cast<EDIT*>(control)->setTabWidth( width );
+		static_cast<EDIT*>(m_control)->setTabWidth( width );
 	}
 	void setEditable()
 	{
-		static_cast<EDIT*>(control)->setEditable();
+		static_cast<EDIT*>(m_control)->setEditable();
 	}
 	void setReadonly()
 	{
-		static_cast<EDIT*>(control)->setReadonly();
+		static_cast<EDIT*>(m_control)->setReadonly();
 	}
 	bool isEditable() const
 	{
-		return static_cast<EDIT*>(control)->isEditable();
+		return static_cast<EDIT*>(m_control)->isEditable();
 	}
 	bool isChanged() const
 	{
-		return static_cast<EDIT*>(control)->isChanged();
+		return static_cast<EDIT*>(m_control)->isChanged();
 	}
 	void setChanged()
 	{
-		static_cast<EDIT*>(control)->setChanged();
+		static_cast<EDIT*>(m_control)->setChanged();
 	}
 
 	void setLineEnd( RLINE_ENDS newLineEnd )
 	{
-		static_cast<EDIT*>(control)->setLineEnd(newLineEnd);
+		static_cast<EDIT*>(m_control)->setLineEnd(newLineEnd);
 	}
 	RLINE_ENDS getLineEnd() const
 	{
-		return static_cast<EDIT*>(control)->getLineEnd();
+		return static_cast<EDIT*>(m_control)->getLineEnd();
 	}
 /*
 	void setOemConvert() const
 	{
-		static_cast<EDIT*>(control)->setOemConvert();
+		static_cast<EDIT*>(m_control)->setOemConvert();
 	}
 	void clearOemConvert() const
 	{
-		static_cast<EDIT*>(control)->clearOemConvert();
+		static_cast<EDIT*>(m_control)->clearOemConvert();
 	}
 */
 	void setCharset( EDIT::EditCharset newCharset )
 	{
-		static_cast<EDIT*>(control)->setCharset(newCharset);
+		static_cast<EDIT*>(m_control)->setCharset(newCharset);
 	}
 	void convertCharset( EDIT::EditCharset newCharset )
 	{
-		static_cast<EDIT*>(control)->convertCharset(newCharset);
+		static_cast<EDIT*>(m_control)->convertCharset(newCharset);
 	}
 
 	bool isOemConvert() const
 	{
-		static_cast<EDIT*>(control)->isOemConvert();
+		static_cast<EDIT*>(m_control)->isOemConvert();
 	}
 	enum EDIT::EditCharset getCharset() const
 	{
-		return static_cast<EDIT*>(control)->getCharset();
+		return static_cast<EDIT*>(m_control)->getCharset();
 	}
 
 	size_t searchText(
@@ -252,14 +252,14 @@ class EditChild : public ManagerChild
 		const char	*replaceText=NULL,
 		bool		all = false )
 	{
-		return static_cast<EDIT*>(control)->searchText(
+		return static_cast<EDIT*>(m_control)->searchText(
 			text, startPos, wholeWord, matchCase, downSearch, replaceText, all
 		);
 	}
 
 	void replaceSelection( const char *replace )
 	{
-		static_cast<EDIT*>(control)->replaceSelection( replace );
+		static_cast<EDIT*>(m_control)->replaceSelection( replace );
 	}
 	const STRING &getFileName() const
 	{
@@ -267,77 +267,77 @@ class EditChild : public ManagerChild
 	}
 	void cut()
 	{
-		static_cast<EDIT*>(control)->cut();
+		static_cast<EDIT*>(m_control)->cut();
 	}
 	void copy()
 	{
-		static_cast<EDIT*>(control)->copy();
+		static_cast<EDIT*>(m_control)->copy();
 	}
 	void paste()
 	{
-		static_cast<EDIT*>(control)->paste();
+		static_cast<EDIT*>(m_control)->paste();
 	}
 	void clear()
 	{
-		static_cast<EDIT*>(control)->clear();
+		static_cast<EDIT*>(m_control)->clear();
 	}
 	void selectAll()
 	{
-		static_cast<EDIT*>(control)->selectAll();
+		static_cast<EDIT*>(m_control)->selectAll();
 	}
 	void deleteLine()
 	{
-		static_cast<EDIT*>(control)->deleteLine();
+		static_cast<EDIT*>(m_control)->deleteLine();
 	}
 	void undo()
 	{
-		static_cast<EDIT*>(control)->undo();
+		static_cast<EDIT*>(m_control)->undo();
 	}
 	void print( PrintDevice *device ) const
 	{
 		STRING	fileName = getFileName();
 
-		static_cast<EDIT*>(control)->print( fileName, device );
+		static_cast<EDIT*>(m_control)->print( fileName, device );
 	}
 	void setLineBreak()
 	{
-		static_cast<EDIT*>(control)->setLineBreak();
+		static_cast<EDIT*>(m_control)->setLineBreak();
 	}
 	void clrLineBreak()
 	{
-		static_cast<EDIT*>(control)->clrLineBreak();
+		static_cast<EDIT*>(m_control)->clrLineBreak();
 	}
 	bool isLineBreak() const
 	{
-		return static_cast<EDIT*>(control)->isLineBreak();
+		return static_cast<EDIT*>(m_control)->isLineBreak();
 	}
 	void setSelection( size_t startPos, size_t endPos )
 	{
-		static_cast<EDIT*>(control)->setSelection( startPos, endPos );
+		static_cast<EDIT*>(m_control)->setSelection( startPos, endPos );
 	}
 	STRING getSelection() const
 	{
-		return static_cast<EDIT*>(control)->getSelection();
+		return static_cast<EDIT*>(m_control)->getSelection();
 	}
 	void getSelection( size_t *startPos, size_t *endPos = NULL ) const
 	{
-		static_cast<EDIT*>(control)->getSelection( startPos, endPos );
+		static_cast<EDIT*>(m_control)->getSelection( startPos, endPos );
 	}
 	void getCursorPosition( size_t *line, size_t *col ) const
 	{
-		static_cast<EDIT*>(control)->getCursorPosition( line, col );
+		static_cast<EDIT*>(m_control)->getCursorPosition( line, col );
 	}
 	operator STRING() const
 	{
-		return STRING(*static_cast<EDIT*>(control));
+		return STRING(*static_cast<EDIT*>(m_control));
 	}
 	STRING getText() const
 	{
-		return control->getText();
+		return m_control->getText();
 	}
 	void setText( const STRING &text )
 	{
-		control->setText( text );
+		m_control->setText( text );
 	}
 	void setTitle( const STRING &text )
 	{
@@ -345,7 +345,7 @@ class EditChild : public ManagerChild
 	}
 	void setText( int textId )
 	{
-		control->setText( textId );
+		m_control->setText( textId );
 	}
 	void setTitle( int textId )
 	{
@@ -354,20 +354,20 @@ class EditChild : public ManagerChild
 
 	void indent()
 	{
-		static_cast<EDIT*>(control)->indent();
+		static_cast<EDIT*>(m_control)->indent();
 	}
 	void unindent()
 	{
-		static_cast<EDIT*>(control)->unindent();
+		static_cast<EDIT*>(m_control)->unindent();
 	}
 
 	void setAutoIndent()
 	{
-		static_cast<EDIT*>(control)->setAutoIndent();
+		static_cast<EDIT*>(m_control)->setAutoIndent();
 	}
 	void clrAutoIndent()
 	{
-		static_cast<EDIT*>(control)->clrAutoIndent();
+		static_cast<EDIT*>(m_control)->clrAutoIndent();
 	}
 };
 

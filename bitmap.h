@@ -3,10 +3,10 @@
 		Module:			bitmap.h
 		Description:	Used to process windows bitmaps
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -97,20 +97,20 @@ class Application;
 
 class Bitmap : public GdiObject<HBITMAP>
 {
-	BITMAPINFO		*bitmapInfo;
-	Size			size;
+	BITMAPINFO		*m_bitmapInfo;
+	Size			m_size;
 
 	void setBitmap( HBITMAP newBitmap, int width, int height )
 	{
-		size.width = width;
-		size.height = height;
+		m_size.width = width;
+		m_size.height = height;
 
 		setHandle( newBitmap );
 	}
 	friend class Device;
 	friend class MemoryDevice;
 	friend class Button;
-	operator HBITMAP ( void ) const
+	operator HBITMAP () const
 	{
 		return getHandle();
 	}
@@ -118,7 +118,7 @@ class Bitmap : public GdiObject<HBITMAP>
 	Bitmap( HDC memoryDevice ) 
 	: GdiObject<HBITMAP>( memoryDevice )
 	{
-		bitmapInfo = NULL;
+		m_bitmapInfo = nullptr;
 	}
 
 	void create( HDC targetDevice, int width, int height )
@@ -136,12 +136,12 @@ class Bitmap : public GdiObject<HBITMAP>
 	friend class Application;
 	Bitmap( HBITMAP handle ) : GdiObject<HBITMAP>( handle )
 	{
-		bitmapInfo = NULL;
+		m_bitmapInfo = nullptr;
 	}
 	const Bitmap & operator = ( HBITMAP handle )
 	{
 		setHandle( handle );
-		bitmapInfo = NULL;
+		m_bitmapInfo = nullptr;
 
 		return *this;
 	}
@@ -150,12 +150,12 @@ class Bitmap : public GdiObject<HBITMAP>
 	public:
 	Bitmap() 
 	{
-		bitmapInfo = NULL;
+		m_bitmapInfo = nullptr;
 	}
 	Bitmap( const Bitmap &src )	: GdiObject<HBITMAP>( src )
 	{
-		size = src.size;
-		bitmapInfo = NULL;
+		m_size = src.m_size;
+		m_bitmapInfo = nullptr;
 	}
 	const Bitmap & operator = ( const Bitmap &src )
 	{
@@ -163,23 +163,23 @@ class Bitmap : public GdiObject<HBITMAP>
 		{
 			clearBitmap();
 			GdiObject<HBITMAP>::operator = ( src );
-			size = src.size;
+			m_size = src.m_size;
 		}
 
 		return *this;
 	}
 	~Bitmap() 
 	{
-		if( bitmapInfo )
-			free( bitmapInfo );
+		if( m_bitmapInfo )
+			free( m_bitmapInfo );
 	}
-	void clearBitmap( void )
+	void clearBitmap()
 	{
 		clear();
-		if( bitmapInfo )
+		if( m_bitmapInfo )
 		{
-			free( bitmapInfo );
-			bitmapInfo = NULL;
+			free( m_bitmapInfo );
+			m_bitmapInfo = nullptr;
 		};
 	}
 
@@ -191,42 +191,42 @@ class Bitmap : public GdiObject<HBITMAP>
 	}
 	void createInfo( int depth, size_t numColors )
 	{
-		if( bitmapInfo )
-			free( bitmapInfo );
+		if( m_bitmapInfo )
+			free( m_bitmapInfo );
 
-		bitmapInfo = (BITMAPINFO *)calloc( 
+		m_bitmapInfo = (BITMAPINFO *)calloc( 
 			1, 
 			sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * numColors 
 		);
 
-		bitmapInfo->bmiHeader.biSize         = sizeof( BITMAPINFOHEADER );
-		bitmapInfo->bmiHeader.biWidth        = size.width;
-		bitmapInfo->bmiHeader.biHeight       = size.height;
-		bitmapInfo->bmiHeader.biPlanes       = 1;
-		bitmapInfo->bmiHeader.biBitCount     = WORD(depth);
-		bitmapInfo->bmiHeader.biCompression  = 0;
-		bitmapInfo->bmiHeader.biClrUsed      = DWORD(numColors);
-		bitmapInfo->bmiHeader.biClrImportant = DWORD(numColors);
+		m_bitmapInfo->bmiHeader.biSize         = sizeof( BITMAPINFOHEADER );
+		m_bitmapInfo->bmiHeader.biWidth        = m_size.width;
+		m_bitmapInfo->bmiHeader.biHeight       = m_size.height;
+		m_bitmapInfo->bmiHeader.biPlanes       = 1;
+		m_bitmapInfo->bmiHeader.biBitCount     = WORD(depth);
+		m_bitmapInfo->bmiHeader.biCompression  = 0;
+		m_bitmapInfo->bmiHeader.biClrUsed      = DWORD(numColors);
+		m_bitmapInfo->bmiHeader.biClrImportant = DWORD(numColors);
 	}
 	int getWidth() const
 	{
-		return size.width;
+		return m_size.width;
 	}
 	int getHeight() const
 	{
-		return size.height;
+		return m_size.height;
 	}
 	RGBQUAD & operator [] ( size_t idx )
 	{
-		return bitmapInfo->bmiColors[idx];
+		return m_bitmapInfo->bmiColors[idx];
 	}
 	const RGBQUAD & operator [] ( size_t idx ) const
 	{
-		return bitmapInfo->bmiColors[idx];
+		return m_bitmapInfo->bmiColors[idx];
 	}
 	const BITMAPINFO *getInfo() const
 	{
-		return bitmapInfo;
+		return m_bitmapInfo;
 	}
 };
 

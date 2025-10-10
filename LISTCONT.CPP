@@ -3,10 +3,10 @@
 		Module:			LISTCONT.CPP
 		Description:	Implementation of ListboxContainer
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -27,7 +27,6 @@
 		OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 		OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 		SUCH DAMAGE.
-
 */
 
 // --------------------------------------------------------------------- //
@@ -58,25 +57,25 @@ using namespace gak;
 
 ListboxContainer::~ListboxContainer()
 {
-	size_t			i = data.size();
+	size_t			i = m_data.size();
 	ListObject		*element;
 	while( i>0 )
 	{
 		i--;
-		element = data[i];
+		element = m_data[i];
 
 		delete element;
 	}
 }
 
 
-ListboxContainer::ListObjectPtr ListboxContainer::getSelectedEntry( void )
+ListboxContainer::ListObjectPtr ListboxContainer::getSelectedEntry()
 {
 	ListObjectPtr		entry = NULL;
 
-	if( control )
+	if( m_control )
 	{
-		T_STRING	selection = control->getSelectedItems();
+		T_STRING	selection = m_control->getSelectedItems();
 		if( !selection.isEmpty() )
 		{
 			STRING	line = selection.getFirstToken( "\n" );
@@ -84,12 +83,12 @@ ListboxContainer::ListObjectPtr ListboxContainer::getSelectedEntry( void )
 			{
 				size_t	i, numElems;
 
-				numElems = data.size();
+				numElems = m_data.size();
 				i = 0;
 				while( i<numElems )
 				{
-					entry = data[i];
-					if( !entry || (STRING)*entry == line )
+					entry = m_data[i];
+					if( !entry || STRING(*entry) == line )
 						break;
 					i++;
 				}
@@ -103,18 +102,18 @@ void ListboxContainer::removeEntry( ListObjectPtr object )
 {
 	size_t	i, numElems;
 
-	numElems = data.size();
+	numElems = m_data.size();
 	for( i=0; i<numElems; i++ )
 	{
-		if( data[i] == object )
+		if( m_data[i] == object )
 			break;
 	}
 
 	if( i<numElems )
 	{
-		data.removeElementAt( i );
-		if( control )
-			control->deleteEntry( int(i) );
+		m_data.removeElementAt( i );
+		if( m_control )
+			m_control->deleteEntry( int(i) );
 	}
 }
 

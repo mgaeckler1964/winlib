@@ -3,10 +3,10 @@
 		Module:			Layout.cpp
 		Description:	Layout managers
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -198,7 +198,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 
 	// calculate the col widths that can grow all positions
 	int colGrowSum = 0;
-	int	width = newSize.width - margin.left - margin.right;
+	int	width = newSize.width - m_margin.left - m_margin.right;
 	for( size_t i=0; i<colDimensions.size(); i++ )
 	{
 		Dimension &colDim = colDimensions[i];
@@ -206,14 +206,14 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 			colGrowSum += colDim.grow;
 		else
 		{
-			if( designerMode && !colDim.length )
+			if( m_designerMode && !colDim.length )
 				colDim.length = 20;
 			width -= colDim.length;
 		}
 	}
 
 	double colFactor = colGrowSum ? width/colGrowSum : 0;
-	int colPos = margin.left;
+	int colPos = m_margin.left;
 	for( size_t i=0; i<colDimensions.size(); i++ )
 	{
 		Dimension &colDim = colDimensions[i];
@@ -225,7 +225,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 
 	// calculate the row heights that can grow and all positions
 	int rowGrowSum = 0;
-	int	height = newSize.height - margin.top - margin.bottom;
+	int	height = newSize.height - m_margin.top - m_margin.bottom;
 	for( size_t i=0; i<rowDimensions.size(); i++ )
 	{
 		Dimension &rowDim = rowDimensions[i];
@@ -233,14 +233,14 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 			rowGrowSum += rowDim.grow;
 		else
 		{
-			if( designerMode && !rowDim.length )
+			if( m_designerMode && !rowDim.length )
 				rowDim.length = 20;
 			height -= rowDim.length;
 		}
 	}
 
 	double rowFactor = rowGrowSum ? height/rowGrowSum : 0;
-	int rowPos = margin.top;
+	int rowPos = m_margin.top;
 	for( size_t i=0; i<rowDimensions.size(); i++ )
 	{
 		Dimension &rowDim = rowDimensions[i];
@@ -346,7 +346,7 @@ Size LayoutManager::calcSize( const ChildWindows &/*children*/, const Size &newS
 void SingleChildManager::doLayout( const ChildWindows &children, const Size &newSize )
 {
 	RectSize	freeArea( newSize );
-	freeArea.substractBorder( margin );
+	freeArea.substractBorder( m_margin );
 
 	if( children.size() == 1 )
 	{
@@ -382,7 +382,7 @@ void RowManager::doLayout( const ChildWindows &children, const Size &newSize )
 	if( numVisible )
 	{
 		RectSize	freeArea( newSize );
-		freeArea.substractBorder( margin );
+		freeArea.substractBorder( m_margin );
 		freeArea.width /= int(numVisible);
 
 		for( size_t i=0; i<children.size(); i++ )
@@ -410,7 +410,7 @@ void ColManager::doLayout( const ChildWindows &children, const Size &newSize )
 			numVisible++;
 
 	RectSize	freeArea( newSize );
-	freeArea.substractBorder( margin );
+	freeArea.substractBorder( m_margin );
 	freeArea.height /= int(numVisible);
 
 	for( size_t i=0; i<children.size(); i++ )
@@ -432,10 +432,10 @@ void ColManager::doLayout( const ChildWindows &children, const Size &newSize )
 
 void AttachmentManager::doLayout( const ChildWindows &children, const Size &newSize )
 {
-	int	left = margin.left;
-	int top = margin.top;
-	int childHeight = newSize.height-margin.top-margin.bottom;
-	int childWidth = newSize.width - margin.left - margin.right;
+	int	left = m_margin.left;
+	int top = m_margin.top;
+	int childHeight = newSize.height - m_margin.top  - m_margin.bottom;
+	int childWidth  = newSize.width  - m_margin.left - m_margin.right;
 
 	int x, y, width, height;
 

@@ -3,10 +3,10 @@
 		Module:			menu.h
 		Description:	Define menu bars
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -93,18 +93,18 @@ namespace winlib
 
 class Menu
 {
-	HMENU	hMenu;
+	HMENU	m_hMenu;
 
 	Menu( const Menu &src );
 	const Menu & operator = ( const Menu &src );
 
 	bool setMenu( HMENU newMenu )
 	{
-		if( hMenu )
-			DestroyMenu( hMenu );
-		hMenu = newMenu;
+		if( m_hMenu )
+			DestroyMenu( m_hMenu );
+		m_hMenu = newMenu;
 
-		return newMenu == NULL; 
+		return newMenu == nullptr; 
 	}
 
 	virtual HMENU createMenu();
@@ -113,17 +113,17 @@ class Menu
 
 	Menu( HMENU menu )
 	{
-		hMenu = menu;
+		m_hMenu = menu;
 	}
 	public:
 	Menu()
 	{
-		hMenu = NULL;
+		m_hMenu = nullptr;
 	}
 	~Menu()
 	{
-		if( hMenu )
-			DestroyMenu( hMenu );
+		if( m_hMenu )
+			DestroyMenu( m_hMenu );
 	}
 	Menu *getSubMenu( int pos )const
 	{
@@ -131,7 +131,7 @@ class Menu
 	}
 	HMENU getMenu() const
 	{
-		return hMenu;
+		return m_hMenu;
 	}
 	bool load( HINSTANCE hInstance, const char *menuName )
 	{

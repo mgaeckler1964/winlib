@@ -235,23 +235,23 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	static void registerSearchDialog( SearchDialog *newFindDialog );
 
 	protected:
-	bool isShiftKey( void ) const
+	bool isShiftKey() const
 	{
 		return m_shiftKey;
 	}
-	bool isAltKey( void ) const
+	bool isAltKey() const
 	{
 		return m_altKey;
 	}
-	bool isControlKey( void ) const
+	bool isControlKey() const
 	{
 		return m_controlKey;
 	}
-	void setClosedFlag( void )
+	void setClosedFlag()
 	{
 		m_closed = true;
 	}
-	bool mayBeDeleted( void ) const
+	bool mayBeDeleted() const
 	{
 		return bool(m_closed && m_destroyed);
 	}
@@ -271,23 +271,23 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 
 	public:
-	virtual SuccessCode close( void );
-	void acceptFiles( void )
+	virtual SuccessCode close();
+	void acceptFiles()
 	{
 		DragAcceptFiles( handle(), true );
 	}
-	void noFileAccept( void )
+	void noFileAccept()
 	{
 		DragAcceptFiles( handle(), true );
 	}
 
 	// mouse capture
 	protected:
-	void captureMouse( void )
+	void captureMouse()
 	{
 		SetCapture( handle() );
 	}
-	void releaseMouse( void )
+	void releaseMouse()
 	{
 		ReleaseCapture();
 	}
@@ -299,17 +299,17 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	*/
 	// WM_INITDIALOG and WM_CREATE
 	public:
-	virtual ProcessStatus handleCreate( void );
+	virtual ProcessStatus handleCreate();
 	virtual void getControls();
 	// WM_CLOSE
-	virtual SuccessCode handleClose( void );
+	virtual SuccessCode handleClose();
 
 	// WM_DESTROY
-	virtual ProcessStatus handleDestroy( void );
+	virtual ProcessStatus handleDestroy();
 
 	// WM_SHOWWINDOW
-	virtual ProcessStatus handleShow( void );
-	virtual ProcessStatus handleHide( void );
+	virtual ProcessStatus handleShow();
+	virtual ProcessStatus handleHide();
 
 	// WM_MDIACTIVATE
 	virtual void handleActivate( bool );
@@ -333,7 +333,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	virtual ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND scrollBar );
 
 	// WM_CAPTURECHANGED
-	virtual ProcessStatus handleMouseRelease( void );
+	virtual ProcessStatus handleMouseRelease();
 
 	// WM_MOUSEMOVE
 	virtual ProcessStatus handleMouseMove( WPARAM modifier, const Point &position );
@@ -367,10 +367,10 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	virtual void showHelp( int controlType, int controlId );
 
 	// WM_TIMER
-	virtual void handleTimer( void );
+	virtual void handleTimer();
 
 	// WM_SETFOCUS
-	virtual void handleFocus( void );
+	virtual void handleFocus();
 	// WM_SYSKEYDOWN, WM_KEYDOWN
 	virtual ProcessStatus handleKeyDown( int key );
 	// WM_SYSKEYUP, WM_KEYUP
@@ -378,7 +378,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	// WM_CHAR
 	virtual ProcessStatus handleCharacterInput( int c );
 	// WM_KILLFOCUS
-	virtual void handleKillFocus( void );
+	virtual void handleKillFocus();
 
 	// WM_ASYNC_TASK_END
 	virtual void handleAsyncTaskEnd( void *data );
@@ -412,7 +412,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		m_terminate = true;
 	}
 	public:
-	void mainLoop( void );
+	void mainLoop();
 	void exitApplication( int exitCode = 0 )
 	{
 		PostQuitMessage( exitCode );
@@ -493,11 +493,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 			delete m_menu;
 		return m_menu = appObject->loadMenu( menuName );
 	}
-	const Menu *getMenu( void ) const
+	const Menu *getMenu() const
 	{
 		return m_menu;
 	}
-	void drawMenuBar( void ) const
+	void drawMenuBar() const
 	{
 		DrawMenuBar( handle() );
 	}
@@ -536,11 +536,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	{
 		createTimer( milliSeconds, true );
 	}
-	void removeTimer( void )
+	void removeTimer()
 	{
 		removeTimer( true );
 	}
-	bool hasTimer( void ) const
+	bool hasTimer() const
 	{
 		return m_applicationTimer;
 	}
@@ -549,7 +549,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		tool help
 	*/
 	void showToolHelp( const char *text );
-	void removeToolHelp( void );
+	void removeToolHelp();
 	void processTooltipTimer();
 
 	/*
@@ -559,13 +559,13 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	void resizeStatusBar( Size *mySize );
 
 	public:
-	void addStatusBar( void );
-	bool hasStatusBar( void ) const
+	void addStatusBar();
+	bool hasStatusBar() const
 	{
 		return( m_statusBar ) ? true : false;
 	}
 	void setStatusText( const STRING &value );
-	void removeStatusBar( void );
+	void removeStatusBar();
 
 	/*
 		scrolling
@@ -596,7 +596,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 			delete m_layoutManager;
 		m_layoutManager = newLayoutManager;
 	}
-	LayoutManager *getLayoutManager( void ) const
+	LayoutManager *getLayoutManager() const
 	{
 		return m_layoutManager;
 	}
@@ -621,7 +621,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 			invalidateWindow();
 		}
 	}
-	void doLayout( void ) const
+	void doLayout() const
 	{
 		if( m_layoutManager )
 		{

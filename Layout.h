@@ -3,10 +3,10 @@
 		Module:			Layout.h
 		Description:	Layout managers
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -196,10 +196,10 @@ struct LayoutData
 
 struct LayoutManager
 {
-	RectBorder	margin;
+	RectBorder	m_margin;
 
 	protected:
-	bool	designerMode;
+	bool	m_designerMode;
 
 	public:
 	static const char className[];
@@ -210,30 +210,30 @@ struct LayoutManager
 
 	LayoutManager( int marginLeft, int marginTop, int marginRight, int marginBottom )
 	{
-		designerMode = false;
+		m_designerMode = false;
 
-		margin.left = marginLeft;
-		margin.top = marginTop;
-		margin.right = marginRight;
-		margin.bottom = marginBottom;
+		m_margin.left = marginLeft;
+		m_margin.top = marginTop;
+		m_margin.right = marginRight;
+		m_margin.bottom = marginBottom;
 	}
 	LayoutManager( int marginVert, int marginHoriz )
 	{
-		designerMode = false;
+		m_designerMode = false;
 
-		margin.left = margin.right = marginHoriz;
-		margin.top = margin.bottom = marginVert;
+		m_margin.left = m_margin.right = marginHoriz;
+		m_margin.top = m_margin.bottom = marginVert;
 	}
 	LayoutManager( int margin=0 )
 	{
-		designerMode = false;
+		m_designerMode = false;
 
-		this->margin.left = this->margin.right =
-		this->margin.top = this->margin.bottom = margin;
+		m_margin.left = m_margin.right =
+		m_margin.top = m_margin.bottom = margin;
 	}
-	void setDesigerMode( void )
+	void setDesigerMode()
 	{
-		designerMode = true;
+		m_designerMode = true;
 	}
 	virtual Size calcSize( const ChildWindows &children, const Size &newSize );
 	virtual void doLayout( const ChildWindows &children, const Size &newSize ) = 0;
@@ -294,7 +294,7 @@ class TableManager : public LayoutManager
 	virtual Size calcSize( const ChildWindows &children, const Size &newSize );
 	virtual void doLayout( const ChildWindows &children, const Size &newSize );
 
-	size_t getNumColumns( void ) const
+	size_t getNumColumns() const
 	{
 		return colDimensions.size();
 	}
@@ -307,7 +307,7 @@ class TableManager : public LayoutManager
 		return colDimensions[col].pos;
 	}
 
-	size_t getNumRows( void ) const
+	size_t getNumRows() const
 	{
 		return rowDimensions.size();
 	}

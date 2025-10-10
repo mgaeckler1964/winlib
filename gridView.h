@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
 		Module:			gridView.h
-		Description:	A control diosplaying data in a grid
+		Description:	A control displaying data in a grid
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -134,24 +134,24 @@ class GridViewer : public ChildWindow
 	int							m_horizOffset, m_vertOffset;
 	int							m_totalHeight, m_totalWidth;
 
-	static void registerClass( void );
+	static void registerClass();
 
-	int getRowHeight( void ) const
+	int getRowHeight() const
 	{
 		return getFont().getFontSizePixel()+2*cellPadding;
 	}
 	void calcDimensions( const Size &size );
-	void calcDimensions( void )
+	void calcDimensions()
 	{
 		assert( m_rowAttributes.size() == m_data.getNumRows() );
 		assert( m_colAttributes.size() == m_data.getNumCols() );
 
 		calcDimensions( getClientSize() );
 	}
-	void updateCaretPos( void );
+	void updateCaretPos();
 	void moveCursor( size_t newEditCol, size_t newEditRow );
-	void moveCursorNextCell( void );
-	void moveCursorPrevCell( void );
+	void moveCursorNextCell();
+	void moveCursorPrevCell();
 
 	bool moveCursorLeftWord( Device &hDC, bool includeSelection );
 	bool moveCursorLeft( Device &hDC, bool includeSelection )
@@ -189,7 +189,7 @@ class GridViewer : public ChildWindow
 
 		drawEditCell( hDC, rect );
 	}
-	void deleteSelection( void )
+	void deleteSelection()
 	{
 		assert( m_editCell );
 		size_t	start = gak::math::min( m_editPos, m_selPos );
@@ -199,7 +199,7 @@ class GridViewer : public ChildWindow
 		m_editPos = m_selPos = start;
 	}
 
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	virtual ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar );
 	virtual ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND scrollBar );
@@ -237,7 +237,7 @@ class GridViewer : public ChildWindow
 		m_colAttributes.setSize( newNumCols );
 		calcDimensions();
 	}
-	size_t getNumCols( void ) const
+	size_t getNumCols() const
 	{
 		return m_data.getNumCols();
 	}
@@ -257,7 +257,7 @@ class GridViewer : public ChildWindow
 
 		calcDimensions();
 	}
-	size_t getNumRows( void ) const
+	size_t getNumRows() const
 	{
 		return m_data.getNumRows();
 	}
@@ -291,15 +291,15 @@ class GridViewer : public ChildWindow
 
 		return visibleWidth -2*cellPadding;
 	}
-	size_t getEditCol( void ) const
+	size_t getEditCol() const
 	{
 		return m_editCol;
 	}
-	size_t getEditRow( void ) const
+	size_t getEditRow() const
 	{
 		return m_editRow;
 	}
-	const STRING &getEditCell( void )
+	const STRING &getEditCell()
 	{
 		return getCell( m_editCol, m_editRow );
 	}
@@ -324,14 +324,14 @@ class GridViewer : public ChildWindow
 		m_data( col, row ).attribute.backgroundColor = color;
 	}
 
-	void clear( void );
-	void copy ( void );
-	void cut( void )
+	void clear();
+	void copy ();
+	void cut()
 	{
 		copy();
 		clear();
 	}
-	void paste( void );
+	void paste();
 };
 
 // --------------------------------------------------------------------- //

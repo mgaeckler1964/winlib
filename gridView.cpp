@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
 		Module:			gridView.cpp
-		Description:	A control diosplaying data in a grid
+		Description:	A control displaying data in a grid
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -113,7 +113,7 @@ const char GridViewer::className[] = "GridViewer";
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void GridViewer::registerClass( void )
+void GridViewer::registerClass()
 {
 	static bool registered = false;
 
@@ -287,7 +287,7 @@ void GridViewer::drawEditCell( Device &hDC, const RectBorder &rect )
 	showCaret();
 }
 
-void GridViewer::updateCaretPos( void )
+void GridViewer::updateCaretPos()
 {
 	if( m_editCell )
 	{
@@ -362,7 +362,7 @@ void GridViewer::moveCursor( size_t newEditCol, size_t newEditRow )
 	}
 }
 
-void GridViewer::moveCursorNextCell( void )
+void GridViewer::moveCursorNextCell()
 {
 	size_t	newEditRow = m_editRow;
 	size_t	newEditCol = m_editCol+1;
@@ -389,7 +389,7 @@ void GridViewer::moveCursorNextCell( void )
 	moveCursor( newEditCol, newEditRow );
 }
 
-void GridViewer::moveCursorPrevCell( void )
+void GridViewer::moveCursorPrevCell()
 {
 	if( m_editCol > m_fixedCols )
 	{
@@ -497,7 +497,7 @@ bool GridViewer::moveCursor( Device &hDC, size_t newPosition, bool includeSelect
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING GridViewer::getWindowClassName( void ) const
+STRING GridViewer::getWindowClassName() const
 {
 	return className;
 }
@@ -1060,7 +1060,7 @@ void GridViewer::setColWidth( size_t col, unsigned colWidth )
 	calcDimensions();
 }
 
-void GridViewer::clear( void )
+void GridViewer::clear()
 {
 	if( m_editCell && m_editPos != m_selPos )
 	{
@@ -1075,7 +1075,7 @@ void GridViewer::clear( void )
 	}
 }
 
-void GridViewer::copy ( void )
+void GridViewer::copy ()
 {
 	if( m_editCell && m_editPos != m_selPos )
 	{
@@ -1096,7 +1096,7 @@ void GridViewer::copy ( void )
 	}
 }
 
-void GridViewer::paste( void )
+void GridViewer::paste()
 {
 	if( m_editCell )
 	{
