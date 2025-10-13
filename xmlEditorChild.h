@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -81,9 +81,27 @@ namespace winlib
 // --------------------------------------------------------------------- //
 
 class Device;
-class XML_VIEWER_BOX;
 class XMLeditorChild;
 
+namespace internal
+{
+
+class ResizeException
+{
+	int m_incWidth;
+
+	public:
+	ResizeException( int incWidth )
+	{
+		m_incWidth = incWidth;
+	}
+	int getIncWidth() const
+	{
+		return m_incWidth;
+	}
+};
+
+class XML_VIEWER_BOX;
 typedef gak::SharedObjectPointer<XML_VIEWER_BOX>	XML_VIEWER_BOX_PTR;
 
 /*
@@ -871,17 +889,19 @@ class XML_TABLE_CELL_VIEWER_BOX : public XML_VIEWER_BOX
 	);
 };
 
+}	// namespace internal
+
 class XMLeditorChild : public ChildWindow
 {
 	private:
-	bool				m_xmlFrames;
-	XML_VIEWER_BOX_PTR	m_theViewerBox;
-	int					m_vertOffset, m_horizOffset;
-	Size				m_size;
-	RectBorder			m_boxSize;
+	bool							m_xmlFrames;
+	internal::XML_VIEWER_BOX_PTR	m_theViewerBox;
+	int								m_vertOffset, m_horizOffset;
+	Size							m_size;
+	RectBorder						m_boxSize;
 
-	XML_CURSOR_POS		m_cursorPos;
-	bool				m_cursorVisible;
+	internal::XML_CURSOR_POS		m_cursorPos;
+	bool							m_cursorVisible;
 
 #ifdef _DEBUG
 	void dump()
@@ -1012,10 +1032,14 @@ class XMLeditorChild : public ChildWindow
 // ----- class inlines ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-inline gak::xml::Element	*XML_CURSOR_POS::getElement() const
+namespace internal
 {
-	return m_viewerBox->getElement( m_line, m_chunk );
+	inline gak::xml::Element	*XML_CURSOR_POS::getElement() const
+	{
+		return m_viewerBox->getElement( m_line, m_chunk );
+	}
 }
+
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //
 // --------------------------------------------------------------------- //

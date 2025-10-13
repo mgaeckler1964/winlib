@@ -59,6 +59,7 @@
     <ClCompile Include="WINAPP.CPP" />
     <ClCompile Include="WINLIB.CPP" />
     <ClCompile Include="xmlEditorChild.cpp" />
+    <ClCompile Include="xmlEditorInternal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="accelerators.h" />
