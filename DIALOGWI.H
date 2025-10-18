@@ -3,10 +3,10 @@
 		Module:			DIALOGWI.H
 		Description:	Implementation of dialog windows
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -125,21 +125,20 @@ class DialogWindow : public CallbackWindow
 
 	// the message handlers
 	virtual LRESULT doDefault( UINT msg, WPARAM wParam, LPARAM lParam );
-	virtual ProcessStatus handleOk( void );
-	virtual ProcessStatus handleCancel( void );
-	virtual SuccessCode handleClose( void );
-
+	virtual ProcessStatus handleOk();
+	virtual ProcessStatus handleCancel();
+	virtual SuccessCode handleClose();
 	virtual ProcessStatus handleButtonClick( int cmd );
-
-	virtual ProcessStatus handleCreate( void );
+	virtual ProcessStatus handleCommand( int cmd );
+	virtual ProcessStatus handleCreate();
 };
 
 class ModalDialog : public DialogWindow
 {
-	int modalResult;
+	int m_modalResult;
 
 	public:
-	ModalDialog(BasicWindow *owner=NULL) : DialogWindow( owner ) { modalResult = IDCANCEL; }
+	ModalDialog(BasicWindow *owner=NULL) : DialogWindow( owner ) , m_modalResult(IDCANCEL) { }
 	int create( const char *dialog, const BasicWindow *parent )
 	{
 		int retVal;
@@ -161,10 +160,10 @@ class ModalDialog : public DialogWindow
 		return create( (const char *)MAKEINTRESOURCE(dialog), parent );
 	}
 
-	virtual SuccessCode close( void );
+	virtual SuccessCode close();
 	SuccessCode close( int result )
 	{
-		modalResult = result;
+		m_modalResult = result;
 		return close();
 	}
 

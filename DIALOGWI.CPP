@@ -3,10 +3,10 @@
 		Module:			DIALOGWI.CPP
 		Description:	Implementation of dialog windows
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -73,17 +73,17 @@ using namespace gak;
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-ProcessStatus DialogWindow::handleOk( void )
+ProcessStatus DialogWindow::handleOk()
 {
 	return psDO_DEFAULT;
 }
 
-ProcessStatus DialogWindow::handleCancel( void )
+ProcessStatus DialogWindow::handleCancel()
 {
 	return psDO_DEFAULT;
 }
 
-SuccessCode DialogWindow::handleClose( void )
+SuccessCode DialogWindow::handleClose()
 {
 	// windows sends WM_COMMAND with IDCANCEL which will close the form
 	// therefore we do not need the standard implementation here
@@ -112,7 +112,17 @@ ProcessStatus DialogWindow::handleButtonClick( int cmd )
 	}
 }
 
-ProcessStatus DialogWindow::handleCreate( void )
+ProcessStatus DialogWindow::handleCommand( int cmd )
+{
+	ProcessStatus status = handleButtonClick( cmd );
+	if( status == psDO_DEFAULT )
+	{
+		status = CallbackWindow::handleCommand(cmd);
+	}
+	return status;
+}
+
+ProcessStatus DialogWindow::handleCreate()
 {
 	CI_STRING	childClass;
 	for( ForeignWindow child = GetWindow( handle(), GW_CHILD ); child; child=GetWindow( child.handle(), GW_HWNDNEXT ) )
@@ -145,7 +155,7 @@ ProcessStatus DialogWindow::handleCreate( void )
 
 ProcessStatus ModalDialog::handleCommand( int cmd )
 {
-	modalResult = cmd;
+	m_modalResult = cmd;
 	return DialogWindow::handleCommand( cmd );
 }
 
@@ -154,9 +164,9 @@ LRESULT DialogWindow::doDefault( UINT, WPARAM, LPARAM )
 	return false;
 }
 
-SuccessCode ModalDialog::close( void )
+SuccessCode ModalDialog::close()
 {
-	return EndDialog( handle(), modalResult ) ? scSUCCESS : scERROR;
+	return EndDialog( handle(), m_modalResult ) ? scSUCCESS : scERROR;
 }
 
 // --------------------------------------------------------------------- //
