@@ -114,11 +114,16 @@ ProcessStatus DialogWindow::handleButtonClick( int cmd )
 
 ProcessStatus DialogWindow::handleCommand( int cmd )
 {
-	ProcessStatus status = handleButtonClick( cmd );
-	if( status == psDO_DEFAULT )
-	{
-		status = CallbackWindow::handleCommand(cmd);
-	}
+	// Do redirect in case of standard buttons, only.
+	// these standard buttons may be initiated by other windows actions as
+	// WM_CLOSE without notification codes and therfor not passed to handleButtonClick( cmd )
+	// by the CallbackWindow
+	ProcessStatus	status =
+		( cmd >= IDOK	&& cmd <= IDNO )	
+			? handleButtonClick( cmd )
+			: CallbackWindow::handleCommand(cmd)
+	;
+
 	return status;
 }
 

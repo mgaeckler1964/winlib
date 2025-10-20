@@ -990,6 +990,7 @@ ProcessStatus CallbackWindow::handleNotification( int /* notification*/ , int /*
 
 ProcessStatus CallbackWindow::handleButtonClick( int buttonControl )
 {
+	// for legacy code
 	return handleCommand( buttonControl );
 }
 
