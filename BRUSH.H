@@ -77,7 +77,7 @@ namespace winlib
 
 class Brush : public GdiObject<HBRUSH>
 {
-	LOGBRUSH	logBrush;
+	LOGBRUSH	m_logBrush;
 
 	void setBrush( HBRUSH newBrush )
 	{
@@ -94,23 +94,23 @@ class Brush : public GdiObject<HBRUSH>
 	friend class Device;
 	Brush( HDC device ) : GdiObject<HBRUSH>( device )
 	{
-		memset( &logBrush, 0, sizeof( logBrush ) );
+		memset( &m_logBrush, 0, sizeof( m_logBrush ) );
 	}
 
 	public:
 	Brush()
 	{
-		memset( &logBrush, 0, sizeof( logBrush ) );
+		memset( &m_logBrush, 0, sizeof( m_logBrush ) );
 	}
 
 	Brush( const Brush &src ) : GdiObject<HBRUSH>( src )
 	{
-		logBrush = src.logBrush;
+		m_logBrush = src.m_logBrush;
 	}
 	const Brush & operator = ( const Brush &src )
 	{
 		GdiObject<HBRUSH>::operator= ( src );
-		logBrush = src.logBrush;
+		m_logBrush = src.m_logBrush;
 
 		return *this;
 	}
@@ -140,10 +140,10 @@ class Brush : public GdiObject<HBRUSH>
 	*/
 	void create( COLORREF color )
 	{
-		logBrush.lbStyle = BS_SOLID;
-		logBrush.lbColor = color;
+		m_logBrush.lbStyle = BS_SOLID;
+		m_logBrush.lbColor = color;
 		setBrush( 
-			CreateSolidBrush( logBrush.lbColor = color ) 
+			CreateSolidBrush( m_logBrush.lbColor = color ) 
 		);
 	}
 	void create( unsigned char red, unsigned char green, unsigned char blue )
@@ -154,17 +154,17 @@ class Brush : public GdiObject<HBRUSH>
 	{
 		HBRUSH	handle = HBRUSH( GetSysColorBrush( color ) );
 		setBrush( handle );
-		GetObject( handle, sizeof(logBrush), &logBrush );
+		GetObject( handle, sizeof(m_logBrush), &m_logBrush );
 	}
 	COLORREF getBackgroundColor() const
 	{
-		return logBrush.lbColor;
+		return m_logBrush.lbColor;
 	}
 	void create( FillStyle fillStyle, COLORREF fillColor )
 	{
-		logBrush.lbStyle = BS_HATCHED;
-		logBrush.lbHatch = fillStyle;
-		logBrush.lbColor = fillColor;
+		m_logBrush.lbStyle = BS_HATCHED;
+		m_logBrush.lbHatch = fillStyle;
+		m_logBrush.lbColor = fillColor;
 		setBrush( CreateHatchBrush( fillStyle, fillColor ) );
 	}
 	void create( FillStyle fillStyle, unsigned char red, unsigned char green, unsigned char blue )
@@ -189,7 +189,7 @@ class Brush : public GdiObject<HBRUSH>
 	{
 		HBRUSH	handle = HBRUSH( GetStockObject(brush) );
 		setBrush( handle );
-		GetObject( handle, sizeof(logBrush), &logBrush );
+		GetObject( handle, sizeof(m_logBrush), &m_logBrush );
 	}
 };
 

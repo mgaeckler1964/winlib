@@ -3,10 +3,10 @@
 		Module:			pen.h
 		Description:	Windows pens
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -95,13 +95,13 @@ namespace winlib
 
 class Pen : public GdiObject<HPEN>
 {
-	LOGPEN	logPen;
+	LOGPEN	m_logPen;
 
 	void setPen( HPEN newBrush )
 	{
 		setHandle( newBrush );
 	}
-	operator HPEN ( void ) const
+	operator HPEN () const
 	{
 		return getHandle();
 	}
@@ -110,15 +110,15 @@ class Pen : public GdiObject<HPEN>
 	friend class Device;
 	Pen( HDC device ) : GdiObject<HPEN>( device )
 	{
-		memset( &logPen, 0, sizeof( logPen ) );
+		memset( &m_logPen, 0, sizeof( m_logPen ) );
 	}
 	public:
 	Pen()
 	{
-		memset( &logPen, 0, sizeof( logPen ) );
+		memset( &m_logPen, 0, sizeof( m_logPen ) );
 	}
 
-	void clearPen( void )
+	void clearPen()
 	{
 		clear();
 	}
@@ -138,23 +138,23 @@ class Pen : public GdiObject<HPEN>
 		psNull =  PS_NULL
 	};
 
-	void create( void )
+	void create()
 	{
 		LOGBRUSH		logBrush;
 
 		logBrush.lbStyle = BS_SOLID;
-		logBrush.lbColor = logPen.lopnColor;
+		logBrush.lbColor = m_logPen.lopnColor;
 
 		setPen(
 //			CreatePenIndirect( &logPen )
 //			CreatePen( logPen.lopnStyle, logPen.lopnWidth.x, logPen.lopnColor )
-			ExtCreatePen( PS_ENDCAP_FLAT|PS_GEOMETRIC|logPen.lopnStyle,logPen.lopnWidth.x,&logBrush,0, NULL )
+			ExtCreatePen( PS_ENDCAP_FLAT|PS_GEOMETRIC|m_logPen.lopnStyle,m_logPen.lopnWidth.x,&logBrush,0, NULL )
 		);
 	}
 
 	Pen &setColor( unsigned char red, unsigned char green, unsigned char blue, bool doCreate=true )
 	{
-		logPen.lopnColor = RGB( red, green, blue );
+		m_logPen.lopnColor = RGB( red, green, blue );
 		if( doCreate )
 			create();
 
@@ -162,7 +162,7 @@ class Pen : public GdiObject<HPEN>
 	}
 	Pen &setWidth( int width, bool doCreate=true )
 	{
-		logPen.lopnWidth.x = width;
+		m_logPen.lopnWidth.x = width;
 		if( doCreate )
 			create();
 
@@ -170,7 +170,7 @@ class Pen : public GdiObject<HPEN>
 	}
 	Pen &setStyle( Style style, bool doCreate=true )
 	{
-		logPen.lopnStyle = style;
+		m_logPen.lopnStyle = style;
 		if( doCreate )
 			create();
 
@@ -201,9 +201,9 @@ class Pen : public GdiObject<HPEN>
 	*/
 	void create( Style style, int width, COLORREF color )
 	{
-		logPen.lopnStyle = style;
-		logPen.lopnWidth.x = width;
-		logPen.lopnColor = color;
+		m_logPen.lopnStyle = style;
+		m_logPen.lopnWidth.x = width;
+		m_logPen.lopnColor = color;
 
 		setPen( CreatePen( style, width, color ) );
 	}
@@ -224,7 +224,7 @@ class Pen : public GdiObject<HPEN>
 	{
 		HPEN	handle = HPEN( GetStockObject(pen) );
 		setPen( handle );
-		GetObject( handle, sizeof(logPen), &logPen );
+		GetObject( handle, sizeof(m_logPen), &m_logPen );
 	}
 };
 

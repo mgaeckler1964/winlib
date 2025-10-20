@@ -3,10 +3,10 @@
 		Module:			palette.h
 		Description:	Defines windows color palettes
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -57,6 +57,7 @@
 #endif
 
 #include <WINLIB/gdi.h>
+#include <gak/stdlib.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -94,7 +95,7 @@ namespace winlib
 
 class Palette : public GdiObject<HPALETTE>
 {
-	LOGPALETTE	*pColors;
+	gak::Buffer<LOGPALETTE>	m_colors;
 
 	void setPalette( HPALETTE newPalette )
 	{
@@ -102,7 +103,7 @@ class Palette : public GdiObject<HPALETTE>
 	}
 	friend class Device;
 	friend class MemoryDevice;
-	operator HPALETTE ( void ) const
+	operator HPALETTE () const
 	{
 		return getHandle();
 	}
@@ -112,50 +113,37 @@ class Palette : public GdiObject<HPALETTE>
 	const Palette & operator = ( const Palette &src ) ;
 
 	public:
-	Palette() 
-	{
-		pColors = NULL;
-	}
-	~Palette() 
-	{
-		if( pColors )
-			free( pColors );
-	}
-	void clearPalette( void )
+	Palette() : m_colors(nullptr) {}
+
+	void clearPalette()
 	{
 		clear();
-		if( pColors )
-		{
-			free( pColors );
-			pColors = NULL;
-		}
+		m_colors.free();
 	}
 
 	void init( size_t numColors )
 	{
 		clearPalette();
-		pColors = (LOGPALETTE*)malloc(
-			sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ) 
-		);
-		pColors->palVersion = 0x300;
-		pColors->palNumEntries = WORD(numColors);
+		m_colors.resize(sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ));
+		m_colors->palVersion = 0x300;
+		m_colors->palNumEntries = WORD(numColors);
 	}
-	void create( )
+	void create()
 	{
-		if( pColors )
+		if( m_colors )
 		{
 			setPalette(
-				CreatePalette( pColors )
+				CreatePalette( m_colors )
 			);
 		}
 	}
 	PALETTEENTRY & operator [] ( size_t idx )
 	{
-		return pColors->palPalEntry[idx];
+		return m_colors->palPalEntry[idx];
 	}
 	const PALETTEENTRY & operator [] ( size_t idx ) const
 	{
-		return pColors->palPalEntry[idx];
+		return m_colors->palPalEntry[idx];
 	}
 };
 

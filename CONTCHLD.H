@@ -4,10 +4,10 @@
 		Description:	An Container displaying its data in a MDI-Child with
 						Listbox (LISTBOX_CHILD)
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -16,7 +16,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -62,34 +62,35 @@ namespace winlib
 
 class ChildEntry : public gak::ListEntry
 {
-	char	name[256];
+	char	m_name[256];
 
 	public:
 	ChildEntry( const char *name )
 	{
-		strcpy( this->name, name );
+		strncpy( m_name, name, sizeof(m_name) );
+		m_name[sizeof(m_name)-1] = 0;
 	};
-	const char *getName( void )
+	const char *getName() const
 	{
-		return name;
+		return m_name;
     };
 };
 
 class ContainerChild : public ListboxChild
 {
-	gak::ListContainer	container;
-	int					numEntries;
+	gak::ListContainer	m_container;
+	int					m_numEntries;
 
 	public:
 	ContainerChild()
 	{
-		numEntries = 0;
+		m_numEntries = 0;
 	};
 	void appendObject( ChildEntry *newObj )
 	{
-		container.addElement( newObj );
-		insertEntry( numEntries, newObj->getName() );
-        numEntries++;
+		m_container.addElement( newObj );
+		insertEntry( m_numEntries, newObj->getName() );
+        m_numEntries++;
     }
 };
 
