@@ -36,6 +36,7 @@
 #include <WINLIB/popup.h>
 #include <WINLIB/CONTROLW.H>
 #include <WINLIB/xmlEditorChild.h>
+#include <WINLIB/chartWin.h>
 
 using namespace winlib;
 
@@ -44,6 +45,7 @@ class TestWindow : public PopupWindow
 	PushButton		myButton;
 	EditControl		myResult;
 	XMLeditorChild	myXmlChild;
+	ChartChild		myChartChild;
 
 	void doRepaint()
 	{
@@ -143,8 +145,8 @@ class TestWindow : public PopupWindow
 		return psDO_DEFAULT;
 	}
 	public:
-	TestWindow() : PopupWindow( NULL ), myXmlChild(NULL) {}
-	void create( void )
+	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr) {}
+	void create()
 	{
 		addStyle( WS_CLIPCHILDREN );
 
@@ -160,6 +162,27 @@ class TestWindow : public PopupWindow
 
 			myXmlChild.sizeNmove(10, 50, 50, 50);
 			myXmlChild.create( this );
+
+			myChartChild.sizeNmove( 70, 50, 50, 50 );
+			myChartChild.create( this );
+
+			LineChart	cData(3,RGB(255,0,0));
+			cData.data.addElement(ChartLinePoint(0,0));
+			cData.data.addElement(ChartLinePoint(1,25));
+			cData.data.addElement(ChartLinePoint(2,20));
+			cData.data.addElement(ChartLinePoint(3,40));
+			cData.data.addElement(ChartLinePoint(4,-10));
+			cData.data.addElement(ChartLinePoint(5,0));
+			myChartChild.addChartLine( &cData );
+
+			LineChart	cData2(2,RGB(0,0,255));
+			cData2.data.addElement(ChartLinePoint(0,100));
+			cData2.data.addElement(ChartLinePoint(1,55));
+			cData2.data.addElement(ChartLinePoint(2,-80));
+			cData2.data.addElement(ChartLinePoint(3,40));
+			cData2.data.addElement(ChartLinePoint(4,0));
+			cData2.data.addElement(ChartLinePoint(5,30));
+			myChartChild.addChartLine( &cData2 );
 		}
 	}
 };
@@ -199,7 +222,7 @@ static TestApp app;
 #if 0
 #include <winlib/device.h>
 
-int main( void )
+int main()
 {
 	PRINTER_ARRAY	buffer;
 	long			*resolutions;
@@ -258,7 +281,7 @@ int main( void )
 #include <stdio.h>
 #include <windows.h>
 
-int main( void )
+int main()
 {
 	int				result;
 	unsigned char	ansi[2];

@@ -100,6 +100,9 @@
     <ClCompile Include="xmlEditorInternal.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="chartWin.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AREA.H">
@@ -232,6 +235,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Processor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chartWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

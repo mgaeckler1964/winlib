@@ -31,6 +31,7 @@
     <ClCompile Include="barcode.c" />
     <ClCompile Include="BASICWIN.CPP" />
     <ClCompile Include="CALLWIN.CPP" />
+    <ClCompile Include="chartWin.cpp" />
     <ClCompile Include="ChildWin.cpp" />
     <ClCompile Include="CONTCHLD.CPP" />
     <ClCompile Include="CONTROLW.CPP" />
@@ -70,6 +71,7 @@
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="BRUSH.H" />
     <ClInclude Include="CALLWIN.H" />
+    <ClInclude Include="chartWin.h" />
     <ClInclude Include="ChildWin.h" />
     <ClInclude Include="CONTCHLD.H" />
     <ClInclude Include="CONTROLW.H" />
