@@ -291,13 +291,23 @@ class Device
 	/*
 		paint operations
 	*/
-	void polyline( POINT *points, int cnt ) const
+	void polyline( const Point *points, int cnt ) const
 	{
 		Polyline( m_device, points, cnt );
 	}
-	void polygon( POINT *points, int cnt ) const
+	template <typename ContainerT>
+	void polyline( const ContainerT &points ) const
+	{
+		polyline( points.getDataBuffer(), int(points.size()) );
+	}
+	void polygon( const Point *points, int cnt ) const
 	{
 		Polygon( m_device, points, cnt );
+	}
+	template <typename ContainerT>
+	void polygon( const ContainerT &points ) const
+	{
+		polygon( points.getDataBuffer(), int(points.size()) );
 	}
 
 	void lineTo( int x, int y ) const

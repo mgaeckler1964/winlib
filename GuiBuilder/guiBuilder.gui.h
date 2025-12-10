@@ -11,6 +11,7 @@
 #include <winlib/scrollFrame.h>
 #include <winlib/ControlW.h>
 #include <winlib/xmlEditorChild.h>
+#include <winlib/chartWin.h>
 #include <winlib/gridView.h>
 
 #include <winlib/winApp.h>
@@ -18,28 +19,29 @@
 namespace winlibGUI {
 
 	const int ABOUT_id=128;
-	const int attachment_id=233;
-	const int attachmentLabel_id=232;
-	const int BackgroundColor_id=245;
-	const int BackgroundColorLabel_id=244;
-	const int baseClass_id=251;
-	const int baseClassLabel_id=250;
-	const int BottomFrame_id=200;
+	const int attachment_id=234;
+	const int attachmentLabel_id=233;
+	const int BackgroundColor_id=246;
+	const int BackgroundColorLabel_id=245;
+	const int baseClass_id=252;
+	const int baseClassLabel_id=251;
+	const int BottomFrame_id=201;
 	const int BUTTON_id=172;
 	const int BUTTO_BAR_id=171;
+	const int CHARTCHILD_id=195;
 	const int CHECKBOX_id=182;
-	const int childCaption_id=203;
-	const int childHeight_id=211;
-	const int childHeightLabel_id=210;
-	const int childWidth_id=209;
-	const int childWidthLabel_id=208;
+	const int childCaption_id=204;
+	const int childHeight_id=212;
+	const int childHeightLabel_id=211;
+	const int childWidth_id=210;
+	const int childWidthLabel_id=209;
 	const int COMBOBOX_id=174;
-	const int controlName_id=202;
-	const int controlStyle_id=249;
-	const int controlStyleLabel_id=248;
+	const int controlName_id=203;
+	const int controlStyle_id=250;
+	const int controlStyleLabel_id=249;
 	const int DATETIMEPICKER_id=194;
-	const int downBUTTON_id=261;
-	const int downLABEL_id=260;
+	const int downBUTTON_id=262;
+	const int downLABEL_id=261;
 	const int EDIT_id=175;
 	const int EDIT_TRANSLATE_id=148;
 	const int FILE_EXIT_id=146;
@@ -54,58 +56,58 @@ namespace winlibGUI {
 	const int FILE_SAVE_AS_id=145;
 	const int FRAMECHILD_id=178;
 	const int GakIcon_id=157;
-	const int GRIDVIEWER_id=196;
-	const int growHEIGHT_id=223;
-	const int growHEIGHTLabel_id=222;
-	const int growWIDTH_id=221;
-	const int growWIDTHLabel_id=220;
-	const int GuiDefinitions_id=268;
+	const int GRIDVIEWER_id=197;
+	const int growHEIGHT_id=224;
+	const int growHEIGHTLabel_id=223;
+	const int growWIDTH_id=222;
+	const int growWIDTHLabel_id=221;
+	const int GuiDefinitions_id=269;
 	const int GuiIcon_id=158;
-	const int HELLO_WORLD1_id=262;
-	const int HELLO_WORLD2_id=263;
-	const int HELLO_WORLD3_id=264;
+	const int HELLO_WORLD1_id=263;
+	const int HELLO_WORLD2_id=264;
+	const int HELLO_WORLD3_id=265;
 	const int H_SCROLLBAR_id=186;
 	const int H_TRACKBAR_id=179;
-	const int itemList_id=253;
-	const int itemListLabel_id=252;
-	const int layoutHEIGHT_id=219;
-	const int layoutHEIGHTLabel_id=218;
-	const int layoutManager_id=235;
-	const int layoutManagerLabel_id=234;
-	const int layoutWIDTH_id=217;
-	const int layoutWIDTHLabel_id=216;
-	const int layout_xPOS_id=213;
-	const int layout_xPOSLabel_id=212;
-	const int layout_yPOS_id=215;
-	const int layout_yPOSLabel_id=214;
+	const int itemList_id=254;
+	const int itemListLabel_id=253;
+	const int layoutHEIGHT_id=220;
+	const int layoutHEIGHTLabel_id=219;
+	const int layoutManager_id=236;
+	const int layoutManagerLabel_id=235;
+	const int layoutWIDTH_id=218;
+	const int layoutWIDTHLabel_id=217;
+	const int layout_xPOS_id=214;
+	const int layout_xPOSLabel_id=213;
+	const int layout_yPOS_id=216;
+	const int layout_yPOSLabel_id=215;
 	const int LISTBOX_id=173;
 	const int MAIN_MENU_id=154;
-	const int marginBOTTOM_id=243;
-	const int marginBOTTOMLabel_id=242;
-	const int marginLEFT_id=237;
-	const int marginLEFTLabel_id=236;
-	const int marginRIGHT_id=239;
-	const int marginRIGHTLabel_id=238;
-	const int marginTOP_id=241;
-	const int marginTOPLabel_id=240;
+	const int marginBOTTOM_id=244;
+	const int marginBOTTOMLabel_id=243;
+	const int marginLEFT_id=238;
+	const int marginLEFTLabel_id=237;
+	const int marginRIGHT_id=240;
+	const int marginRIGHTLabel_id=239;
+	const int marginTOP_id=242;
+	const int marginTOPLabel_id=241;
 	const int MEMOCONTROL_id=184;
 	const int MenuTestModalPopup_id=151;
 	const int MenuTestPopup_id=152;
 	const int MENU_FILE_id=147;
 	const int MENU_INFO_id=153;
-	const int numCols_id=255;
-	const int numColsLABEL_id=254;
-	const int numRows_id=257;
-	const int numRowsLABEL_id=256;
-	const int OPEN_GUI_FILE_id=266;
-	const int paddingBOTTOM_id=231;
-	const int paddingBOTTOMLabel_id=230;
-	const int paddingLEFT_id=225;
-	const int paddingLEFTLabel_id=224;
-	const int paddingRIGHT_id=227;
-	const int paddingRIGHTLabel_id=226;
-	const int paddingTOP_id=229;
-	const int paddingTOPLabel_id=228;
+	const int numCols_id=256;
+	const int numColsLABEL_id=255;
+	const int numRows_id=258;
+	const int numRowsLABEL_id=257;
+	const int OPEN_GUI_FILE_id=267;
+	const int paddingBOTTOM_id=232;
+	const int paddingBOTTOMLabel_id=231;
+	const int paddingLEFT_id=226;
+	const int paddingLEFTLabel_id=225;
+	const int paddingRIGHT_id=228;
+	const int paddingRIGHTLabel_id=227;
+	const int paddingTOP_id=230;
+	const int paddingTOPLabel_id=229;
 	const int Properties_id=136;
 	const int PUSHBUTTON_id=181;
 	const int PUSHBUTTON1_id=159;
@@ -125,39 +127,39 @@ namespace winlibGUI {
 	const int PUSHBUTTON_Right_id=191;
 	const int PUSHBUTTON_Top_id=190;
 	const int RADIOBUTTON_id=183;
-	const int SAVE_GUI_FILE_id=267;
-	const int SelectFontButton_id=247;
-	const int SelectFontCheck_id=246;
+	const int SAVE_GUI_FILE_id=268;
+	const int SelectFontButton_id=248;
+	const int SelectFontCheck_id=247;
 	const int StringListEditor_id=134;
-	const int stringListGrid_id=197;
+	const int stringListGrid_id=198;
 	const int StyleDialog_id=130;
 	const int StyleListBox_id=188;
 	const int SysType_id=156;
-	const int targetLanguageCombo_id=198;
+	const int targetLanguageCombo_id=199;
 	const int TestLabel_id=176;
 	const int TestModalPoup_id=129;
 	const int TestPopup_id=132;
 	const int TEST_ATTACHMENT_id=131;
 	const int TEST_MENU_id=155;
-	const int TEST_STRING_id=265;
+	const int TEST_STRING_id=266;
 	const int TEST_xmlGridFORM_id=133;
 	const int TOOL_BAR_id=164;
-	const int TopFrame_id=199;
+	const int TopFrame_id=200;
 	const int TranslationForm_id=135;
-	const int translationsGrid_id=201;
+	const int translationsGrid_id=202;
 	const int TREEVIEW_id=180;
-	const int upBUTTON_id=259;
+	const int upBUTTON_id=260;
 	const int UPDOWNBUTTON_id=177;
-	const int upLABEL_id=258;
+	const int upLABEL_id=259;
 	const int VIEW_ITEM_LIST_id=149;
 	const int VIEW_ITEM_TREE_id=150;
 	const int V_SCROLLBAR_id=187;
 	const int V_TRACKBAR_id=185;
-	const int XMLEDITORCHILD_id=195;
-	const int xPOS_id=205;
-	const int xPOSLabel_id=204;
-	const int yPOS_id=207;
-	const int yPOSLabel_id=206;
+	const int XMLEDITORCHILD_id=196;
+	const int xPOS_id=206;
+	const int xPOSLabel_id=205;
+	const int yPOS_id=208;
+	const int yPOSLabel_id=207;
 
 	class GuiApplication : public winlib::Application {
 		public:
@@ -258,6 +260,7 @@ namespace winlibGUI {
 		}
 
 		winlib::DateTimePicker *DATETIMEPICKER;
+		winlib::ChartChild *CHARTCHILD;
 		private:
 		virtual void getControls();
 	};	// end of TestPopup

@@ -118,6 +118,7 @@ class ChartChild : public ChildWindow
 	public:
 	static const char className[];
 
+	bool						m_useDemoData;
 	AllLineCharts				m_chartData;
 	gak::math::MinMax<double>	m_xBounds, m_yBounds;
 
@@ -127,7 +128,7 @@ class ChartChild : public ChildWindow
 
 public:
 	ChartChild( BasicWindow *owner ) 
-		: ChildWindow( owner )
+		: ChildWindow( owner ), m_useDemoData(true)
 	{
 		registerClass();
 	}

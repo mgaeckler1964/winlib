@@ -165,7 +165,7 @@ void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &s
 		*inserter = value2Pixel( *it, size );
 	}
 
-	hDC.polyline(myPolygon.getDataBuffer(), myPolygon.size());
+	hDC.polyline(myPolygon);
 
 }
 
@@ -184,6 +184,39 @@ STRING ChartChild::getWindowClassName() const
 
 ProcessStatus ChartChild::handleRepaint( Device &hDC )
 {
+	if( m_useDemoData && !m_chartData.size() )
+	{
+		LineChart	cData(3,RGB(255,0,0));
+		cData.data.addElement(ChartLinePoint(0,0));
+		cData.data.addElement(ChartLinePoint(1,25));
+		cData.data.addElement(ChartLinePoint(2,20));
+		cData.data.addElement(ChartLinePoint(3,40));
+		cData.data.addElement(ChartLinePoint(4,-10));
+		cData.data.addElement(ChartLinePoint(5,0));
+		addChartLine( &cData );
+
+		LineChart	cData2(2,RGB(0,0,255));
+		cData2.data.addElement(ChartLinePoint(0,100));
+		cData2.data.addElement(ChartLinePoint(1,55));
+		cData2.data.addElement(ChartLinePoint(2,-80));
+		cData2.data.addElement(ChartLinePoint(3,40));
+		cData2.data.addElement(ChartLinePoint(4,0));
+		cData2.data.addElement(ChartLinePoint(5,30));
+		addChartLine( &cData2 );
+
+		LineChart	cData3(2,RGB(0,255,0));
+
+		cData3.data.addElement(ChartLinePoint(1,80));
+		cData3.data.addElement(ChartLinePoint(2,-80));
+		cData3.data.addElement(ChartLinePoint(3,0));
+		cData3.data.addElement(ChartLinePoint(4,33));
+		cData3.data.addElement(ChartLinePoint(5,44));
+		cData3.data.addElement(ChartLinePoint(6,0));
+		addChartLine( &cData3 );
+
+		m_useDemoData = true;
+	}
+
 	Size size = getSize();
 	for(
 		AllLineCharts::const_iterator it = m_chartData.cbegin(), endIT = m_chartData.cend();
@@ -203,6 +236,12 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 
 void ChartChild::addChartLine( LineChart *data )
 {
+	if(m_useDemoData)
+	{
+		m_xBounds = gak::math::MinMax<double>();
+		m_yBounds = gak::math::MinMax<double>();
+		m_useDemoData = false;
+	}
 	for(
 		Chart2dData::const_iterator it = data->data.cbegin(), endIT = data->data.cend();
 		it != endIT;

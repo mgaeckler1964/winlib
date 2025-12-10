@@ -166,23 +166,6 @@ class TestWindow : public PopupWindow
 			myChartChild.sizeNmove( 70, 50, 50, 50 );
 			myChartChild.create( this );
 
-			LineChart	cData(3,RGB(255,0,0));
-			cData.data.addElement(ChartLinePoint(0,0));
-			cData.data.addElement(ChartLinePoint(1,25));
-			cData.data.addElement(ChartLinePoint(2,20));
-			cData.data.addElement(ChartLinePoint(3,40));
-			cData.data.addElement(ChartLinePoint(4,-10));
-			cData.data.addElement(ChartLinePoint(5,0));
-			myChartChild.addChartLine( &cData );
-
-			LineChart	cData2(2,RGB(0,0,255));
-			cData2.data.addElement(ChartLinePoint(0,100));
-			cData2.data.addElement(ChartLinePoint(1,55));
-			cData2.data.addElement(ChartLinePoint(2,-80));
-			cData2.data.addElement(ChartLinePoint(3,40));
-			cData2.data.addElement(ChartLinePoint(4,0));
-			cData2.data.addElement(ChartLinePoint(5,30));
-			myChartChild.addChartLine( &cData2 );
 		}
 	}
 };

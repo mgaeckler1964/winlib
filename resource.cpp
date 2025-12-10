@@ -54,6 +54,7 @@
 #include <WINLIB/gridView.h>
 #include <WINLIB/xmlEditorChild.h>
 #include <WINLIB/scrollFrame.h>
+#include <WINLIB/chartWin.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -198,26 +199,27 @@ static void setGridViewer( GridViewer * gridViewer, xml::Element *child )
 
 static void createChild( const F_STRING &resourceFileName, xml::Element *child, CallbackWindow *parent, bool designerMode )
 {
-	BasicWindow		*newBasicChild = NULL;
-	ChildWindow		*newChild = NULL;
-	Label			*staticText = NULL;
-	Button			*button = NULL;
-	PushButton		*pushButton = NULL;
-	CheckBox		*checkBox = NULL;
-	GroupBox		*groupBox = NULL;
-	RadioButton		*radioButton = NULL;
-	EditControl		*editControl = NULL;
-	MemoControl		*memoControl = NULL;
-	FrameChild		*frameChild = NULL;
-	ScrollFrame		*scrollFrame = NULL;
-	ComboBox		*comboBox = NULL;
-	ListBox			*listBox = NULL;
-	TrackBar		*trackBar = NULL;
-	DateTimePicker	*dateTimePicker = NULL;
-	ScrollBar		*scrollBar = NULL;
-	UpDownButton	*upDownButton = NULL;
-	TreeView		*treeView = NULL;
-	GridViewer		*gridViewer = NULL;
+	BasicWindow		*newBasicChild = nullptr;
+	ChildWindow		*newChild = nullptr;
+	Label			*staticText = nullptr;
+	Button			*button = nullptr;
+	PushButton		*pushButton = nullptr;
+	CheckBox		*checkBox = nullptr;
+	GroupBox		*groupBox = nullptr;
+	RadioButton		*radioButton = nullptr;
+	EditControl		*editControl = nullptr;
+	MemoControl		*memoControl = nullptr;
+	FrameChild		*frameChild = nullptr;
+	ScrollFrame		*scrollFrame = nullptr;
+	ComboBox		*comboBox = nullptr;
+	ListBox			*listBox = nullptr;
+	TrackBar		*trackBar = nullptr;
+	DateTimePicker	*dateTimePicker = nullptr;
+	ScrollBar		*scrollBar = nullptr;
+	UpDownButton	*upDownButton = nullptr;
+	TreeView		*treeView = nullptr;
+	GridViewer		*gridViewer = nullptr;
+	ChartChild		*chartChild = nullptr;
 
 	unsigned		x = child->getAttribute( LayoutData::xPosAttr ).getValueN<unsigned>();
 	unsigned		y = child->getAttribute( LayoutData::yPosAttr ).getValueN<unsigned>();
@@ -265,6 +267,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		newBasicChild = newChild = new XMLeditorChild( parent );
 	else if( type == GridViewer::className )
 		newBasicChild = newChild = gridViewer = new GridViewer( parent );
+	else if( type == ChartChild::className )
+		newBasicChild = newChild = chartChild = new ChartChild( parent );
 	else
 		throw gak::LibraryException( gak::STRING( "Unkown item type: " ) + type );
 

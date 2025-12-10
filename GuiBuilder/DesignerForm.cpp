@@ -41,6 +41,7 @@
 #include <gak/numericString.h>
 
 #include <WINLIB/BASICWIN.H>
+#include <WINLIB/chartWin.h>
 
 #include "DesignerForm.h"
 #include "GuiBuilderWindow.h"
@@ -737,6 +738,12 @@ void DesignerForm::createControl( const Point *position )
 		newWindow = newChild = new GridViewer( parent );
 		newCaption = "";
 		type = GridViewer::className;
+	}
+	else if(m_theGuiBuilder->getCurrentId() == CHARTWIN_PUSH )
+	{
+		newWindow = newChild = new ChartChild( parent );
+		newCaption = "";
+		type = ChartChild::className;
 	}
 
 	newName = type.uperCaseCopy();

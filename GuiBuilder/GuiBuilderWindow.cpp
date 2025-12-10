@@ -1097,6 +1097,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 				"#include <winlib/scrollFrame.h>\n"
 				"#include <winlib/ControlW.h>\n"
 				"#include <winlib/xmlEditorChild.h>\n"
+				"#include <winlib/chartWin.h>\n"
 				"#include <winlib/gridView.h>\n\n"
 				"#include <winlib/winApp.h>\n\n"
 				"namespace winlibGUI {\n\n";
@@ -2223,6 +2224,9 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		/*
 			tool bar
 		*/
+
+
+	
 		case SELECT_PUSH:
 		case LABEL_PUSH:
 		case BUTTON_PUSH:
@@ -2230,18 +2234,19 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		case RADIOBUTTON_PUSH:
 		case GROUPBOX_PUSH:
 		case LIST_PUSH:
-		case TREEVIEW_PUSH:
+		case COMBO_PUSH:
+		case EDIT_PUSH:
+		case MEMO_PUSH:
 		case TRACKBAR_PUSH:
 		case DATETIMEPICKER_PUSH:
 		case SCROLLBAR_PUSH:
 		case UPDPOWN_PUSH:
-		case COMBO_PUSH:
-		case EDIT_PUSH:
-		case MEMO_PUSH:
-		case FRAME_PUSH:
-		case SCROLLER_PUSH:
+		case TREEVIEW_PUSH:
 		case XMLVIEW_PUSH:
 		case GRIDVIEW_PUSH:
+		case CHARTWIN_PUSH:
+		case FRAME_PUSH:
+		case SCROLLER_PUSH:
 			m_currentId = control;
 			break;
 
@@ -2579,13 +2584,17 @@ SuccessCode GuiBuilderWindow::create()
 		btnCreateTreeView.setId( TREEVIEW_PUSH );
 		btnCreateTreeView.create( &toolbar );
 
-		btnCreateXmlViewer.setText( "XmlViewer." );
+		btnCreateXmlViewer.setText( "XmlViewer" );
 		btnCreateXmlViewer.setId( XMLVIEW_PUSH );
 		btnCreateXmlViewer.create( &toolbar );
 
-		btnCreateGridViewer.setText( "GridViewer." );
+		btnCreateGridViewer.setText( "GridViewer" );
 		btnCreateGridViewer.setId( GRIDVIEW_PUSH );
 		btnCreateGridViewer.create( &toolbar );
+
+		btnCreateChartWin.setText( "ChartWin" );
+		btnCreateChartWin.setId( CHARTWIN_PUSH );
+		btnCreateChartWin.create( &toolbar );
 
 		btnCreateFrame.setText( "Frame" );
 		btnCreateFrame.setId( FRAME_PUSH );

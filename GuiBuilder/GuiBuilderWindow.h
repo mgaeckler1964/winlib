@@ -127,7 +127,7 @@ class GuiBuilderWindow : public OverlappedWindow
 						btnCreateEditControl, btnCreateMemoControl, 
 						btnCreateTrackBar, btnCreateScrollBar, btnCreateUpDownButton,
 						btnCreateTreeView, btnCreateXmlViewer, btnCreateGridViewer, 
-						btnCreateFrame, btnCreateScroller, btnCreateDateTimePicker;
+						btnCreateFrame, btnCreateScroller, btnCreateDateTimePicker, btnCreateChartWin;
 	int					m_currentId;
 
 	ListBox				topResourceSelect;

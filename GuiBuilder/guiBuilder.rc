@@ -3,10 +3,10 @@
 		Module:			guiBuilder.rc
 		Description:	The ressource used
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -43,47 +43,51 @@
 /* ----- icons --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
+SELECT_PUSH			ICON "select.ico"
 BUTTON_PUSH			ICON "button.ico"
 CHECKBOX_PUSH		ICON "checkbox.ico"
-COMBO_PUSH			ICON "combobox.ico"
-DATETIMEPICKER_PUSH	ICON "dateTimePicker.ico"
-EDIT_PUSH			ICON "editControl.ico"
-FRAME_PUSH			ICON "frame.ico"
-GRIDVIEW_PUSH		ICON "grid.ico"
-GROUPBOX_PUSH		ICON "groupBox.ico"
-GUIBUILDER_ICON		ICON "guiBuilder.ico"
-GAK_ICON			ICON "GAK.ico"
-LIST_PUSH			ICON "listbox.ico"
-MEMO_PUSH			ICON "memoControl.ico"
 RADIOBUTTON_PUSH	ICON "radiobutton.ico"
-SCROLLBAR_PUSH		ICON "scrollbar.ico"
-SCROLLER_PUSH		ICON "scroller.ico"
-SELECT_PUSH			ICON "select.ico"
+GROUPBOX_PUSH		ICON "groupBox.ico"
+LIST_PUSH			ICON "listbox.ico"
+COMBO_PUSH			ICON "combobox.ico"
+EDIT_PUSH			ICON "editControl.ico"
+MEMO_PUSH			ICON "memoControl.ico"
 TRACKBAR_PUSH		ICON "trackbar.ico"
-TREEVIEW_PUSH		ICON "treeview.ico"
+DATETIMEPICKER_PUSH	ICON "dateTimePicker.ico"
+SCROLLBAR_PUSH		ICON "scrollbar.ico"
 UPDPOWN_PUSH		ICON "updownButton.ico"
+TREEVIEW_PUSH		ICON "treeview.ico"
 XMLVIEW_PUSH		ICON "xmlViewer.ico"
+GRIDVIEW_PUSH		ICON "grid.ico"
+CHARTWIN_PUSH		ICON "chartwin.ico"
+FRAME_PUSH			ICON "frame.ico"
+SCROLLER_PUSH		ICON "scroller.ico"
+
+GAK_ICON			ICON "GAK.ico"
+GUIBUILDER_ICON		ICON "guiBuilder.ico"
+
 
 STRINGTABLE
 BEGIN
-	BUTTON_PUSH			, "Pushbutton"
-	CHECKBOX_PUSH		, "Checkbox"
-	COMBO_PUSH			, "Combobox.ico"
-	DATETIMEPICKER_PUSH	, "DateTimePicker"
-	EDIT_PUSH			, "EditControl"
-	FRAME_PUSH			, "Frame"
-	GRIDVIEW_PUSH		, "Grid"
-	GROUPBOX_PUSH		, "GroupBox"
-	LIST_PUSH			, "Listbox"
-	MEMO_PUSH			, "Memo"
-	RADIOBUTTON_PUSH	, "RadioButton"
-	SCROLLBAR_PUSH		, "ScrollBar"
-	SCROLLER_PUSH		, "Scroller"
 	SELECT_PUSH			, "Select"
-	TRACKBAR_PUSH		, "TrackBar"
-	TREEVIEW_PUSH		, "TreeView.ico"
-	UPDPOWN_PUSH		, "UpDownButton"
-	XMLVIEW_PUSH		, "XmlViewer"
+	BUTTON_PUSH			, "Push Button"
+	CHECKBOX_PUSH		, "Check Box"
+	RADIOBUTTON_PUSH	, "Radio Button"
+	GROUPBOX_PUSH		, "Group Box"
+	LIST_PUSH			, "List Box"
+	COMBO_PUSH			, "Combo Box"
+	EDIT_PUSH			, "Edit Control"
+	MEMO_PUSH			, "Memo"
+	TRACKBAR_PUSH		, "Track Bar"
+	DATETIMEPICKER_PUSH	, "Date Time Picker"
+	SCROLLBAR_PUSH		, "Scroll Bar"
+	UPDPOWN_PUSH		, "Up Down Button"
+	TREEVIEW_PUSH		, "Tree View"
+	XMLVIEW_PUSH		, "Xml Viewer"
+	GRIDVIEW_PUSH		, "Grid Viewer"
+	CHARTWIN_PUSH		, "Chart"
+	FRAME_PUSH			, "Frame"
+	SCROLLER_PUSH		, "Scroller"
 END
 
 
