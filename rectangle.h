@@ -3,10 +3,10 @@
 		Module:			rectangle.h
 		Description:	Defines dimensions for windows and drawing functions
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -174,19 +174,19 @@ struct RectBorder : public RECT
 	}
 	operator RectSize () const;
 
-	Point getTopLeft( void ) const
+	Point getTopLeft() const
 	{
 		return Point( left, top );
 	}
-	Point getTopRight( void ) const
+	Point getTopRight() const
 	{
 		return Point( right, top );
 	}
-	Point getBottomLeft( void ) const
+	Point getBottomLeft() const
 	{
 		return Point( left, bottom );
 	}
-	Point getBottomRight( void ) const
+	Point getBottomRight() const
 	{
 		return Point( right, bottom );
 	}
@@ -260,19 +260,19 @@ struct RectSize : public Point, public Size
 		return result;
 	}
 
-	Point getTopLeft( void ) const
+	Point getTopLeft() const
 	{
 		return Point( x, y );
 	}
-	Point getTopRight( void ) const
+	Point getTopRight() const
 	{
 		return Point( x+width, y );
 	}
-	Point getBottomLeft( void ) const
+	Point getBottomLeft() const
 	{
 		return Point( x, y+height );
 	}
-	Point getBottomRight( void ) const
+	Point getBottomRight() const
 	{
 		return Point( x+width, y+height );
 	}

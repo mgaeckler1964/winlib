@@ -93,7 +93,7 @@ struct RessourceIDs<int>
 	int		m_curID;
 
 	RessourceIDs(int curID) : m_curID(curID) {}
-	int getNextID( void )
+	int getNextID()
 	{
 		return m_curID++;
 	}
@@ -105,7 +105,7 @@ struct RessourceIDs<const int*>
 	const int	*m_curID;
 
 	RessourceIDs(const int *curID) : m_curID(curID) {}
-	int getNextID( void )
+	int getNextID()
 	{
 		return *m_curID++;
 	}

@@ -108,7 +108,7 @@ const char ScrollFrame::className[] = "ScrollFrame";
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void ScrollFrame::registerClass( void )
+void ScrollFrame::registerClass()
 {
 	static bool registered = false;
 
@@ -155,7 +155,7 @@ CallbackWindow	*ScrollFrame::getChild()
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
-STRING ScrollFrame::getWindowClassName( void ) const
+STRING ScrollFrame::getWindowClassName() const
 {
 	return className;
 }

@@ -3,10 +3,10 @@
 		Module:			POPUP.H
 		Description:	Popup Windows
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -60,8 +60,8 @@ class PopupWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName( void ) const;
-	static void registerClass( void );
+	virtual STRING	getWindowClassName() const;
+	static void registerClass();
 
 	protected:
 	SuccessCode create( BasicWindow *parent, const char *resourceName );
@@ -75,8 +75,8 @@ class PopupWindow : public CallbackWindow
 	SuccessCode create( BasicWindow *parent, int nWidth=0, int nHeight=0 );
 
 	protected:
-	virtual ProcessStatus handleOk( void );
-	virtual ProcessStatus handleCancel( void );
+	virtual ProcessStatus handleOk();
+	virtual ProcessStatus handleCancel();
 	virtual ProcessStatus handleButtonClick( int cmd );
 };
 
@@ -86,8 +86,8 @@ class ModalPopup : public PopupWindow
 	HWND	activeWindow;
 
 	private:
-	void DisableAllWindows( void );
-	void EnableAllWindows( void );
+	void DisableAllWindows();
+	void EnableAllWindows();
 
 	protected:
 	void setModalResult( int result )
@@ -109,11 +109,11 @@ class ModalPopup : public PopupWindow
 		return errFlag;
 	}
 	using PopupWindow::create;
-	virtual ProcessStatus handleOk( void );
-	virtual ProcessStatus handleCancel( void );
-	virtual ProcessStatus handleDestroy( void );
-	virtual ProcessStatus handleShow( void );
-	virtual ProcessStatus handleHide( void );
+	virtual ProcessStatus handleOk();
+	virtual ProcessStatus handleCancel();
+	virtual ProcessStatus handleDestroy();
+	virtual ProcessStatus handleShow();
+	virtual ProcessStatus handleHide();
 
 	public:
 	ModalPopup(BasicWindow *owner=NULL) : PopupWindow( owner )
@@ -122,7 +122,7 @@ class ModalPopup : public PopupWindow
 		modalResult = 0;
 		activeWindow = 0;
 	}
-	int getModalResult( void ) const
+	int getModalResult() const
 	{
 		return modalResult;
 	}
@@ -132,8 +132,8 @@ class OverlappedWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName( void ) const;
-	static void registerClass( void );
+	virtual STRING	getWindowClassName() const;
+	static void registerClass();
 
 	public:
 	OverlappedWindow( BasicWindow *owner ) : CallbackWindow( owner )
@@ -154,8 +154,8 @@ class ToolWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName( void ) const;
-	static void registerClass( void );
+	virtual STRING	getWindowClassName() const;
+	static void registerClass();
 
 	public:
 	ToolWindow( BasicWindow *owner ) : CallbackWindow( owner )

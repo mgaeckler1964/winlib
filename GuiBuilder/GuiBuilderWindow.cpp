@@ -3,10 +3,10 @@
 		Module:			GuiBuilderWindow.cpp
 		Description:	The main window
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -275,7 +275,7 @@ void GuiBuilderWindow::deleteGuiDoc()
 	deleteDesignerForm();
 }
 
-void GuiBuilderWindow::handleChildSelect( void )
+void GuiBuilderWindow::handleChildSelect()
 {
 	assert( designerForm );
 
@@ -301,7 +301,7 @@ void GuiBuilderWindow::handleChildSelect( void )
 	enableDisaleProperties();
 }
 
-void GuiBuilderWindow::handleItemTreeSelect( void )
+void GuiBuilderWindow::handleItemTreeSelect()
 {
 	assert( designerForm );
 
@@ -318,7 +318,7 @@ void GuiBuilderWindow::handleItemTreeSelect( void )
 	enableDisaleProperties();
 }
 
-void GuiBuilderWindow::handleStringSelect( void )
+void GuiBuilderWindow::handleStringSelect()
 {
 	assert( stringListEditor );
 	int	selected = childSelect.getSelection();
@@ -330,7 +330,7 @@ void GuiBuilderWindow::handleStringSelect( void )
 	enableDisaleProperties();
 }
 
-STRING GuiBuilderWindow::getUniqueType( void )
+STRING GuiBuilderWindow::getUniqueType()
 {
 	STRING		uniqueType, currentType;
 	ArrayOfInts	selected;
@@ -416,7 +416,7 @@ void GuiBuilderWindow::fillChildItemList( xml::Element *resource, TreeNode *pare
 		throw LibraryException( STRING( "Unkown tag " ) + tag );
 }
 
-void GuiBuilderWindow::refreshChildSelect( void )
+void GuiBuilderWindow::refreshChildSelect()
 {
 	if( m_editorMode == emFORM )
 	{
@@ -438,7 +438,7 @@ void GuiBuilderWindow::refreshChildSelect( void )
 	}
 }
 
-void GuiBuilderWindow::loadResource( void )
+void GuiBuilderWindow::loadResource()
 {
 	xml::Element	*resource = getSelectedTopResource();
 	if( resource )
@@ -508,7 +508,7 @@ void GuiBuilderWindow::loadResource( void )
 	enableDisaleProperties();
 }
 
-void GuiBuilderWindow::enableDisaleProperties( void )
+void GuiBuilderWindow::enableDisaleProperties()
 {
 	if( m_editorMode == emMENU )
 	{
@@ -527,7 +527,7 @@ void GuiBuilderWindow::enableDisaleProperties( void )
 	invalidateWindow();
 }
 
-void GuiBuilderWindow::enableNameProperties( void )
+void GuiBuilderWindow::enableNameProperties()
 {
 	properties.enable();
 
@@ -596,7 +596,7 @@ void GuiBuilderWindow::enableNameProperties( void )
 	disableChild( properties.numRows );
 }
 
-void GuiBuilderWindow::enableDisaleMenuProperties( void )
+void GuiBuilderWindow::enableDisaleMenuProperties()
 {
 	TreeNode *selected = treeSelect.getSelection();
 	if( !selected )
@@ -607,7 +607,7 @@ void GuiBuilderWindow::enableDisaleMenuProperties( void )
 	enableNameProperties();
 }
 
-void GuiBuilderWindow::enableDisaleStringsProperties( void )
+void GuiBuilderWindow::enableDisaleStringsProperties()
 {
 	ArrayOfInts	selItems;
 	size_t		numSelected = childSelect.getSelectedItems( &selItems );
@@ -619,7 +619,7 @@ void GuiBuilderWindow::enableDisaleStringsProperties( void )
 	enableNameProperties();
 }
 
-void GuiBuilderWindow::enableDisaleFormProperties( void )
+void GuiBuilderWindow::enableDisaleFormProperties()
 {
 	ArrayOfInts	selItems;
 	size_t		numSelected = childSelect.getSelectedItems( &selItems );
@@ -892,7 +892,7 @@ void GuiBuilderWindow::newStyle( unsigned long newStyle, unsigned long styleMask
 	}
 }
 
-bool GuiBuilderWindow::checkChangedFlag( void )
+bool GuiBuilderWindow::checkChangedFlag()
 {
 	if( m_changedFlag )
 	{
@@ -992,7 +992,7 @@ void GuiBuilderWindow::loadGUI( xml::Document *doc )
 	}
 }
 
-void GuiBuilderWindow::loadDocument( void )
+void GuiBuilderWindow::loadDocument()
 {
 	OpenFileDialog	openFile;
 	if( openFile.create( this, OPEN_GUI_FILE_id, GuiFilterList_ids, GuiFilterList_count ) == IDOK )
@@ -1022,7 +1022,7 @@ void GuiBuilderWindow::loadDocument( void )
 	}
 }
 
-GuiBuilderWindow::IdentifiersMap GuiBuilderWindow::createIDs( void )
+GuiBuilderWindow::IdentifiersMap GuiBuilderWindow::createIDs()
 {
 	IdentifiersMap	identifiers;
 	xml::XmlArray	items;
@@ -1115,7 +1115,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 
 	stream << "\n\tclass GuiApplication : public winlib::Application {\n"
 			<< "\t\tpublic:\n"
-			<< "\t\tvirtual gak::xml::Document *getGuiDoc( void );\n"
+			<< "\t\tvirtual gak::xml::Document *getGuiDoc();\n"
 			"\t\tGuiApplication(int iconID=-1) : winlib::Application(iconID) {}\n"
 			"\t};\n";
 
@@ -1364,7 +1364,7 @@ void GuiBuilderWindow::saveDocumentAs( const F_STRING &fileName )
 	clrChangedFlag();
 }
 
-bool GuiBuilderWindow::saveDocumentAs( void )
+bool GuiBuilderWindow::saveDocumentAs()
 {
 	SaveFileAsDialog	saveFile;
 	if( saveFile.create( this, SAVE_GUI_FILE_id, GuiFilterList_ids, GuiFilterList_count ) == IDOK )
@@ -1381,7 +1381,7 @@ bool GuiBuilderWindow::saveDocumentAs( void )
 	}
 }
 
-bool GuiBuilderWindow::saveDocument( void )
+bool GuiBuilderWindow::saveDocument()
 {
 	if( !getDocument().isEmpty() )
 	{
@@ -1394,7 +1394,7 @@ bool GuiBuilderWindow::saveDocument( void )
 	}
 }
 
-void GuiBuilderWindow::handleChildNameChange( void )
+void GuiBuilderWindow::handleChildNameChange()
 {
 	ArrayOfInts	selected;
 	size_t	numSelected = childSelect.getSelectedItems( &selected );
@@ -1480,7 +1480,7 @@ void GuiBuilderWindow::changeStringResource( size_t idx, const STRING &name, con
 	}
 }
 
-bool GuiBuilderWindow::checkLayoutData( void )
+bool GuiBuilderWindow::checkLayoutData()
 {
 	STRING	value = properties.layout_xPOS->getText();
 	if( !value.isEmpty() )
@@ -1531,7 +1531,7 @@ bool GuiBuilderWindow::checkLayoutData( void )
 	return true;
 }
 
-void GuiBuilderWindow::editItemList( void )
+void GuiBuilderWindow::editItemList()
 {
 	/*
 		find first item with items tag
@@ -2489,7 +2489,7 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 	return psPROCESSED;
 }
 
-bool GuiBuilderWindow::canClose( void )
+bool GuiBuilderWindow::canClose()
 {
 	return checkChangedFlag();
 }
@@ -2498,7 +2498,7 @@ bool GuiBuilderWindow::canClose( void )
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-SuccessCode GuiBuilderWindow::create( void )
+SuccessCode GuiBuilderWindow::create()
 {
 	if( !setMenu( MAIN_MENU_id ) )
 	{

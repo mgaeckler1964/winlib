@@ -3,10 +3,10 @@
 		Module:			GuiBuilderWindow.h
 		Description:	The main window
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -155,11 +155,11 @@ class GuiBuilderWindow : public OverlappedWindow
 	{
 		m_docFileName = fileName;
 	}
-	const F_STRING &getDocument( void ) const
+	const F_STRING &getDocument() const
 	{
 		return m_docFileName;
 	}
-	void clrChangedFlag( void )
+	void clrChangedFlag()
 	{
 		if( m_changedFlag )
 		{
@@ -168,7 +168,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		}
 	}
 	public:
-	void setChangedFlag( void )
+	void setChangedFlag()
 	{
 		if( !m_changedFlag )
 		{
@@ -176,7 +176,7 @@ class GuiBuilderWindow : public OverlappedWindow
 			m_changedFlag = true;
 		}
 	}
-	bool getChangedFlag( void ) const
+	bool getChangedFlag() const
 	{
 		return m_changedFlag;
 	}
@@ -201,7 +201,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		}
 	}
 
-	SuccessCode create( void );
+	SuccessCode create();
 	private:
 	void deleteGuiDoc();
 
@@ -215,7 +215,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	TreeNode *addChildItem( xml::Element *resource, TreeNode *parent );
 	void fillMenuItemList( xml::Element *resource, TreeNode *parent );
 	void fillChildItemList( xml::Element *resource, TreeNode *parent );
-	xml::Element *getSelectedChildResource( void ) const
+	xml::Element *getSelectedChildResource() const
 	{
 		size_t	selIdx = size_t(childSelect.getSelection());
 		if( selIdx < m_childResources.size() )
@@ -227,7 +227,7 @@ class GuiBuilderWindow : public OverlappedWindow
 			return NULL;
 		}
 	}
-	void deleteDesignerForm( void )
+	void deleteDesignerForm()
 	{
 		if( designerForm )
 		{
@@ -248,7 +248,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		topResourceSelect.replaceEntry( idx, newName );
 		topResourceSelect.selectEntry( idx );
 	}
-	xml::Element *getSelectedTopResource( void ) const
+	xml::Element *getSelectedTopResource() const
 	{
 		size_t	selResource = size_t(topResourceSelect.getSelection());
 		if( selResource < m_topResources.size() )
@@ -267,8 +267,8 @@ class GuiBuilderWindow : public OverlappedWindow
 		addTopResource( resource, name );
 		topResourceSelect.selectEntry( name );
 	}
-	void refreshChildSelect( void );
-	void loadResource( void );
+	void refreshChildSelect();
+	void loadResource();
 
 	static void enableChild( BasicWindow *child )
 	{
@@ -280,11 +280,11 @@ class GuiBuilderWindow : public OverlappedWindow
 		child->hide();
 		child->disable();
 	}
-	void enableDisaleProperties( void );
-	void enableNameProperties( void );
-	void enableDisaleMenuProperties( void );
-	void enableDisaleStringsProperties( void );
-	void enableDisaleFormProperties( void );
+	void enableDisaleProperties();
+	void enableNameProperties();
+	void enableDisaleMenuProperties();
+	void enableDisaleStringsProperties();
+	void enableDisaleFormProperties();
 
 	BasicWindow *getChildByResource( xml::Element *resource )
 	{
@@ -292,7 +292,7 @@ class GuiBuilderWindow : public OverlappedWindow
 
 		return designerForm->findChild( resource );
 	}
-	BasicWindow *getChildByTreeSelect( void )
+	BasicWindow *getChildByTreeSelect()
 	{
 		assert( designerForm );
 
@@ -305,15 +305,15 @@ class GuiBuilderWindow : public OverlappedWindow
 
 		return child;
 	}
-	void handleChildSelect( void );
-	void handleItemTreeSelect( void );
-	void handleStringSelect( void );
+	void handleChildSelect();
+	void handleItemTreeSelect();
+	void handleStringSelect();
 
 	public:
 	void removeSelected( bool withDesigner );
 
 	private:
-	STRING getUniqueType( void );
+	STRING getUniqueType();
 
 	void handleChildNameChange();
 	public:
@@ -327,14 +327,14 @@ class GuiBuilderWindow : public OverlappedWindow
 	virtual ProcessStatus handleSelectionChange( int control );
 	virtual ProcessStatus handleButtonClick( int control );
 	virtual ProcessStatus handleCommand( int cmd );
-	virtual bool canClose( void );
+	virtual bool canClose();
 	void handleMenuEditor( WPARAM wParam );
 	void handleFormEditor( WPARAM wParam );
 	void handleStringEditor( WPARAM wParam );
 	virtual void postControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam );
 
 	public:
-	int getCurrentId( void ) const
+	int getCurrentId() const
 	{
 		return m_currentId;
 	}
@@ -392,7 +392,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	void loadChildProperties( BasicWindow *child );
 
 	private:
-	void setLayoutManager( void )
+	void setLayoutManager()
 	{
 		if( designerForm )
 		{
@@ -402,8 +402,8 @@ class GuiBuilderWindow : public OverlappedWindow
 		}
 		enableDisaleProperties();
 	}
-	bool checkLayoutData( void );
-	void editItemList( void );
+	bool checkLayoutData();
+	void editItemList();
 	void newMenu();
 	void newStringList();
 	void newFrame();
@@ -412,20 +412,20 @@ class GuiBuilderWindow : public OverlappedWindow
 
 	void collectCaptions( const xml::Element *root, Captions *target ) const;
 	void translateCaptions( xml::Element *root, const Dictionary &dict ) const;
-	bool checkChangedFlag( void );
+	bool checkChangedFlag();
 	void newDocument();
 	void loadTranslations( xml::Document *doc );
 	void loadGUI( xml::Document *doc );
-	void loadDocument( void );
-	IdentifiersMap createIDs( void );
+	void loadDocument();
+	IdentifiersMap createIDs();
 	STRING saveGui( const F_STRING &fileName );
 	void saveHeader( const F_STRING &fileName, const IdentifiersMap &identifiers );
 	void saveCpp( const F_STRING &fileName, const STRING &xmlGuiSrc );
 	void saveDictionaries( const STRING &fileName );
 	void saveDocumentAs( const F_STRING &newName );
 	void saveTranslations( const F_STRING &fileName );
-	bool saveDocumentAs( void );
-	bool saveDocument( void );
+	bool saveDocumentAs();
+	bool saveDocument();
 
 	void newStyle( unsigned long newStyle, unsigned long styleMask );
 };

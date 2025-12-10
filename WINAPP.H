@@ -3,10 +3,10 @@
 		Module:			WINAPP.H
 		Description:	Application Controller
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -120,7 +120,7 @@ class Application
 	gak::IntStrMap		m_resourceStrings;
 
 	private:
-	STRING getApplicationFromFile( void );
+	STRING getApplicationFromFile();
 
 	protected:
 	Application( const char *iconName );
@@ -133,8 +133,8 @@ class Application
 	~Application();
 
 	gak::xml::Document *getGuiDoc( const STRING &xmlSrc );
-	virtual gak::xml::Document *getGuiDoc( void );
-	F_STRING getGuiFile( void )
+	virtual gak::xml::Document *getGuiDoc();
+	F_STRING getGuiFile()
 	{
 		gak::xml::Document	*doc = getGuiDoc();
 
@@ -190,11 +190,11 @@ class Application
 	{
 		m_resInstance = hInstance;
 	}
-	static HINSTANCE getAppInstance( void )
+	static HINSTANCE getAppInstance()
 	{
 		return m_appInstance;
 	}
-	static HINSTANCE getResInstance( void )
+	static HINSTANCE getResInstance()
 	{
 		return m_resInstance ? m_resInstance : m_appInstance;
 	}
@@ -204,7 +204,7 @@ class Application
 	{
 		m_country = country;
 	}
-	STRING getCountry( void ) const
+	STRING getCountry() const
 	{
 		STRING country = m_country;
 		if( country.isEmpty() )
@@ -231,9 +231,9 @@ class Application
 	{
 		m_applicationName = name;
 	}
-	const STRING &getApplication( void );
-	const F_STRING &getFileName( void );
-	const F_STRING &getPathName( void );
+	const STRING &getApplication();
+	const F_STRING &getFileName();
+	const F_STRING &getPathName();
 	const F_STRING getPathName( const STRING &fName )
 	{
 		return gak::makeFullPath( getFileName(), fName );
@@ -321,7 +321,7 @@ class Application
 	{
 		return loadIcon( MAKEINTRESOURCE( iconId ) );
 	}
-	HICON getIcon( void )
+	HICON getIcon()
 	{
 		if( !m_applicationIcon && m_iconName )
 			m_applicationIcon = loadIcon( m_iconName );
@@ -329,7 +329,7 @@ class Application
 			m_applicationIcon = LoadIcon( NULL, IDI_APPLICATION );
 		return m_applicationIcon;
 	}
-	CallbackWindow *getMainWindow( void ) const
+	CallbackWindow *getMainWindow() const
 	{
 		return m_mainWindow;
 	}

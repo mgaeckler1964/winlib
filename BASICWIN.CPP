@@ -126,7 +126,7 @@ void BasicWindow::checkSize( int width, int height )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING ForeignWindow::getWindowClassName( void ) const
+STRING ForeignWindow::getWindowClassName() const
 {
 	STRING	myClassName;
 
@@ -165,7 +165,7 @@ bool BasicWindow::handleChildClose( BasicWindow *child, bool deleted )
 	return deleted;
 }
 
-bool BasicWindow::canClose( void )
+bool BasicWindow::canClose()
 {
 	// check child windows! not owned windows
 	for(
@@ -184,12 +184,12 @@ bool BasicWindow::canClose( void )
 	return true;
 }
 
-SuccessCode ForeignWindow::close( void )
+SuccessCode ForeignWindow::close()
 {
 	return DestroyWindow( handle() ) ? scSUCCESS : scERROR;
 }
 
-SuccessCode BasicWindow::close( void )
+SuccessCode BasicWindow::close()
 {
 	// close owned windows that are not child windows (required for MIDI tools)
 	for(  
@@ -522,7 +522,7 @@ BasicWindow *BasicWindow::findChild( int id ) const
 	return NULL;
 }
 
-const BasicWindow *BasicWindow::getTopWindow( void ) const
+const BasicWindow *BasicWindow::getTopWindow() const
 {
 	const BasicWindow	*top = this;
 

@@ -3,10 +3,10 @@
 		Module: 		FONTS.H
 		Description:	Handling fonts
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -98,7 +98,7 @@ class Font : public GdiObject<HFONT>
 	friend class BasicWindow;
 	friend class ControlWindow;
 	friend class CallbackWindow;
-	operator HFONT ( void ) const
+	operator HFONT () const
 	{
 		return getHandle();
 	}
@@ -135,14 +135,14 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	bool isAssigned( void ) const
+	bool isAssigned() const
 	{
 		return getHandle() ? true : false;
 	}
 
-	void deleteFont( void );
+	void deleteFont();
 
-	Font &setAnsiFont( void )
+	Font &setAnsiFont()
 	{
 		m_fontData.lfCharSet = ANSI_CHARSET;
 		if( isAssigned() )
@@ -150,7 +150,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setOemFont( void )
+	Font &setOemFont()
 	{
 		m_fontData.lfCharSet = OEM_CHARSET;
 		if( isAssigned() )
@@ -158,7 +158,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setSymbolFont( void )
+	Font &setSymbolFont()
 	{
 		m_fontData.lfCharSet = SYMBOL_CHARSET;
 		if( isAssigned() )
@@ -166,7 +166,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setVariableFont( void )
+	Font &setVariableFont()
 	{
 		m_fontData.lfPitchAndFamily &= 0xFC;
 		m_fontData.lfPitchAndFamily |= VARIABLE_PITCH;
@@ -175,7 +175,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setFixedFont( void )
+	Font &setFixedFont()
 	{
 		m_fontData.lfPitchAndFamily &= 0xFC;
 		m_fontData.lfPitchAndFamily |= FIXED_PITCH;
@@ -192,7 +192,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	const char *getFontName( void ) const
+	const char *getFontName() const
 	{
 		return m_fontData.lfFaceName;
 	}
@@ -214,10 +214,10 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	int getFontSize( void ) const;
-	int getFontSizePixel( void ) const;
+	int getFontSize() const;
+	int getFontSizePixel() const;
 
-	Font &setBold( void )
+	Font &setBold()
 	{
 		setWeight( FW_BOLD );
 		if( isAssigned() )
@@ -225,7 +225,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setNormal( void )
+	Font &setNormal()
 	{
 		setWeight( FW_NORMAL );
 		if( isAssigned() )
@@ -242,7 +242,7 @@ class Font : public GdiObject<HFONT>
 		return *this;
 	}
 
-	bool isItalic( void ) const
+	bool isItalic() const
 	{
 		return m_fontData.lfItalic;
 	}
@@ -254,7 +254,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	bool isUnderline( void ) const
+	bool isUnderline() const
 	{
 		return m_fontData.lfUnderline;
 	}
@@ -266,7 +266,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	bool isStrikeOut( void ) const
+	bool isStrikeOut() const
 	{
 		return m_fontData.lfStrikeOut;
 	}
@@ -278,7 +278,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	unsigned long getStyle( void ) const
+	unsigned long getStyle() const
 	{
 		unsigned long style = m_fontData.lfWeight & 0xFFFFUL;
 		if( isItalic() )
@@ -312,7 +312,7 @@ class Font : public GdiObject<HFONT>
 		return *this;
 	}
 
-	long getCharWidth( void ) const
+	long getCharWidth() const
 	{
 		return m_fontData.lfWidth;
 	}
@@ -323,7 +323,7 @@ class Font : public GdiObject<HFONT>
 		unsigned long		Flags = CF_BOTH|CF_INITTOLOGFONTSTRUCT|CF_FORCEFONTEXIST
 	);
 
-	bool create( void );
+	bool create();
 	enum SystemFont
 	{
 		sfOemFixed = OEM_FIXED_FONT,

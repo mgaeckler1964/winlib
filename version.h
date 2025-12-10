@@ -86,23 +86,23 @@ class ProgramVersionInfo
 	public:
 	ProgramVersionInfo( const gak::STRING &appFileName );
 
-	const gak::STRING &getVersionString( void ) const
+	const gak::STRING &getVersionString() const
 	{
 		return m_versionString;
 	}
-	const gak::STRING &getLegalCopyRight( void ) const
+	const gak::STRING &getLegalCopyRight() const
 	{
 		return m_legalCopyRight;
 	}
-	const gak::STRING &getFileDescription( void ) const
+	const gak::STRING &getFileDescription() const
 	{
 		return m_fileDescription;
 	}
-	const gak::STRING &getProductName( void ) const
+	const gak::STRING &getProductName() const
 	{
 		return m_productName;
 	}
-	const gak::STRING &getCompanyName( void ) const
+	const gak::STRING &getCompanyName() const
 	{
 		return m_companyName;
 	}

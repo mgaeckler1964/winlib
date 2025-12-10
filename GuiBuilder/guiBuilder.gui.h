@@ -161,7 +161,7 @@ namespace winlibGUI {
 
 	class GuiApplication : public winlib::Application {
 		public:
-		virtual gak::xml::Document *getGuiDoc( void );
+		virtual gak::xml::Document *getGuiDoc();
 		GuiApplication(int iconID=-1) : winlib::Application(iconID) {}
 	};
 

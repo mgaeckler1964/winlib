@@ -956,7 +956,7 @@ class BasicWindow : public ForeignWindow
 	BasicWindow &operator = ( const BasicWindow &source );
 
 	// (de)contructors
-	void init( void )
+	void init()
 	{
 		m_autoWidth = m_autoHeight = false;
 		m_x = m_y = m_width = m_height = CW_USEDEFAULT;
@@ -1080,8 +1080,8 @@ class BasicWindow : public ForeignWindow
 	{
 		setHandle( form->Handle );
 	}
-	virtual bool canClose( void );
-	virtual SuccessCode close( void );
+	virtual bool canClose();
+	virtual SuccessCode close();
 
 
 	void invalidateRect( const RectBorder &rect, bool clear=true ) const
@@ -1144,7 +1144,7 @@ class BasicWindow : public ForeignWindow
 			m_toolHelp = appObject->loadString( controlId );
 		}
 	}
-	int getId( void ) const
+	int getId() const
 	{
 		return m_controlId;
 	}
@@ -1153,7 +1153,7 @@ class BasicWindow : public ForeignWindow
 		resources
 	*/
 	void setResource( gak::xml::Element *resource );
-	gak::xml::Element *getResource( void ) const
+	gak::xml::Element *getResource() const
 	{
 		return m_resource;
 	}
@@ -1167,16 +1167,16 @@ class BasicWindow : public ForeignWindow
 		m_parent = parent;
 	}
 	public:
-	const BasicWindow *getParent( void ) const
+	const BasicWindow *getParent() const
 	{
 		return m_parent;
 	}
-	const BasicWindow *getTopWindow( void ) const;
-	const BasicWindow *getOwner( void ) const
+	const BasicWindow *getTopWindow() const;
+	const BasicWindow *getOwner() const
 	{
 		return m_owner;
 	}
-	HWND getParentHandle( void ) const
+	HWND getParentHandle() const
 	{
 		if( m_parent )
 		{
@@ -1200,7 +1200,7 @@ class BasicWindow : public ForeignWindow
 
 		return *this;
 	}
-	const STRING &getTitle( void ) const
+	const STRING &getTitle() const
 	{
 		return m_caption;
 	}
@@ -1208,7 +1208,7 @@ class BasicWindow : public ForeignWindow
 	/*
 		tool help
 	*/
-	const STRING &getToolhelp( void ) const
+	const STRING &getToolhelp() const
 	{
 		return m_toolHelp;
 	}
@@ -1242,11 +1242,11 @@ class BasicWindow : public ForeignWindow
 		}
 		m_layoutData = layoutData;
 	}
-	LayoutData *getLayoutData( void )
+	LayoutData *getLayoutData()
 	{
 		return m_layoutData;
 	}
-	const LayoutData *getLayoutData( void ) const
+	const LayoutData *getLayoutData() const
 	{
 		return m_layoutData;
 	}
@@ -1264,7 +1264,7 @@ class BasicWindow : public ForeignWindow
 	{
 		resize( size.width, size.height );
 	}
-	void resize( void )
+	void resize()
 	{
 		if( m_autoWidth || m_autoHeight )
 		{
@@ -1331,7 +1331,7 @@ class BasicWindow : public ForeignWindow
 	{
 		sizeNmove( dimension.left, dimension.top, dimension.getWidth(), dimension.getHeight() );
 	}
-	Size getSize( void ) const
+	Size getSize() const
 	{
 		if( isValid()  )
 		{
@@ -1351,7 +1351,7 @@ class BasicWindow : public ForeignWindow
 	{
 		m_childWindows.addElement( child );
 	}
-	const ChildWindows &getChildren( void ) const
+	const ChildWindows &getChildren() const
 	{
 		return m_childWindows;
 	}
@@ -1436,7 +1436,7 @@ class BasicWindow : public ForeignWindow
 		if( handle() )
 			invalidateWindow();
 	}
-	void clearBrush( void )
+	void clearBrush()
 	{
 		m_backGroundBrush.clearBrush();
 		if( handle() )

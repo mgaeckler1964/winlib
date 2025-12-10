@@ -188,7 +188,7 @@ void Button::clearSiblingsFlag( unsigned int msg ) const
 // ----- class protected ----------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void ControlWindow::subclassControl( void )
+void ControlWindow::subclassControl()
 {
 	if( !m_wpOrigControlProc )
 	{
@@ -211,7 +211,7 @@ void ControlWindow::subclassControl( void )
 	m_subclassCounter++;
 }
 
-void ControlWindow::restoreProc( void )
+void ControlWindow::restoreProc()
 {
 	if( --m_subclassCounter && m_wpOrigControlProc )
 	{
@@ -236,7 +236,7 @@ void ControlWindow::restoreProc( void )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-SuccessCode ControlWindow::close( void )
+SuccessCode ControlWindow::close()
 {
 	SuccessCode result = scSUCCESS;
 	if( handle() )
@@ -252,52 +252,52 @@ SuccessCode ControlWindow::close( void )
 	return result;
 }
 
-STRING Button::getWindowClassName( void ) const
+STRING Button::getWindowClassName() const
 {
 	return className;	// "BUTTON";
 }
 
-STRING TrackBar::getWindowClassName( void ) const
+STRING TrackBar::getWindowClassName() const
 {
 	return TRACKBAR_CLASS;	// "msctls_trackbar32";
 }
 
-STRING DateTimePicker::getWindowClassName( void ) const
+STRING DateTimePicker::getWindowClassName() const
 {
 	return DATETIMEPICK_CLASS;	// "SysDateTimePick32";
 }
 
-STRING UpDownButton::getWindowClassName( void ) const
+STRING UpDownButton::getWindowClassName() const
 {
 	return UPDOWN_CLASS;	// "msctls_updown32";
 }
 
-STRING EDIT::getWindowClassName( void ) const
+STRING EDIT::getWindowClassName() const
 {
 	return className;	// "EDIT";
 }
 
-STRING ComboBox::getWindowClassName( void ) const
+STRING ComboBox::getWindowClassName() const
 {
 	return className;	// "COMBOBOX";
 }
 
-STRING ListBox::getWindowClassName( void ) const
+STRING ListBox::getWindowClassName() const
 {
 	return className;	// "LISTBOX";
 }
 
-STRING Label::getWindowClassName( void ) const
+STRING Label::getWindowClassName() const
 {
 	return "STATIC";
 }
 
-STRING ScrollBar::getWindowClassName( void ) const
+STRING ScrollBar::getWindowClassName() const
 {
 	return className;	// "scrollbar";
 }
 
-STRING TreeView::getWindowClassName( void ) const
+STRING TreeView::getWindowClassName() const
 {
 	return WC_TREEVIEW; // "SysTreeView";
 }
@@ -375,7 +375,7 @@ LRESULT EDIT::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
 --------------------------------------------------------------------------------
 */
 
-STRING ComboBox::getSelectedText( void ) const
+STRING ComboBox::getSelectedText() const
 {
 	STRING	text;
 	int	selectedIndex = getSelection();
@@ -400,7 +400,7 @@ STRING ComboBox::getSelectedText( void ) const
 --------------------------------------------------------------------------------
 */
 
-int ListBox::getSelection( void ) const
+int ListBox::getSelection() const
 {
 	int index;
 
@@ -419,7 +419,7 @@ int ListBox::getSelection( void ) const
 	return index;
 }
 
-size_t	ListBox::getNumVisible( void ) const
+size_t	ListBox::getNumVisible() const
 {
 	int itemHeigth = message( LB_GETITEMHEIGHT );
 	int myHeight = getSize().height;
@@ -458,7 +458,7 @@ void ListBox::setItems( T_STRING items )
 	}
 }
 
-void ListBox::clearSelection( void )
+void ListBox::clearSelection()
 {
 	if( isMultipleSelection() )
 	{
@@ -500,7 +500,7 @@ void ListBox::setSelectedItems( const ArrayOfInts &selected )
 		message( LB_SETCURSEL, selected[0] );
 }
 
-STRING ListBox::getSelectedItems( void ) const
+STRING ListBox::getSelectedItems() const
 {
 	STRING		selectedItems;
 	ArrayOfInts	selected;
@@ -555,7 +555,7 @@ size_t	ListBox::getSelectedItems( ArrayOfInts *selected ) const
 	return selCount;
 }
 
-size_t ListBox::getNumSelected( void ) const
+size_t ListBox::getNumSelected() const
 {
 	if( isMultipleSelection() )
 		return size_t(message( LB_GETSELCOUNT, 0, 0 ) );
@@ -636,7 +636,7 @@ void EDIT::getSelection( size_t *start, size_t *end ) const
 	}
 }
 
-STRING EDIT::getSelection( void ) const
+STRING EDIT::getSelection() const
 {
 	STRING	selection;
 	size_t	start, end;
@@ -671,7 +671,7 @@ void EDIT::setSelection( std::size_t start, std::size_t end )
 	focus();
 }
 
-void EDIT::indent( void )
+void EDIT::indent()
 {
 	STRING	theText;
 	size_t	startPos, endPos, newEndPos;
@@ -707,7 +707,7 @@ void EDIT::indent( void )
 	setChanged();
 }
 
-void EDIT::unindent( void )
+void EDIT::unindent()
 {
 	STRING	theText;
 	int		i, tabWidth = getTabWidth();

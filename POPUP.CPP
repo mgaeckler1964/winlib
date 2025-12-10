@@ -3,10 +3,10 @@
 		Module:			POPUP.CPP
 		Description:	Popup Windows
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2025 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -87,7 +87,7 @@ BOOL _export pascal EnableDisableProc( HWND window, LPARAM lParam )
 	return true;
 }
 
-void ModalPopup::DisableAllWindows( void )
+void ModalPopup::DisableAllWindows()
 {
 	FARPROC proc;
 
@@ -98,7 +98,7 @@ void ModalPopup::DisableAllWindows( void )
 	FreeProcInstance( proc );
 }
 
-void ModalPopup::EnableAllWindows( void )
+void ModalPopup::EnableAllWindows()
 {
 	FARPROC proc;
 
@@ -117,7 +117,7 @@ void ModalPopup::EnableAllWindows( void )
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void PopupWindow::registerClass( void )
+void PopupWindow::registerClass()
 {
 	static bool registered = false;
 
@@ -136,7 +136,7 @@ void PopupWindow::registerClass( void )
 	}
 }
 
-void OverlappedWindow::registerClass( void )
+void OverlappedWindow::registerClass()
 {
 	static bool registered = false;
 
@@ -155,7 +155,7 @@ void OverlappedWindow::registerClass( void )
 	}
 }
 
-void ToolWindow::registerClass( void )
+void ToolWindow::registerClass()
 {
 	static bool registered = false;
 
@@ -179,17 +179,17 @@ void ToolWindow::registerClass( void )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING PopupWindow::getWindowClassName( void ) const
+STRING PopupWindow::getWindowClassName() const
 {
 	return className;
 }
 
-STRING OverlappedWindow::getWindowClassName( void ) const
+STRING OverlappedWindow::getWindowClassName() const
 {
 	return className;
 }
 
-STRING ToolWindow::getWindowClassName( void ) const
+STRING ToolWindow::getWindowClassName() const
 {
 	return className;
 }
@@ -255,7 +255,7 @@ SuccessCode PopupWindow::create( BasicWindow *parent, int nWidth, int nHeight )
 	return CallbackWindow::create( parent );
 };
 
-ProcessStatus ModalPopup::handleShow( void )
+ProcessStatus ModalPopup::handleShow()
 {
 	PopupWindow::handleShow();
 	DisableAllWindows();
@@ -263,13 +263,13 @@ ProcessStatus ModalPopup::handleShow( void )
 	return psDO_DEFAULT;
 }
 
-ProcessStatus ModalPopup::handleHide( void )
+ProcessStatus ModalPopup::handleHide()
 {
 	EnableAllWindows();
 	return psDO_DEFAULT;
 }
 
-ProcessStatus ModalPopup::handleDestroy( void )
+ProcessStatus ModalPopup::handleDestroy()
 {
 	EnableAllWindows();
 
@@ -278,7 +278,7 @@ ProcessStatus ModalPopup::handleDestroy( void )
 	return psDO_DEFAULT;
 }
 
-ProcessStatus PopupWindow::handleOk( void )
+ProcessStatus PopupWindow::handleOk()
 {
 	if( canClose() )
 	{
@@ -288,7 +288,7 @@ ProcessStatus PopupWindow::handleOk( void )
 	return psDO_DEFAULT;
 }
 
-ProcessStatus PopupWindow::handleCancel( void )
+ProcessStatus PopupWindow::handleCancel()
 {
 	if( canClose() )
 	{
@@ -309,13 +309,13 @@ ProcessStatus PopupWindow::handleButtonClick( int cmd )
 	return CallbackWindow::handleButtonClick( cmd );
 }
 
-ProcessStatus ModalPopup::handleOk( void )
+ProcessStatus ModalPopup::handleOk()
 {
 	setModalResult( IDOK );
 	return PopupWindow::handleOk();
 }
 
-ProcessStatus ModalPopup::handleCancel( void )
+ProcessStatus ModalPopup::handleCancel()
 {
 	setModalResult( IDCANCEL );
 	return PopupWindow::handleCancel();

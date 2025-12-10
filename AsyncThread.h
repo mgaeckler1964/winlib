@@ -86,8 +86,8 @@ class AsyncThread : public gak::Thread
 	AsyncThread(CallbackWindow *callWin, void *data=NULL, bool autoDelete = true) 
 		: Thread( autoDelete ), m_callwin(callWin), m_data(data)  {}
 
-	virtual void ExecuteTask( void ) = 0;
-	virtual void ExecuteThread( void )
+	virtual void ExecuteTask() = 0;
+	virtual void ExecuteThread()
 	{
 		ExecuteTask();
 		m_callwin->postMessage(WM_ASYNC_TASK_END, 0, LPARAM(m_data));

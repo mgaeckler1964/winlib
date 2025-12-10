@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Austria, Linz ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -109,7 +109,7 @@
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-void TranslateForm::saveDict( void )
+void TranslateForm::saveDict()
 {
 	size_t max = m_captions.size();
 
@@ -167,7 +167,7 @@ void TranslateForm::loadNewDict( const STRING &newLanguage )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-ProcessStatus TranslateForm::handleCreate( void )
+ProcessStatus TranslateForm::handleCreate()
 {
 	size_t	row = 0;
 	translationsGrid->createData( 2, m_captions.size() );

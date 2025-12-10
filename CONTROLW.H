@@ -108,8 +108,8 @@ class ControlWindow : public BasicWindow
 		m_popupMenu = NULL;
 		setStyle( WS_CHILD|WS_VISIBLE|WS_TABSTOP );
 	}
-	void subclassControl( void );
-	void restoreProc( void );
+	void subclassControl();
+	void restoreProc();
 
 	public:
 	virtual SuccessCode create( CallbackWindow *parent )
@@ -142,7 +142,7 @@ class ControlWindow : public BasicWindow
 
 		return create( parent );
 	}
-	virtual SuccessCode close( void );
+	virtual SuccessCode close();
 	void initHandle( BasicWindow *parent, int controlId )
 	{
 		BasicWindow::initHandle( parent, controlId );
@@ -166,7 +166,7 @@ class Button : public ControlWindow
 	static const char className[];
 
 	Bitmap		bitmap;
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	private:
 	void clearSiblingsFlag( unsigned int msg ) const;
@@ -176,11 +176,11 @@ class Button : public ControlWindow
 	Button( BasicWindow *owner = NULL ) : ControlWindow( owner ) {}
 
 	public:
-	bool isActive( void ) const
+	bool isActive() const
 	{
 		return message( BM_GETCHECK ) ? true : false;
 	}
-	void setActive( void ) const
+	void setActive() const
 	{
 		message( BM_SETCHECK, BST_CHECKED );
 		clearSiblingsFlag( BM_SETCHECK );
@@ -191,16 +191,16 @@ class Button : public ControlWindow
 		if( active )
 			clearSiblingsFlag( BM_SETCHECK );
 	}
-	void clrActive( void ) const
+	void clrActive() const
 	{
 		message( BM_SETCHECK, BST_UNCHECKED );
 	}
 
-	bool isHighlighted( void ) const
+	bool isHighlighted() const
 	{
 		return message( BM_GETSTATE, 0, 0L ) ? true : false;
 	}
-	void setHighlight( void ) const
+	void setHighlight() const
 	{
 		message( BM_SETSTATE, 1, 0 );
 		clearSiblingsFlag( BM_SETSTATE );
@@ -211,7 +211,7 @@ class Button : public ControlWindow
 		if( highlight )
 			clearSiblingsFlag( BM_SETSTATE );
 	}
-	void clrHighlight( void ) const
+	void clrHighlight() const
 	{
 		message( BM_SETSTATE, 0, 0 );
 	}
@@ -334,7 +334,7 @@ class RadioButton : public Button
 
 class ComboBox : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	int getSelectedTextLen( int index ) const
 	{
@@ -351,7 +351,7 @@ class ComboBox : public ControlWindow
 	{
 		message( CB_ADDSTRING, 0, LPARAM(text) );
 	}
-	void clearEntries( void )
+	void clearEntries()
 	{
 		message( CB_RESETCONTENT );
 	}
@@ -359,11 +359,11 @@ class ComboBox : public ControlWindow
 	{
 		message( CB_DELETESTRING, entryId );
 	}
-	int getSelection( void ) const
+	int getSelection() const
 	{
 		return (int)message( CB_GETCURSEL );
 	}
-	STRING getSelectedText( void ) const;
+	STRING getSelectedText() const;
 	int findEntry( const char *entry ) const
 	{
 		return int(message( CB_FINDSTRINGEXACT, WPARAM(-1), LPARAM(entry) ));
@@ -377,7 +377,7 @@ class ComboBox : public ControlWindow
 	{
 		message( CB_SELECTSTRING, WPARAM(-1), LPARAM(entry) );
 	}
-	size_t getNumItems( void ) const
+	size_t getNumItems() const
 	{
 		return message( CB_GETCOUNT );
 	}
@@ -385,7 +385,7 @@ class ComboBox : public ControlWindow
 
 class ListBox : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
@@ -417,11 +417,11 @@ class ListBox : public ControlWindow
 
 		return entry;
 	}
-	void clearEntries( void ) const
+	void clearEntries() const
 	{
 		message( LB_RESETCONTENT );
 	}
-	void clearSelection( void );
+	void clearSelection();
 
 	void selectEntry( int entryId );
 	void unselectEntry( int entryId );
@@ -453,22 +453,22 @@ class ListBox : public ControlWindow
 		insertEntry( idx, text );
 	}
 
-	bool isMultipleSelection( void ) const
+	bool isMultipleSelection() const
 	{
 		return hasStyle( LBS_MULTIPLESEL ) || hasStyle( LBS_EXTENDEDSEL );
 	}
-	int getSelection( void ) const;
+	int getSelection() const;
 
 	bool isSelected( size_t entry ) const
 	{
 		return message( LB_GETSEL, entry, 0L ) > 0 ? true : false;
 	}
-	size_t	getNumEntries( void ) const
+	size_t	getNumEntries() const
 	{
 		return size_t(message( LB_GETCOUNT ));
 	}
-	size_t	getNumVisible( void ) const;
-	size_t	getFirstVisible( void ) const
+	size_t	getNumVisible() const;
+	size_t	getFirstVisible() const
 	{
 		return message( LB_GETTOPINDEX );
 	}
@@ -486,24 +486,24 @@ class ListBox : public ControlWindow
 	void	setItems( T_STRING items );
 	void	setSelectedItems( T_STRING items );
 	void	setSelectedItems( const gak::ArrayOfInts &data );
-	STRING	getSelectedItems( void ) const;
+	STRING	getSelectedItems() const;
 	size_t	getSelectedItems( gak::ArrayOfInts *data ) const;
 
-	size_t getNumSelected( void ) const;
+	size_t getNumSelected() const;
 
-	void enableMultiSelection( void )
+	void enableMultiSelection()
 	{
 		addStyle( LBS_MULTIPLESEL );
 	}
-	void disableMultiSelection( void )
+	void disableMultiSelection()
 	{
 		removeStyle( LBS_MULTIPLESEL );
 	}
-	void enableExtendedSelection( void )
+	void enableExtendedSelection()
 	{
 		addStyle( LBS_EXTENDEDSEL );
 	}
-	void disableExtendedSelection( void )
+	void disableExtendedSelection()
 	{
 		removeStyle( LBS_EXTENDEDSEL );
 	}
@@ -512,7 +512,7 @@ class ListBox : public ControlWindow
 
 class Label : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
@@ -553,7 +553,7 @@ class Label : public ControlWindow
 
 class EDIT : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 	//public:
 	static const char className[];
 	//private:
@@ -609,21 +609,21 @@ class EDIT : public ControlWindow
 		message( EM_SETTABSTOPS, 1, LPARAM(&numPixels) );
 		invalidateWindow();
 	}
-	int getTabWidth( void ) const
+	int getTabWidth() const
 	{
 		return m_tabWidth;
 	}
-	void setEditable( void )
+	void setEditable()
 	{
 		m_editable = true;
 		message( EM_SETREADONLY, false );
 	}
-	void setReadonly( void )
+	void setReadonly()
 	{
 		m_editable = false;
 		message( EM_SETREADONLY, true );
 	}
-	bool isEditable( void ) const
+	bool isEditable() const
 	{
 		return m_editable;
 	}
@@ -684,30 +684,30 @@ class EDIT : public ControlWindow
 		addStyle( ES_NOHIDESEL );
 	}
 
-	void indent( void );
-	void unindent( void );
+	void indent();
+	void unindent();
 
-	void cut( void ) const
+	void cut() const
 	{
 		message( WM_CUT );
 	}
-	void copy( void ) const
+	void copy() const
 	{
 		message( WM_COPY );
 	}
-	void paste( void ) const
+	void paste() const
 	{
 		message( WM_PASTE );
 	}
-	void clear( void ) const
+	void clear() const
 	{
 		message( WM_CLEAR );
 	}
-	void selectAll( void )
+	void selectAll()
 	{
 		setSelection( 0, getTextLength() );
 	}
-	void deleteLine( void )
+	void deleteLine()
 	{
 		size_t	lineStart, lineEnd;
 
@@ -720,7 +720,7 @@ class EDIT : public ControlWindow
 		cut();
 	}
 
-	void undo( void ) const
+	void undo() const
 	{
 		message( EM_UNDO );
 	}
@@ -730,38 +730,38 @@ class EDIT : public ControlWindow
 		setText( value );
 	}
 
-	STRING getString( void ) const
+	STRING getString() const
 	{
 		return getText( isOemConvert() );
 	}
-	operator STRING( void ) const
+	operator STRING() const
 	{
 		return getString();
 	}
 
 	void print( const char *fileName, PrintDevice *printer );
 
-	void setLineBreak( void )
+	void setLineBreak()
 	{
 		removeStyle( ES_AUTOHSCROLL|WS_HSCROLL );
 		message( EM_FMTLINES, true );
 
 	}
-	void clrLineBreak( void )
+	void clrLineBreak()
 	{
 		addStyle( ES_AUTOHSCROLL|WS_HSCROLL );
 		message( EM_FMTLINES, false );
 	}
-	bool isLineBreak( void )
+	bool isLineBreak()
 	{
 		return (bool)(!hasStyle( ES_AUTOHSCROLL|WS_HSCROLL ));
 	}
-	void setAutoIndent( void )
+	void setAutoIndent()
 	{
 		subclassControl();
 	}
 
-	void clrAutoIndent( void )
+	void clrAutoIndent()
 	{
 		restoreProc();
 	}
@@ -821,7 +821,7 @@ class EditControl : public EDIT
 
 class UpDownButton : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
@@ -829,7 +829,7 @@ class UpDownButton : public ControlWindow
 	{
 		addStyle( UDS_SETBUDDYINT|UDS_ALIGNRIGHT|UDS_AUTOBUDDY|UDS_ARROWKEYS );
 	}
-	int getPosition( void ) const
+	int getPosition() const
 	{
 		return int(message( UDM_GETPOS ));
 	}
@@ -845,7 +845,7 @@ class UpDownButton : public ControlWindow
 
 class ScrollBar : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
@@ -866,7 +866,7 @@ class ScrollBar : public ControlWindow
 	{
 		message( SBM_SETRANGE, minVal, maxVal );
 	}
-	int getPosition( void ) const
+	int getPosition() const
 	{
 		return int(message( SBM_GETPOS ));
 	}
@@ -878,13 +878,13 @@ class ScrollBar : public ControlWindow
 
 class TrackBar : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
 
 	TrackBar( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
-	int getPosition( void ) const
+	int getPosition() const
 	{
 		return int(message( TBM_GETPOS ));
 	}
@@ -905,7 +905,7 @@ class TrackBar : public ControlWindow
 
 class DateTimePicker : public ControlWindow
 {
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	public:
 	static const char className[];
@@ -953,11 +953,11 @@ class TreeNode
 		data = NULL;
 	}
 
-	HTREEITEM getHandle( void ) const
+	HTREEITEM getHandle() const
 	{
 		return handle;
 	}
-	TreeNode *getParent( void ) const
+	TreeNode *getParent() const
 	{
 		return parent;
 	}
@@ -974,14 +974,14 @@ class TreeNode
 		children.removeElementVal( child );
 	}
 
-	TreeNode *getFirstChild( void ) const
+	TreeNode *getFirstChild() const
 	{
 		if( children.size() )
 			return children[0];
 		else
 			return NULL;
 	}
-	TreeNode *getLastChild( void ) const
+	TreeNode *getLastChild() const
 	{
 		if( children.size() )
 			return children[children.size() -1];
@@ -992,7 +992,7 @@ class TreeNode
 	{
 		data = newData;
 	}
-	void *getData( void ) const
+	void *getData() const
 	{
 		return data;
 	}
@@ -1000,11 +1000,11 @@ class TreeNode
 	{
 		label = newLabel;
 	}
-	const STRING &getLabel( void ) const
+	const STRING &getLabel() const
 	{
 		return label;
 	}
-	size_t getIndex( void )
+	size_t getIndex()
 	{
 		return parent ? parent->getIndex( this ) : 0;
 	}
@@ -1016,7 +1016,7 @@ class TreeNode
 	{
 		return children[index];
 	}
-	size_t getNumChildren( void ) const
+	size_t getNumChildren() const
 	{
 		return children.size();
 	}
@@ -1029,7 +1029,7 @@ class TreeView : public ControlWindow
 	static const char className[];
 	private:
 
-	virtual STRING getWindowClassName( void ) const;
+	virtual STRING getWindowClassName() const;
 
 	TreeNode *addItem( TreeNode *parent, const STRING &label, void *data, size_t index )
 	{
@@ -1206,7 +1206,7 @@ class TreeView : public ControlWindow
 
 		return dragOver;
 	}
-	TreeNode *doDrop( void )
+	TreeNode *doDrop()
 	{
 		TreeNode *target = NULL;
 
