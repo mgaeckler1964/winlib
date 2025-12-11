@@ -15,7 +15,8 @@
       ..\..\Object\Winlib\bcb\Layout.obj ..\..\Object\Winlib\bcb\resource.obj 
       ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj 
       ..\..\Object\Winlib\bcb\version.obj ..\..\Object\Winlib\bcb\menu.obj 
-      ..\..\Object\Winlib\bcb\xmlEditorInternal.obj"/>
+      ..\..\Object\Winlib\bcb\xmlEditorInternal.obj 
+      ..\..\Object\Winlib\bcb\chartWin.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -96,8 +97,8 @@ Item0=$(BCB)\source\vcl
 [HistoryLists\hlConditionals]
 Count=3
 Item0=NDEBUG
-Item1=NDEBUG;_DEBUG
-Item2=_DEBUG
+Item1=_DEBUG
+Item2=NDEBUG;_DEBUG
 
 [HistoryLists\hlIntOutputDir]
 Count=1

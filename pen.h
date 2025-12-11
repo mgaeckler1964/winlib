@@ -123,7 +123,11 @@ class Pen : public GdiObject<HPEN>
 		clear();
 	}
 
-
+	Pen & operator = ( const Pen &src )
+	{
+		GdiObject<HPEN>::operator= ( src );
+		return *this;
+	}
 
 	/*
 		user defined pen

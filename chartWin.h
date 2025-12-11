@@ -122,6 +122,8 @@ class ChartChild : public ChildWindow
 	AllLineCharts				m_chartData;
 	gak::math::MinMax<double>	m_xBounds, m_yBounds;
 
+	void addChartLine2( LineChart *data );
+
 	Point value2Pixel(const ChartLinePoint &value, const Size &size );
 	void paintLine(Device &hDC, const LineChart &lineData, const Size &size);
 	virtual ProcessStatus handleRepaint( Device &hDC );

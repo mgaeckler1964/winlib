@@ -722,6 +722,9 @@ using namespace winlib;
 int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 							LPSTR cmdLine, int nCmdShow)
 {
+	/// TODO: Logfile crashes in Borland C++ Builder -> analyse and fix
+	doEnableLogEx( gakLogging::llInfo );
+	doDisableLog();
 	doEnterFunctionEx(gakLogging::llInfo, "WinMain");
 	int	result = 0;
 

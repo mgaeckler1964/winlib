@@ -148,12 +148,9 @@ Point ChartChild::value2Pixel(const ChartLinePoint &value, const Size &size )
 
 void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &size)
 {
-
 	gak::Array<Point>	myPolygon;
 
-	Pen	linePen;
-	linePen.create(Pen::psSolid, lineData.lineWidth, lineData.color);
-	hDC.selectPen( linePen );
+	hDC.getPen().create(Pen::psSolid, lineData.lineWidth, lineData.color);
 	myPolygon.setMinSize(lineData.data.size());
 	std::back_insert_iterator< gak::Array<Point> > inserter = std::back_inserter(myPolygon);
 	for(
@@ -166,7 +163,20 @@ void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &s
 	}
 
 	hDC.polyline(myPolygon);
+}
 
+void ChartChild::addChartLine2( LineChart *data )
+{
+	for(
+		Chart2dData::const_iterator it = data->data.cbegin(), endIT = data->data.cend();
+		it != endIT;
+		++it
+	)
+	{
+		m_xBounds.test( it->val1 );
+		m_yBounds.test( it->val2 );
+	}
+	m_chartData.createElement().moveFrom( *data );
 }
 
 // --------------------------------------------------------------------- //
@@ -176,7 +186,7 @@ void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &s
 // --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-   
+
 STRING ChartChild::getWindowClassName() const
 {
 	return className;
@@ -184,7 +194,7 @@ STRING ChartChild::getWindowClassName() const
 
 ProcessStatus ChartChild::handleRepaint( Device &hDC )
 {
-	if( m_useDemoData && !m_chartData.size() )
+	if( !m_chartData.size() )
 	{
 		LineChart	cData(3,RGB(255,0,0));
 		cData.data.addElement(ChartLinePoint(0,0));
@@ -193,7 +203,7 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 		cData.data.addElement(ChartLinePoint(3,40));
 		cData.data.addElement(ChartLinePoint(4,-10));
 		cData.data.addElement(ChartLinePoint(5,0));
-		addChartLine( &cData );
+		addChartLine2( &cData );
 
 		LineChart	cData2(2,RGB(0,0,255));
 		cData2.data.addElement(ChartLinePoint(0,100));
@@ -202,7 +212,7 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 		cData2.data.addElement(ChartLinePoint(3,40));
 		cData2.data.addElement(ChartLinePoint(4,0));
 		cData2.data.addElement(ChartLinePoint(5,30));
-		addChartLine( &cData2 );
+		addChartLine2( &cData2 );
 
 		LineChart	cData3(2,RGB(0,255,0));
 
@@ -212,9 +222,7 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 		cData3.data.addElement(ChartLinePoint(4,33));
 		cData3.data.addElement(ChartLinePoint(5,44));
 		cData3.data.addElement(ChartLinePoint(6,0));
-		addChartLine( &cData3 );
-
-		m_useDemoData = true;
+		addChartLine2( &cData3 );
 	}
 
 	Size size = getSize();
@@ -240,18 +248,10 @@ void ChartChild::addChartLine( LineChart *data )
 	{
 		m_xBounds = gak::math::MinMax<double>();
 		m_yBounds = gak::math::MinMax<double>();
+		m_chartData.clear();
 		m_useDemoData = false;
 	}
-	for(
-		Chart2dData::const_iterator it = data->data.cbegin(), endIT = data->data.cend();
-		it != endIT;
-		++it
-	)
-	{
-		m_xBounds.test( it->val1 );
-		m_yBounds.test( it->val2 );
-	}
-	m_chartData.createElement().moveFrom( *data );
+	addChartLine2(data);
 }
 
 // --------------------------------------------------------------------- //

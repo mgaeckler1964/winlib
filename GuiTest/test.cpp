@@ -29,8 +29,13 @@
 		SUCH DAMAGE.
 */
 
+// --------------------------------------------------------------------- //
+// ----- includes ------------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
 #include <gak/gaklib.h>
 #include <gak/fmtNumber.h>
+#include <gak/logfile.h>
 
 #include <WINLIB/WINAPP.H>
 #include <WINLIB/popup.h>
@@ -38,7 +43,22 @@
 #include <WINLIB/xmlEditorChild.h>
 #include <WINLIB/chartWin.h>
 
+// --------------------------------------------------------------------- //
+// ----- module switches ----------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+#ifdef __BORLANDC__
+#	pragma option -RT-
+#	pragma option -b
+#	pragma option -a4
+#	pragma option -pc
+#endif
+
 using namespace winlib;
+
+// --------------------------------------------------------------------- //
+// ----- class definitions --------------------------------------------- //
+// --------------------------------------------------------------------- //
 
 class TestWindow : public PopupWindow
 {
@@ -165,7 +185,6 @@ class TestWindow : public PopupWindow
 
 			myChartChild.sizeNmove( 70, 50, 50, 50 );
 			myChartChild.create( this );
-
 		}
 	}
 };
@@ -289,4 +308,11 @@ int main()
 
 	return 0;
 }
+#endif
+
+#ifdef __BORLANDC__
+#	pragma option -RT.
+#	pragma option -b.
+#	pragma option -a.
+#	pragma option -p.
 #endif

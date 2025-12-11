@@ -1,0 +1,7 @@
+USEUNIT("test.cpp");
+USELIB("..\..\..\object\winlib\winlibBCB.lib");
+USELIB("..\..\..\object\gaklib\gaklib_bcb.lib");
+//---------------------------------------------------------------------------
+This file is used by the project manager only and should be treated like the project file
+
+WinMain
