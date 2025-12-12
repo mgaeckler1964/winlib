@@ -728,11 +728,24 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 	doEnterFunctionEx(gakLogging::llInfo, "WinMain");
 	int	result = 0;
 
-	if( appObject )
+	try
 	{
-		Application::setInstance( hInstance );
-		result = appObject->AppMain( hInstance, cmdLine, nCmdShow );
+		if( appObject )
+		{
+			Application::setInstance( hInstance );
+			result = appObject->AppMain( hInstance, cmdLine, nCmdShow );
 
+		}
+	}
+	catch( std::exception &e )
+	{
+		MessageBox( nullptr, LPCSTR(e.what()), LPCSTR("Exception"), MB_ICONERROR );
+		result = -1;
+	}
+	catch( ... )
+	{
+		MessageBox( nullptr, LPCSTR("Unknown error 8-("), LPCSTR("Exception"), MB_ICONERROR );
+		result = -2;
 	}
 	return result;
 }
