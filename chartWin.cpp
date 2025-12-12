@@ -137,22 +137,22 @@ Point ChartChild::value2Pixel(const ChartLinePoint &value, const Size &size )
 {
 	const double valWidth = m_xBounds.getMax() - m_xBounds.getMin();
 	const double valWidthPerPixel = valWidth / size.width;
-	const int pixelX = (value.val1 - m_xBounds.getMin()) / valWidthPerPixel;
+	const int pixelX = int((value.val1 - m_xBounds.getMin()) / valWidthPerPixel + 0.5);
 
 	const double valHeight = m_yBounds.getMax() - m_yBounds.getMin();
 	const double valHeightPerPixel = valHeight / size.height;
-	const int pixelY = size.height - (value.val2 - m_yBounds.getMin()) / valHeightPerPixel;
+	const int pixelY = int(size.height - (value.val2 - m_yBounds.getMin()) / valHeightPerPixel + 0.5);
 
 	return Point(pixelX, pixelY);
 }
 
 void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &size)
 {
-	gak::Array<Point>	myPolygon;
+	gak::Array<Point>	myPolyline;
 
 	hDC.getPen().create(Pen::psSolid, lineData.lineWidth, lineData.color);
-	myPolygon.setMinSize(lineData.data.size());
-	std::back_insert_iterator< gak::Array<Point> > inserter = std::back_inserter(myPolygon);
+	myPolyline.setMinSize(lineData.data.size());
+	std::back_insert_iterator< gak::Array<Point> > inserter = std::back_inserter(myPolyline);
 	for(
 		Chart2dData::const_iterator it = lineData.data.cbegin(), endIT = lineData.data.cend();
 		it != endIT;
@@ -162,8 +162,9 @@ void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &s
 		*inserter = value2Pixel( *it, size );
 	}
 
-	hDC.polyline(myPolygon);
+	hDC.polyline(myPolyline);
 }
+
 
 void ChartChild::addChartLine2( LineChart *data )
 {
@@ -194,8 +195,15 @@ STRING ChartChild::getWindowClassName() const
 
 ProcessStatus ChartChild::handleRepaint( Device &hDC )
 {
-	if( !m_chartData.size() )
+	if( !m_chartData.size() && !m_barCharts.size() )
 	{
+		BarChart	bData( RGB(255,0,0), 50);
+		addBarChart( bData );
+		BarChart	bData2( RGB(0,255,0), -20);
+		addBarChart( bData2 );
+		BarChart	bData3( RGB(0,0,255), 40);
+		addBarChart( bData3 );
+
 		LineChart	cData(3,RGB(255,0,0));
 		cData.data.addElement(ChartLinePoint(0,0));
 		cData.data.addElement(ChartLinePoint(1,25));
@@ -226,6 +234,31 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 	}
 
 	Size size = getSize();
+
+	if( m_barCharts.size() )
+	{
+		const int bottom = m_barBounds.getMin() < 0 
+			? size.height + m_barBounds.getMin() * size.height / m_barBounds.getRange()
+			: size.height;
+		const int width = size.width / m_barCharts.size();
+		int left = 0;
+		int right = left + width;
+		for(
+			AllBarCharts::const_iterator it = m_barCharts.cbegin(), endIT = m_barCharts.cend();
+			it != endIT;
+			++it
+		)
+		{
+			const int top = bottom - (it->value * bottom) / m_barBounds.getMax();
+
+			hDC.getBrush().create(it->color);
+			hDC.rectangle(left,top,right,bottom);
+
+			left=right;
+			right = left+width;
+		}
+	}
+
 	for(
 		AllLineCharts::const_iterator it = m_chartData.cbegin(), endIT = m_chartData.cend();
 		it != endIT;
@@ -242,16 +275,39 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+void ChartChild::clearData()
+{
+	m_xBounds = gak::math::MinMax<double>();
+	m_yBounds = gak::math::MinMax<double>();
+	m_barBounds = gak::math::MinMax<double>();
+	m_chartData.clear();
+	m_barCharts.clear();
+	m_useDemoData = false;
+}
+
 void ChartChild::addChartLine( LineChart *data )
 {
 	if(m_useDemoData)
 	{
-		m_xBounds = gak::math::MinMax<double>();
-		m_yBounds = gak::math::MinMax<double>();
-		m_chartData.clear();
-		m_useDemoData = false;
+		clearData();
 	}
 	addChartLine2(data);
+}
+
+void ChartChild::addChartLine( const LineChart &data )
+{
+	LineChart copy( data );
+	addChartLine(&copy);
+}
+
+void ChartChild::addBarChart( const BarChart &value )
+{
+	if(m_useDemoData)
+	{
+		clearData();
+	}
+	m_barCharts.addElement( value );
+	m_barBounds.test( value.value );
 }
 
 // --------------------------------------------------------------------- //

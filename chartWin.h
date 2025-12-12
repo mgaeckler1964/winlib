@@ -83,14 +83,19 @@ namespace winlib
 	typedef gak::Duo<double,double>		ChartLinePoint;
 	typedef gak::Array<ChartLinePoint>	Chart2dData;
 
-	struct	LineChart
+	struct CommonChart
 	{
-		Chart2dData		data;
 		int				lineWidth;
 		COLORREF		color;
+		CommonChart( int width=1, COLORREF color=RGB(0,0,0) ) : lineWidth(width), color(color) {}
+	};
 
-		LineChart( int width=1, COLORREF color=RGB(0,0,0), const Chart2dData &data = Chart2dData() ) : data(data), lineWidth(width), color(color) {}
-		LineChart( int width, COLORREF color, Chart2dData *data ) : lineWidth(width), color(color) 
+	struct	LineChart : public CommonChart
+	{
+		Chart2dData		data;
+
+		LineChart( int width=1, COLORREF color=RGB(0,0,0), const Chart2dData &data = Chart2dData() ) : CommonChart(width,color), data(data) {}
+		LineChart( int width, COLORREF color, Chart2dData *data ) : CommonChart(width,color)
 		{
 			this->data.moveFrom( *data );
 		}
@@ -104,8 +109,16 @@ namespace winlib
 			return *this;
 		}
 	};
-
 	typedef gak::Array<LineChart>		AllLineCharts;
+
+	struct	BarChart : public CommonChart
+	{
+		double		value;
+
+		BarChart( COLORREF color=0, double value=0 ) : CommonChart(0,color), value(value) {}
+	};
+	typedef gak::Array<BarChart>		AllBarCharts;
+
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -119,8 +132,13 @@ class ChartChild : public ChildWindow
 	static const char className[];
 
 	bool						m_useDemoData;
+	// the line charts
 	AllLineCharts				m_chartData;
 	gak::math::MinMax<double>	m_xBounds, m_yBounds;
+
+	// the bar chart
+	AllBarCharts				m_barCharts;
+	gak::math::MinMax<double>	m_barBounds;
 
 	void addChartLine2( LineChart *data );
 
@@ -136,6 +154,9 @@ public:
 	}
 
 	void addChartLine( LineChart *data );
+	void addChartLine( const LineChart &data );
+	void addBarChart( const BarChart &value );
+	void clearData();
 };
 
 // --------------------------------------------------------------------- //
