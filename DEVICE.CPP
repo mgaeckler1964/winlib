@@ -41,9 +41,10 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <gak/string.h>
-
 #include <winlib/device.h>
+
+#include <gak/string.h>
+#include <gak/geometry.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -64,6 +65,23 @@ using namespace gak;
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void Device::pie(int x, int y, int radius, double startAngle, double endAngle )
+{
+	math::Point<double>			center( x, y );
+	math::PolarPoint<double>	start( radius, startAngle );
+	math::PolarPoint<double>	end( radius, endAngle );
+
+	math::Point<double>	startPoint = center + math::Point<double>(start);
+	math::Point<double>	endPoint = center + math::Point<double>(end);
+
+	Pie( 
+		m_device, 
+		x-radius, y-radius, x+radius, y+radius, 
+		int(startPoint.getX()+0.5), int(startPoint.getY()+0.5), 
+		int(endPoint.getX()+0.5), int(endPoint.getY()+0.5) 
+	);
+}
 
 int Device::getLineHeight() const
 {

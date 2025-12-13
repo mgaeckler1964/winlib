@@ -133,7 +133,7 @@ void ChartChild::registerClass()
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-Point ChartChild::value2Pixel(const ChartLinePoint &value, const Size &size )
+Point ChartChild::value2Pixel(const Chart2dPoint &value, const Size &size )
 {
 	const double valWidth = m_xBounds.getMax() - m_xBounds.getMin();
 	const double valWidthPerPixel = valWidth / size.width;
@@ -146,7 +146,67 @@ Point ChartChild::value2Pixel(const ChartLinePoint &value, const Size &size )
 	return Point(pixelX, pixelY);
 }
 
-void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &size)
+void ChartChild::drawBarCharts(Device &hDC, const Size &size)
+{
+	hDC.getPen().create(Pen::psNull, 0, 0);
+
+	const int bottom = m_1dBounds.getMin() < 0 
+		? size.height + int(m_1dBounds.getMin() * size.height / m_1dBounds.getRange() +0.5)
+		: size.height;
+	const int width = size.width / int(m_1dData.size());
+	int left = 0;
+	int right = left + width;
+	for(
+		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
+		it != endIT;
+		++it
+	)
+	{
+		const int top = bottom - int((it->value * bottom) / m_1dBounds.getMax() +0.5);
+
+		hDC.getBrush().create(it->color);
+		hDC.rectangle(left,top,right,bottom);
+
+		left=right;
+		right = left+width;
+	}
+}
+
+void ChartChild::drawPieCharts(Device &hDC, const Size &size)
+{
+	hDC.getPen().create(Pen::psNull, 0, 0);
+
+	Point center( size.width/2, size.height/2);
+	int radius = gak::math::min(size.width, size.height) /2;
+	double sum = 0;
+
+	for(
+		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
+		it != endIT;
+		++it
+	)
+	{
+		sum += it->value;
+	}
+	const double	pi2 = M_PI*2;
+	double			startAngle = 0;
+	for(
+		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
+		it != endIT;
+		++it
+	)
+	{
+		hDC.getBrush().create(it->color);
+		const double pieAngle = it->value * pi2 / sum;
+		const double nextAngle = startAngle+pieAngle;
+		hDC.pie(center,radius,nextAngle, startAngle );
+		startAngle = nextAngle;
+	}
+}
+
+
+
+void ChartChild::paintLine(Device &hDC, const Chart2D &lineData, const Size &size)
 {
 	gak::Array<Point>	myPolyline;
 
@@ -166,7 +226,7 @@ void ChartChild::paintLine(Device &hDC, const LineChart &lineData, const Size &s
 }
 
 
-void ChartChild::addChartLine2( LineChart *data )
+void ChartChild::add2dChart2( Chart2D *data )
 {
 	for(
 		Chart2dData::const_iterator it = data->data.cbegin(), endIT = data->data.cend();
@@ -177,7 +237,7 @@ void ChartChild::addChartLine2( LineChart *data )
 		m_xBounds.test( it->val1 );
 		m_yBounds.test( it->val2 );
 	}
-	m_chartData.createElement().moveFrom( *data );
+	m_2dData.createElement().moveFrom( *data );
 }
 
 // --------------------------------------------------------------------- //
@@ -195,72 +255,56 @@ STRING ChartChild::getWindowClassName() const
 
 ProcessStatus ChartChild::handleRepaint( Device &hDC )
 {
-	if( !m_chartData.size() && !m_barCharts.size() )
+	if( m_useDemoData && !m_2dData.size() && !m_1dData.size() )
 	{
-		BarChart	bData( RGB(255,0,0), 50);
-		addBarChart( bData );
-		BarChart	bData2( RGB(0,255,0), -20);
-		addBarChart( bData2 );
-		BarChart	bData3( RGB(0,0,255), 40);
-		addBarChart( bData3 );
+		Chart1D	bData( RGB(255,0,0), 50);
+		add1dChart( bData );
+		Chart1D	bData2( RGB(0,255,0), -20);
+		add1dChart( bData2 );
+		Chart1D	bData3( RGB(0,0,255), 40);
+		add1dChart( bData3 );
 
-		LineChart	cData(3,RGB(255,0,0));
-		cData.data.addElement(ChartLinePoint(0,0));
-		cData.data.addElement(ChartLinePoint(1,25));
-		cData.data.addElement(ChartLinePoint(2,20));
-		cData.data.addElement(ChartLinePoint(3,40));
-		cData.data.addElement(ChartLinePoint(4,-10));
-		cData.data.addElement(ChartLinePoint(5,0));
-		addChartLine2( &cData );
+		Chart2D	cData(3,RGB(255,0,0));
+		cData.data.addElement(Chart2dPoint(0,0));
+		cData.data.addElement(Chart2dPoint(1,25));
+		cData.data.addElement(Chart2dPoint(2,20));
+		cData.data.addElement(Chart2dPoint(3,40));
+		cData.data.addElement(Chart2dPoint(4,-10));
+		cData.data.addElement(Chart2dPoint(5,0));
+		add2dChart2( &cData );
 
-		LineChart	cData2(2,RGB(0,0,255));
-		cData2.data.addElement(ChartLinePoint(0,100));
-		cData2.data.addElement(ChartLinePoint(1,55));
-		cData2.data.addElement(ChartLinePoint(2,-80));
-		cData2.data.addElement(ChartLinePoint(3,40));
-		cData2.data.addElement(ChartLinePoint(4,0));
-		cData2.data.addElement(ChartLinePoint(5,30));
-		addChartLine2( &cData2 );
+		Chart2D	cData2(2,RGB(0,0,255));
+		cData2.data.addElement(Chart2dPoint(0,100));
+		cData2.data.addElement(Chart2dPoint(1,55));
+		cData2.data.addElement(Chart2dPoint(2,-80));
+		cData2.data.addElement(Chart2dPoint(3,40));
+		cData2.data.addElement(Chart2dPoint(4,0));
+		cData2.data.addElement(Chart2dPoint(5,30));
+		add2dChart2( &cData2 );
 
-		LineChart	cData3(2,RGB(0,255,0));
+		Chart2D	cData3(2,RGB(0,255,0));
 
-		cData3.data.addElement(ChartLinePoint(1,80));
-		cData3.data.addElement(ChartLinePoint(2,-80));
-		cData3.data.addElement(ChartLinePoint(3,0));
-		cData3.data.addElement(ChartLinePoint(4,33));
-		cData3.data.addElement(ChartLinePoint(5,44));
-		cData3.data.addElement(ChartLinePoint(6,0));
-		addChartLine2( &cData3 );
+		cData3.data.addElement(Chart2dPoint(1,80));
+		cData3.data.addElement(Chart2dPoint(2,-80));
+		cData3.data.addElement(Chart2dPoint(3,0));
+		cData3.data.addElement(Chart2dPoint(4,33));
+		cData3.data.addElement(Chart2dPoint(5,44));
+		cData3.data.addElement(Chart2dPoint(6,0));
+		add2dChart2( &cData3 );
 	}
 
 	Size size = getSize();
 
-	if( m_barCharts.size() )
+	if( m_1dData.size() )
 	{
-		const int bottom = m_barBounds.getMin() < 0 
-			? size.height + m_barBounds.getMin() * size.height / m_barBounds.getRange()
-			: size.height;
-		const int width = size.width / m_barCharts.size();
-		int left = 0;
-		int right = left + width;
-		for(
-			AllBarCharts::const_iterator it = m_barCharts.cbegin(), endIT = m_barCharts.cend();
-			it != endIT;
-			++it
-		)
-		{
-			const int top = bottom - (it->value * bottom) / m_barBounds.getMax();
-
-			hDC.getBrush().create(it->color);
-			hDC.rectangle(left,top,right,bottom);
-
-			left=right;
-			right = left+width;
-		}
+		if( m_1dType == BarChart )
+			drawBarCharts(hDC, size);
+		else if( m_1dType == PieChart )
+			drawPieCharts(hDC, size);
 	}
 
 	for(
-		AllLineCharts::const_iterator it = m_chartData.cbegin(), endIT = m_chartData.cend();
+		AllCharts2D::const_iterator it = m_2dData.cbegin(), endIT = m_2dData.cend();
 		it != endIT;
 		++it
 	)
@@ -279,35 +323,35 @@ void ChartChild::clearData()
 {
 	m_xBounds = gak::math::MinMax<double>();
 	m_yBounds = gak::math::MinMax<double>();
-	m_barBounds = gak::math::MinMax<double>();
-	m_chartData.clear();
-	m_barCharts.clear();
+	m_1dBounds = gak::math::MinMax<double>();
+	m_2dData.clear();
+	m_1dData.clear();
 	m_useDemoData = false;
 }
 
-void ChartChild::addChartLine( LineChart *data )
+void ChartChild::add2dChart( Chart2D *data )
 {
 	if(m_useDemoData)
 	{
 		clearData();
 	}
-	addChartLine2(data);
+	add2dChart2(data);
 }
 
-void ChartChild::addChartLine( const LineChart &data )
+void ChartChild::add2dChart( const Chart2D &data )
 {
-	LineChart copy( data );
-	addChartLine(&copy);
+	Chart2D copy( data );
+	add2dChart(&copy);
 }
 
-void ChartChild::addBarChart( const BarChart &value )
+void ChartChild::add1dChart( const Chart1D &value )
 {
 	if(m_useDemoData)
 	{
 		clearData();
 	}
-	m_barCharts.addElement( value );
-	m_barBounds.test( value.value );
+	m_1dData.addElement( value );
+	m_1dBounds.test( value.value );
 }
 
 // --------------------------------------------------------------------- //

@@ -80,45 +80,54 @@ namespace winlib
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-	typedef gak::Duo<double,double>		ChartLinePoint;
-	typedef gak::Array<ChartLinePoint>	Chart2dData;
+typedef gak::Duo<double,double>		Chart2dPoint;
+typedef gak::Array<Chart2dPoint>	Chart2dData;
 
-	struct CommonChart
+struct CommonChart
+{
+	int				lineWidth;
+	COLORREF		color;
+	CommonChart( int width=1, COLORREF color=RGB(0,0,0) ) : lineWidth(width), color(color) {}
+};
+
+struct	Chart2D : public CommonChart
+{
+	Chart2dData		data;
+
+	Chart2D( int width=1, COLORREF color=RGB(0,0,0), const Chart2dData &data = Chart2dData() ) : CommonChart(width,color), data(data) {}
+	Chart2D( int width, COLORREF color, Chart2dData *data ) : CommonChart(width,color)
 	{
-		int				lineWidth;
-		COLORREF		color;
-		CommonChart( int width=1, COLORREF color=RGB(0,0,0) ) : lineWidth(width), color(color) {}
-	};
+		this->data.moveFrom( *data );
+	}
 
-	struct	LineChart : public CommonChart
+	Chart2D &moveFrom( Chart2D &source )
 	{
-		Chart2dData		data;
+		lineWidth = source.lineWidth;
+		color = source.color;
+		data.moveFrom( source.data );
 
-		LineChart( int width=1, COLORREF color=RGB(0,0,0), const Chart2dData &data = Chart2dData() ) : CommonChart(width,color), data(data) {}
-		LineChart( int width, COLORREF color, Chart2dData *data ) : CommonChart(width,color)
-		{
-			this->data.moveFrom( *data );
-		}
+		return *this;
+	}
+};
+typedef gak::Array<Chart2D>		AllCharts2D;
 
-		LineChart &moveFrom( LineChart &source )
-		{
-			lineWidth = source.lineWidth;
-			color = source.color;
-			data.moveFrom( source.data );
+struct	Chart1D : public CommonChart
+{
+	double		value;
 
-			return *this;
-		}
-	};
-	typedef gak::Array<LineChart>		AllLineCharts;
+	Chart1D( COLORREF color=0, double value=0 ) : CommonChart(0,color), value(value) {}
+};
+typedef gak::Array<Chart1D>		AllCharts1D;
 
-	struct	BarChart : public CommonChart
-	{
-		double		value;
+enum Chart1dTypes
+{
+	BarChart, PieChart
+};
 
-		BarChart( COLORREF color=0, double value=0 ) : CommonChart(0,color), value(value) {}
-	};
-	typedef gak::Array<BarChart>		AllBarCharts;
-
+enum Chart2dTypes
+{
+	LineChart, StapleChart
+};
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -133,29 +142,38 @@ class ChartChild : public ChildWindow
 
 	bool						m_useDemoData;
 	// the line charts
-	AllLineCharts				m_chartData;
+	AllCharts2D					m_2dData;
 	gak::math::MinMax<double>	m_xBounds, m_yBounds;
+	Chart2dTypes				m_2dType;
 
-	// the bar chart
-	AllBarCharts				m_barCharts;
-	gak::math::MinMax<double>	m_barBounds;
+	// the bar or pie chart
+	AllCharts1D					m_1dData;
+	gak::math::MinMax<double>	m_1dBounds;
+	Chart1dTypes				m_1dType;
 
-	void addChartLine2( LineChart *data );
+	void add2dChart2( Chart2D *data );
 
-	Point value2Pixel(const ChartLinePoint &value, const Size &size );
-	void paintLine(Device &hDC, const LineChart &lineData, const Size &size);
+	Point value2Pixel(const Chart2dPoint &value, const Size &size );
+	void drawBarCharts(Device &hDC, const Size &size);
+	void drawPieCharts(Device &hDC, const Size &size);
+	void paintLine(Device &hDC, const Chart2D &lineData, const Size &size);
 	virtual ProcessStatus handleRepaint( Device &hDC );
 
 public:
 	ChartChild( BasicWindow *owner ) 
-		: ChildWindow( owner ), m_useDemoData(true)
+		: ChildWindow( owner ), m_useDemoData(true), m_1dType(BarChart)
 	{
 		registerClass();
 	}
 
-	void addChartLine( LineChart *data );
-	void addChartLine( const LineChart &data );
-	void addBarChart( const BarChart &value );
+	void add2dChart( Chart2D *data );
+	void add2dChart( const Chart2D &data );
+
+	void add1dChart( const Chart1D &value );
+	void set1Dtype(Chart1dTypes new1dType)
+	{
+		m_1dType = new1dType;
+	}
 	void clearData();
 };
 

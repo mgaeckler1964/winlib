@@ -66,6 +66,7 @@ class TestWindow : public PopupWindow
 	EditControl		myResult;
 	XMLeditorChild	myXmlChild;
 	ChartChild		myChartChild;
+	ChartChild		myPieChild;
 
 	void doRepaint()
 	{
@@ -78,6 +79,7 @@ class TestWindow : public PopupWindow
 
 		hDC.getBrush().create( red, green, blue );
 		hDC.rectangle( 0, 0, size.width, size.height );
+		//hDC.pie(size.width/2, size.height/2, size.height/2, -1, 0 );
 
 	}
 	virtual ProcessStatus handleOk()
@@ -165,7 +167,7 @@ class TestWindow : public PopupWindow
 		return psDO_DEFAULT;
 	}
 	public:
-	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr) {}
+	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr) {}
 	void create()
 	{
 		addStyle( WS_CLIPCHILDREN );
@@ -185,6 +187,13 @@ class TestWindow : public PopupWindow
 
 			myChartChild.sizeNmove( 70, 50, 50, 50 );
 			myChartChild.create( this );
+
+			myPieChild.sizeNmove(125, 50, 50, 50);
+			myPieChild.create( this );
+			myPieChild.add1dChart(Chart1D(RGB(255,0,0),20));
+			myPieChild.add1dChart(Chart1D(RGB(0,255,0),29));
+			myPieChild.add1dChart(Chart1D(RGB(0,0,255),10));
+			myPieChild.set1Dtype( PieChart );
 		}
 	}
 };

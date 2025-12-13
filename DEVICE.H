@@ -348,6 +348,12 @@ class Device
 		Ellipse( m_device, x-radius, y-radius, x+radius, y+radius );
 	}
 
+	void pie(int x, int y, int radius, double startAngle, double endAngle );
+	void pie(const Point &center, int radius, double startAngle, double endAngle )
+	{
+		pie(center.x, center.y, radius, startAngle, endAngle );
+	}
+
 	void rectangle( int left, int top, int right, int bottom ) const
 	{
 		Rectangle( m_device, left, top, right, bottom );
