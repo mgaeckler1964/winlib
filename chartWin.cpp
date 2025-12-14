@@ -160,6 +160,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 		++it
 	)
 	{
+		bool textInBar = false;
 		const int top = bottom - int((it->value * bottom) / m_1dBounds.getMax() +0.5);
 
 		hDC.getPen().create(Pen::psNull, 0, 0);
@@ -168,7 +169,6 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 
 		const STRING value = gak::formatNumber(it->value);
 		Size textSize;
-		hDC.getPen().create(Pen::psNull, 1, ~(it->color));
 		hDC.getTextExtent( value, &textSize );
 
 		RectBorder	textRect(left, top, right, bottom);
@@ -188,8 +188,20 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 		}
 		else
 		{
+			textInBar = true;
 			textRect.top++;
 			textRect.bottom--;
+		}
+
+		if( textInBar )
+		{
+			hDC.setTextColor( getGrayValue(it->color) < 128 ? colors::WHITE : colors::BLACK );
+			hDC.setBackgroundColor( it->color );
+		}
+		else
+		{
+			hDC.setTextColor( colors::BLACK );
+			hDC.setBackgroundColor( colors::WHITE );
 		}
 		hDC.drawText( value, textRect, DT_BOTTOM );
 
@@ -283,14 +295,14 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 {
 	if( m_useDemoData && !m_2dData.size() && !m_1dData.size() )
 	{
-		Chart1D	bData( RGB(255,0,0), 50);
+		Chart1D	bData( colors::RED, 50);
 		add1dChart( bData );
-		Chart1D	bData2( RGB(0,255,0), -20);
+		Chart1D	bData2( colors::LIME, -20);
 		add1dChart( bData2 );
-		Chart1D	bData3( RGB(0,0,255), 40);
+		Chart1D	bData3( colors::BLUE, 40);
 		add1dChart( bData3 );
 
-		Chart2D	cData(3,RGB(255,0,0));
+		Chart2D	cData(3,colors::RED);
 		cData.data.addElement(Chart2dPoint(0,0));
 		cData.data.addElement(Chart2dPoint(1,25));
 		cData.data.addElement(Chart2dPoint(2,20));
@@ -299,7 +311,7 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 		cData.data.addElement(Chart2dPoint(5,0));
 		add2dChart2( &cData );
 
-		Chart2D	cData2(2,RGB(0,0,255));
+		Chart2D	cData2(2,colors::BLUE);
 		cData2.data.addElement(Chart2dPoint(0,100));
 		cData2.data.addElement(Chart2dPoint(1,55));
 		cData2.data.addElement(Chart2dPoint(2,-80));
@@ -308,7 +320,7 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 		cData2.data.addElement(Chart2dPoint(5,30));
 		add2dChart2( &cData2 );
 
-		Chart2D	cData3(2,RGB(0,255,0));
+		Chart2D	cData3(2,colors::LIME);
 
 		cData3.data.addElement(Chart2dPoint(1,80));
 		cData3.data.addElement(Chart2dPoint(2,-80));

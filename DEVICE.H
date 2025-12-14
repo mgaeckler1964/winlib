@@ -77,6 +77,55 @@ namespace winlib
 {
 
 // --------------------------------------------------------------------- //
+// ----- constants ----------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+namespace colors
+{
+	// color codes copied from here: https://www.rapidtables.com/web/color/RGB_Color.html
+
+	static const COLORREF	BLACK=RGB(0,0,0);
+	static const COLORREF	WHITE=RGB(255,255,255);
+	static const COLORREF	RED=RGB(255,0,0);
+	static const COLORREF	LIME=RGB(0,255,0);
+	static const COLORREF	BLUE=RGB(0,0,255);
+	static const COLORREF	YELLOW=RGB( 255, 255, 0 );
+	static const COLORREF	MAGENTA=RGB( 255, 0, 255 );
+	static const COLORREF	CYAN=RGB( 0, 255, 255 );
+	static const COLORREF	MAROON=RGB(128,0,0);
+	static const COLORREF	GREEN=RGB(0,128,0);
+	static const COLORREF	NAVY=RGB(0,0,128);
+	static const COLORREF	OLIVE=RGB(128,128,0);
+	static const COLORREF	PURPE=RGB(128,0,128);
+	static const COLORREF	TEAL=RGB(0,128,128);
+	static const COLORREF	GRAY=RGB(128,128,128);
+	static const COLORREF	SILVER=RGB(192,192,192);
+	static const COLORREF	DARK_RED=RGB(139,0,0);
+	static const COLORREF	BROWN=RGB(165,42,42);
+	static const COLORREF	ORANGE=RGB(255,165,0);
+	static const COLORREF	KHAKI=RGB(240,230,140);
+	static const COLORREF	YELLOW_GREEN=RGB(154,205,50);
+	static const COLORREF	TURQUOISE=RGB(64,224,208);
+	static const COLORREF	AQUA_MARINE=RGB(127,255,212);
+	static const COLORREF	BLUE_VIOLET=RGB(138,43,226);
+	static const COLORREF	INDIGO=RGB(75,0,130);
+}
+
+// --------------------------------------------------------------------- //
+// ----- macros -------------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+inline unsigned getGrayValue( unsigned red, unsigned green, unsigned blue )
+{
+	return (red + green + blue)/3;
+}
+
+inline unsigned getGrayValue( COLORREF color )
+{
+	return getGrayValue( GetRValue(color), GetGValue(color), GetBValue(color) );
+}
+
+// --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
@@ -258,9 +307,13 @@ class Device
 		m_font.connect( m_device );
 		selectFont();
 	}
+	void setTextColor( COLORREF color )
+	{
+		SetTextColor( m_device, color ); 
+	}
 	void setTextColor( unsigned char red, unsigned char green, unsigned char blue )
 	{
-		SetTextColor( m_device, RGB( red, green, blue ) ); 
+		setTextColor( RGB( red, green, blue ) ); 
 	}
 	void setBackgroundColor( COLORREF color, int mode = OPAQUE )
 	{
