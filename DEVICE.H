@@ -184,15 +184,19 @@ class Device
 		if( y )
 			*y = pos.y;
 	}
-	void getTextExtentWithBreak( const char *text, Size *size );
-	void getTextExtent( const char *text, size_t len, Size *size );
-	void getTextExtent( const char *text, size_t startPos, size_t len, Size *size )
+	void getTextExtentWithBreak( const char *text, Size *size ) const;
+	void getTextExtent( const char *text, size_t len, Size *size ) const;
+	void getTextExtent( const char *text, size_t startPos, size_t len, Size *size ) const
 	{
 		getTextExtent( text+startPos, len, size ); 
 	}
-	void getTextExtent( char text, Size *size )
+	void getTextExtent( char text, Size *size ) const
 	{
 		getTextExtent( &text, 1, size );
+	}
+	void getTextExtent( const STRING &text, Size *size ) const
+	{
+		getTextExtent( text, text.strlen(), size );
 	}
 
 	int	getxOffset() const

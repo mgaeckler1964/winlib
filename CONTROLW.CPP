@@ -421,7 +421,7 @@ int ListBox::getSelection() const
 
 size_t	ListBox::getNumVisible() const
 {
-	int itemHeigth = message( LB_GETITEMHEIGHT );
+	int itemHeigth = int(message( LB_GETITEMHEIGHT ));
 	int myHeight = getSize().height;
 	return size_t(myHeight/itemHeigth);
 }

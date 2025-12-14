@@ -119,7 +119,7 @@ void Device::printText( const char *text ) const
 	TextOut( m_device, 0, 0, text, int(strlen( text )) );
 }
 
-void Device::getTextExtentWithBreak( const char *text, Size *size )
+void Device::getTextExtentWithBreak( const char *text, Size *size ) const
 {
 	const char *cp1, *cp2;
 	SIZE		lineSize;
@@ -143,7 +143,7 @@ void Device::getTextExtentWithBreak( const char *text, Size *size )
 	}
 }
 
-void Device::getTextExtent( const char *text, size_t len, Size *size )
+void Device::getTextExtent( const char *text, size_t len, Size *size ) const
 {
 	SIZE	xSize;
 	GetTextExtentPoint32( m_device, text, int(len), &xSize );

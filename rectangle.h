@@ -144,6 +144,15 @@ struct Point : public POINT
 struct RectSize;
 struct RectBorder : public RECT
 {
+	RectBorder() {}
+
+	RectBorder(long left, long top, long right, long bottom ) 
+	{
+		this->left	= left;
+		this->top	= top;
+		this->right	= right;
+		this->bottom= bottom;
+	}
 	void substractBorder( const RectBorder &border )
 	{
 		left	+= border.left;

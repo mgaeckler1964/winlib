@@ -148,8 +148,6 @@ Point ChartChild::value2Pixel(const Chart2dPoint &value, const Size &size )
 
 void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 {
-	hDC.getPen().create(Pen::psNull, 0, 0);
-
 	const int bottom = m_1dBounds.getMin() < 0 
 		? size.height + int(m_1dBounds.getMin() * size.height / m_1dBounds.getRange() +0.5)
 		: size.height;
@@ -164,8 +162,36 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 	{
 		const int top = bottom - int((it->value * bottom) / m_1dBounds.getMax() +0.5);
 
+		hDC.getPen().create(Pen::psNull, 0, 0);
 		hDC.getBrush().create(it->color);
 		hDC.rectangle(left,top,right,bottom);
+
+		const STRING value = gak::formatNumber(it->value);
+		Size textSize;
+		hDC.getPen().create(Pen::psNull, 1, ~(it->color));
+		hDC.getTextExtent( value, &textSize );
+
+		RectBorder	textRect(left, top, right, bottom);
+		if( textRect.top > textRect.bottom )
+		{
+			swap( &textRect.top, &textRect.bottom );
+		}
+		if( textRect.top - textSize.height >= 0 )
+		{
+			textRect.bottom = textRect.top;
+			textRect.top -= textSize.height;
+		}
+		else if(textRect.bottom + textSize.height <= size.height)
+		{
+			textRect.top = textRect.bottom;
+			textRect.bottom += textSize.height;
+		}
+		else
+		{
+			textRect.top++;
+			textRect.bottom--;
+		}
+		hDC.drawText( value, textRect, DT_BOTTOM );
 
 		left=right;
 		right = left+width;
