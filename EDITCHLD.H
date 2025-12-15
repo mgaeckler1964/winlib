@@ -194,6 +194,10 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(m_control)->setReadonly();
 	}
+	void setBackgroundColorByRef( COLORREF color )
+	{
+		static_cast<EDIT*>(m_control)->setBackgroundColorByRef(color);
+	}
 	bool isEditable() const
 	{
 		return static_cast<EDIT*>(m_control)->isEditable();

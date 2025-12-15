@@ -109,6 +109,7 @@ namespace colors
 	static const COLORREF	CORAL=RGB(255,127,80);
 	static const COLORREF	INDIAN_RED=RGB(205,92,92);
 	static const COLORREF	SALMON=RGB(240,128,128);
+	static const COLORREF	LIGHT_SALMON=RGB(255,160,122);
 	static const COLORREF	ORANGE=RGB(255,165,0);
 	static const COLORREF	GOLD=RGB(255,215,0);
 	static const COLORREF	GOLD_ROD=RGB(218,165,32);
