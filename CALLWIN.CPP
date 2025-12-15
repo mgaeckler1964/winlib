@@ -739,6 +739,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			msgStatus = handleCharacterInput( int(wParam) );
 			break;
 
+		case WM_CTLCOLORLISTBOX:
 		case WM_CTLCOLORBTN:
 		case WM_CTLCOLOREDIT:
 		case WM_CTLCOLORSTATIC:
