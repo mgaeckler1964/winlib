@@ -205,29 +205,25 @@ bool ColorDialog::createWithPalette(
 	const char *paletteName 
 )
 {
-	int 	i;
-	char	keyName[256],
-			color[256];
-	STRING	colorStr;
-	size_t	nameLen;
+	STRING	keyName = paletteName ? paletteName : "colorEntry";
+	const size_t nameLen = keyName.strlen();
 
-	strcpy( keyName, paletteName ? paletteName : "colorEntry" );
-	nameLen = strlen( keyName );
-
-	for( i=0; i<16; i++ )
+	for( int i=0; i<NUM_COLORS; i++ )
 	{
-		itoa( i, keyName + nameLen, 10 );
-		colorStr = appObject->GetProfile( NULL, keyName, "16777215" );
-		m_palette[i] = atol( color );
+		keyName += formatNumber(i);
+		STRING	colorStr = appObject->GetProfile( nullptr, keyName, "16777215" );
+		m_palette[i] = colorStr.getValueN<COLORREF>();
+		keyName.cut(nameLen);
 	}
 	if( create( parent, value ) )
 	{
-		for( i=0; i<16; i++ )
+		for( int i=0; i<NUM_COLORS; i++ )
 		{
-			itoa( i, keyName + nameLen, 10 );
-			ultoa( m_palette[i], color, 10 );
+			keyName += formatNumber(i);
+			STRING	colorStr = formatNumber(m_palette[i]);
 
-			appObject->WriteProfile( false, NULL, keyName, color );
+			appObject->WriteProfile( false, nullptr, keyName, colorStr );
+			keyName.cut(nameLen);
 		}
 
 		return true;										// ok clicked
