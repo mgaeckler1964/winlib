@@ -73,6 +73,7 @@
     <ClInclude Include="CALLWIN.H" />
     <ClInclude Include="chartWin.h" />
     <ClInclude Include="ChildWin.h" />
+    <ClInclude Include="colors.h" />
     <ClInclude Include="CONTCHLD.H" />
     <ClInclude Include="CONTROLW.H" />
     <ClInclude Include="DEVICE.H" />

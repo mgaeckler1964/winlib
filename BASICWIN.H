@@ -1364,26 +1364,6 @@ class BasicWindow : public ForeignWindow
 	/*
 		colors
 	*/
-	void setBackgroundColorByRef( COLORREF color )
-	{
-		m_backGroundBrush.create( color );
-		if( handle() )
-		{
-			invalidateWindow();
-		}
-	}
-	void setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue )
-	{
-		setBackgroundColorByRef( RGB(red, green, blue ) );
-	}
-	void setBackgroundColorByIndex( SystemColor nIndex )
-	{
-		m_backGroundBrush.createSyscolor( nIndex );
-		if( handle() )
-		{
-			invalidateWindow();
-		}
-	}
 	enum BackgroundColor { 
 		bcDEFAULT, 
 
@@ -1435,6 +1415,23 @@ class BasicWindow : public ForeignWindow
 
 		if( handle() )
 			invalidateWindow();
+	}
+
+	void setBackgroundColorByRef( COLORREF color )
+	{
+		setBackgroundColor( bcSELECT, color );
+	}
+	void setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue )
+	{
+		setBackgroundColorByRef( RGB(red, green, blue ) );
+	}
+	void setBackgroundColorByIndex( SystemColor nIndex )
+	{
+		m_backGroundBrush.createSyscolor( nIndex );
+		if( handle() )
+		{
+			invalidateWindow();
+		}
 	}
 	void clearBrush()
 	{

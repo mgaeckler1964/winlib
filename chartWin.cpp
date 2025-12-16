@@ -43,6 +43,7 @@
 
 #include <WINLIB/chartWin.h>
 
+#include <WINLIB/colors.h>
 #include <WINLIB/DEVICE.H>
 
 // --------------------------------------------------------------------- //
