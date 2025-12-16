@@ -375,7 +375,7 @@
 <child type="Label" name="BackgroundColorLabel" caption="Hintergrundfarbe" x="0" y="0" width="0" height="0" style="1342177291" id="245">
 <layout y="22" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" x="0" />
 </child>
-<child type="ComboBox" name="BackgroundColor" caption="" x="201" y="679" width="80" height="200" style="1342242819" id="246">
+<child type="ComboBox" name="BackgroundColor" caption="" x="201" y="679" width="80" height="200" style="1344339971" id="246">
 <layout x="1" y="22" growWidth="1" paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2" />
 <items>
 <item>Default</item>

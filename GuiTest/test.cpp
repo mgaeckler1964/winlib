@@ -67,6 +67,7 @@ class TestWindow : public PopupWindow
 	XMLeditorChild	myXmlChild;
 	ChartChild		myChartChild;
 	ChartChild		myPieChild;
+	ComboBox		myCombo;
 
 	void doRepaint()
 	{
@@ -146,6 +147,7 @@ class TestWindow : public PopupWindow
 		popup = new OverlappedWindow( NULL );
 		label = new Label( popup );
 		label->setText( "POPUP with parent dlg&thick" );
+
 		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_DLGFRAME|WS_THICKFRAME );
@@ -194,6 +196,21 @@ class TestWindow : public PopupWindow
 			myPieChild.add1dChart(Chart1D(RGB(0,255,0),29));
 			myPieChild.add1dChart(Chart1D(RGB(0,0,255),10));
 			myPieChild.set1Dtype( PieChart );
+
+			myCombo.sizeNmove(10, 110, 100, 100 );
+			myCombo.addStyle( WS_VSCROLL );
+			myCombo.create( this );
+			myCombo.addEntry( "hello" );
+			myCombo.addEntry( "world" );
+			myCombo.addEntry( "the" );
+			myCombo.addEntry( "quick" );
+			myCombo.addEntry( "brown" );
+			myCombo.addEntry( "fox" );
+			myCombo.addEntry( "jumps" );
+			myCombo.addEntry( "over" );
+			myCombo.addEntry( "the" );
+			myCombo.addEntry( "lazy" );
+			myCombo.addEntry( "dog" );
 		}
 	}
 };

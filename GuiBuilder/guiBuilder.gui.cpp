@@ -388,7 +388,7 @@ namespace winlibGUI {
 "<child type=\"Label\" name=\"BackgroundColorLabel\" caption=\"Background Color\" x=\"0\" y=\"0\" width=\"0\" height=\"0\" style=\"1342177291\" id=\"245\">\n"
 "<layout y=\"22\" paddingLeft=\"2\" paddingTop=\"2\" paddingRight=\"2\" paddingBottom=\"2\" x=\"0\" />\n"
 "</child>\n"
-"<child type=\"ComboBox\" name=\"BackgroundColor\" caption=\"\" x=\"201\" y=\"679\" width=\"80\" height=\"200\" style=\"1342242819\" id=\"246\">\n"
+"<child type=\"ComboBox\" name=\"BackgroundColor\" caption=\"\" x=\"201\" y=\"679\" width=\"80\" height=\"200\" style=\"1344339971\" id=\"246\">\n"
 "<layout x=\"1\" y=\"22\" growWidth=\"1\" paddingLeft=\"2\" paddingTop=\"2\" paddingRight=\"2\" paddingBottom=\"2\" />\n"
 "<items>\n"
 "<item>Default</item>\n"
