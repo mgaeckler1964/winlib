@@ -82,6 +82,7 @@ namespace winlib
 // --------------------------------------------------------------------- //
 
 static const size_t NUM_COLORS=16;
+static const size_t SEARCH_TEXT_SIZE=256;
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -337,7 +338,7 @@ class SearchDialog : public BasicWindow
 {
 	protected:
 	FINDREPLACE 	m_findInfo;
-	char			m_findText[256];
+	char			m_findText[SEARCH_TEXT_SIZE];
 
 	protected:
 	SearchDialog();
@@ -356,7 +357,7 @@ class SearchDialog : public BasicWindow
 class ReplaceDialog : protected SearchDialog
 {
 	private:
-	char			m_replaceText[256];
+	char			m_replaceText[SEARCH_TEXT_SIZE];
 
 	private:
 	ReplaceDialog();
