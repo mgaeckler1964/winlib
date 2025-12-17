@@ -198,7 +198,6 @@ class TestWindow : public PopupWindow
 			myPieChild.set1Dtype( PieChart );
 
 			myCombo.sizeNmove(10, 110, 100, 100 );
-			myCombo.addStyle( WS_VSCROLL );
 			myCombo.create( this );
 			myCombo.addEntry( "hello" );
 			myCombo.addEntry( "world" );

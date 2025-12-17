@@ -2187,9 +2187,11 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 				if( properties.BackgroundColor->getNumItems()-1 == selected )
 				{
 					ColorDialog	colorDialog;
-					COLORREF	backgroundColor;
-					if( colorDialog.create( this, &backgroundColor ) )
+					COLORREF	backgroundColor = designerForm->getBackgroundColor();
+					if( colorDialog.createWithPalette( this, &backgroundColor, "backgroundColor" ) )
+					{
 						designerForm->setBackgroundColor( colorName, backgroundColor );
+					}
 				}
 				else
 					designerForm->setBackgroundColor( colorName, 0 );

@@ -344,7 +344,7 @@ class ComboBox : public ControlWindow
 	static const char className[];
 	ComboBox( BasicWindow *owner = NULL ) : ControlWindow( owner )
 	{
-		addStyle( CBS_DROPDOWNLIST|CBS_NOINTEGRALHEIGHT );
+		addStyle( WS_VSCROLL|CBS_DROPDOWNLIST|CBS_NOINTEGRALHEIGHT );
 	}
 
 	void addEntry( const char *text )

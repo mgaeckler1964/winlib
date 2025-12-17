@@ -46,6 +46,7 @@
 #include <WINLIB/resource.h>
 #include <WINLIB/frame.h>
 #include <WINLIB/gridView.h>
+#include <WINLIB/colors.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -884,6 +885,14 @@ class DesignerForm : public OverlappedWindow
 		m_selected.forEach( theChanger );
 	}
 	using OverlappedWindow::setBackgroundColor;
+	COLORREF getBackgroundColor() const
+	{
+		if( m_selected.size() )
+		{
+			return m_selected[0]->getBackgroundBrush().getBackgroundColor();
+		}
+		return colors::WHITE;
+	}
 
 	private:
 	class LayoutRemover
