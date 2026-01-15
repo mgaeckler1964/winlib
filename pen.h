@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -158,7 +158,11 @@ class Pen : public GdiObject<HPEN>
 
 	Pen &setColor( unsigned char red, unsigned char green, unsigned char blue, bool doCreate=true )
 	{
-		m_logPen.lopnColor = RGB( red, green, blue );
+		return setColor(RGB( red, green, blue ), doCreate);
+	}
+	Pen &setColor( COLORREF color, bool doCreate=true )
+	{
+		m_logPen.lopnColor = color;
 		if( doCreate )
 			create();
 
