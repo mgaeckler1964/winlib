@@ -946,6 +946,30 @@ class BasicWindow : public ForeignWindow
 
 	gak::xml::Element	*m_resource;
 
+	enum WindowState {
+		wsNew, wsInCreation, wsLoading, wsReady
+	} m_state;
+
+	template <class WindowClass> 
+	friend
+	SuccessCode createForm( 
+		const F_STRING &resourceFileName, gak::xml::Element *resource, 
+		WindowClass *form, BasicWindow *parent, bool designerMode 
+	);
+	void setLoading()
+	{
+		m_state = wsLoading;
+	}
+	void setReady()
+	{
+		m_state = wsReady;
+	}
+	public:
+	bool isReady() const
+	{
+		return m_state == wsReady;
+	}
+	private:
 	void addWindow( BasicWindow *child )
 	{
 		m_ownedWindows += child;
@@ -962,11 +986,12 @@ class BasicWindow : public ForeignWindow
 		m_x = m_y = m_width = m_height = CW_USEDEFAULT;
 		m_widthOffset = m_heightOffset = 0;
 
-		m_resource	= NULL;
-		m_layoutData= NULL;
-		m_owner		= NULL;
-		m_parent	= NULL;
+		m_resource	= nullptr;
+		m_layoutData= nullptr;
+		m_owner		= nullptr;
+		m_parent	= nullptr;
 		m_controlId	= -1;
+		m_state		= wsNew;
 
 		m_tag = 0;
 	}
@@ -1032,6 +1057,7 @@ class BasicWindow : public ForeignWindow
 			parent->m_childWindows.addElement( this );
 		}
 
+		m_state = wsInCreation;
 		HWND winHandle = CreateWindowEx(
 			exStyle, 
 			LPCSTR(className), 
@@ -1069,6 +1095,7 @@ class BasicWindow : public ForeignWindow
 				resize( m_width, m_height );
 			}
 
+			m_state = wsReady;
 			return scSUCCESS;
 		}
 		return scERROR;

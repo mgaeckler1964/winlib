@@ -177,6 +177,7 @@ SuccessCode createForm(
 	
 	if( form->create( parent ) == scSUCCESS )
 	{
+		form->setLoading();
 		form->disallowNotifications();
 
 		createChildWindows( resourceFileName, resource, form, designerMode );
@@ -189,6 +190,7 @@ SuccessCode createForm(
 
 		form->handleCreate();
 
+		form->setReady();
 		return scSUCCESS;
 	}
 
