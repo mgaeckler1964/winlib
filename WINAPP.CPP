@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -112,7 +112,7 @@ template <typename RESULTTYPE>
 struct ResultTraits
 {
 	static const int	sRegistryType = REG_SZ;
-	static RESULTTYPE	GetValue( char *valueBuff )
+	static RESULTTYPE	GetValue( const STRING &valueBuff )
 	{
 		return valueBuff;
 	}
@@ -126,9 +126,9 @@ template <>
 struct ResultTraits<long>
 {
 	static const int	sRegistryType = REG_DWORD;
-	static long	GetValue(char *valueBuff)
+	static long	GetValue(const STRING &valueBuff)
 	{
-		return *((long*)valueBuff);
+		return *((long*)valueBuff.c_str());
 	}
 	static size_t GetValueSize(long)
 	{
@@ -178,10 +178,10 @@ static RESULTTYPE readRegistration( const char *company, const char *app, const 
 
 	long		openResult;
 	HKEY		softKey;
-	char		valueBuff[10240];
-	DWORD		valueSize= sizeof( valueBuff ) -1;
 	bool		valueFound = false;
 	RESULTTYPE	result;
+	STRING		valueBuff;
+	DWORD		valueSize;
 
 	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
 											: HKEY_CURRENT_USER,
@@ -217,24 +217,49 @@ static RESULTTYPE readRegistration( const char *company, const char *app, const 
 												&sectionKey );
 					if( openResult == ERROR_SUCCESS )
 					{
-						openResult = RegQueryValueEx( sectionKey, (char *)var, NULL,
-													&typeVar, (LPBYTE)valueBuff, &valueSize );
+						valueSize = 0;
+						openResult = RegQueryValueEx(
+							sectionKey, (char *)var, NULL, NULL, NULL, &valueSize
+						);
+						if( openResult == ERROR_MORE_DATA )
+						{
+							valueBuff.setMinSize( valueSize+1 );
+						}
+						openResult = RegQueryValueEx(
+							sectionKey, (char *)var, NULL, &typeVar, (LPBYTE)valueBuff.c_str(), &valueSize 
+						);
 						if( openResult == ERROR_SUCCESS
 						&&  valueSize > 0
 						&&  typeVar == tResultTraits::sRegistryType )
+						{
+							valueBuff.setActSize(valueSize);
 							valueFound = true;
+						}
 
 						RegCloseKey( sectionKey );
 					}
 				}
 				else
 				{
-					openResult = RegQueryValueEx( appKey, (char *)var, NULL,
-												&typeVar, (LPBYTE)valueBuff, &valueSize );
+					valueSize = 0;
+					openResult = RegQueryValueEx( 
+						appKey, (char *)var, NULL, NULL, (LPBYTE)"", &valueSize 
+					);
+					if( openResult == ERROR_MORE_DATA )
+					{
+						valueBuff.setMinSize( valueSize+1 );
+					}
+
+					openResult = RegQueryValueEx(
+						appKey, (char *)var, NULL, &typeVar, (LPBYTE)valueBuff.c_str(), &valueSize 
+					);
 					if( openResult == ERROR_SUCCESS
 					&&  valueSize > 0
 					&&  typeVar == tResultTraits::sRegistryType )
+					{
+						valueBuff.setActSize(valueSize);
 						valueFound = true;
+					}
 				}
 
 				RegCloseKey( appKey );
@@ -653,10 +678,21 @@ const F_STRING &Application::getFileName()
 {
 	if( m_fileName.isEmpty() )
 	{
-		char	theFileName[10240];
+		DWORD	bufferSize = 1024;
+		size_t	curSize;
 
-		GetModuleFileName( m_appInstance, theFileName, sizeof( theFileName ) -1 );
-		m_fileName = theFileName;
+		while( 1 )
+		{
+			m_fileName.setMinSize( bufferSize-- );
+
+			curSize = GetModuleFileName( m_appInstance, (LPSTR)m_fileName.c_str(), bufferSize );
+			if( curSize < bufferSize )
+			{
+				m_fileName.setActSize( curSize );
+				break;
+			}
+			bufferSize *= 2;
+		}
 	}
 
 	return m_fileName;
