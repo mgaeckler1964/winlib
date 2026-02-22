@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -29,8 +29,10 @@
 		SUCH DAMAGE.
 */
 
-#include <winlib\regedit.h>
-#include <gak\stdlib.h>
+#include <winlib/regedit.h>
+
+#include <gak/stdlib.h>
+#include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -52,11 +54,9 @@ using namespace gak;
 
 void RegistryEditor::create( BasicWindow *parent, const char *keyValue, bool userReg )
 {
-	STRING			value;
-	char 			buffer[10240];
-	unsigned long	buff_size = sizeof( buffer );
-	unsigned long	dummy;
-	HKEY			theKey;
+	STRING			oldValue, newValue;
+
+	Registry		theKey;
 
 	char *keyName;
 	const char *valueName;
@@ -75,40 +75,18 @@ void RegistryEditor::create( BasicWindow *parent, const char *keyValue, bool use
 		valueName = slashPos+1;
 	}
 
-	if( RegCreateKey(userReg ? HKEY_CURRENT_USER : HKEY_LOCAL_MACHINE,
-		keyName,
-		&theKey ) == ERROR_SUCCESS
-	)
-		if(
-			RegQueryValueEx(
-				theKey,
-				valueName,
-				NULL,
-				&dummy,
-				(LPBYTE)buffer, &buff_size
-			) != ERROR_SUCCESS
-		)
+	if( theKey.createKey(!userReg, keyName ) == ERROR_SUCCESS )
+	{
+		if( !theKey.readValue( valueName, &oldValue ) )
 		{
-			*buffer = 0;
-		}
-		else
-		{
-			buffer[buff_size] = 0;
+			oldValue.release();
 		}
 
-	{
-		value = StringEditor::create( parent, valueName, buffer );
-		if( value != buffer )
+		newValue = StringEditor::create( parent, valueName, oldValue );
+		if( newValue != oldValue )
 		{
-			RegSetValueEx(
-				theKey,
-				valueName,
-				0,
-				REG_SZ,
-				(LPBYTE)((const char*)value), DWORD(value.strlen())
-			);
+			theKey.writeValue( valueName, newValue );
 		}
-		RegCloseKey( theKey );
 	}
 }
 

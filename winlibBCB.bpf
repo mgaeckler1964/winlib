@@ -24,6 +24,7 @@ USEUNIT("version.cpp");
 USEUNIT("menu.cpp");
 USEUNIT("xmlEditorInternal.cpp");
 USEUNIT("chartWin.cpp");
+USEUNIT("registry.cpp");
 //---------------------------------------------------------------------------
 #define Library
 

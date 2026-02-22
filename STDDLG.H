@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -62,6 +62,7 @@
 #include <winlib/device.h>
 #include <winlib/controlw.h>
 #include <winlib/winapp.h>
+#include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -142,20 +143,20 @@ class FileDialog : public BasicWindow
 			if( slashPos != -1 )
 			{
 				m_directory.cut( slashPos );
-				m_ofn.lpstrInitialDir = (const char *)m_directory;
+				m_ofn.lpstrInitialDir = m_directory.c_str();
 				if( !m_regName.isEmpty() )
 					appObject->WriteProfile( false, "lastDirectory", m_regName, m_directory );
 			}
 			else
 			{
-				m_directory = (const char *)NULL;
-				m_ofn.lpstrInitialDir = NULL;
+				m_directory.release();
+				m_ofn.lpstrInitialDir = nullptr;
 			}
 		}
 		else
 		{
-			m_directory = (const char *)NULL;
-			m_ofn.lpstrInitialDir = NULL;
+			m_directory.release();
+			m_ofn.lpstrInitialDir = nullptr;
 		}
 	}
 	public:
@@ -188,21 +189,21 @@ class FileDialog : public BasicWindow
 			if( slashPos != -1 )
 			{
 				m_directory = filename.leftString( slashPos );
-				m_ofn.lpstrInitialDir = (const char *)m_directory;
-				strcpy( m_fileBuffer, filename + (size_t)(slashPos + 1) );
+				m_ofn.lpstrInitialDir = m_directory.c_str();
+				strcpy( m_fileBuffer, filename + size_t(slashPos + 1) );
 			}
 			else
 			{
-				m_directory = (const char *)NULL;
-				m_ofn.lpstrInitialDir = NULL;
+				m_directory.release();
+				m_ofn.lpstrInitialDir = nullptr;
 				strcpy( m_fileBuffer, filename );
 			}
 		}
 		else
 		{
 			*m_fileBuffer = 0;
-			m_directory = (const char *)NULL;
-			m_ofn.lpstrInitialDir = NULL;
+			m_directory.release();
+			m_ofn.lpstrInitialDir = nullptr;
 		}
 	}
 	const STRING &getDirectory() const
@@ -212,34 +213,20 @@ class FileDialog : public BasicWindow
 	void setDirectory( const STRING &newDirectory )
 	{
 		m_directory = newDirectory;
-		m_ofn.lpstrInitialDir = (const char *)m_directory;
+		m_ofn.lpstrInitialDir = m_directory.c_str();
 	}
 	void setDefaultDirectory( const STRING &regName )
 	{
-		HKEY	shellFolderKey;
-		DWORD	type, size;
-		char	path[1024];
-		long	regResult;
+		Registry	shellFolderKey;
 
-		regResult = RegOpenKey(
-			HKEY_CURRENT_USER,
-			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-			&shellFolderKey
-		);
+		long		regResult = shellFolderKey.openPrivate( "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders" ); 
 		if( regResult == ERROR_SUCCESS )
 		{
-			size = sizeof( path );
-			type = REG_SZ;
-			regResult = RegQueryValueEx(
-				shellFolderKey, regName,
-				NULL,
-				&type, (LPBYTE)path, &size
-			);
-			if( regResult == ERROR_SUCCESS && type == REG_SZ )
+			STRING		path;
+			if( shellFolderKey.readValue( regName, &path ) )
 			{
 				setDirectory( path );
 			}
-			RegCloseKey( shellFolderKey );
 		}
 	}
 	void setLastDirectory( const STRING &regName )
@@ -330,7 +317,7 @@ class ColorDialog
 	bool createWithPalette(
 		const BasicWindow	*parent,
 		COLORREF			*value,
-		const char			*paletteName = NULL 
+		const char			*paletteName = nullptr 
 	);
 };
 
@@ -446,8 +433,8 @@ void FileDialog::init( const BasicWindow *parent, int titleId, IdType filterID, 
 	}
 
 	m_ofn.hwndOwner		= parent->handle();
-	m_ofn.lpstrTitle	= m_title.isNullPtr() ? (const char *)NULL : (const char *)m_title;
-	m_ofn.lpstrFilter	= m_filter.isNullPtr() ? (const char *)NULL : (const char *)m_filter;
+	m_ofn.lpstrTitle	= m_title.isNullPtr() ? nullptr : m_title.c_str();
+	m_ofn.lpstrFilter	= m_filter.isNullPtr() ? nullptr : m_filter.c_str();
 }
 
 template <typename IdType>

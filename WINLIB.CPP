@@ -129,13 +129,31 @@ unsigned int SyncExec( const char *command, const char *arguments, unsigned int 
 
 namespace winlib
 {
-STRING getWindowsVersion()
+/// TODO create an consistenz interface for C and C++
+
+void getWindowsVersion(gak::uint8 *major, gak::uint8 *minor, gak::uint16 *build )
 {
 	DWORD version = GetVersion();
-	gak::uint8 major = gak::uint8(LOBYTE(LOWORD(version)));
-	gak::uint8 minor = gak::uint8(HIBYTE(LOWORD(version)));
-	gak::uint16 build = version < 0x80000000 ? gak::uint16(HIWORD(version)) : 0; 
+	*major = gak::uint8(LOBYTE(LOWORD(version)));
+	*minor = gak::uint8(HIBYTE(LOWORD(version)));
+	*build = version < 0x80000000 ? gak::uint16(HIWORD(version)) : 0; 
+}
 
+gak::uint8	getWindowsMajorVersion()
+{
+	gak::uint8		major, minor;
+	gak::uint16		build;
+
+	getWindowsVersion(&major, &minor, &build );
+	return major;
+}
+
+STRING getWindowsVersion()
+{
+	gak::uint8		major, minor;
+	gak::uint16		build;
+
+	getWindowsVersion(&major, &minor, &build );
 	return gak::formatNumber(major)+'.'+gak::formatNumber(minor)+'.'+gak::formatNumber(build);
 }
 

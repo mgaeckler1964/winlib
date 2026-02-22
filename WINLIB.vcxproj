@@ -50,6 +50,7 @@
     <ClCompile Include="POPUP.CPP" />
     <ClCompile Include="Processor.cpp" />
     <ClCompile Include="REGEDIT.CPP" />
+    <ClCompile Include="registry.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scrollFrame.cpp" />
     <ClCompile Include="splash.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="RAW_DATA.H" />
     <ClInclude Include="rectangle.h" />
     <ClInclude Include="REGEDIT.H" />
+    <ClInclude Include="registry.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resourceTags.h" />
     <ClInclude Include="scrollFrame.h" />

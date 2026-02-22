@@ -239,10 +239,10 @@ class Application
 		return gak::makeFullPath( getFileName(), fName );
 	}
 
-	STRING	GetProfile( const char *section, const char *variable, const STRING &defaultVal );
-	long	GetProfile( const char *section, const char *variable, long defaultVal );
-	long	WriteProfile( bool publicVal, const char *section, const char *variable, const char *value );
-	long	WriteProfile( bool publicVal, const char *section, const char *variable, long value );
+	STRING	GetProfile( const char *section, const char *variable, const STRING &defaultVal, bool stupidMode=false );
+	long	GetProfile( const char *section, const char *variable, long defaultVal, bool stupidMode=false );
+	long	WriteProfile( bool publicVal, const char *section, const char *variable, const char *value, bool stupidMode=false );
+	long	WriteProfile( bool publicVal, const char *section, const char *variable, long value, bool stupidMode=false );
 	long	DeleteProfile( bool publicVal, const char *section="", const char *variable="" );
 	long	DeleteCompanyProfile( bool publicVal );
 
@@ -333,6 +333,20 @@ class Application
 	{
 		return m_mainWindow;
 	}
+
+#if	0 // ndef __BORLANDC__
+	/// TODO: analyse whether this skeleton can be used
+	bool isNative()
+	{
+#ifdef __WIN64__
+		return true;
+#else
+		bool result;
+		IsWow64Process( GetCurrentProcess(), &result );
+		return !result;
+#endif
+	}
+#endif
 };
 
 #ifdef _MSC_VER

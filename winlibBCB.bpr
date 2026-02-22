@@ -16,7 +16,7 @@
       ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj 
       ..\..\Object\Winlib\bcb\version.obj ..\..\Object\Winlib\bcb\menu.obj 
       ..\..\Object\Winlib\bcb\xmlEditorInternal.obj 
-      ..\..\Object\Winlib\bcb\chartWin.obj"/>
+      ..\..\Object\Winlib\bcb\chartWin.obj ..\..\Object\Winlib\bcb\registry.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>

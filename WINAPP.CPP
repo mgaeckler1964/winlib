@@ -48,6 +48,7 @@
 #include <winlib/winapp.h>
 #include <winlib/resource.h>
 #include <winlib/menu.h>
+#include <WINLIB/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -83,6 +84,11 @@ static const char SOFTWARE[] = "SOFTWARE";
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+enum Wow6432Mode_t
+{
+	regTry1, regTry2, useStupidPath
+};
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -108,248 +114,53 @@ HINSTANCE Application::m_resInstance = 0;
 // ----- module functions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-template <typename RESULTTYPE>
-struct ResultTraits
+template <class INPUTTYPE>
+static long writeRegistration( 
+	bool publicVal, const char *company, const char *app, const char *section, 
+	const char *var, const INPUTTYPE &i_value, 
+	bool stupidMode 
+)
 {
-	static const int	sRegistryType = REG_SZ;
-	static RESULTTYPE	GetValue( const STRING &valueBuff )
+	long	openResult;
+	REGSAM	perm;
+
+	if( publicVal )
 	{
-		return valueBuff;
-	}
-	static size_t GetValueSize(const RESULTTYPE &value)
-	{
-		return strlen(value)+1;
-	}
-};
-
-template <>
-struct ResultTraits<long>
-{
-	static const int	sRegistryType = REG_DWORD;
-	static long	GetValue(const STRING &valueBuff)
-	{
-		return *((long*)valueBuff.c_str());
-	}
-	static size_t GetValueSize(long)
-	{
-		return sizeof(long);
-	}
-};
-
-template <typename INPUTTYPE>
-struct InputTraits : public ResultTraits<INPUTTYPE>
-{
-	const INPUTTYPE &m_value;
-	
-	InputTraits(const INPUTTYPE &value) : m_value(value) {}
-
-	size_t GetValueSize()
-	{
-		return strlen(m_value)+1;
-	}
-
-	LPBYTE GetAdress() const
-	{
-		return (LPBYTE)static_cast<const char*>(m_value);
-	}
-};
-
-template <>
-struct InputTraits<long> : public ResultTraits<long>
-{
-	long m_value;
-	
-	InputTraits(long value) : m_value(value) {}
-
-	static size_t GetValueSize()
-	{
-		return sizeof(long);
-	}
-	LPBYTE GetAdress() const
-	{
-		return (LPBYTE)(&m_value);
-	}
-};
-
-template <class RESULTTYPE>
-static RESULTTYPE readRegistration( const char *company, const char *app, const char *section, const char *var, const RESULTTYPE &def, bool publicVal = false )
-{
-	typedef ResultTraits<RESULTTYPE>	tResultTraits;
-
-	long		openResult;
-	HKEY		softKey;
-	bool		valueFound = false;
-	RESULTTYPE	result;
-	STRING		valueBuff;
-	DWORD		valueSize;
-
-	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
-											: HKEY_CURRENT_USER,
-								SOFTWARE, 0,
-								KEY_READ, &softKey );
-	if( openResult == ERROR_SUCCESS )
-	{
-		HKEY	companyKey;
-
-		openResult = RegOpenKeyEx(	softKey,
-									company, 0,
-									KEY_READ,
-									&companyKey );
-		if( openResult == ERROR_SUCCESS )
-		{
-			HKEY	appKey;
-
-			openResult = RegOpenKeyEx(	companyKey,
-										app, 0,
-										KEY_READ,
-										&appKey );
-			if( openResult == ERROR_SUCCESS )
-			{
-				DWORD	typeVar;
-
-				if( section && *section )
-				{
-					HKEY	sectionKey;
-
-					openResult = RegOpenKeyEx(	appKey,
-												section, 0,
-												KEY_READ,
-												&sectionKey );
-					if( openResult == ERROR_SUCCESS )
-					{
-						valueSize = 0;
-						openResult = RegQueryValueEx(
-							sectionKey, (char *)var, NULL, NULL, NULL, &valueSize
-						);
-						if( openResult == ERROR_MORE_DATA )
-						{
-							valueBuff.setMinSize( valueSize+1 );
-						}
-						openResult = RegQueryValueEx(
-							sectionKey, (char *)var, NULL, &typeVar, (LPBYTE)valueBuff.c_str(), &valueSize 
-						);
-						if( openResult == ERROR_SUCCESS
-						&&  valueSize > 0
-						&&  typeVar == tResultTraits::sRegistryType )
-						{
-							valueBuff.setActSize(valueSize);
-							valueFound = true;
-						}
-
-						RegCloseKey( sectionKey );
-					}
-				}
-				else
-				{
-					valueSize = 0;
-					openResult = RegQueryValueEx( 
-						appKey, (char *)var, NULL, NULL, (LPBYTE)"", &valueSize 
-					);
-					if( openResult == ERROR_MORE_DATA )
-					{
-						valueBuff.setMinSize( valueSize+1 );
-					}
-
-					openResult = RegQueryValueEx(
-						appKey, (char *)var, NULL, &typeVar, (LPBYTE)valueBuff.c_str(), &valueSize 
-					);
-					if( openResult == ERROR_SUCCESS
-					&&  valueSize > 0
-					&&  typeVar == tResultTraits::sRegistryType )
-					{
-						valueBuff.setActSize(valueSize);
-						valueFound = true;
-					}
-				}
-
-				RegCloseKey( appKey );
-			}
-
-			RegCloseKey( companyKey );
-		}
-		RegCloseKey( softKey );
-	}
-
-	if( valueFound )
-	{
-		result = tResultTraits::GetValue(valueBuff);
-	}
-	else if( !publicVal )
-	{
-		result = readRegistration<RESULTTYPE>( company, app, section, var, def, true );
+		perm = stupidMode ? KEY_ALL_ACCESS|KEY_WOW64_32KEY : KEY_ALL_ACCESS|KEY_WOW64_64KEY;
 	}
 	else
 	{
-		result = def;
+		perm = KEY_ALL_ACCESS;
 	}
 
-	return result;
-}
+	Registry	softKey;
 
-template <class INPUTTYPE>
-static long writeRegistration( bool publicVal, const char *company, const char *app, const char *section, const char *var, const INPUTTYPE &i_value )
-{
-	long	openResult;
-	HKEY	softKey;
-
-	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
-											: HKEY_CURRENT_USER,
-								SOFTWARE, 0,
-								KEY_CREATE_SUB_KEY, &softKey );
-	if( openResult == ERROR_SUCCESS )
+	if( (openResult = softKey.openKey( publicVal, SOFTWARE, perm )) == ERROR_SUCCESS )
 	{
-		HKEY	companyKey;
-		DWORD	dummy;
+		Registry companyKey;
 
-		openResult = RegCreateKeyEx(	softKey, company, 0, "",
-										REG_OPTION_NON_VOLATILE,
-										KEY_ALL_ACCESS,
-										NULL,
-										&companyKey,
-										&dummy );
-		if( openResult == ERROR_SUCCESS )
+		if( (openResult = companyKey.createKey( softKey, company, perm )) == ERROR_SUCCESS )
 		{
-			HKEY	appKey;
+			Registry	appKey;
 
-			openResult = RegCreateKeyEx(	companyKey, app, 0, "",
-											REG_OPTION_NON_VOLATILE,
-											KEY_ALL_ACCESS,
-											NULL,
-											&appKey,
-											&dummy );
-			if( openResult == ERROR_SUCCESS )
+			if( (openResult = appKey.createKey( companyKey, app, perm )) == ERROR_SUCCESS )
 			{
-				typedef InputTraits<INPUTTYPE>	tInputTraits;
-				tInputTraits	value(i_value);
-				DWORD			valueSize = DWORD(value.GetValueSize());
 
 				if( section && *section )
 				{
-					HKEY	sectionKey;
+					Registry	sectionKey;
 
-					openResult = RegCreateKeyEx(	appKey, section, 0, "",
-													REG_OPTION_NON_VOLATILE,
-													KEY_ALL_ACCESS,
-													NULL,
-													&sectionKey,
-													&dummy );
-					if( openResult == ERROR_SUCCESS )
+					if( (openResult = sectionKey.createKey( appKey, section, perm )) == ERROR_SUCCESS )
 					{
-						openResult = RegSetValueEx( sectionKey, (char *)var, 0,
-							tInputTraits::sRegistryType, value.GetAdress(), valueSize );
-						RegCloseKey( sectionKey );
+						openResult = sectionKey.writeValue( var, i_value );
 					}
 				}
 				else
-					openResult = RegSetValueEx( appKey, (char *)var, 0,
-									tInputTraits::sRegistryType, value.GetAdress(), valueSize );
-
-				RegCloseKey( appKey );
+				{
+					openResult = appKey.writeValue( var, i_value );
+				}
 			}
-
-			RegCloseKey( companyKey );
 		}
-		RegCloseKey( softKey );
 	}
 
 	return openResult;
@@ -358,59 +169,170 @@ static long writeRegistration( bool publicVal, const char *company, const char *
 static long deleteRegistration( bool publicVal, const char *company, const char *app="", const char *section="", const char *var="" )
 {
 	long	openResult;
-	HKEY	softKey;
+	REGSAM	perm[2];
+	size_t	permCount;
+	bool	deleted = false;
 
-	openResult = RegOpenKeyEx(	publicVal	? HKEY_LOCAL_MACHINE
-											: HKEY_CURRENT_USER,
-								SOFTWARE, 0,
-								KEY_ALL_ACCESS, &softKey );
-	if( openResult == ERROR_SUCCESS )
+	if( publicVal )
 	{
-		if( isEmpty(app) )
+		perm[0] = KEY_ALL_ACCESS;
+#ifdef __WIN32__
+		perm[1] = KEY_ALL_ACCESS|KEY_WOW64_64KEY;
+#else
+		perm[1] = KEY_ALL_ACCESS|KEY_WOW64_32KEY;
+#endif
+		permCount = 2;
+	}
+	else
+	{
+		perm[0] = KEY_ALL_ACCESS;
+		permCount = 1;
+	}
+
+	for( size_t i=0; i<permCount; ++ i )
+	{
+		Registry	softKey;
+
+		if( (openResult = softKey.openKey( publicVal, SOFTWARE, perm[i] )) == ERROR_SUCCESS )
 		{
-			openResult = RegDeleteKey(softKey, company);
+			if( isEmpty(app) )
+			{
+				openResult = softKey.deleteSubkey(company);
+				deleted = deleted || (openResult == ERROR_SUCCESS);
+			}
+			else
+			{
+				Registry	companyKey;
+
+				if( (openResult = companyKey.openSubkey( softKey, company, perm[i] )) == ERROR_SUCCESS )
+				{
+					if( isEmpty(section) && isEmpty( var ) )
+					{
+						openResult = companyKey.deleteSubkey(app);
+						deleted = deleted || (openResult == ERROR_SUCCESS);
+					}
+					else
+					{
+						Registry appKey;
+						if( (openResult = appKey.openSubkey( companyKey, app, perm[i] ))  == ERROR_SUCCESS )
+						{
+							if( !isEmpty(section) )
+							{
+								Registry sectionKey;
+								if( (openResult = sectionKey.openSubkey( appKey, section, perm[i] )) == ERROR_SUCCESS )
+								{
+									openResult = sectionKey.deleteValue( var );
+									deleted = deleted || (openResult == ERROR_SUCCESS);
+								}
+							}
+							else
+							{
+								openResult = appKey.deleteValue(var);
+								deleted = deleted || (openResult == ERROR_SUCCESS);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return deleted ? ERROR_SUCCESS : openResult;
+}
+
+template <class RESULTTYPE>
+static RESULTTYPE readRegistration( 
+	const char *company, const char *app, const char *section, const char *var, const RESULTTYPE &def, 
+	bool publicVal = false,
+	Wow6432Mode_t *wow6432mode = nullptr		// stupid microsoft store registries from 32 bit programs in a 64 bit windows in another path
+)
+{
+	doEnterFunctionEx( gakLogging::llInfo, "readRegistration( const char *company, const char *app, const char *section, const char *var, const RESULTTYPE &def, bool publicVal = false, Wow6432Mode_t *wow6432mode = nullptr )" );
+	doLogValueEx( gakLogging::llInfo, company ? company : "<NULL>" );
+	doLogValueEx( gakLogging::llInfo, app ? app : "<NULL>" );
+	doLogValueEx( gakLogging::llInfo, section ? section : "<NULL>" );
+	doLogValueEx( gakLogging::llInfo, var ? var : "<NULL>" );
+	doLogValueEx( gakLogging::llInfo, publicVal );
+	typedef ResultTraits<RESULTTYPE>	tResultTraits;
+
+	Wow6432Mode_t	defaultRegMode = regTry1;
+
+	REGSAM		perm;
+	Registry	software;
+	bool		valueFound = false;
+	RESULTTYPE	result;
+	STRING		valueBuff;
+
+	if( !publicVal )
+	{
+		perm = KEY_READ;
+	}
+	else
+	{
+		if( !wow6432mode )
+		{
+			wow6432mode = &defaultRegMode;
+		}
+		if( *wow6432mode == regTry2 )
+		{
+			perm = KEY_READ|KEY_WOW64_32KEY;
 		}
 		else
 		{
-			HKEY	companyKey;
+			perm = KEY_READ|KEY_WOW64_64KEY;
+		}
+	}
+	if( software.openKey( publicVal, SOFTWARE, perm ) == ERROR_SUCCESS)
+	{
+		Registry	companyKey;
 
-			openResult = RegOpenKeyEx( softKey, company, 0, KEY_ALL_ACCESS, &companyKey );
-			if( openResult == ERROR_SUCCESS )
+		if( companyKey.openSubkey( software, company, perm ) == ERROR_SUCCESS )
+		{
+			Registry	appKey;
+
+			if( appKey.openSubkey( companyKey, app, perm ) == ERROR_SUCCESS )
 			{
-				if( isEmpty(section) && isEmpty( var ) )
+				if( section && *section )
 				{
-					openResult = RegDeleteKey(companyKey, app);
+					Registry	sectionKey;
+
+					if( sectionKey.openSubkey( appKey, section, perm ) == ERROR_SUCCESS )
+					{
+						valueFound = sectionKey.readValue( var, &result );
+					}
 				}
 				else
 				{
-					HKEY appKey;
-					openResult = RegOpenKeyEx( companyKey, app, 0, KEY_ALL_ACCESS, &appKey );
-					if( openResult == ERROR_SUCCESS )
-					{
-						if( !isEmpty(section) )
-						{
-							HKEY sectionKey;
-							openResult = RegOpenKeyEx(	appKey, section, 0, KEY_ALL_ACCESS, &sectionKey );
-							if( openResult == ERROR_SUCCESS )
-							{
-								openResult = RegDeleteValue( sectionKey, var );
-								RegCloseKey( sectionKey );
-							}
-						}
-						else
-						{
-							openResult = RegDeleteValue(appKey, var);
-						}
-						RegCloseKey( appKey );
-					}
+					valueFound = appKey.readValue( var, &result );
 				}
-				RegCloseKey( companyKey );
 			}
 		}
-		RegCloseKey( softKey );
 	}
 
-	return openResult;
+	if( valueFound )
+	{
+		if( publicVal && *wow6432mode == regTry2 )
+		{
+			deleteRegistration( true, company, app, section, var );
+			writeRegistration( true, company, app, section, var, result, false );
+		}
+	}
+	else if( !publicVal )
+	{
+		result = readRegistration<RESULTTYPE>( company, app, section, var, def, true, wow6432mode );
+	}
+	else if( *wow6432mode == regTry1 )
+	{
+		*wow6432mode = regTry2;
+
+		result = readRegistration<RESULTTYPE>( company, app, section, var, def, true, wow6432mode );
+	}
+	else
+	{
+		result = def;
+	}
+
+	return result;
 }
 
 // --------------------------------------------------------------------- //
@@ -423,25 +345,25 @@ static long deleteRegistration( bool publicVal, const char *company, const char 
 
 Application::Application( const char *newIconName )
 {
-	m_guiRoot = NULL;
-	m_guiDoc = NULL;
+	m_guiRoot = nullptr;
+	m_guiDoc = nullptr;
 	m_company = "gak";
 	appObject = this;
 	m_iconName = newIconName;
-	m_applicationIcon = NULL;
+	m_applicationIcon = nullptr;
 }
 
 Application::Application( int newIconID )
 {
-	m_guiRoot = NULL;
-	m_guiDoc = NULL;
+	m_guiRoot = nullptr;
+	m_guiDoc = nullptr;
 	m_company = "gak";
 	appObject = this;
 	if( newIconID > 0 )
 		m_iconName = MAKEINTRESOURCE( newIconID );
 	else
-		m_iconName = NULL;
-	m_applicationIcon = NULL;
+		m_iconName = nullptr;
+	m_applicationIcon = nullptr;
 }
 
 Application::~Application()
@@ -501,7 +423,7 @@ bool Application::startApplication( HINSTANCE, const char * )
 
 CallbackWindow *Application::createMainWindow( const char *, int )
 {
-	return NULL;
+	return nullptr;
 }
 
 void Application::deleteMainWindow( BasicWindow * )
@@ -583,7 +505,7 @@ xml::Document *Application::getGuiDoc( const STRING &xmlSrc )
 
 xml::Element	*Application::getResource( const STRING &identifier, const STRING &type, const STRING &filterType )
 {
-	xml::Element	*resource = NULL;
+	xml::Element	*resource = nullptr;
 
 	if( !m_guiDoc )
 		getGuiDoc();
@@ -713,28 +635,34 @@ const F_STRING &Application::getPathName()
 	return m_pathName;
 }
 
-STRING Application::GetProfile( const char *section, const char *variable, const STRING &defaultVal )
+STRING Application::GetProfile( const char *section, const char *variable, const STRING &defaultVal, bool stupidMode )
 {
-	return readRegistration<STRING>( m_company, getApplication(), section, variable, defaultVal );;
+	Wow6432Mode_t	regMode = regTry1;
+	if( stupidMode )
+		regMode = useStupidPath;
+	return readRegistration<STRING>( m_company, getApplication(), section, variable, defaultVal, false, &regMode );
 }
 
-long Application::GetProfile( const char *section, const char *variable, long defaultVal )
+long Application::GetProfile( const char *section, const char *variable, long defaultVal, bool stupidMode )
 {
-	return readRegistration<long>( m_company, getApplication(), section, variable, defaultVal );;
+	Wow6432Mode_t	regMode = regTry1;
+	if( stupidMode )
+		regMode = useStupidPath;
+	return readRegistration<long>( m_company, getApplication(), section, variable, defaultVal, false, &regMode );
 }
 
 #ifdef __BORLANDC__
 #pragma argsused
 #endif
 
-long Application::WriteProfile( bool publicVal, const char *section, const char *variable, const char *value )
+long Application::WriteProfile( bool publicVal, const char *section, const char *variable, const char *value, bool stupidMode )
 {
-	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
+	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value, stupidMode );
 }
 
-long Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value )
+long Application::WriteProfile( bool publicVal, const char *section, const char *variable, long value, bool stupidMode )
 {
-	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value );
+	return writeRegistration( publicVal, m_company, getApplication(), section, variable, value, stupidMode );
 }
 
 long Application::DeleteProfile( bool publicVal, const char *section, const char *variable )

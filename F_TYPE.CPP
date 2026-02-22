@@ -3,10 +3,10 @@
 		Module:			F_TYPE.CPP
 		Description:	Registers file extensions
 		Author:			Martin Gäckler
-		Address:		Hopfengasse 15, A-4020 Linz
+		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1992-2021 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -15,7 +15,7 @@
 		You should have received a copy of the GNU General Public License 
 		along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Germany, Munich ``AS IS''
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
 		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
@@ -54,6 +54,7 @@
 #endif
 
 #include <winlib/f_type.h>
+#include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -77,164 +78,175 @@ using namespace gak;
 
 bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type )
 {
-	long	openResult;
-	char	valueBuff[512];
-	long	valueSize;
-	HKEY	typeKey, ddeKey;
-	STRING	tmp;
-	bool	error = true;
+	doEnterFunctionEx( gakLogging::llInfo, "bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type )" );
+
+	Registry	classesRoot;
+	if( classesRoot.openPublic( "Software\\classes", KEY_READ|KEY_WOW64_64KEY ) != ERROR_SUCCESS )
+/*@*/	return true;
+
+	bool		error = true;
+	STRING		valueBuff;
 
 	type->extension = ".";
 	type->extension += extension;
 	type->cmd = cmd;
 
-	valueSize = sizeof( valueBuff ) -1;
-	openResult = RegQueryValue( HKEY_CLASSES_ROOT, type->extension, valueBuff, &valueSize );
-	if( openResult == ERROR_SUCCESS && *valueBuff )
+	Registry	extKey;		// for .../.<ext>
+	Registry	typeKey;	// for .../<ext>file
+	Registry	openKey;	// for .../<ext>file/shell/<cmd>	(open, print etc)
+	Registry	ddeKey;		// for .../<ext>file/shell/<cmd>/ddeexec
+
+	doLogValueEx( gakLogging::llInfo, type->extension );
+
+	if( 
+		extKey.openSubkey(classesRoot, type->extension, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
+		extKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+	)
 	{
+		doLogValueEx(gakLogging::llInfo, valueBuff );
 		type->type = valueBuff;
-		valueSize = sizeof( valueBuff ) -1;
-		openResult = RegQueryValue( HKEY_CLASSES_ROOT, type->type, valueBuff, &valueSize );
-		if( openResult == ERROR_SUCCESS )
+
+		if(
+			typeKey.openSubkey( classesRoot, type->type, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
+			typeKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+		)
 			type->type_description = valueBuff;
 		else
 			type->type_description = type->type;
+	}
 
-		tmp = type->type + "\\DefaultIcon";
-		valueSize = sizeof( valueBuff ) -1;
-		openResult = RegQueryValue( HKEY_CLASSES_ROOT, tmp, valueBuff, &valueSize );
-		if( openResult == ERROR_SUCCESS )
+	if( typeKey )
+	{
+		if( typeKey.readValue( "DefaultIcon", &valueBuff ) )
 			type->icon = valueBuff;
 		else
-			type->icon = "";
+			type->icon = type->type;
 
-		tmp = type->type + "\\shell\\" + cmd;
 
-		openResult = RegOpenKey( HKEY_CLASSES_ROOT, tmp, &typeKey );
-		if( openResult == ERROR_SUCCESS  )
+		STRING shellCmd = STRING("shell\\") + cmd;
+		if(
+			openKey.openSubkey( typeKey, shellCmd, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
+			openKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+		)
+			type->cmd_description = valueBuff;
+		else
+			type->cmd_description = type->cmd;
+	}
+
+	if( openKey && openKey.readValue( "command", &valueBuff) && !valueBuff.isEmpty() )
+	{
+		type->commandLine = valueBuff;
+		error = false;
+
+		if( ddeKey.openSubkey( openKey, "ddeexec" ) == ERROR_SUCCESS  )
 		{
-			valueSize = sizeof( valueBuff ) -1;
-			openResult = RegQueryValue( typeKey, NULL, valueBuff, &valueSize );
-			if( openResult == ERROR_SUCCESS  )
-				type->cmd_description = valueBuff;
+			if( ddeKey.readValue( &valueBuff ) )
+				type->ddeCommand = valueBuff;
 			else
-				type->cmd_description = type->cmd;
+				type->ddeCommand.release();
 
-			valueSize = sizeof( valueBuff ) -1;
-			openResult = RegQueryValue( typeKey, "command", valueBuff, &valueSize );
-			if( openResult == ERROR_SUCCESS )
-			{
-				type->commandLine = valueBuff;
-				error = false;
+			if( ddeKey.readValue( "ifexec", &valueBuff ) )
+				type->ddeIfExec = valueBuff;
+			else
+				type->ddeIfExec.release();
 
-				openResult = RegOpenKey( typeKey, "ddeexec", &ddeKey );
-				if( openResult == ERROR_SUCCESS  )
-				{
-					valueSize = sizeof( valueBuff ) -1;
-					openResult = RegQueryValue( ddeKey, NULL, valueBuff, &valueSize );
-					if( openResult == ERROR_SUCCESS )
-						type->ddeCommand = valueBuff;
-					else
-						type->ddeCommand = "";
+			if( ddeKey.readValue( "Application", &valueBuff ) )
+				type->application = valueBuff;
+			else
+				type->application.release();
 
-					valueSize = sizeof( valueBuff ) -1;
-					openResult = RegQueryValue( ddeKey, "ifexec", valueBuff, &valueSize );
-					if( openResult == ERROR_SUCCESS )
-						type->ddeIfExec = valueBuff;
-					else
-						type->ddeIfExec = "";
-
-					valueSize = sizeof( valueBuff ) -1;
-					openResult = RegQueryValue( ddeKey, "Application", valueBuff, &valueSize );
-					if( openResult == ERROR_SUCCESS )
-						type->application = valueBuff;
-					else
-						type->application = "";
-
-					valueSize = sizeof( valueBuff ) -1;
-					openResult = RegQueryValue( ddeKey, "topic", valueBuff, &valueSize );
-					if( openResult == ERROR_SUCCESS )
-						type->topic = valueBuff;
-					else
-						type->topic = "";
-				}
-				else
-				{
-					type->ddeCommand = "";
-					type->ddeIfExec = "";
-					type->application = "";
-					type->topic = "";
-				}
-
-			}
-
-			RegCloseKey( typeKey );
+			if( ddeKey.readValue( "topic", &valueBuff ) )
+				type->topic = valueBuff;
+			else
+				type->topic.release();
 		}
 	}
 
+	if( error )
+	{
+		type->cmd.release();
+		type->cmd_description.release();
+		type->commandLine.release();
+		type->ddeCommand.release();
+		type->ddeIfExec.release();
+		type->application.release();
+		type->topic.release();
+	}
+	doLogValueEx( gakLogging::llInfo, type->commandLine );
+	doLogValueEx( gakLogging::llInfo, type->type_description );
+	doLogValueEx( gakLogging::llInfo, error );
 	return error;
 }
 
 bool addFileType( FileTypeRegistry *type )
 {
-	long	openResult;
-	HKEY	typeKey, ddeKey;
-	STRING	tmp;
-	bool	error;
+	doEnterFunctionEx( gakLogging::llInfo, "bool addFileType( FileTypeRegistry *type )" );
 
-	error = (bool)RegSetValue( HKEY_CLASSES_ROOT, type->extension, REG_SZ, type->type, DWORD(type->type.strlen()) );
+	Registry	classesRoot;
+	if( classesRoot.openPublic( "Software\\classes", KEY_READ|KEY_WOW64_64KEY ) != ERROR_SUCCESS )
+/*@*/	return true;
+
+	long		openResult;
+	Registry	cmdTypeKey, // open edit etc.
+				ddeKey;
+	STRING		tmp;
+	bool		error;
+
+	doLogValueEx( gakLogging::llInfo, type->extension );
+	doLogValueEx( gakLogging::llInfo, type->type );
+	error = classesRoot.setValue( type->extension, rtSTRING, type->type.c_str(), type->type.strlen() ) != ERROR_SUCCESS;
 	if( !error )
-		error = RegSetValue( HKEY_CLASSES_ROOT, type->type, REG_SZ, type->type_description, DWORD(type->type_description.strlen()) );
+	{
+		doLogValueEx( gakLogging::llInfo, type->type );
+		doLogValueEx( gakLogging::llInfo, type->type_description );
+		error = classesRoot.setValue( type->type, rtSTRING, type->type_description.c_str(), type->type_description.strlen() ) != ERROR_SUCCESS;
+	}
 
 	if( !error )
 	{
 		tmp = type->type + "\\DefaultIcon";
 		if( type->icon[0U] )
-			error = RegSetValue( HKEY_CLASSES_ROOT, tmp, REG_SZ, type->icon, DWORD(type->icon.strlen()) );
+			error = classesRoot.setValue( tmp, rtSTRING, type->icon.c_str(), type->icon.strlen() ) != ERROR_SUCCESS;
 		else
-			RegDeleteKey( HKEY_CLASSES_ROOT, tmp );
+			classesRoot.deleteSubkey( tmp );
 	}
 
 	if( !error )
 	{
 		tmp = type->type + "\\shell\\" + type->cmd;
-		openResult = RegCreateKey( HKEY_CLASSES_ROOT, tmp, &typeKey );
+		error = cmdTypeKey.createKey( classesRoot, tmp ) != ERROR_SUCCESS;
 	}
-	if( !error && openResult == ERROR_SUCCESS )
+	if( !error )
 	{
-		RegSetValue( typeKey, NULL, REG_SZ, type->cmd_description, DWORD(type->cmd_description.strlen()) );
+		cmdTypeKey.setValue( rtSTRING, type->cmd_description.c_str(), type->cmd_description.strlen() );
 
-		RegSetValue( typeKey, "command", REG_SZ, type->commandLine, DWORD(type->commandLine.strlen()) );
+		cmdTypeKey.setValue( "command", rtSTRING, type->commandLine.c_str(), type->commandLine.strlen() );
 
 		if( type->ddeCommand[0U] && type->application[0U] )
 		{
-			openResult = RegCreateKey( typeKey, "ddeexec", &ddeKey );
+			openResult = ddeKey.createKey( cmdTypeKey, "ddeexec" );
 			if( openResult == ERROR_SUCCESS )
 			{
-				RegSetValue( ddeKey, NULL, REG_SZ, type->ddeCommand, DWORD(type->ddeCommand.strlen()) );
+				ddeKey.setValue( rtSTRING, type->ddeCommand.c_str(), type->ddeCommand.strlen() );
 				if( type->ddeIfExec[0U] )
-					RegSetValue( ddeKey, "ifexec", REG_SZ, type->ddeIfExec, DWORD(type->ddeIfExec.strlen()) );
+					ddeKey.setValue( "ifexec", rtSTRING, type->ddeIfExec.c_str(), type->ddeIfExec.strlen() );
 				else
-					RegDeleteKey( ddeKey, "ifexec" );
+					ddeKey.deleteSubkey( "ifexec" );
 
-				RegSetValue( ddeKey, "Application", REG_SZ, type->application, DWORD(type->application.strlen()) );
+				ddeKey.setValue( "Application", rtSTRING, type->application.c_str(), type->application.strlen() );
 				if( type->topic[0U] )
-					RegSetValue( ddeKey, "Topic", REG_SZ, type->topic, DWORD(type->topic.strlen()) );
+					ddeKey.setValue( "Topic", rtSTRING, type->topic.c_str(), type->topic.strlen() );
 				else
-					RegDeleteKey( ddeKey, "Topic" );
-
-				RegCloseKey( ddeKey );
+					ddeKey.deleteSubkey( "Topic" );
 				error = false;
 			}
 		}
 		else
 		{
-			RegDeleteKey(typeKey, "ddeexec\\Application" );
-			RegDeleteKey(typeKey, "ddeexec" );
+			cmdTypeKey.deleteSubkey( "ddeexec\\Application" );
+			cmdTypeKey.deleteSubkey( "ddeexec" );
 			error = false;
 		}
-
-		RegCloseKey( typeKey );
 	}
 
 	return error;
@@ -242,16 +254,8 @@ bool addFileType( FileTypeRegistry *type )
 
 bool removeFileType( FileTypeRegistry *type )
 {
-	long	deleteResult;
-	STRING	tmp;
-	bool	error = true;
-
-	tmp = type->type + "\\shell\\" + type->cmd;
-	deleteResult = RegDeleteKey( HKEY_CLASSES_ROOT, tmp );
-	if( deleteResult == ERROR_SUCCESS )
-	{
-		error = false;
-	}
+	STRING	tmp = type->type + "\\shell\\" + type->cmd;
+	bool	error = RegistryClassesRoot().deleteSubkey( tmp ) != ERROR_SUCCESS;
 
 	return error;
 }

@@ -1,12 +1,12 @@
 /*
-		Project:		GAKLIB
-		Module:			WinAppTest.h
-		Description:	Unit test for winlib::Application
+		Project:		WINLIB
+		Module:			registry.cpp
+		Description:	Registry keys (reserved code space)
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -33,15 +33,15 @@
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
+#ifndef STRICT
+#define STRICT 1
+#endif
+
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <iostream>
-#include <gak/unitTest.h>
-
-#include <WINLIB/WINAPP.H>
-#include <WINLIB/WINLIB.H>
+#include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -58,7 +58,7 @@
 #	pragma option -pc
 #endif
 
-namespace gak
+namespace winlib
 {
 
 // --------------------------------------------------------------------- //
@@ -77,92 +77,6 @@ namespace gak
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class WinApp : public winlib::Application
-{
-};
-
-static char theKeyName[] = "theKeyName";
-
-class WinAppTest : public UnitTest
-{
-	WinApp	m_appObject;
-
-	virtual const char *GetClassName() const
-	{
-		return "WinAppTest";
-	}
-	virtual void PerformTest()
-	{
-		doEnterFunctionEx(gakLogging::llInfo, "WinAppTest::PerformTest");
-		TestScope scope( "PerformTest" );
-		UT_ASSERT_EQUAL( winlib::appObject, &m_appObject );
-
-		m_appObject.setComapny("GakWinlibUnitTester");
-		m_appObject.setApplication("UnitTestApp");
-
-		long tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
-		long result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 333 );
-
-		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
-
-		result = m_appObject.WriteProfile(true, "", theKeyName, 999, true );
-		if( result == ERROR_SUCCESS )
-		{
-			std::cout << "Admintest" << unsigned(winlib::getWindowsMajorVersion()) << std::endl;
-
-			if( winlib::getWindowsMajorVersion() >= 6 )
-			{
-				tester = m_appObject.GetProfile("", theKeyName, 666, true);
-				UT_ASSERT_EQUAL( tester, 666 );
-			}
-
-			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 999 );
-
-			tester = m_appObject.GetProfile("", theKeyName, 666, true);
-			UT_ASSERT_EQUAL( tester, 999 );
-
-			result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 333 );
-
-			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-
-			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-
-			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-		}
-		else
-		{
-			std::cout << "No Admintest" << std::endl;
-		}
-
-		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-	}
-};
-
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -170,8 +84,6 @@ class WinAppTest : public UnitTest
 // --------------------------------------------------------------------- //
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
-
-static WinAppTest myWinAppTest;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
@@ -197,9 +109,64 @@ static WinAppTest myWinAppTest;
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
+RegistryType Registry::queryValue( HKEY key, const char *var, void *buffer, size_t *io_size )
+{
+	DWORD		typeVar;
+	DWORD		size = DWORD(*io_size);
+
+	long openResult = RegQueryValueEx(
+		key, var, nullptr, &typeVar, LPBYTE(buffer), &size 
+	);
+	*io_size = size;
+	if( openResult == ERROR_SUCCESS )
+		return RegistryType(typeVar);
+	else if( openResult == ERROR_FILE_NOT_FOUND )
+		return rtMISSING;
+
+	return  rtERROR;
+}
+
 // --------------------------------------------------------------------- //
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
+
+long Registry::createKey2( HKEY parent, const char *name, unsigned long perm )
+{
+	DWORD	dummy;
+	long	openResult = RegCreateKeyEx(
+		parent, name, 0, "",
+		REG_OPTION_NON_VOLATILE,
+		perm, nullptr,
+		&m_key,
+		&dummy 
+	);
+	if( openResult != ERROR_SUCCESS )
+	{
+		m_key = 0;
+	}
+	else
+	{
+		m_perm = perm;
+	}
+	return openResult;
+}
+long Registry::openKey2( HKEY parent, const char *name, unsigned long perm )
+{
+	long openResult = RegOpenKeyEx(	
+		parent, name, 
+		0,
+		perm, &m_key 
+	);
+	if( openResult != ERROR_SUCCESS )
+	{
+		m_key = 0;
+	}
+	else
+	{
+		m_perm = perm;
+	}
+	return openResult;
+}
 
 // --------------------------------------------------------------------- //
 // ----- class protected ----------------------------------------------- //
@@ -217,7 +184,7 @@ static WinAppTest myWinAppTest;
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-}	// namespace gak
+} // namespace winlib
 
 #ifdef __BORLANDC__
 #	pragma option -RT.
