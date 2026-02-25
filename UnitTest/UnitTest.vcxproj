@@ -96,9 +96,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="UnitTest.cpp" />
+    <ClCompile Include="UnitTest.cpp">
+      <ShowIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ShowIncludes>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RegistryTest.h" />
     <ClInclude Include="WinAppTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

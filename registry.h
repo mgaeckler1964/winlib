@@ -90,6 +90,7 @@ enum RegistryType
 	rtERROR = REG_NONE-1,
 	rtNONE = REG_NONE,
 	rtSTRING = REG_SZ,
+	rtENV = REG_EXPAND_SZ,
 	rtBINRAY = REG_BINARY,
 	rtINTEGER = REG_DWORD,
 	rtINTEGER64 = REG_QWORD
@@ -114,17 +115,21 @@ template <typename RESULTTYPE>
 class ResultTraits : public RegTraits<RESULTTYPE>
 {
 	size_t		m_minSize;
-	gak::STRING	valueBuff;
+	gak::STRING	m_valueBuff;
 
 	public:
 	static const bool s_fixBufferSize = false;
 
 	ResultTraits() : m_minSize(0) {}
 
+	const gak::STRING &getPlain() const
+	{
+		return m_valueBuff;
+	}
 	void setBufferSize( size_t size )
 	{
 		m_minSize = size;
-		valueBuff.setMinSize( size+1 );
+		m_valueBuff.setMinSize( size+1 );
 	}
 	size_t size() const
 	{
@@ -132,15 +137,15 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 	}
 	void *getBuffer() const
 	{
-		return (void *)valueBuff.c_str();
+		return (void *)m_valueBuff.c_str();
 	}
 	void setActSize( size_t size )
 	{
-		valueBuff.setActSize(size);
+		m_valueBuff.setActSize(size);
 	}
 	RESULTTYPE	GetValue()
 	{
-		return valueBuff;
+		return m_valueBuff;
 	}
 	static size_t GetValueSize(const RESULTTYPE &value)
 	{
@@ -150,11 +155,15 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 template <>
 class ResultTraits<long> : public RegTraits<long>
 {
-	char valueBuff[128];
+	char m_valueBuff[128];
 
 	public:
 	static const bool s_fixBufferSize = true;
 
+	const char *getPlain() const
+	{
+		return m_valueBuff;
+	}
 	void setBufferSize( size_t )
 	{
 	}
@@ -164,16 +173,16 @@ class ResultTraits<long> : public RegTraits<long>
 
 	size_t size() const
 	{
-		return sizeof( valueBuff );
+		return sizeof( m_valueBuff );
 	}
 	void *getBuffer() const
 	{
-		return (void *)valueBuff;
+		return (void *)m_valueBuff;
 	}
 
 	long GetValue()
 	{
-		return *((long*)valueBuff);
+		return *((long*)m_valueBuff);
 	}
 	static size_t GetValueSize(long)
 	{
@@ -255,6 +264,16 @@ class Registry : public gak::CopyProtection
 		{
 			RegistryType	typeVar = queryValue( key, var, valueBuff.getBuffer(), &valueSize );
 
+			if( typeVar == rtENV && rtSTRING == tResultTraits::s_registryType )
+			{
+				valueBuff.setActSize(valueSize-1);
+				STRING	newBuffer = valueBuff.getPlain();
+				size_t	newSize = ExpandEnvironmentStrings( newBuffer, nullptr, 0 );
+				valueBuff.setBufferSize(newSize+1);
+				valueSize = ExpandEnvironmentStrings( newBuffer, LPSTR(valueBuff.getBuffer()), newSize );
+				typeVar = rtSTRING;
+			}
+
 			if( valueSize > 0
 			&&  typeVar == tResultTraits::s_registryType )
 			{
@@ -293,6 +312,11 @@ class Registry : public gak::CopyProtection
 	{
 		// Unike ...Ex RegSetValue creates a new key with a nameless value
 		return RegSetValue( key, var, type, LPCSTR(data), DWORD(len) );
+	}
+	static long setValueEx( HKEY key, const char *var, RegistryType type, const void *data, size_t len )
+	{
+		// Unike ...Ex RegSetValue creates a new key with a nameless value
+		return RegSetValueEx( key, var, 0, type, LPBYTE(data), DWORD(len) );
 	}
 
 	public:
@@ -435,7 +459,7 @@ class Registry : public gak::CopyProtection
 	/*
 		legacy writing
 	*/
-	/// write a value with given type and size
+	/// write a key with unamed value given type and size
 	long setValue( const char *var, RegistryType type, const void *data, size_t len ) const
 	{
 		return setValue( m_key, var, type, data, len );
@@ -446,6 +470,24 @@ class Registry : public gak::CopyProtection
 		return setValue( m_key, nullptr, type, data, len );
 	}
 
+	/// write a key with unamed text value
+	long setValue( const char *var, const gak::STRING &data ) const
+	{
+		return setValue( m_key, var, rtSTRING, data.c_str(), data.size()+1 );
+	}
+	/// write an unnamed text value
+	long setValue( const gak::STRING &data  ) const
+	{
+		return setValue( m_key, nullptr, rtSTRING, data.c_str(), data.size()+1 );
+	}
+
+	// for testing, only can be used to create values of type REG_EXPAND_SZ
+	/// TODO create an api that allows to create/write/read REG_EXPAND_SZ values actually when reading Strings and we find rtENV
+	/// we expand the env-variables and return a string 
+	long setValueEx( const char *var, RegistryType type, const void *data, size_t len ) const
+	{
+		return setValueEx( m_key, var, type, data, len );
+	}
 #if 0
 	/// this method is useful, when migrating old code that still uses the windows registry api
 	HKEY get() const

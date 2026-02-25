@@ -1,12 +1,12 @@
 /*
 		Project:		WINLIB
-		Module:			UnitTest.cpp
-		Description:	The UnitTest main source
+		Module:			RegistryTest.h
+		Description:	Registry keys
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -37,13 +37,10 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <gak/logfile.h>
-#include <gak/directoryEntry.h>
-#include <gak/directory.h>
+#include <iostream>
 #include <gak/unitTest.h>
 
-#include "WinAppTest.h"
-#include "RegistryTest.h"
+#include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -59,6 +56,11 @@
 #	pragma option -a4
 #	pragma option -pc
 #endif
+
+using namespace winlib;
+
+namespace gak
+{
 
 // --------------------------------------------------------------------- //
 // ----- constants ----------------------------------------------------- //
@@ -76,6 +78,61 @@
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+class RegistryTest : public UnitTest
+{
+	virtual const char *GetClassName() const
+	{
+		return "RegistryTest";
+	}
+	virtual void PerformTest()
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "RegistryTest::PerformTest");
+		TestScope scope( "PerformTest" );
+
+		const char * const GakWindowsTester = "GakWindowsTester";
+		const char * const valueName = "ValueName";
+		const char * const expValName = "expValName";
+
+		Registry	software;
+		software.openPrivate( "SOFTWARE" );
+		UT_ASSERT_TRUE( software );
+		char *unnamedValue = "dummy";
+		long result = software.setValue(GakWindowsTester, rtSTRING, unnamedValue, strlen(unnamedValue)+1 );
+		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+		{
+			Registry	testerKey;
+			result = testerKey.openSubkey( software, GakWindowsTester, KEY_ALL_ACCESS );
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			STRING		namedValue = "namedValue";
+			result = testerKey.writeValue( valueName, namedValue );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			STRING		origValue = "Test %TMP% Test";
+			STRING		expectedValue = STRING("Test ") + getenv("TMP") + " Test";
+			result = testerKey.setValueEx( expValName, rtENV, origValue, origValue.size()+1 );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			STRING	readValue;
+			bool success = testerKey.readValue( &readValue );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( readValue, unnamedValue );
+
+			success = testerKey.readValue( valueName, &readValue );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( readValue, namedValue );
+
+			readValue = "not found";
+			success = testerKey.readValue( expValName, &readValue );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( readValue, expectedValue );
+		}
+		result = software.deleteSubkey(GakWindowsTester);
+		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+	}
+};
+
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -83,6 +140,8 @@
 // --------------------------------------------------------------------- //
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+static RegistryTest myRegistryTest;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
@@ -128,37 +187,7 @@
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-int main( int , const char *argv[] )
-{
-	//doEnableLogEx(gakLogging::llDetail);
-	doDisableLog();
-	doEnableProfile(gakLogging::llDetail); 
-	gak::F_STRING	sourcePath;
-	doEnterFunctionEx( gakLogging::llInfo, "main" );
-
-	std::cout << "Winlib UnitTest " << __DATE__ << ' ' << __TIME__ << std::endl;
-	gak::fsplit( gak::fullPath( __FILE__ ), &sourcePath );
-	if( !sourcePath.isEmpty() )
-	{
-		std::cout << "Changing directory to " << sourcePath << std::endl;
-		if( setcwd( sourcePath ) )
-		{
-			perror( sourcePath );
-		}
-	}
-	else
-	{
-		std::cout << "Don't know Source Path, using " << gak::getcwd() << std::endl;
-	}
-
-	gak::UnitTest::PerformTests( argv );
-	gak::UnitTest::PrintResult();
-
-#ifdef _Windows
-	getchar();
-#endif
-	return EXIT_SUCCESS;
-}
+}	// namespace gak
 
 #ifdef __BORLANDC__
 #	pragma option -RT.

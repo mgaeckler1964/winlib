@@ -23,5 +23,8 @@
     <ClInclude Include="WinAppTest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="RegistryTest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
