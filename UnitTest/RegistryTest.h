@@ -127,6 +127,29 @@ class RegistryTest : public UnitTest
 			success = testerKey.readValue( expValName, &readValue );
 			UT_ASSERT_TRUE( success );
 			UT_ASSERT_EQUAL( readValue, expectedValue );
+
+			{
+				ArrayOfStrings myValues;
+				testerKey.getValueNames( &myValues );
+				UT_ASSERT_EQUAL( myValues.size(), 3U );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( valueName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( expValName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( "" ), ArrayOfStrings::no_index );
+			}
+
+			{
+				testerKey.setValue( "key1", "value1" );
+				testerKey.setValue( "key2", "value2" );
+
+				ArrayOfStrings myKeys;
+				testerKey.getKeyNames( &myKeys );
+				UT_ASSERT_EQUAL( myKeys.size(), 2U );
+				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key1" ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key2" ), ArrayOfStrings::no_index );
+			}
+
+			testerKey.deleteSubkey("key1");
+			testerKey.deleteSubkey("key2");
 		}
 		result = software.deleteSubkey(GakWindowsTester);
 		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );

@@ -51,6 +51,8 @@
 // ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+using namespace gak;
+
 #ifdef __BORLANDC__
 #	pragma option -RT-
 #	pragma option -b
@@ -179,6 +181,62 @@ long Registry::openKey2( HKEY parent, const char *name, unsigned long perm )
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void Registry::getKeyNames( ArrayOfStrings *keyNames )
+{
+	DWORD	numKeys, maxTitleSize;
+	STRING	keyName;
+
+	long openResult = RegQueryInfoKey(
+		m_key, 
+		nullptr, nullptr, nullptr, 
+		&numKeys, &maxTitleSize, 
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	);
+	if( openResult == ERROR_SUCCESS )
+	{
+		++maxTitleSize;
+		for( DWORD i=0; i<numKeys; ++i )
+		{
+			DWORD titleSize = maxTitleSize;
+			keyName.setMinSize( titleSize+1 );
+			openResult = RegEnumKeyEx( m_key, i, LPSTR(keyName.c_str()), &titleSize, nullptr, nullptr, nullptr, nullptr );
+			if( openResult == ERROR_SUCCESS )
+			{
+				keyName.setActSize(titleSize);
+				keyNames->addElement( keyName );
+			}
+		}
+	}
+}
+
+void Registry::getValueNames( ArrayOfStrings *valueNames )
+{
+	DWORD	numKeys, maxTitleSize;
+	STRING	valueName;
+
+	long openResult = RegQueryInfoKey(
+		m_key, 
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		&numKeys, &maxTitleSize, 
+		nullptr, nullptr, nullptr
+	);
+	if( openResult == ERROR_SUCCESS )
+	{
+		++maxTitleSize;
+		for( DWORD i=0; i<numKeys; ++i )
+		{
+			DWORD titleSize = maxTitleSize;
+			valueName.setMinSize( titleSize+1 );
+			openResult = RegEnumValue( m_key, i, LPSTR(valueName.c_str()), &titleSize, nullptr, nullptr, nullptr, nullptr );
+			if( openResult == ERROR_SUCCESS )
+			{
+				valueName.setActSize(titleSize);
+				valueNames->addElement( valueName );
+			}
+		}
+	}
+}
 
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //

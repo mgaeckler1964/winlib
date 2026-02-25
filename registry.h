@@ -47,6 +47,7 @@
 #include <windows.h>
 #include <gak/CopyProtection.h>
 #include <gak/string.h>
+#include <gak/array.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -480,6 +481,12 @@ class Registry : public gak::CopyProtection
 	{
 		return setValue( m_key, nullptr, rtSTRING, data.c_str(), data.size()+1 );
 	}
+
+	/*
+		querying key and value names
+	*/
+	void getKeyNames( gak::ArrayOfStrings *keyNames );
+	void getValueNames( gak::ArrayOfStrings *valueNames );
 
 	// for testing, only can be used to create values of type REG_EXPAND_SZ
 	/// TODO create an api that allows to create/write/read REG_EXPAND_SZ values actually when reading Strings and we find rtENV
