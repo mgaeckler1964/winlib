@@ -99,16 +99,16 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 	doLogValueEx( gakLogging::llInfo, type->extension );
 
 	if( 
-		extKey.openSubkey(classesRoot, type->extension, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
-		extKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+		extKey.openSubkey(classesRoot, type->extension, KEY_READ|KEY_WOW64_64KEY )==ERROR_SUCCESS && 
+		extKey.readValue( &valueBuff )==rsOK && !valueBuff.isEmpty() 
 	)
 	{
 		doLogValueEx(gakLogging::llInfo, valueBuff );
 		type->type = valueBuff;
 
 		if(
-			typeKey.openSubkey( classesRoot, type->type, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
-			typeKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+			typeKey.openSubkey( classesRoot, type->type, KEY_READ|KEY_WOW64_64KEY )==ERROR_SUCCESS && 
+			typeKey.readValue( &valueBuff )==rsOK && !valueBuff.isEmpty() 
 		)
 			type->type_description = valueBuff;
 		else
@@ -117,7 +117,7 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 
 	if( typeKey )
 	{
-		if( typeKey.readValue( "DefaultIcon", &valueBuff ) )
+		if( typeKey.readValue( "DefaultIcon", &valueBuff ) == rsOK )
 			type->icon = valueBuff;
 		else
 			type->icon = type->type;
@@ -125,37 +125,37 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 
 		STRING shellCmd = STRING("shell\\") + cmd;
 		if(
-			openKey.openSubkey( typeKey, shellCmd, KEY_READ|KEY_WOW64_64KEY ) == ERROR_SUCCESS && 
-			openKey.readValue( &valueBuff ) && !valueBuff.isEmpty() 
+			openKey.openSubkey( typeKey, shellCmd, KEY_READ|KEY_WOW64_64KEY )==ERROR_SUCCESS && 
+			openKey.readValue( &valueBuff )==rsOK && !valueBuff.isEmpty() 
 		)
 			type->cmd_description = valueBuff;
 		else
 			type->cmd_description = type->cmd;
 	}
 
-	if( openKey && openKey.readValue( "command", &valueBuff) && !valueBuff.isEmpty() )
+	if( openKey && openKey.readValue( "command", &valueBuff)==rsOK && !valueBuff.isEmpty() )
 	{
 		type->commandLine = valueBuff;
 		error = false;
 
 		if( ddeKey.openSubkey( openKey, "ddeexec" ) == ERROR_SUCCESS  )
 		{
-			if( ddeKey.readValue( &valueBuff ) )
+			if( ddeKey.readValue( &valueBuff ) == rsOK )
 				type->ddeCommand = valueBuff;
 			else
 				type->ddeCommand.release();
 
-			if( ddeKey.readValue( "ifexec", &valueBuff ) )
+			if( ddeKey.readValue( "ifexec", &valueBuff ) == rsOK )
 				type->ddeIfExec = valueBuff;
 			else
 				type->ddeIfExec.release();
 
-			if( ddeKey.readValue( "Application", &valueBuff ) )
+			if( ddeKey.readValue( "Application", &valueBuff ) == rsOK )
 				type->application = valueBuff;
 			else
 				type->application.release();
 
-			if( ddeKey.readValue( "topic", &valueBuff ) )
+			if( ddeKey.readValue( "topic", &valueBuff ) == rsOK )
 				type->topic = valueBuff;
 			else
 				type->topic.release();

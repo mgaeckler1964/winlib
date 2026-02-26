@@ -98,6 +98,15 @@ enum RegistryType
 	rtINT64 = REG_QWORD
 };
 
+enum ReadSuccess
+{
+	rsOK,
+	rsBadType,
+	rsBadSize,
+	rsNotFound,
+	rsError,
+};
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -137,11 +146,11 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 
 	ResultTraits() {}
 
-	RESULTTYPE *getPlain()
+	size_t expand( size_t valueSize )
 	{
-		return &m_valueBuff;
+		return  valueSize;
 	}
-	void setBufferSize( size_t size )
+	void setBufferSize( size_t  )
 	{
 	}
 	size_t size() const
@@ -152,7 +161,7 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 	{
 		return (void *)&m_valueBuff;
 	}
-	void setActSize( size_t size )
+	void setActSize( size_t )
 	{
 	}
 	RESULTTYPE	GetValue()
@@ -171,19 +180,36 @@ class ResultTraits<gak::STRING> : public RegTraits<gak::STRING>
 	size_t		m_minSize;
 	gak::STRING	m_valueBuff;
 
+	void release()
+	{
+		m_valueBuff.release();
+		m_minSize = 0;
+	}
+
 	public:
 	static const bool s_fixBufferSize = false;
 
 	ResultTraits() : m_minSize(0) {}
 
-	const gak::STRING &getPlain() const
+	size_t expand( size_t valueSize )
 	{
-		return m_valueBuff;
+		setActSize(valueSize);
+		gak::STRING	newBuffer = m_valueBuff;
+		DWORD	newSize = ExpandEnvironmentStrings( newBuffer, nullptr, 0 );
+		release();	// this ensures, that this is a real new buffer
+		setBufferSize(newSize+1);
+		return  ExpandEnvironmentStrings( newBuffer, LPSTR(m_valueBuff.c_str()), newSize );
 	}
+
 	void setBufferSize( size_t size )
 	{
-		m_minSize = size;
-		m_valueBuff.setMinSize( size+1 );
+		if( size > m_minSize )		// never shrink the buffer
+		{
+			m_minSize = size;
+			m_valueBuff.release();	// do not copy the existing buffer -> create a new one
+									/// TODO: analyse what is faster: memory mnagement or block copying
+			m_valueBuff.setMinSize( size+1 );
+		}
 	}
 	size_t size() const
 	{
@@ -241,12 +267,12 @@ struct InputTraits<gak::STRING> : public RegTraits<gak::STRING>
 
 	size_t GetValueSize()
 	{
-		return m_value.strlen()+1;
+		return m_value.isNullPtr() ? 0 : m_value.strlen()+1;
 	}
 
 	LPBYTE GetAdress() const
 	{
-		return LPBYTE(m_value.c_str() ? m_value.c_str() : "");
+		return LPBYTE(m_value.c_str());
 	}
 };
 
@@ -272,63 +298,7 @@ class Registry : public gak::CopyProtection
 	}
 
 	template <class RESULTTYPE>
-	static bool readValue( HKEY key, const char *var, RESULTTYPE *result, long perm )
-	{
-		typedef ResultTraits<RESULTTYPE>	tResultTraits;
-
-		tResultTraits	valueBuff;
-		bool			valueFound = false;
-
-		if( !tResultTraits::s_fixBufferSize )
-		{
-			size_t size = getValueSize( key, var );
-			if( size )
-				valueBuff.setBufferSize(size+1);	// reserve 1 byte extra space for the trailing 0 byte
-		}
-		size_t valueSize = valueBuff.size();
-		if( valueSize )
-		{
-			RegistryType	typeVar = queryValue( key, var, valueBuff.getBuffer(), &valueSize );
-
-			if( typeVar == rtENV && rtSTRING == tResultTraits::s_registryType )
-			{
-				valueBuff.setActSize(valueSize);
-				STRING	newBuffer = valueBuff.getPlain();
-				size_t	newSize = ExpandEnvironmentStrings( newBuffer, nullptr, 0 );
-				valueBuff.setBufferSize(newSize+1);
-				valueSize = ExpandEnvironmentStrings( newBuffer, LPSTR(valueBuff.getBuffer()), newSize );
-				typeVar = rtSTRING;
-			}
-
-			if( valueSize > 0
-			&&  typeVar == tResultTraits::s_registryType )
-			{
-				if( !tResultTraits::s_fixBufferSize )
-				{
-					valueBuff.setActSize(valueSize);
-					valueFound = true;
-				}
-				else if(valueSize == valueBuff.size() )
-				{
-					valueFound = true;
-				}
-				if( valueFound )
-				{
-					*result = valueBuff.GetValue();
-				}
-			}
-			else if( var && typeVar == rtMISSING )
-			{
-				Registry	subKey;
-				if( subKey.openKey2( key, var, perm ) == ERROR_SUCCESS )
-				{
-					valueFound = readValue(subKey.m_key, nullptr, result, perm );
-				}
-			}
-		}
-
-		return valueFound;
-	}
+	static ReadSuccess readValue( HKEY key, const char *var, RESULTTYPE *result, long perm );
 
 	template <class INPUTTYPE>
 	static long writeValue( HKEY key, const char *var, const INPUTTYPE &i_value )
@@ -466,14 +436,14 @@ class Registry : public gak::CopyProtection
 	*/
 	/// reading a value from any key
 	template <class RESULTTYPE>
-	bool readValue( const char *var, RESULTTYPE *result ) const
+	ReadSuccess readValue( const char *var, RESULTTYPE *result ) const
 	{
 		return readValue( m_key, var, result, m_perm );
 	}
 
 	/// reading a nameless value from any key
 	template <class RESULTTYPE>
-	bool readValue( RESULTTYPE *result ) const
+	ReadSuccess readValue( RESULTTYPE *result ) const
 	{
 		return readValue( m_key, nullptr, result, m_perm );
 	}
@@ -606,6 +576,74 @@ class RegistryCurrentUser : public Registry
 // --------------------------------------------------------------------- //
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
+
+template <class RESULTTYPE>
+ReadSuccess Registry::readValue( HKEY key, const char *var, RESULTTYPE *result, long perm )
+{
+	typedef ResultTraits<RESULTTYPE>	tResultTraits;
+
+	tResultTraits	valueBuff;
+	ReadSuccess		retCode = rsNotFound;
+
+	if( !tResultTraits::s_fixBufferSize )
+	{
+		size_t size = getValueSize( key, var );
+		if( size )
+			valueBuff.setBufferSize(size+1);	// reserve 1 byte extra space for the trailing 0 byte
+		else
+		{
+			*result = RESULTTYPE();
+			retCode = rsOK;
+		}
+	}
+	size_t valueSize = valueBuff.size();
+	if( valueSize )
+	{
+		RegistryType	typeVar = queryValue( key, var, valueBuff.getBuffer(), &valueSize );
+
+		if( typeVar == rtENV && rtSTRING == tResultTraits::s_registryType )
+		{
+			valueSize = valueBuff.expand( valueSize );
+			typeVar = rtSTRING;
+		}
+
+		if( valueSize > 0
+		&&  typeVar == tResultTraits::s_registryType )
+		{
+			if( !tResultTraits::s_fixBufferSize )
+			{
+				valueBuff.setActSize(valueSize);
+				retCode = rsOK;
+			}
+			else if(valueSize == valueBuff.size() )
+			{
+				retCode = rsOK;
+			}
+			else
+			{
+				retCode = rsBadSize;
+			}
+			if( retCode == rsOK )
+			{
+				*result = valueBuff.GetValue();
+			}
+		}
+		else if( var && typeVar == rtMISSING )
+		{
+			Registry	subKey;
+			if( subKey.openKey2( key, var, perm ) == ERROR_SUCCESS )
+			{
+				retCode = readValue(subKey.m_key, nullptr, result, perm );
+			}
+		}
+		else if( typeVar == rtERROR )
+			retCode = rsError;
+		else
+			retCode = rsBadType;
+	}
+
+	return retCode;
+}
 
 // --------------------------------------------------------------------- //
 // ----- class privates ------------------------------------------------ //

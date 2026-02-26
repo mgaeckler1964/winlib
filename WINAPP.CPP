@@ -298,12 +298,12 @@ static RESULTTYPE readRegistration(
 
 					if( sectionKey.openSubkey( appKey, section, perm ) == ERROR_SUCCESS )
 					{
-						valueFound = sectionKey.readValue( var, &result );
+						valueFound = sectionKey.readValue( var, &result ) == rsOK;
 					}
 				}
 				else
 				{
-					valueFound = appKey.readValue( var, &result );
+					valueFound = appKey.readValue( var, &result ) == rsOK;
 				}
 			}
 		}

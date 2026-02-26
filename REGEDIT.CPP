@@ -77,7 +77,7 @@ void RegistryEditor::create( BasicWindow *parent, const char *keyValue, bool use
 
 	if( theKey.createKey(!userReg, keyName ) == ERROR_SUCCESS )
 	{
-		if( !theKey.readValue( valueName, &oldValue ) )
+		if( theKey.readValue( valueName, &oldValue ) != rsOK )
 		{
 			oldValue.release();
 		}

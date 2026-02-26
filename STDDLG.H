@@ -223,7 +223,7 @@ class FileDialog : public BasicWindow
 		if( regResult == ERROR_SUCCESS )
 		{
 			STRING		path;
-			if( shellFolderKey.readValue( regName, &path ) )
+			if( shellFolderKey.readValue( regName, &path ) == rsOK )
 			{
 				setDirectory( path );
 			}
