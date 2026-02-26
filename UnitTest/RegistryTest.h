@@ -89,51 +89,117 @@ class RegistryTest : public UnitTest
 		doEnterFunctionEx(gakLogging::llInfo, "RegistryTest::PerformTest");
 		TestScope scope( "PerformTest" );
 
-		const char * const GakWindowsTester = "GakWindowsTester";
-		const char * const valueName = "ValueName";
-		const char * const expValName = "expValName";
+		// the key
+		const char * const	GakWindowsTester = "GakWindowsTester";
+		char				*unnamedValue = "dummy";
+
+		// first value
+		const char * const	valueName = "ValueName";
+		STRING				namedValue = "namedValue";
+
+		// second value
+		const char * const	expValName = "expValName";
+		STRING				origValue = "Test %TMP% Test";
+		STRING				expectedValue = STRING("Test ") + getenv("TMP") + " Test";
+
+		// third value
+		const char * const	longName = "longName";
+		long				longValue = 666;
+
+		// forth value
+		const char * const	long64Name = "long64Name";
+		gak::int64			long64Value = std::numeric_limits<gak::int64>::min();
+
+		// fifth value
+		const char * const	badStrName = "badName";
+		const char * const	badValue = "66645";
 
 		Registry	software;
 		software.openPrivate( "SOFTWARE" );
 		UT_ASSERT_TRUE( software );
-		char *unnamedValue = "dummy";
 		long result = software.setValue(GakWindowsTester, rtSTRING, unnamedValue, strlen(unnamedValue)+1 );
 		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
 
 		{
+			/*
+				Writing
+			*/
 			Registry	testerKey;
 			result = testerKey.openSubkey( software, GakWindowsTester, KEY_ALL_ACCESS );
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
 
-			STRING		namedValue = "namedValue";
 			result = testerKey.writeValue( valueName, namedValue );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(valueName), namedValue.strlen()+1 );
 
-			STRING		origValue = "Test %TMP% Test";
-			STRING		expectedValue = STRING("Test ") + getenv("TMP") + " Test";
 			result = testerKey.setValueEx( expValName, rtENV, origValue, origValue.size()+1 );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			result = testerKey.writeValue( longName, longValue );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			result = testerKey.writeValue( long64Name, long64Value );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			// writing a string that it not 0-terminated
+			result = testerKey.setValueEx( badStrName, rtSTRING, badValue, 3 );  // do not write the trailing 0
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(badStrName), 3 );
+
+			/*
+				Reading
+			*/
 
 			STRING	readValue;
 			bool success = testerKey.readValue( &readValue );
 			UT_ASSERT_TRUE( success );
 			UT_ASSERT_EQUAL( readValue, unnamedValue );
+			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
 			success = testerKey.readValue( valueName, &readValue );
 			UT_ASSERT_TRUE( success );
 			UT_ASSERT_EQUAL( readValue, namedValue );
+			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
 			readValue = "not found";
 			success = testerKey.readValue( expValName, &readValue );
 			UT_ASSERT_TRUE( success );
 			UT_ASSERT_EQUAL( readValue, expectedValue );
+			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
+
+			long readLong;
+			success = testerKey.readValue( longName, &readLong );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( readLong, longValue );
+
+			gak::int64 readLong64;
+			success = testerKey.readValue( long64Name, &readLong64 );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( readLong64, long64Value );
+
+
+			// reading a string that was not 0-terminated
+			STRING read666;
+			success = testerKey.readValue( badStrName, &read666 );
+			UT_ASSERT_TRUE( success );
+			UT_ASSERT_EQUAL( read666.strlen(), 3 );
+			UT_ASSERT_EQUAL( read666.strlen(), strlen(read666.c_str()) );
+
+			/// reading and writing a NULL string
+			namedValue.release();
+			result = testerKey.writeValue( valueName, namedValue );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(valueName), namedValue.strlen()+1 );
 
 			{
 				ArrayOfStrings myValues;
 				testerKey.getValueNames( &myValues );
-				UT_ASSERT_EQUAL( myValues.size(), 3U );
+				UT_ASSERT_EQUAL( myValues.size(), 6U );
 				UT_ASSERT_NOT_EQUAL( myValues.findElement( valueName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( longName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( long64Name ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValues.findElement( expValName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValues.findElement( badStrName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValues.findElement( "" ), ArrayOfStrings::no_index );
 			}
 

@@ -48,6 +48,7 @@
 #include <gak/CopyProtection.h>
 #include <gak/string.h>
 #include <gak/array.h>
+#include <gak/types.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -94,7 +95,7 @@ enum RegistryType
 	rtENV = REG_EXPAND_SZ,
 	rtBINRAY = REG_BINARY,
 	rtINTEGER = REG_DWORD,
-	rtINTEGER64 = REG_QWORD
+	rtINT64 = REG_QWORD
 };
 
 // --------------------------------------------------------------------- //
@@ -104,16 +105,68 @@ enum RegistryType
 template <typename REGTYPE>
 struct RegTraits
 {
+	static const RegistryType	s_registryType = rtNONE;
+};
+
+template <>
+struct RegTraits<gak::STRING>
+{
 	static const RegistryType	s_registryType = rtSTRING;
 };
+
 template <>
 struct RegTraits<long>
 {
 	static const RegistryType	s_registryType = rtINTEGER;
 };
 
+template <>
+struct RegTraits<gak::int64>
+{
+	static const RegistryType	s_registryType = rtINT64;
+};
+
+
 template <typename RESULTTYPE>
 class ResultTraits : public RegTraits<RESULTTYPE>
+{
+	RESULTTYPE	m_valueBuff;
+
+	public:
+	static const bool s_fixBufferSize = true;
+
+	ResultTraits() {}
+
+	RESULTTYPE *getPlain()
+	{
+		return &m_valueBuff;
+	}
+	void setBufferSize( size_t size )
+	{
+	}
+	size_t size() const
+	{
+		return sizeof( m_valueBuff );
+	}
+	void *getBuffer() const
+	{
+		return (void *)&m_valueBuff;
+	}
+	void setActSize( size_t size )
+	{
+	}
+	RESULTTYPE	GetValue()
+	{
+		return m_valueBuff;
+	}
+	static size_t GetValueSize(const RESULTTYPE &value)
+	{
+		return sizeof(RESULTTYPE);
+	}
+};
+
+template <>
+class ResultTraits<gak::STRING> : public RegTraits<gak::STRING>
 {
 	size_t		m_minSize;
 	gak::STRING	m_valueBuff;
@@ -142,86 +195,58 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 	}
 	void setActSize( size_t size )
 	{
-		m_valueBuff.setActSize(size);
+		if( !size )
+			m_valueBuff.release();
+		else
+		{
+			if( !m_valueBuff.c_str()[size-1] )
+				--size;
+			m_valueBuff.setActSize(size);
+		}
 	}
-	RESULTTYPE	GetValue()
+	gak::STRING	GetValue()
 	{
 		return m_valueBuff;
 	}
-	static size_t GetValueSize(const RESULTTYPE &value)
+	static size_t GetValueSize(const gak::STRING &value)
 	{
 		return strlen(value)+1;
-	}
-};
-template <>
-class ResultTraits<long> : public RegTraits<long>
-{
-	char m_valueBuff[128];
-
-	public:
-	static const bool s_fixBufferSize = true;
-
-	const char *getPlain() const
-	{
-		return m_valueBuff;
-	}
-	void setBufferSize( size_t )
-	{
-	}
-	void setActSize( size_t )
-	{
-	}
-
-	size_t size() const
-	{
-		return sizeof( m_valueBuff );
-	}
-	void *getBuffer() const
-	{
-		return (void *)m_valueBuff;
-	}
-
-	long GetValue()
-	{
-		return *((long*)m_valueBuff);
-	}
-	static size_t GetValueSize(long)
-	{
-		return sizeof(long);
 	}
 };
 
 template <typename INPUTTYPE>
 struct InputTraits : public RegTraits<INPUTTYPE>
 {
-	const INPUTTYPE &m_value;
+	const INPUTTYPE m_value;
 	
 	InputTraits(const INPUTTYPE &value) : m_value(value) {}
 
 	size_t GetValueSize()
 	{
-		return strlen(m_value)+1;
+		return sizeof(INPUTTYPE);
 	}
 
-	LPBYTE GetAdress() const
-	{
-		return (LPBYTE)static_cast<const char*>(m_value);
-	}
-};
-template <>
-struct InputTraits<long> : public RegTraits<long>
-{
-	long m_value;
-	
-	InputTraits(long value) : m_value(value) {}
-
-	static size_t GetValueSize()
-	{
-		return sizeof(long);
-	}
 	LPBYTE GetAdress() const
 	{
 		return LPBYTE(&m_value);
+	}
+};
+
+template <>
+struct InputTraits<gak::STRING> : public RegTraits<gak::STRING>
+{
+	const gak::STRING &m_value;
+	
+	InputTraits(const gak::STRING &value) : m_value(value) {}
+
+	size_t GetValueSize()
+	{
+		return m_value.strlen()+1;
+	}
+
+	LPBYTE GetAdress() const
+	{
+		return LPBYTE(m_value.c_str() ? m_value.c_str() : "");
 	}
 };
 
@@ -258,7 +283,7 @@ class Registry : public gak::CopyProtection
 		{
 			size_t size = getValueSize( key, var );
 			if( size )
-				valueBuff.setBufferSize(size+1);
+				valueBuff.setBufferSize(size+1);	// reserve 1 byte extra space for the trailing 0 byte
 		}
 		size_t valueSize = valueBuff.size();
 		if( valueSize )
@@ -267,7 +292,7 @@ class Registry : public gak::CopyProtection
 
 			if( typeVar == rtENV && rtSTRING == tResultTraits::s_registryType )
 			{
-				valueBuff.setActSize(valueSize-1);
+				valueBuff.setActSize(valueSize);
 				STRING	newBuffer = valueBuff.getPlain();
 				size_t	newSize = ExpandEnvironmentStrings( newBuffer, nullptr, 0 );
 				valueBuff.setBufferSize(newSize+1);
@@ -280,10 +305,17 @@ class Registry : public gak::CopyProtection
 			{
 				if( !tResultTraits::s_fixBufferSize )
 				{
-					valueBuff.setActSize(valueSize-1);
+					valueBuff.setActSize(valueSize);
+					valueFound = true;
 				}
-				valueFound = true;
-				*result = valueBuff.GetValue();
+				else if(valueSize == valueBuff.size() )
+				{
+					valueFound = true;
+				}
+				if( valueFound )
+				{
+					*result = valueBuff.GetValue();
+				}
 			}
 			else if( var && typeVar == rtMISSING )
 			{
@@ -305,7 +337,7 @@ class Registry : public gak::CopyProtection
 
 		tInputTraits	value(i_value);
 		DWORD			valueSize = DWORD(value.GetValueSize());
-
+		assert(tInputTraits::s_registryType > 0);
 		return RegSetValueEx( key, var, 0, tInputTraits::s_registryType, value.GetAdress(), valueSize );
 	}
 
