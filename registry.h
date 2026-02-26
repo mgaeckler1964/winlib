@@ -311,10 +311,10 @@ class Registry : public gak::CopyProtection
 		return RegSetValueEx( key, var, 0, tInputTraits::s_registryType, value.GetAdress(), valueSize );
 	}
 
-	static long setValue( HKEY key, const char *var, RegistryType type, const void *data, size_t len )
+	static long setKeyValue( HKEY key, const char *keyName, RegistryType type, const void *data, size_t len )
 	{
 		// Unike ...Ex RegSetValue creates a new key with a nameless value
-		return RegSetValue( key, var, type, LPCSTR(data), DWORD(len) );
+		return RegSetValue( key, keyName, type, LPCSTR(data), DWORD(len) );
 	}
 	static long setValueEx( HKEY key, const char *var, RegistryType type, const void *data, size_t len )
 	{
@@ -463,25 +463,25 @@ class Registry : public gak::CopyProtection
 		legacy writing
 	*/
 	/// write a key with unamed value given type and size
-	long setValue( const char *var, RegistryType type, const void *data, size_t len ) const
+	long setKeyValue( const char *keyName, RegistryType type, const void *data, size_t len ) const
 	{
-		return setValue( m_key, var, type, data, len );
+		return setKeyValue( m_key, keyName, type, data, len );
 	}
 	/// write an unnamed value with given type and size
-	long setValue( RegistryType type, const void *data, size_t len ) const
+	long setKeyValue( RegistryType type, const void *data, size_t len ) const
 	{
-		return setValue( m_key, nullptr, type, data, len );
+		return setValueEx( m_key, nullptr, type, data, len );
 	}
 
 	/// write a key with unamed text value
-	long setValue( const char *var, const gak::STRING &data ) const
+	long setKeyValue( const char *keyName, const gak::STRING &data ) const
 	{
-		return setValue( m_key, var, rtSTRING, data.c_str(), data.size()+1 );
+		return setKeyValue( m_key, keyName, rtSTRING, data.c_str(), data.size()+1 );
 	}
 	/// write an unnamed text value
-	long setValue( const gak::STRING &data  ) const
+	long setKeyValue( const gak::STRING &data  ) const
 	{
-		return setValue( m_key, nullptr, rtSTRING, data.c_str(), data.size()+1 );
+		return setValueEx( m_key, nullptr, rtSTRING, data.c_str(), data.size()+1 );
 	}
 
 	/*

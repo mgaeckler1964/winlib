@@ -91,7 +91,7 @@ class RegistryTest : public UnitTest
 
 		// the key
 		const char * const	GakWindowsTester = "GakWindowsTester";
-		char				*unnamedValue = "dummy";
+		STRING				unnamedValue = "dummy";
 
 		// first value
 		const char * const	valueName = "ValueName";
@@ -125,7 +125,7 @@ class RegistryTest : public UnitTest
 		Registry	software;
 		software.openPrivate( "SOFTWARE" );
 		UT_ASSERT_TRUE( software );
-		long result = software.setValue(GakWindowsTester, rtSTRING, unnamedValue, strlen(unnamedValue)+1 );
+		long result = software.setKeyValue(GakWindowsTester, unnamedValue );
 		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
 
 		{
@@ -252,8 +252,8 @@ class RegistryTest : public UnitTest
 			}
 
 			{
-				testerKey.setValue( "key1", "value1" );
-				testerKey.setValue( "key2", "value2" );
+				testerKey.setKeyValue( "key1", "value1" );
+				testerKey.setKeyValue( "key2", "value2" );
 
 				ArrayOfStrings myKeys;
 				testerKey.getKeyNames( &myKeys );

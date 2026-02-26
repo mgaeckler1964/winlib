@@ -194,19 +194,19 @@ bool addFileType( FileTypeRegistry *type )
 
 	doLogValueEx( gakLogging::llInfo, type->extension );
 	doLogValueEx( gakLogging::llInfo, type->type );
-	error = classesRoot.setValue( type->extension, rtSTRING, type->type.c_str(), type->type.strlen() ) != ERROR_SUCCESS;
+	error = classesRoot.setKeyValue( type->extension, type->type ) != ERROR_SUCCESS;
 	if( !error )
 	{
 		doLogValueEx( gakLogging::llInfo, type->type );
 		doLogValueEx( gakLogging::llInfo, type->type_description );
-		error = classesRoot.setValue( type->type, rtSTRING, type->type_description.c_str(), type->type_description.strlen() ) != ERROR_SUCCESS;
+		error = classesRoot.setKeyValue( type->type, type->type_description ) != ERROR_SUCCESS;
 	}
 
 	if( !error )
 	{
 		tmp = type->type + "\\DefaultIcon";
 		if( type->icon[0U] )
-			error = classesRoot.setValue( tmp, rtSTRING, type->icon.c_str(), type->icon.strlen() ) != ERROR_SUCCESS;
+			error = classesRoot.setKeyValue( tmp, type->icon ) != ERROR_SUCCESS;
 		else
 			classesRoot.deleteSubkey( tmp );
 	}
@@ -218,24 +218,24 @@ bool addFileType( FileTypeRegistry *type )
 	}
 	if( !error )
 	{
-		cmdTypeKey.setValue( rtSTRING, type->cmd_description.c_str(), type->cmd_description.strlen() );
+		cmdTypeKey.setKeyValue( type->cmd_description );
 
-		cmdTypeKey.setValue( "command", rtSTRING, type->commandLine.c_str(), type->commandLine.strlen() );
+		cmdTypeKey.setKeyValue( "command", type->commandLine );
 
 		if( type->ddeCommand[0U] && type->application[0U] )
 		{
 			openResult = ddeKey.createKey( cmdTypeKey, "ddeexec" );
 			if( openResult == ERROR_SUCCESS )
 			{
-				ddeKey.setValue( rtSTRING, type->ddeCommand.c_str(), type->ddeCommand.strlen() );
+				ddeKey.setKeyValue( type->ddeCommand );
 				if( type->ddeIfExec[0U] )
-					ddeKey.setValue( "ifexec", rtSTRING, type->ddeIfExec.c_str(), type->ddeIfExec.strlen() );
+					ddeKey.setKeyValue( "ifexec", type->ddeIfExec );
 				else
 					ddeKey.deleteSubkey( "ifexec" );
 
-				ddeKey.setValue( "Application", rtSTRING, type->application.c_str(), type->application.strlen() );
+				ddeKey.setKeyValue( "Application", type->application );
 				if( type->topic[0U] )
-					ddeKey.setValue( "Topic", rtSTRING, type->topic.c_str(), type->topic.strlen() );
+					ddeKey.setKeyValue( "Topic", type->topic );
 				else
 					ddeKey.deleteSubkey( "Topic" );
 				error = false;
