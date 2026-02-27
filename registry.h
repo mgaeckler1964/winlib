@@ -121,9 +121,33 @@ typedef gak::Array<RegValuePair>	RegValuePairs;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-template <typename REGTYPE>
-struct RegTraits
+class EnvSTRING : public gak::STRING
 {
+	public:
+	EnvSTRING( const gak::STRING &src ) : gak::STRING( src ) {}
+	EnvSTRING() : gak::STRING() {}
+
+	gak::STRING expand() const
+	{
+		DWORD	newSize = ExpandEnvironmentStrings( c_str(), nullptr, 0 );
+		STRING	expanded;
+
+		expanded.setMinSize(newSize+1);
+		newSize = ExpandEnvironmentStrings( c_str(), LPSTR(expanded.c_str()), newSize );
+		expanded.setActSize( newSize );
+		return expanded;
+	}
+};
+
+/*
+	Traits for registry types, string, expandedStrings, long and 64 bit long
+	Here we defined fopr each supported C++ types the registry types used
+*/
+template <typename REGTYPE>
+class RegTraits
+{
+	// this is private, to ensure this will be not used for
+	// unspecalized types
 	static const RegistryType	s_registryType = rtNONE;
 };
 
@@ -131,6 +155,12 @@ template <>
 struct RegTraits<gak::STRING>
 {
 	static const RegistryType	s_registryType = rtSTRING;
+};
+
+template <>
+struct RegTraits<EnvSTRING>
+{
+	static const RegistryType	s_registryType = rtENV;
 };
 
 template <>
@@ -146,6 +176,10 @@ struct RegTraits<gak::int64>
 };
 
 
+/*
+	Traits for reading registry values
+	the default can be used for integer like types
+*/
 template <typename RESULTTYPE>
 class ResultTraits : public RegTraits<RESULTTYPE>
 {
@@ -184,6 +218,9 @@ class ResultTraits : public RegTraits<RESULTTYPE>
 	}
 };
 
+/*
+	The special for STRING
+*/
 template <>
 class ResultTraits<gak::STRING> : public RegTraits<gak::STRING>
 {
@@ -250,6 +287,21 @@ class ResultTraits<gak::STRING> : public RegTraits<gak::STRING>
 	}
 };
 
+//
+// Envstring are read like normal strings but use another type
+//
+template <>
+class ResultTraits<EnvSTRING> : public ResultTraits<gak::STRING>
+{
+	public:
+	static const RegistryType	s_registryType = rtENV;
+};
+
+
+/*
+	Traits for writeing registry values
+	the default can be used for integer like types
+*/
 template <typename INPUTTYPE>
 struct InputTraits : public RegTraits<INPUTTYPE>
 {
@@ -286,7 +338,44 @@ struct InputTraits<gak::STRING> : public RegTraits<gak::STRING>
 	}
 };
 
+//
+// char pointer use the same registry type like STRING
+//
+template <>
+struct InputTraits<const char*> : public RegTraits<gak::STRING>
+{
+	const char *m_value;
+	
+	InputTraits(const char *value) : m_value(value) {}
 
+	size_t GetValueSize()
+	{
+		return m_value ? 0 : strlen(m_value)+1;
+	}
+
+	LPBYTE GetAdress() const
+	{
+		return LPBYTE(m_value);
+	}
+};
+
+
+//
+// Envstring are written like normal strings but use another type
+//
+template <>
+struct InputTraits<EnvSTRING> : public InputTraits<gak::STRING>
+{
+	static const RegistryType	s_registryType = rtENV;
+	InputTraits(const EnvSTRING &value) : InputTraits<gak::STRING>(value) {}
+};
+
+
+/*
+==================================================================
+	the main registry class for reading and writing
+==================================================================
+*/
 class Registry : public gak::CopyProtection
 {
 	protected:
@@ -318,7 +407,8 @@ class Registry : public gak::CopyProtection
 
 		tInputTraits	value(i_value);
 		DWORD			valueSize = DWORD(value.GetValueSize());
-		assert(tInputTraits::s_registryType > 0);
+		RegistryType	type = tInputTraits::s_registryType;
+		assert(type > 0);
 		return RegSetValueEx( key, var, 0, tInputTraits::s_registryType, value.GetAdress(), valueSize );
 	}
 

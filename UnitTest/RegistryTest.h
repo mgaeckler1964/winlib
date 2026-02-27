@@ -122,6 +122,9 @@ class RegistryTest : public UnitTest
 		const char * const	emptyName = "emptyName";
 		STRING				emptyValue = "";
 
+		// eight value for error checking
+		const char * const	errorName = "wrongValues";
+
 		Registry	software;
 		software.openPrivate( "SOFTWARE" );
 		UT_ASSERT_TRUE( software );
@@ -143,6 +146,10 @@ class RegistryTest : public UnitTest
 
 			// ---------------------- 2 --------------------------------
 			result = testerKey.setValueEx( expValName, rtENV, origValue, origValue.size()+1 );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+
+			EnvSTRING origEnv = origValue;
+			result = testerKey.writeValue( expValName, origEnv );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
 
 			// ---------------------- 3 --------------------------------
@@ -192,6 +199,12 @@ class RegistryTest : public UnitTest
 			UT_ASSERT_EQUAL( readValue, expectedValue );
 			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
+			EnvSTRING myEnvValue;
+			success = testerKey.readValue( expValName, &myEnvValue );
+			UT_ASSERT_EQUAL( success, rsOK );
+			UT_ASSERT_EQUAL( myEnvValue, origValue );
+			UT_ASSERT_EQUAL( myEnvValue.expand(), expectedValue );
+
 			long readLong;
 			success = testerKey.readValue( longName, &readLong );
 			UT_ASSERT_EQUAL( success, rsOK );
@@ -225,10 +238,10 @@ class RegistryTest : public UnitTest
 
 			/// check errors
 			long testValue=666;
-			result = testerKey.setValueEx( expValName, rtINTEGER, &testValue, 1 );  
+			result = testerKey.setValueEx( errorName, rtINTEGER, &testValue, 1 );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(expValName), 1 );
-			success = testerKey.readValue( expValName, &testValue );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(errorName), 1 );
+			success = testerKey.readValue( errorName, &testValue );
 			UT_ASSERT_EQUAL( success, rsBadSize );
 
 			success = testerKey.readValue( "dummyNotExisting", &readLong64 );
@@ -240,7 +253,7 @@ class RegistryTest : public UnitTest
 			{
 				ArrayOfStrings myValuesNames;
 				testerKey.getValueNames( &myValuesNames );
-				UT_ASSERT_EQUAL( myValuesNames.size(), 8U );
+				UT_ASSERT_EQUAL( myValuesNames.size(), 9U );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( long64Name ), ArrayOfStrings::no_index );
@@ -248,6 +261,7 @@ class RegistryTest : public UnitTest
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( badStrName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( nullName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( emptyName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( errorName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
 
 				RegValuePairs	myPairs;
