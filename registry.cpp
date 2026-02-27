@@ -184,19 +184,19 @@ long Registry::openKey2( HKEY parent, const char *name, unsigned long perm )
 
 void Registry::getKeyNames( ArrayOfStrings *keyNames )
 {
-	DWORD	numKeys, maxTitleSize;
+	DWORD	numValues, maxTitleSize;
 	STRING	keyName;
 
 	long openResult = RegQueryInfoKey(
 		m_key, 
 		nullptr, nullptr, nullptr, 
-		&numKeys, &maxTitleSize, 
+		&numValues, &maxTitleSize, 
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	);
 	if( openResult == ERROR_SUCCESS )
 	{
 		++maxTitleSize;
-		for( DWORD i=0; i<numKeys; ++i )
+		for( DWORD i=0; i<numValues; ++i )
 		{
 			DWORD titleSize = maxTitleSize;
 			keyName.setMinSize( titleSize+1 );
@@ -212,19 +212,19 @@ void Registry::getKeyNames( ArrayOfStrings *keyNames )
 
 void Registry::getValueNames( ArrayOfStrings *valueNames )
 {
-	DWORD	numKeys, maxTitleSize;
+	DWORD	numValues, maxTitleSize;
 	STRING	valueName;
 
 	long openResult = RegQueryInfoKey(
 		m_key, 
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		&numKeys, &maxTitleSize, 
+		&numValues, &maxTitleSize, 
 		nullptr, nullptr, nullptr
 	);
 	if( openResult == ERROR_SUCCESS )
 	{
 		++maxTitleSize;
-		for( DWORD i=0; i<numKeys; ++i )
+		for( DWORD i=0; i<numValues; ++i )
 		{
 			DWORD titleSize = maxTitleSize;
 			valueName.setMinSize( titleSize+1 );
@@ -233,6 +233,52 @@ void Registry::getValueNames( ArrayOfStrings *valueNames )
 			{
 				valueName.setActSize(titleSize);
 				valueNames->addElement( valueName );
+			}
+		}
+	}
+}
+
+void Registry::getValuePairs( RegValuePairs *valuePairs )
+{
+	DWORD	numValues, maxTitleSize;
+
+	long openResult = RegQueryInfoKey(
+		m_key, 
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		&numValues, &maxTitleSize, 
+		nullptr, nullptr, nullptr
+	);
+
+	if( openResult == ERROR_SUCCESS )
+	{
+		STRING	valueName;
+
+		valuePairs->setChunkSize( numValues );
+		++maxTitleSize;
+		for( DWORD i=0; i<numValues; ++i )
+		{
+			DWORD		type, valueSizeDw;
+			DWORD		titleSize = maxTitleSize;
+			RegValuePair &newValue = valuePairs->createElement();
+
+			newValue.valueName.setMinSize( titleSize+1 );
+			openResult = RegEnumValue(
+				m_key, i, 
+				LPSTR(newValue.valueName.c_str()), &titleSize, 
+				nullptr, 
+				&type, nullptr, &valueSizeDw 
+			);
+			if( openResult == ERROR_SUCCESS )
+			{
+				size_t valueSize = valueSizeDw;
+
+				newValue.valueName.setActSize(titleSize);
+				newValue.valueBuffer.setMinSize( valueSize+1 );
+				newValue.type = queryValue( 
+					newValue.valueName, 
+					(void *)newValue.valueBuffer.c_str(), 
+					&valueSize );
+				newValue.valueBuffer.setActSize( valueSize );
 			}
 		}
 	}

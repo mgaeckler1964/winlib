@@ -1,6 +1,6 @@
 /*
 		Project:		WINLIB
-		Module:			registry.cpp
+		Module:			registry.h
 		Description:	Registry keys
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
@@ -49,6 +49,8 @@
 #include <gak/string.h>
 #include <gak/array.h>
 #include <gak/types.h>
+
+#include <WINLIB/WINLIB.H>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -106,6 +108,14 @@ enum ReadSuccess
 	rsNotFound,
 	rsError,
 };
+
+struct RegValuePair
+{
+	RegistryType	type;
+	gak::STRING		valueName, valueBuffer;
+};
+
+typedef gak::Array<RegValuePair>	RegValuePairs;
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -275,6 +285,7 @@ struct InputTraits<gak::STRING> : public RegTraits<gak::STRING>
 		return LPBYTE(m_value.c_str());
 	}
 };
+
 
 class Registry : public gak::CopyProtection
 {
@@ -489,6 +500,7 @@ class Registry : public gak::CopyProtection
 	*/
 	void getKeyNames( gak::ArrayOfStrings *keyNames );
 	void getValueNames( gak::ArrayOfStrings *valueNames );
+	void getValuePairs( RegValuePairs *valuePairs );
 
 	// for testing, only can be used to create values of type REG_EXPAND_SZ
 	/// TODO create an api that allows to create/write/read REG_EXPAND_SZ values actually when reading Strings and we find rtENV

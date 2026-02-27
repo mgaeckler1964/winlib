@@ -238,17 +238,21 @@ class RegistryTest : public UnitTest
 			UT_ASSERT_EQUAL( success, rsBadType );
 
 			{
-				ArrayOfStrings myValues;
-				testerKey.getValueNames( &myValues );
-				UT_ASSERT_EQUAL( myValues.size(), 8U );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( valueName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( longName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( long64Name ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( expValName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( badStrName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( nullName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( emptyName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValues.findElement( "" ), ArrayOfStrings::no_index );
+				ArrayOfStrings myValuesNames;
+				testerKey.getValueNames( &myValuesNames );
+				UT_ASSERT_EQUAL( myValuesNames.size(), 8U );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( long64Name ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( expValName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( badStrName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( nullName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( emptyName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
+
+				RegValuePairs	myPairs;
+				testerKey.getValuePairs( &myPairs );
+				UT_ASSERT_EQUAL( myValuesNames.size(), myPairs.size() );
 			}
 
 			{
