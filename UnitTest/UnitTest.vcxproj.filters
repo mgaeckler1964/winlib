@@ -18,6 +18,9 @@
     <ClCompile Include="UnitTest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="F_TYPE_TEST.h">
+      <Filter>Headerdateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WinAppTest.h">

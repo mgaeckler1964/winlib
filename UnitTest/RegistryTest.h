@@ -57,9 +57,9 @@
 #	pragma option -pc
 #endif
 
-using namespace winlib;
+using namespace gak;
 
-namespace gak
+namespace winlib
 {
 
 // --------------------------------------------------------------------- //
@@ -142,7 +142,9 @@ class RegistryTest : public UnitTest
 			// ---------------------- 1 --------------------------------
 			result = testerKey.writeValue( valueName, namedValue );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(valueName), namedValue.strlen()+1 );
+			size_t size = 0;
+			UT_ASSERT_EQUAL( testerKey.getValueSize(valueName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, namedValue.strlen()+1 );
 
 			// ---------------------- 2 --------------------------------
 			result = testerKey.setValueEx( expValName, rtENV, origValue, origValue.size()+1 );  
@@ -164,19 +166,23 @@ class RegistryTest : public UnitTest
 			// writing a string that it not 0-terminated
 			result = testerKey.setValueEx( badStrName, rtSTRING, badValue, 3 );  // do not write the trailing 0
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(badStrName), 3 );
+
+			UT_ASSERT_EQUAL( testerKey.getValueSize(badStrName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, 3 );
 
 			// ---------------------- 6 --------------------------------
 			// writing a null string
 			result = testerKey.writeValue( nullName, nullValue );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(nullName), 0 );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(nullName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, 0 );
 
 			// ---------------------- 7 --------------------------------
 			// writing an empty string
 			result = testerKey.writeValue( emptyName, emptyValue );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(emptyName), 1 );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(emptyName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, 1 );
 
 			/*
 				Reading
@@ -240,7 +246,8 @@ class RegistryTest : public UnitTest
 			long testValue=666;
 			result = testerKey.setValueEx( errorName, rtINTEGER, &testValue, 1 );  
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(errorName), 1 );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(errorName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, 1 );
 			success = testerKey.readValue( errorName, &testValue );
 			UT_ASSERT_EQUAL( success, rsBadSize );
 

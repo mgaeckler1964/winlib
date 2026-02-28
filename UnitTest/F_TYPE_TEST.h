@@ -1,12 +1,12 @@
 /*
 		Project:		GAKLIB
-		Module:			WinAppTest.h
-		Description:	Unit test for winlib::Application
+		Module:			F_TYPE_TEST.h
+		Description:	Registers file extensions
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -40,8 +40,7 @@
 #include <iostream>
 #include <gak/unitTest.h>
 
-#include <WINLIB/WINAPP.H>
-#include <WINLIB/WINLIB.H>
+#include <WINLIB/F_TYPE.H>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -79,89 +78,38 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class WinApp : public winlib::Application
+class F_TYPE_Test : public gak::UnitTest
 {
-};
-
-static char theKeyName[] = "theKeyName";
-
-class WinAppTest : public UnitTest
-{
-	WinApp	m_appObject;
-
 	virtual const char *GetClassName() const
 	{
-		return "WinAppTest";
+		return "F_TYPE_Test";
+	}
+	void testExtension( const char *ext, const char *cmd, bool expectIcon )
+	{
+		FileTypeRegistry	reg;
+		getFileType( ext, cmd, &reg );
+
+		UT_ASSERT_EQUAL( reg.extension, STRING('.')+ext );
+		UT_ASSERT_EQUAL( reg.cmd, cmd );
+		if( expectIcon )
+			UT_ASSERT_NOT_EQUAL( reg.icon, reg.type );
+		else
+			UT_ASSERT_EQUAL( reg.icon, reg.type );
 	}
 	virtual void PerformTest()
 	{
-		doEnterFunctionEx(gakLogging::llInfo, "WinAppTest::PerformTest");
-		TestScope scope( "PerformTest" );
-		UT_ASSERT_EQUAL( winlib::appObject, &m_appObject );
+		doEnterFunctionEx(gakLogging::llInfo, "F_TYPE_Test::PerformTest");
+		gak::TestScope scope( "PerformTest" );
 
-		m_appObject.setComapny("GakWinlibUnitTester");
-		m_appObject.setApplication("UnitTestApp");
-
-		long tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
-		long result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 333 );
-
-		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
-
-		result = m_appObject.WriteProfile(true, "", theKeyName, 999, true );
-		if( result == ERROR_SUCCESS )
 		{
-			std::cout << "Admintest" << unsigned(winlib::getWindowsMajorVersion()) << std::endl;
-
-			if( winlib::getWindowsMajorVersion() >= 6 )
-			{
-				tester = m_appObject.GetProfile("", theKeyName, 666, true);
-				UT_ASSERT_EQUAL( tester, 666 );
-			}
-
-			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 999 );
-
-			tester = m_appObject.GetProfile("", theKeyName, 666, true);
-			UT_ASSERT_EQUAL( tester, 999 );
-
-			result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 333 );
-
-			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-
-			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
-
-			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+			gak::TestScope scope( "c->open" );
+			testExtension( "c", "open", true );
 		}
-		else
 		{
-			std::cout << "No Admintest" << std::endl;
+			gak::TestScope scope( "md->open" );
+			testExtension( "md", "open", false );
 		}
 
-		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 	}
 };
 
@@ -173,7 +121,7 @@ class WinAppTest : public UnitTest
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-static WinAppTest myWinAppTest;
+static F_TYPE_Test myF_TYPE_Test;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //

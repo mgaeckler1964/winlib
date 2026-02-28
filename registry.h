@@ -388,13 +388,14 @@ class Registry : public gak::CopyProtection
 
 	static RegistryType queryValue( HKEY key, const char *var, void *buffer, size_t *io_size );
 
-	static size_t getValueSize(HKEY key, const char *var)
+	static long getValueSize(HKEY key, const char *var, size_t *size)
 	{
 		DWORD		valueSize = 0;
 		long		openResult = RegQueryValueEx(
 			key, var, nullptr, nullptr, nullptr, &valueSize
 		);
-		return openResult == ERROR_SUCCESS ? valueSize : 0;
+		*size = valueSize;
+		return openResult;
 	}
 
 	template <class RESULTTYPE>
@@ -407,8 +408,6 @@ class Registry : public gak::CopyProtection
 
 		tInputTraits	value(i_value);
 		DWORD			valueSize = DWORD(value.GetValueSize());
-		RegistryType	type = tInputTraits::s_registryType;
-		assert(type > 0);
 		return RegSetValueEx( key, var, 0, tInputTraits::s_registryType, value.GetAdress(), valueSize );
 	}
 
@@ -427,36 +426,41 @@ class Registry : public gak::CopyProtection
 	Registry() : m_key(0), m_perm(0) {}
 	~Registry()
 	{
-		if( m_key && m_perm )
-		{
-			RegCloseKey( m_key );
-		}
+		close();
 	}
 	operator bool () const
 	{
 		return m_key != 0;
 	}
 
+	void close()
+	{
+		if( m_key )
+		{
+			RegCloseKey( m_key );
+		}
+	}
+
 	/*
 		creating new keys
 	*/
 	/// create a public key under Local HKEY_LOCAL_MACHINE
-	long createPublic( const char *name, unsigned long perm=KEY_ALL_ACCESS )
+	long createPublic( const char *name, unsigned long perm=KEY_ALL_ACCESS|KEY_WOW64_64KEY )
 	{
 		return createKey2( HKEY_LOCAL_MACHINE, name, perm );
 	}
 	/// create a private key under Local HKEY_CURRENT_USER
-	long createPrivate( const char *name, unsigned long perm=KEY_ALL_ACCESS )
+	long createPrivate( const char *name, unsigned long perm=KEY_ALL_ACCESS|KEY_WOW64_64KEY )
 	{
 		return createKey2( HKEY_CURRENT_USER, name, perm );
 	}
 	/// open a public or private key 
-	long createKey( bool publicKey, const char *name, unsigned long perm=KEY_ALL_ACCESS )
+	long createKey( bool publicKey, const char *name, unsigned long perm=KEY_ALL_ACCESS|KEY_WOW64_64KEY )
 	{
 		return publicKey ? createPublic( name, perm ) : createPrivate( name, perm );
 	}
 	/// create a sub key under an open key
-	long createKey( const Registry &parent, const char *name, unsigned long perm=KEY_ALL_ACCESS )
+	long createKey( const Registry &parent, const char *name, unsigned long perm=KEY_ALL_ACCESS|KEY_WOW64_64KEY )
 	{
 		return createKey2( parent.m_key, name, perm );
 	}
@@ -465,25 +469,31 @@ class Registry : public gak::CopyProtection
 		Opening existing keys
 	*/
 	/// open a private key from Local HKEY_CURRENT_USER
-	long openPrivate( const char *name, unsigned long perm=KEY_READ )
+	long openUsers( const char *name, unsigned long perm=KEY_READ|KEY_WOW64_64KEY )
+	{
+		return openKey2( HKEY_USERS, name, perm );
+	}
+
+	/// open a private key from Local HKEY_CURRENT_USER
+	long openPrivate( const char *name, unsigned long perm=KEY_READ|KEY_WOW64_64KEY )
 	{
 		return openKey2( HKEY_CURRENT_USER, name, perm );
 	}
 
 	/// open a public key from Local HKEY_LOCAL_MACHINE
-	long openPublic( const char *name, unsigned long perm=KEY_READ )
+	long openPublic( const char *name, unsigned long perm=KEY_READ|KEY_WOW64_64KEY )
 	{
 		return openKey2( HKEY_LOCAL_MACHINE, name, perm );
 	}
 
 	/// open a public or private key 
-	long openKey( bool publicKey, const char *name, unsigned long perm=KEY_READ )
+	long openKey( bool publicKey, const char *name, unsigned long perm=KEY_READ|KEY_WOW64_64KEY )
 	{
 		return publicKey ? openPublic( name, perm ) : openPrivate( name, perm );
 	}
 
 	/// open a sub key from an open key
-	long openSubkey( const Registry &parent, const char *name, unsigned long perm=KEY_READ )
+	long openSubkey( const Registry &parent, const char *name, unsigned long perm=KEY_READ|KEY_WOW64_64KEY )
 	{
 		return openKey2( parent.m_key, name, perm );
 	}
@@ -527,9 +537,9 @@ class Registry : public gak::CopyProtection
 		return queryValue( m_key, nullptr, buffer, io_size );
 	}
 	/// get the content size of a value
-	size_t getValueSize(const char *var) const
+	long getValueSize(const char *var, size_t *size) const
 	{
-		return getValueSize(m_key, var);
+		return getValueSize(m_key, var, size);
 	}
 
 	/*
@@ -608,44 +618,24 @@ class Registry : public gak::CopyProtection
 #endif
 };
 
-class RegistryClassesRoot : public Registry
+template <HKEY ROOT_KEY>
+class RegistryRoot : public Registry
 {
 	public:
-	RegistryClassesRoot()
+	RegistryRoot()
 	{
-		m_key = HKEY_CLASSES_ROOT;
+		m_key = ROOT_KEY;
 	}
-	~RegistryClassesRoot()
+	~RegistryRoot()
 	{
 		m_key = 0;
 	}
 };
 
-class RegistryLocalMachine : public Registry
-{
-	public:
-	RegistryLocalMachine()
-	{
-		m_key = HKEY_LOCAL_MACHINE;
-	}
-	~RegistryLocalMachine()
-	{
-		m_key = 0;
-	}
-};
-
-class RegistryCurrentUser : public Registry
-{
-	public:
-	RegistryCurrentUser()
-	{
-		m_key = HKEY_CURRENT_USER;
-	}
-	~RegistryCurrentUser()
-	{
-		m_key = 0;
-	}
-};
+typedef RegistryRoot<HKEY_CLASSES_ROOT>		RegistryClassesRoot;
+typedef RegistryRoot<HKEY_LOCAL_MACHINE>	RegistryLocalMachine;
+typedef RegistryRoot<HKEY_CURRENT_USER>		RegistryCurrentUser;
+typedef RegistryRoot<HKEY_USERS>			RegistryUsers;
 
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
@@ -689,13 +679,21 @@ ReadSuccess Registry::readValue( HKEY key, const char *var, RESULTTYPE *result, 
 
 	if( !tResultTraits::s_fixBufferSize )
 	{
-		size_t size = getValueSize( key, var );
-		if( size )
-			valueBuff.setBufferSize(size+1);	// reserve 1 byte extra space for the trailing 0 byte
-		else
+		size_t size;
+		long error = getValueSize( key, var, &size );
+		if( error == ERROR_SUCCESS )
 		{
-			*result = RESULTTYPE();
-			retCode = rsOK;
+			if( size )
+				valueBuff.setBufferSize(size+1);	// reserve 1 byte extra space for the trailing 0 byte
+			else
+			{
+				retCode = rsOK;
+				*result = RESULTTYPE();
+			}
+		}
+		else if( error != ERROR_FILE_NOT_FOUND )
+		{
+			retCode = rsError;
 		}
 	}
 	size_t valueSize = valueBuff.size();
@@ -743,7 +741,14 @@ ReadSuccess Registry::readValue( HKEY key, const char *var, RESULTTYPE *result, 
 		else
 			retCode = rsBadType;
 	}
-
+	else if( var && retCode == rsNotFound )
+	{
+		Registry	subKey;
+		if( subKey.openKey2( key, var, perm ) == ERROR_SUCCESS )
+		{
+			retCode = readValue(subKey.m_key, nullptr, result, perm );
+		}
+	}
 	return retCode;
 }
 
