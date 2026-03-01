@@ -616,6 +616,11 @@ class Registry : public gak::CopyProtection
 
 		public:
 		const STRING &operator * ();
+		const STRING *operator -> ()
+		{
+			operator *();
+			return &m_name;
+		}
 
 		const key_iterator & operator ++()		// pre-inkrement
 		{
@@ -747,11 +752,19 @@ class RegistryRoot : public Registry
 	}
 };
 
-typedef RegistryRoot<HKEY_CLASSES_ROOT>		RegistryClassesRoot;
+typedef RegistryRoot<HKEY_CLASSES_ROOT>		_RegistryClassesRoot;
 typedef RegistryRoot<HKEY_LOCAL_MACHINE>	RegistryLocalMachine;
 typedef RegistryRoot<HKEY_CURRENT_USER>		RegistryCurrentUser;
 typedef RegistryRoot<HKEY_USERS>			RegistryUsers;
 
+class RegistryClassesRoot : public Registry
+{
+	public:
+	RegistryClassesRoot( bool publicKey = true )
+	{
+		openKey( publicKey, "Software\\Classes" );
+	}
+};
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
