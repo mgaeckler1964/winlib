@@ -598,13 +598,128 @@ class Registry : public gak::CopyProtection
 	/*
 		querying key and value names
 	*/
-	void getKeyNames( gak::ArrayOfStrings *keyNames );
-	void getValueNames( gak::ArrayOfStrings *valueNames );
-	void getValuePairs( RegValuePairs *valuePairs );
+	class key_iterator
+	{
+		friend class Registry;
+		const Registry	&m_reg;
+		DWORD			m_numKeys, m_maxTitleSize, m_index;
+		bool			m_loaded;
+		STRING			m_name;
+
+		void next()
+		{
+			++m_index;
+			m_name.release();
+			m_loaded = false;
+		}
+		key_iterator( const Registry &reg );
+
+		public:
+		const STRING &operator * ();
+
+		const key_iterator & operator ++()		// pre-inkrement
+		{
+			next();
+			return *this;
+		}
+		key_iterator operator ++(int)			// post-inkrement
+		{
+			key_iterator old = *this;
+			next();
+			return old;
+		}
+		bool operator == ( const key_iterator &other )
+		{
+			return m_index == other.m_index;
+		}
+		bool operator != ( const key_iterator &other )
+		{
+			return m_index != other.m_index;
+		}
+
+	};
+	key_iterator kbegin() const
+	{
+		return key_iterator( *this );
+	}
+	key_iterator kend() const
+	{
+		key_iterator end = kbegin();
+		end.m_index = end.m_numKeys;
+		return end;
+	}
+
+	class value_iterator
+	{
+		friend class Registry;
+		const Registry	&m_reg;
+		DWORD			m_numValues, m_maxTitleSize, m_maxValueSize, m_index;
+		bool			m_loaded;
+		RegValuePair	m_value;
+
+		void next()
+		{
+			++m_index;
+			m_value.type = rtERROR;
+			m_value.valueName.release();
+			m_value.valueBuffer.release();
+			m_loaded = false;
+		}
+
+		value_iterator( const Registry &reg );
+
+		public:
+		const RegValuePair &operator * ();
+		const RegValuePair *operator -> ()
+		{
+			operator *();
+			return &m_value;
+		}
+
+		const value_iterator & operator ++()		// pre-inkrement
+		{
+			next();
+			return *this;
+		}
+		value_iterator operator ++(int)				// post-inkrement
+		{
+			value_iterator old = *this;
+			next();
+			return old;
+		}
+		bool operator == ( const value_iterator &other )
+		{
+			return m_index == other.m_index;
+		}
+		bool operator != ( const value_iterator &other )
+		{
+			return m_index != other.m_index;
+		}
+	};
+	value_iterator vbegin() const
+	{
+		return value_iterator( *this );
+	}
+	value_iterator vend() const
+	{
+		value_iterator end = vbegin();
+		end.m_index = end.m_numValues;
+		return end;
+	}
+
+#ifdef __BORLANDC__
+	friend class Registry::key_iterator;
+	friend class Registry::value_iterator;
+#endif
+
+	/*
+		old functions for testing only
+	*/
+	void _getKeyNames( gak::ArrayOfStrings *keyNames );
+	void _getValueNames( gak::ArrayOfStrings *valueNames );
+	void _getValuePairs( RegValuePairs *valuePairs );
 
 	// for testing, only can be used to create values of type REG_EXPAND_SZ
-	/// TODO create an api that allows to create/write/read REG_EXPAND_SZ values actually when reading Strings and we find rtENV
-	/// we expand the env-variables and return a string 
 	long setValueEx( const char *var, RegistryType type, const void *data, size_t len ) const
 	{
 		return setValueEx( m_key, var, type, data, len );

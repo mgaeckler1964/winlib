@@ -107,6 +107,46 @@ namespace winlib
 // ----- class constructors/destructors -------------------------------- //
 // --------------------------------------------------------------------- //
 
+Registry::key_iterator::key_iterator( const Registry &reg ) : m_reg( reg ), m_index(0), m_loaded(false)
+{
+	long openResult = RegQueryInfoKey(
+		m_reg.m_key,
+		nullptr, nullptr, nullptr,
+		&m_numKeys, &m_maxTitleSize,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	);
+	if( openResult == ERROR_SUCCESS )
+	{
+		++m_maxTitleSize;
+	}
+	else
+	{
+		m_numKeys = 0;
+		m_maxTitleSize = 0;
+	}
+}
+
+Registry::value_iterator::value_iterator( const Registry &reg ) : m_reg( reg ), m_index(0), m_loaded(false)
+{
+	long openResult = RegQueryInfoKey(
+		m_reg.m_key,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		&m_numValues, &m_maxTitleSize, &m_maxValueSize,
+		nullptr, nullptr
+	);
+	if( openResult == ERROR_SUCCESS )
+	{
+		++m_maxTitleSize;
+		++m_maxValueSize;
+	}
+	else
+	{
+		m_numValues = 0;
+		m_maxTitleSize = 0;
+		m_maxValueSize = 0;
+	}
+}
+
 // --------------------------------------------------------------------- //
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -182,105 +222,87 @@ long Registry::openKey2( HKEY parent, const char *name, unsigned long perm )
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void Registry::getKeyNames( ArrayOfStrings *keyNames )
+const STRING &Registry::key_iterator::operator * ()
 {
-	DWORD	numValues, maxTitleSize;
-	STRING	keyName;
-
-	long openResult = RegQueryInfoKey(
-		m_key, 
-		nullptr, nullptr, nullptr, 
-		&numValues, &maxTitleSize, 
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	);
-	if( openResult == ERROR_SUCCESS )
+	if( !m_loaded )
 	{
-		++maxTitleSize;
-		for( DWORD i=0; i<numValues; ++i )
+		DWORD titleSize = m_maxTitleSize;
+		m_name.setMinSize( titleSize+1 );
+		long openResult = RegEnumKeyEx( m_reg.m_key, m_index, LPSTR(m_name.c_str()), &titleSize, nullptr, nullptr, nullptr, nullptr );
+		if( openResult == ERROR_SUCCESS )
 		{
-			DWORD titleSize = maxTitleSize;
-			keyName.setMinSize( titleSize+1 );
-			openResult = RegEnumKeyEx( m_key, i, LPSTR(keyName.c_str()), &titleSize, nullptr, nullptr, nullptr, nullptr );
-			if( openResult == ERROR_SUCCESS )
-			{
-				keyName.setActSize(titleSize);
-				keyNames->addElement( keyName );
-			}
+			m_name.setActSize(titleSize);
 		}
+		m_loaded = true;
+	}
+	return m_name;
+}
+
+const RegValuePair &Registry::value_iterator::operator * ()
+{
+	if( !m_loaded )
+	{
+		DWORD	type;
+		DWORD	titleSize = m_maxTitleSize;
+		DWORD	valueSize = m_maxValueSize;
+
+		m_value.valueName.release();
+		m_value.valueName.setMinSize( titleSize+1 );
+		m_value.valueBuffer.release();
+		m_value.valueBuffer.setMinSize( valueSize+1);
+
+		long openResult = RegEnumValue(
+			m_reg.m_key, m_index, 
+			LPSTR(m_value.valueName.c_str()), &titleSize, 
+			nullptr, 
+			&type, LPBYTE(m_value.valueBuffer.c_str()), &valueSize 
+		);
+		if( openResult == ERROR_SUCCESS )
+		{
+			m_value.type = RegistryType(type);
+			m_value.valueBuffer.setActSize( valueSize );
+			m_value.valueName.setActSize( titleSize );
+			m_loaded = true;
+		}
+		else
+			m_value.type = rtERROR;
+	}
+	return m_value;
+}
+
+void Registry::_getKeyNames( ArrayOfStrings *keyNames )
+{
+	for(
+		key_iterator it = kbegin(), endIT = kend();
+		it != endIT;
+		++it
+	)
+	{
+		keyNames->addElement( *it );
 	}
 }
 
-void Registry::getValueNames( ArrayOfStrings *valueNames )
+void Registry::_getValueNames( ArrayOfStrings *valueNames )
 {
-	DWORD	numValues, maxTitleSize;
-	STRING	valueName;
-
-	long openResult = RegQueryInfoKey(
-		m_key, 
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		&numValues, &maxTitleSize, 
-		nullptr, nullptr, nullptr
-	);
-	if( openResult == ERROR_SUCCESS )
+	for(
+		value_iterator it = vbegin(), endIT = vend();
+		it != endIT;
+		++it
+	)
 	{
-		++maxTitleSize;
-		for( DWORD i=0; i<numValues; ++i )
-		{
-			DWORD titleSize = maxTitleSize;
-			valueName.setMinSize( titleSize+1 );
-			openResult = RegEnumValue( m_key, i, LPSTR(valueName.c_str()), &titleSize, nullptr, nullptr, nullptr, nullptr );
-			if( openResult == ERROR_SUCCESS )
-			{
-				valueName.setActSize(titleSize);
-				valueNames->addElement( valueName );
-			}
-		}
+		valueNames->addElement( it->valueName );
 	}
 }
 
-void Registry::getValuePairs( RegValuePairs *valuePairs )
+void Registry::_getValuePairs( RegValuePairs *valuePairs )
 {
-	DWORD	numValues, maxTitleSize;
-
-	long openResult = RegQueryInfoKey(
-		m_key, 
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		&numValues, &maxTitleSize, 
-		nullptr, nullptr, nullptr
-	);
-
-	if( openResult == ERROR_SUCCESS )
+	for(
+		value_iterator it = vbegin(), endIT = vend();
+		it != endIT;
+		++it
+	)
 	{
-		STRING	valueName;
-
-		valuePairs->setChunkSize( numValues );
-		++maxTitleSize;
-		for( DWORD i=0; i<numValues; ++i )
-		{
-			DWORD		type, valueSizeDw;
-			DWORD		titleSize = maxTitleSize;
-			RegValuePair &newValue = valuePairs->createElement();
-
-			newValue.valueName.setMinSize( titleSize+1 );
-			openResult = RegEnumValue(
-				m_key, i, 
-				LPSTR(newValue.valueName.c_str()), &titleSize, 
-				nullptr, 
-				&type, nullptr, &valueSizeDw 
-			);
-			if( openResult == ERROR_SUCCESS )
-			{
-				size_t valueSize = valueSizeDw;
-
-				newValue.valueName.setActSize(titleSize);
-				newValue.valueBuffer.setMinSize( valueSize+1 );
-				newValue.type = queryValue( 
-					newValue.valueName, 
-					(void *)newValue.valueBuffer.c_str(), 
-					&valueSize );
-				newValue.valueBuffer.setActSize( valueSize );
-			}
-		}
+		valuePairs->addElement( *it );
 	}
 }
 

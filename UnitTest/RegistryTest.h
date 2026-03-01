@@ -259,7 +259,7 @@ class RegistryTest : public UnitTest
 
 			{
 				ArrayOfStrings myValuesNames;
-				testerKey.getValueNames( &myValuesNames );
+				testerKey._getValueNames( &myValuesNames );
 				UT_ASSERT_EQUAL( myValuesNames.size(), 9U );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
@@ -272,7 +272,7 @@ class RegistryTest : public UnitTest
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
 
 				RegValuePairs	myPairs;
-				testerKey.getValuePairs( &myPairs );
+				testerKey._getValuePairs( &myPairs );
 				UT_ASSERT_EQUAL( myValuesNames.size(), myPairs.size() );
 			}
 
@@ -281,7 +281,7 @@ class RegistryTest : public UnitTest
 				testerKey.setKeyValue( "key2", "value2" );
 
 				ArrayOfStrings myKeys;
-				testerKey.getKeyNames( &myKeys );
+				testerKey._getKeyNames( &myKeys );
 				UT_ASSERT_EQUAL( myKeys.size(), 2U );
 				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key1" ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key2" ), ArrayOfStrings::no_index );
