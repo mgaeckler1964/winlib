@@ -438,6 +438,7 @@ class Registry : public gak::CopyProtection
 		if( m_key )
 		{
 			RegCloseKey( m_key );
+			m_key = 0;
 		}
 	}
 

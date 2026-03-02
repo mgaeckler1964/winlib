@@ -175,6 +175,8 @@ RegistryType Registry::queryValue( HKEY key, const char *var, void *buffer, size
 long Registry::createKey2( HKEY parent, const char *name, unsigned long perm )
 {
 	DWORD	dummy;
+
+	close();
 	long	openResult = RegCreateKeyEx(
 		parent, name, 0, "",
 		REG_OPTION_NON_VOLATILE,
@@ -194,6 +196,7 @@ long Registry::createKey2( HKEY parent, const char *name, unsigned long perm )
 }
 long Registry::openKey2( HKEY parent, const char *name, unsigned long perm )
 {
+	close();
 	long openResult = RegOpenKeyEx(	
 		parent, name, 
 		0,
