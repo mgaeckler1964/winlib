@@ -125,6 +125,10 @@ class RegistryTest : public UnitTest
 		// eight value for error checking
 		const char * const	errorName = "wrongValues";
 
+		// nin1t value
+		const char * const charName = "charNameField";
+		const char * const charPtrValue = "a dummy value 666";
+
 		Registry	software;
 		software.openPrivate( "SOFTWARE" );
 		UT_ASSERT_TRUE( software );
@@ -183,6 +187,13 @@ class RegistryTest : public UnitTest
 			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
 			UT_ASSERT_EQUAL( testerKey.getValueSize(emptyName, &size), ERROR_SUCCESS );
 			UT_ASSERT_EQUAL( size, 1 );
+
+			// ---------------------- 8 --------------------------------
+			// writing an char pointer
+			result = testerKey.writeValue( charName, charPtrValue );  
+			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( testerKey.getValueSize(charName, &size), ERROR_SUCCESS );
+			UT_ASSERT_EQUAL( size, strlen(charPtrValue)+1 );
 
 			/*
 				Reading
@@ -260,7 +271,7 @@ class RegistryTest : public UnitTest
 			{
 				ArrayOfStrings myValuesNames;
 				testerKey._getValueNames( &myValuesNames );
-				UT_ASSERT_EQUAL( myValuesNames.size(), 9U );
+				UT_ASSERT_EQUAL( myValuesNames.size(), 10U );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( long64Name ), ArrayOfStrings::no_index );
@@ -269,6 +280,7 @@ class RegistryTest : public UnitTest
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( nullName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( emptyName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( errorName ), ArrayOfStrings::no_index );
+				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( charName ), ArrayOfStrings::no_index );
 				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
 
 				RegValuePairs	myPairs;

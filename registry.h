@@ -350,7 +350,7 @@ struct InputTraits<const char*> : public RegTraits<gak::STRING>
 
 	size_t GetValueSize()
 	{
-		return m_value ? 0 : strlen(m_value)+1;
+		return m_value ? strlen(m_value)+1 : 0;
 	}
 
 	LPBYTE GetAdress() const
