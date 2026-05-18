@@ -8,7 +8,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -55,6 +55,7 @@
 #ifdef _MSC_VER
 #	pragma warning( pop )
 #endif
+#include <winlib/Atom.h>
 
 #include <winlib/callwin.h>
 #include <winlib/winapp.h>
@@ -615,21 +616,12 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		// DDE messages
 		case WM_DDE_INITIATE:
 		{
-			ATOM	appAtom;
-			ATOM	topicAtom;
-			char	application[32];
-			char	topic[32];
+			AtomReader	application(LOWORD( lParam ));
+			AtomReader	topic(HIWORD( lParam ));
 
-			appAtom = LOWORD( lParam );
-			topicAtom = HIWORD( lParam );
-
-			GlobalGetAtomName( appAtom, application, sizeof( application ) );
-			GlobalGetAtomName( topicAtom, topic, sizeof( topic ) );
-
-			if( ddeInitiate( application, topic ) == psPROCESSED )
+			if( ddeInitiate( application.getValue(), topic.getValue() ) == psPROCESSED )
 			{
-
-				LPARAM lParam = PackDDElParam( WM_DDE_ACK, appAtom, topicAtom );
+				LPARAM lParam = PackDDElParam( WM_DDE_ACK, application.getAtom(), topic.getAtom() );
 				SendMessage( HWND(wParam), WM_DDE_ACK, WPARAM(handle()), lParam );
 			}
 			else

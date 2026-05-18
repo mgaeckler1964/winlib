@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -357,11 +357,11 @@ class ForeignWindow
 		send a message to a window
 	*/
 
-	LRESULT message( UINT message, WPARAM wParam=0, LPARAM lParam=0 ) const
+	LRESULT message( unsigned message, WPARAM wParam=0, LPARAM lParam=0 ) const
 	{
 		return SendMessage( m_winHandle, message, wParam, lParam );
 	}
-	void postMessage( UINT message, WPARAM wParam=0, LPARAM lParam=0 ) const
+	void postMessage( unsigned message, WPARAM wParam=0, LPARAM lParam=0 ) const
 	{
 		PostMessage( m_winHandle, message, wParam, lParam );
 	}
