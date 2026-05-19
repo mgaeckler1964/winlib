@@ -83,7 +83,7 @@ static const std::size_t MAX_ATOM_SIZE=256;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class Atom
+class AtomBase
 {
 	ATOM	m_atom;
 
@@ -93,37 +93,37 @@ class Atom
 	}
 
 	protected:
-	Atom( ATOM atom, char *buffer, size_t bufferSize ) : m_atom(atom)
+	AtomBase( ATOM atom, char *buffer, size_t bufferSize ) : m_atom(atom)
 	{
 		GlobalGetAtomName( atom, buffer, int(bufferSize) );
 	}
-	Atom( const char *value ) : m_atom(addAtom(value))
+	AtomBase( const char *value ) : m_atom(addAtom(value))
 	{
 	}
-
-	public:
 	void deleteAtom()
 	{
 		GlobalDeleteAtom(m_atom);
 	}
+
+	public:
 	ATOM getAtom() const
 	{
 		return m_atom;
 	}
 };
 
-class AtomWriter : public Atom
+class AtomWriter : public AtomBase
 {
 	public:
-	AtomWriter( const char *val ) : Atom(val ) {}
+	AtomWriter( const char *val ) : AtomBase(val ) {}
 };
 
-class AtomReader : public Atom
+class AtomReader : public AtomBase
 {
 	char m_value[MAX_ATOM_SIZE];
 
 	public:
-	AtomReader( ATOM atom ) : Atom(atom, m_value, sizeof(m_value) ) {}
+	AtomReader( ATOM atom ) : AtomBase(atom, m_value, sizeof(m_value) ) {}
 	const char *getValue() const
 	{
 		return m_value;
