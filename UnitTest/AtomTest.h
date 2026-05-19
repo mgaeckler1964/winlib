@@ -1,7 +1,7 @@
 /*
-		Project:		Windows Class Library
-		Module:			Atom.h
-		Description:	Handle windows atoms
+		Project:		GAKLIB
+		Module:			
+		Description:	
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -29,23 +29,18 @@
 		SUCH DAMAGE.
 */
 
-#ifndef WINLIB_ATOM_H
-#define WINLIB_ATOM_H
-
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
-
-#ifndef STRICT
-#define STRICT 1
-#endif
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <cstdlib>
-#include <windows.h>
+#include <winlib/Atom.h>
+
+#include <iostream>
+#include <gak/unitTest.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -62,14 +57,19 @@
 #	pragma option -pc
 #endif
 
-namespace winlib
+namespace gak
 {
 
 // --------------------------------------------------------------------- //
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-static const std::size_t MAX_ATOM_SIZE=256;
+#define FIT_TEXT	"10234567891023456789102345678910234567891023456789"	\
+					"10234567891023456789102345678910234567891023456789"	\
+					"10234567891023456789102345678910234567891023456789"	\
+					"10234567891023456789102345678910234567891023456789"	\
+					"10234567891023456789102345678910234567891023456789"	\
+					"12345"
 
 // --------------------------------------------------------------------- //
 // ----- macros -------------------------------------------------------- //
@@ -83,73 +83,61 @@ static const std::size_t MAX_ATOM_SIZE=256;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class AtomBase
+class AtomTest : public UnitTest
 {
-	ATOM	m_atom;
+	virtual const char *GetClassName() const
+	{
+		return "AtomTest";
+	}
+	ATOM doOneTest( const char *testText, bool expectError=false )
+	{
+		ATOM	atom;
 
-	static ATOM addAtom( const char *value )
-	{
-		return GlobalAddAtom( value );
+		winlib::AtomProducer	theWriter(testText);
+		winlib::AtomConsumer	theReader(atom = theWriter.getAtom());
+		
+		if(!expectError)
+		{
+			UT_ASSERT_NOT_EQUAL( atom, ATOM(0) );
+			UT_ASSERT_EQUAL( testText, theReader.getValue() );
+		}
+		else
+		{
+			UT_ASSERT_EQUAL( atom, ATOM(0) );
+		}
+
+		return atom;
 	}
-	static ATOM addAtom( int value )
+	void doCompleteTest( const char *testText, bool expectError=false )
 	{
-		return GlobalAddAtom( MAKEINTATOM(value) );
+		ATOM	atom = doOneTest(testText, expectError );
+		if( atom && !expectError )
+		{
+			winlib::AtomConsumer	theReader(atom);
+			UT_ASSERT_NOT_EQUAL( testText, theReader.getValue() );
+		}
+
 	}
 
-	protected:
-	AtomBase( ATOM atom, char *buffer, size_t bufferSize ) : m_atom(atom)
+	virtual void PerformTest()
 	{
-		GlobalGetAtomName( atom, buffer, int(bufferSize) );
-	}
-	AtomBase( const char *value ) : m_atom(addAtom(value))
-	{
-	}
-	void deleteAtom()
-	{
-		GlobalDeleteAtom(m_atom);
-	}
-	void forceDeleteAtom()
-	{
-		char buffer[MAX_ATOM_SIZE];
-		while( GlobalGetAtomName( m_atom, buffer, sizeof(buffer) ) )
-			GlobalDeleteAtom(m_atom);
-	}
+		doEnterFunctionEx(gakLogging::llInfo, "AtomTest::PerformTest");
+		TestScope scope( "PerformTest" );
 
-	public:
-	ATOM getAtom() const
-	{
-		return m_atom;
+		{
+			TestScope scope( "smallText" );
+			doCompleteTest("TheQuickBrownFoxJumpsOverTheLayzyDok");
+		}
+		{
+			TestScope scope( "FIT_TEXT" );
+			doOneTest(FIT_TEXT);
+		}
+		{
+			TestScope scope( "FIT_TEXTx" );
+			doOneTest(FIT_TEXT "x", true);
+		}
 	}
 };
-
-class AtomProducer : public AtomBase
-{
-	public:
-	AtomProducer( const char *val ) : AtomBase(val ) {}
-};
-
-class AtomReader : public AtomBase
-{
-	char m_value[MAX_ATOM_SIZE];
-
-	public:
-	AtomReader( ATOM atom ) : AtomBase(atom, m_value, sizeof(m_value) ) {}
-	const char *getValue() const
-	{
-		return m_value;
-	}
-};
-
-class AtomConsumer : public AtomReader
-{
-	public:
-	AtomConsumer( ATOM atom ) : AtomReader(atom ) {}
-	~AtomConsumer() 
-	{
-		forceDeleteAtom();
-	}
-};
-
 
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
@@ -158,6 +146,8 @@ class AtomConsumer : public AtomReader
 // --------------------------------------------------------------------- //
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+static AtomTest myAtomTest;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
@@ -203,7 +193,7 @@ class AtomConsumer : public AtomReader
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-} // namespace winlib
+}	// namespace gak
 
 #ifdef __BORLANDC__
 #	pragma option -RT.
@@ -211,5 +201,3 @@ class AtomConsumer : public AtomReader
 #	pragma option -a.
 #	pragma option -p.
 #endif
-
-#endif // WINLIB_ATOM_H

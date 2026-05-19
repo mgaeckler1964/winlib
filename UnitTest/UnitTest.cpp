@@ -42,8 +42,10 @@
 #include <gak/directory.h>
 #include <gak/unitTest.h>
 
+#include "F_TYPE_TEST.h"
 #include "WinAppTest.h"
 #include "RegistryTest.h"
+#include "AtomTest.h"
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //

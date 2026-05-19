@@ -18,15 +18,18 @@
     <ClCompile Include="UnitTest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="F_TYPE_TEST.h">
-      <Filter>Headerdateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WinAppTest.h">
+    <ClInclude Include="F_TYPE_TEST.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RegistryTest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WinAppTest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomTest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

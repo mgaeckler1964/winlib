@@ -175,7 +175,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 		RectBorder	textRect(left, top, right, bottom);
 		if( textRect.top > textRect.bottom )
 		{
-			swap( &textRect.top, &textRect.bottom );
+			gak::swap( &textRect.top, &textRect.bottom );
 		}
 		if( textRect.top - textSize.height >= 0 )
 		{
