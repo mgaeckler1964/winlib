@@ -622,7 +622,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			if( ddeInitiate( application.getValue(), topic.getValue() ) == psPROCESSED )
 			{
 				LPARAM lParam = PackDDElParam( WM_DDE_ACK, application.getAtom(), topic.getAtom() );
-				SendMessage( HWND(wParam), WM_DDE_ACK, WPARAM(handle()), lParam );
+				PostMessage( HWND(wParam), WM_DDE_ACK, WPARAM(handle()), lParam );
 			}
 			else
 			{
