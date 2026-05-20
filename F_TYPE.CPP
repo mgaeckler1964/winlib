@@ -78,7 +78,7 @@ using namespace gak;
 
 bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type )
 {
-	doEnterFunctionEx( gakLogging::llInfo, "bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type )" );
+	doEnterFunctionEx( gakLogging::llDetail, "bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type )" );
 
 	Registry	classesRoot;
 	if( classesRoot.openPublic( "Software\\classes", KEY_READ|KEY_WOW64_64KEY ) != ERROR_SUCCESS )
@@ -96,14 +96,14 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 	Registry	openKey;	// for .../<ext>file/shell/<cmd>	(open, print etc)
 	Registry	ddeKey;		// for .../<ext>file/shell/<cmd>/ddeexec
 
-	doLogValueEx( gakLogging::llInfo, type->extension );
+	doLogValueEx( gakLogging::llDetail, type->extension );
 
 	if( 
 		extKey.openSubkey(classesRoot, type->extension, KEY_READ|KEY_WOW64_64KEY )==ERROR_SUCCESS && 
 		extKey.readValue( &valueBuff )==rsOK && !valueBuff.isEmpty() 
 	)
 	{
-		doLogValueEx(gakLogging::llInfo, valueBuff );
+		doLogValueEx(gakLogging::llDetail, valueBuff );
 		type->type = valueBuff;
 
 		if(
@@ -172,15 +172,15 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 		type->application.release();
 		type->topic.release();
 	}
-	doLogValueEx( gakLogging::llInfo, type->commandLine );
-	doLogValueEx( gakLogging::llInfo, type->type_description );
-	doLogValueEx( gakLogging::llInfo, error );
+	doLogValueEx( gakLogging::llDetail, type->commandLine );
+	doLogValueEx( gakLogging::llDetail, type->type_description );
+	doLogValueEx( gakLogging::llDetail, error );
 	return error;
 }
 
 bool addFileType( FileTypeRegistry *type )
 {
-	doEnterFunctionEx( gakLogging::llInfo, "bool addFileType( FileTypeRegistry *type )" );
+	doEnterFunctionEx( gakLogging::llDetail, "bool addFileType( FileTypeRegistry *type )" );
 
 	Registry	classesRoot;
 	if( classesRoot.openPublic( "Software\\classes", KEY_READ|KEY_WOW64_64KEY ) != ERROR_SUCCESS )

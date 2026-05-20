@@ -249,6 +249,9 @@
     <ClInclude Include="registry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Atom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

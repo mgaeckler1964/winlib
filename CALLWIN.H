@@ -8,7 +8,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -382,6 +382,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	// WM_ASYNC_TASK_END
 	virtual void handleAsyncTaskEnd( void *data );
+
+	// WM_COPYDATA
+	virtual	ProcessStatus handleData(const ForeignWindow &src, int dataType, const void *data, size_t size);
 
 	// all other messages
 	virtual ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam );

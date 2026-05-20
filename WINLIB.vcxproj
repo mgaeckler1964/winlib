@@ -67,6 +67,7 @@
     <ClInclude Include="accelerators.h" />
     <ClInclude Include="AREA.H" />
     <ClInclude Include="AsyncThread.h" />
+    <ClInclude Include="Atom.h" />
     <ClInclude Include="barcode.h" />
     <ClInclude Include="BASICWIN.H" />
     <ClInclude Include="bitmap.h" />

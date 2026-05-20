@@ -642,7 +642,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 				if( ddeExecute( commandPtr ) == psPROCESSED )
 				{
 					GlobalUnlock( command );
-					LPARAM lParam = PackDDElParam( WM_DDE_ACK, 0, UINT(command) );
+					LPARAM lParam = PackDDElParam( WM_DDE_ACK, 0, UINT_PTR(command) );
 					PostMessage( HWND(wParam), WM_DDE_ACK, WPARAM(handle()), lParam );
 				}
 				else
@@ -766,6 +766,21 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		case WM_ASYNC_TASK_END:
 			handleAsyncTaskEnd( reinterpret_cast<void*>(lParam) );
 			break;
+
+		case WM_COPYDATA:
+		{
+			PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
+			ForeignWindow	src((HWND)wParam);
+			msgStatus = handleData(src, cds->dwData, cds->lpData, cds->cbData);
+			if( msgStatus == psPROCESSED )
+				m_callBackValue = TRUE;
+			else
+			{
+				msgStatus = psPROCESSED;
+				m_callBackValue = FALSE;
+			}
+			break;
+		}
 
 		// The special (rarely used) messages
 		default:
@@ -1050,6 +1065,11 @@ void CallbackWindow::handleReplace( const char *, const char *,
 
 void CallbackWindow::handleAsyncTaskEnd( void * /*data*/ )
 {
+}
+
+ProcessStatus CallbackWindow::handleData(const ForeignWindow &, int, const void *, size_t )
+{
+	return psDO_DEFAULT;
 }
 
 ProcessStatus CallbackWindow::handleMessage( UINT, WPARAM, LPARAM )

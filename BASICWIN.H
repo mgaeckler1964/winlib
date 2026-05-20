@@ -918,6 +918,29 @@ class ForeignWindow
 		m_caret = false;
 		DestroyCaret();
 	}
+
+	/*
+		copy data
+	*/
+	private:
+	void copyData( const void *data, std::size_t len, int typeID, const ForeignWindow *src  ) const
+	{
+		COPYDATASTRUCT cds;
+		cds.dwData = typeID;
+		cds.cbData = DWORD(len);
+		cds.lpData = const_cast<void *>(data);
+
+		SendMessage(handle(), WM_COPYDATA, WPARAM(src ? src->handle() : nullptr), LPARAM(&cds));		
+	}
+	public:
+	void copyData( const gak::STRING &data, int typeID=0, const ForeignWindow *src=nullptr ) const
+	{
+		copyData(data.c_str(), data.size()+1, typeID, src );		
+	}
+	void copyData( const char *data, int typeID=0, const ForeignWindow *src=nullptr ) const
+	{
+		copyData(data, strlen(data)+1, typeID, src);		
+	}
 };
 
 class BasicWindow : public ForeignWindow
