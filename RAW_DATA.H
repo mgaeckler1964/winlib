@@ -62,8 +62,8 @@
 #include <gak/array.h>
 #include <gak/memoryStream.h>
 
-#include <WINLIB\BASICWIN.H>
-
+#include <WINLIB/BASICWIN.H>
+#include <WINLIB/GlobalMem.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -151,16 +151,12 @@ template <typename OBJ>
 class BasicClipboardMemory
 {
 	private:
-	HGLOBAL			memHndl;
-	const OBJ		*data;
-	size_t			blockSize;
+	GlobalLocker	m_memory;
+	size_t			m_blockSize;
 
 	const OBJ *getDataBuffer()
 	{
-		if( !data && memHndl )
-			data = static_cast<const OBJ *>(GlobalLock( memHndl ));
-
-		return data;
+		return static_cast<const OBJ *>(m_memory.getPtr());
 	}
 	BasicClipboardMemory( const BasicClipboardMemory &source );
 	const BasicClipboardMemory & operator = ( const BasicClipboardMemory &source );
@@ -169,23 +165,18 @@ class BasicClipboardMemory
 	typedef OBJ value_type;
 	size_t size() const
 	{
-		return blockSize;
+		return m_blockSize;
 	}
 
-	BasicClipboardMemory( int clipFormat )
+	BasicClipboardMemory( int clipFormat ) : m_memory(GetClipboardData( clipFormat )), m_blockSize(m_memory.size())
 	{
-		memHndl   = GetClipboardData( clipFormat );
-		data = NULL;
-		blockSize = GlobalSize( memHndl );
 	}
 	~BasicClipboardMemory()
 	{
-		if( data && memHndl )
-			GlobalUnlock( memHndl );
 	}
 	bool is_open() const
 	{
-		return memHndl ? true : false;
+		return m_memory.is_open();
 	}
 	const OBJ &operator [] ( size_t idx )
 	{

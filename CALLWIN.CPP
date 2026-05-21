@@ -55,6 +55,7 @@
 #ifdef _MSC_VER
 #	pragma warning( pop )
 #endif
+#include <winlib/GlobalMem.h>
 #include <winlib/Atom.h>
 
 #include <winlib/callwin.h>
@@ -634,20 +635,18 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		case WM_DDE_EXECUTE:
 		{
-			HGLOBAL	command = HGLOBAL(lParam);
-			char	*commandPtr = static_cast<char *>(GlobalLock( command ));
+			GlobalLocker	command(reinterpret_cast<HGLOBAL>(lParam));
+			const char		*commandPtr = static_cast<const char *>(command.getPtr());
 
 			if( commandPtr )
 			{
 				if( ddeExecute( commandPtr ) == psPROCESSED )
 				{
-					GlobalUnlock( command );
-					LPARAM lParam = PackDDElParam( WM_DDE_ACK, 0, UINT_PTR(command) );
+					LPARAM lParam = PackDDElParam( WM_DDE_ACK, 0, UINT_PTR(command.getHandle()) );
 					PostMessage( HWND(wParam), WM_DDE_ACK, WPARAM(handle()), lParam );
 				}
 				else
 				{
-					GlobalUnlock( command );
 					msgStatus = psDO_DEFAULT;
 				}
 			}

@@ -252,6 +252,9 @@
     <ClInclude Include="Atom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalMem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

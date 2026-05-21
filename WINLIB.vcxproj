@@ -85,6 +85,7 @@
     <ClInclude Include="frame.h" />
     <ClInclude Include="F_TYPE.H" />
     <ClInclude Include="gdi.h" />
+    <ClInclude Include="GlobalMem.h" />
     <ClInclude Include="gridView.h" />
     <ClInclude Include="Layout.h" />
     <ClInclude Include="LISTCONT.H" />
