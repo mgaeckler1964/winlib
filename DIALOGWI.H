@@ -66,6 +66,10 @@ class DialogWindow : public CallbackWindow
 	{
 	}
 	// text of an control
+	void limitEditText( int controlID, unsigned long maxLen )
+	{
+		SendMessage( GetDlgItem( handle(), controlID ), EM_LIMITTEXT, maxLen, 0L );
+	}
 	void setButtonLabel( int buttonId, const char *label ) const
 	{
 		SetDlgItemText( handle(), buttonId, (LPSTR)label );
