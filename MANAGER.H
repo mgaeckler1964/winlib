@@ -67,12 +67,12 @@ class ManagerChild : public MDIchildWindow
 	virtual void handleFocus();
 
 	public:
-	ManagerChild()
+	ManagerChild(BasicWindow *owner) : MDIchildWindow(owner)
 	{
 		m_control = nullptr;
 		setLayoutManager( new SingleChildManager );
 	}
-	ManagerChild( ControlWindow *control )
+	ManagerChild( BasicWindow *owner, ControlWindow *control ) : MDIchildWindow(owner)
 	{
 		m_control = control;
 		setLayoutManager( new SingleChildManager );

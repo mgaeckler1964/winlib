@@ -86,7 +86,7 @@ class MDIchildWindow : public CallbackWindow, public MdiChildList
 	static void registerClass();
 
 	protected:
-	MDIchildWindow() : CallbackWindow( nullptr )
+	MDIchildWindow( BasicWindow *owner ) : CallbackWindow( owner )
 	{
 		m_clientParent = nullptr;
 		m_winMenu  = nullptr;

@@ -138,12 +138,10 @@ class ModalDialog : public DialogWindow
 	int m_modalResult;
 
 	public:
-	ModalDialog(BasicWindow *owner=NULL) : DialogWindow( owner ) , m_modalResult(IDCANCEL) { }
+	ModalDialog(BasicWindow *owner=NULL) : DialogWindow( owner ), m_modalResult(IDCANCEL) { }
 	int create( const char *dialog, const BasicWindow *parent )
 	{
-		int retVal;
-
-		retVal = int(
+		int retVal = int(
 			DialogBoxParam(
 				Application::getResInstance(), (LPSTR)dialog,
 				parent ? parent->handle() : 0,

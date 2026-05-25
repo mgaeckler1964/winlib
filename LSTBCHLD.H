@@ -76,7 +76,7 @@ class ListboxChild : public ManagerChild
 	{
 		static_cast<ListBox*>(m_control)->getSelection();
 	};
-	ListboxChild() : ManagerChild( new ListBox ) {};
+	ListboxChild(BasicWindow *owner) : ManagerChild( owner, new ListBox ) {};
 };
 
 }	// namespace winlib

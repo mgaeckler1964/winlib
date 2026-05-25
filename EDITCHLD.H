@@ -83,7 +83,7 @@ class EditChild : public ManagerChild
 
 	virtual void handleTimer();
 	public:
-	EditChild() : ManagerChild( new MemoControl )
+	EditChild( BasicWindow *owner ) : ManagerChild( owner, new MemoControl )
 	{
 		m_modifyTime = 0;
 		m_withBOM = m_autoReload = false;
