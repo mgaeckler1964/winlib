@@ -99,7 +99,7 @@ class WinAppTest : public UnitTest
 		TestScope scope( "PerformTest" );
 		UT_ASSERT_EQUAL( winlib::appObject, &m_appObject );
 
-		m_appObject.setComapny("GakWinlibUnitTester");
+		m_appObject.setCompany("GakWinlibUnitTester");
 		m_appObject.setApplication("UnitTestApp");
 
 		long tester = m_appObject.GetProfile("", theKeyName, 666);

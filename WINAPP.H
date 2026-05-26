@@ -223,7 +223,7 @@ class Application
 	#pragma warn +inl
 #endif
 	}
-	void setComapny( const char *name )
+	void setCompany( const char *name )
 	{
 		m_company = name;
 	}
