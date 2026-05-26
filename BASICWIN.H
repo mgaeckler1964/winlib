@@ -1061,7 +1061,7 @@ class BasicWindow : public ForeignWindow
 		ForeignWindow::setHandle( handle );
 		readWindowData();
 	}
-	SuccessCode create( BasicWindow *parent, Menu *menu=NULL, LPVOID lpParam=NULL )
+	SuccessCode create( BasicWindow *parent, Menu *menu=nullptr, void *lpParam=nullptr )
 	{
 		STRING className = getWindowClassName();
 
@@ -1083,12 +1083,12 @@ class BasicWindow : public ForeignWindow
 		m_state = wsInCreation;
 		HWND winHandle = CreateWindowEx(
 			exStyle, 
-			LPCSTR(className), 
-			m_caption.isEmpty() ? NULL : LPCSTR(m_caption), 
+			className.c_str(), 
+			m_caption.isEmpty() ? nullptr : m_caption.c_str(), 
 			style,
 			m_x, m_y, m_width, m_height,
 			parent ? parent->handle() : 0,
-			menu ? menu->getMenu() : NULL, 
+			menu ? menu->getMenu() : nullptr,
 			Application::getAppInstance(), 
 			lpParam ? lpParam : this
 		);

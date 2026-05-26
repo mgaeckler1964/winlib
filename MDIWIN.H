@@ -159,13 +159,13 @@ class MDIclientWindow : virtual public ControlWindow
 		CLIENTCREATESTRUCT	clientCreate;
 
 		m_winMenu = winMenu;
-		m_myParent	  = parent;
+		m_myParent = parent;
 
 		clientCreate.hWindowMenu  = winMenu ? winMenu->getMenu() : nullptr;
 		clientCreate.idFirstChild = 1024;
 
 		SuccessCode error = BasicWindow::create(
-			reinterpret_cast<BasicWindow*>(parent), 0, (LPSTR)&clientCreate
+			reinterpret_cast<BasicWindow*>(parent), 0, &clientCreate
 		);
 		return error;
 	}
