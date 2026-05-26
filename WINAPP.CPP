@@ -443,9 +443,19 @@ int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdSho
 	if( !m_mainWindow )
 		return 1;
 
-	m_mainWindow->mainLoop();
+	try
+	{
+		m_mainWindow->mainLoop();
 
-	deleteMainWindow( m_mainWindow );
+		deleteMainWindow( m_mainWindow );
+		m_mainWindow = nullptr;
+	}
+	catch(...)
+	{
+		deleteMainWindow( m_mainWindow );
+		m_mainWindow = nullptr;
+		throw;
+	}
 
 	return 0;
 }
@@ -698,7 +708,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 		{
 			Application::setInstance( hInstance );
 			result = appObject->AppMain( hInstance, cmdLine, nCmdShow );
-
 		}
 	}
 	catch( std::exception &e )
