@@ -1084,7 +1084,7 @@ class BasicWindow : public ForeignWindow
 		HWND winHandle = CreateWindowEx(
 			exStyle, 
 			className.c_str(), 
-			m_caption.isEmpty() ? nullptr : m_caption.c_str(), 
+			m_caption.isEmpty() ? 0 : m_caption.c_str(), 
 			style,
 			m_x, m_y, m_width, m_height,
 			parent ? parent->handle() : 0,
