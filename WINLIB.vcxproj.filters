@@ -255,6 +255,9 @@
     <ClInclude Include="GlobalMem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
