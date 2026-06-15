@@ -46,6 +46,11 @@
 // ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+#ifdef _MSC_VER
+#	pragma warning( push )
+#	pragma warning( disable: 4996 )
+#endif
+
 #ifdef __BORLANDC__
 #	pragma option -RT-
 #	pragma option -b
@@ -107,6 +112,10 @@ class ContainerChild : public ListboxChild
 #	pragma option -b.
 #	pragma option -a.
 #	pragma option -p.
+#endif
+
+#ifdef _MSC_VER
+#	pragma warning( pop )
 #endif
 
 #endif

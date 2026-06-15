@@ -69,6 +69,7 @@
 #include <gak/gaklib.h>
 #include <gak/string.h>
 #include <gak/xml.h>
+#include <gak/fmtNumber.h>
 
 #include <winlib/layout.h>
 #include <winlib/brush.h>
@@ -140,12 +141,9 @@ inline bool WritePrivateProfileInt( LPSTR	appName,
 									int 	value,
 									LPSTR	file )
 {
-	char	buffer[32];
-
-	return WritePrivateProfileString( appName, key,
-									  itoa( value, buffer, 10 ),
-									  file )
-			? true : false;
+	return WritePrivateProfileString( 
+		appName, key, gak::formatNumber(value), file 
+	) ? true : false;
 }
 
 // --------------------------------------------------------------------- //

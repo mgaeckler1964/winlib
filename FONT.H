@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -184,14 +184,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
-	Font &setFontName( const char *name )
-	{
-		strncpy( m_fontData.lfFaceName, name, LF_FACESIZE -1 );
-		if( isAssigned() )
-			create();
-
-		return *this;
-	}
+	Font &setFontName( const char *name );
 	const char *getFontName() const
 	{
 		return m_fontData.lfFaceName;

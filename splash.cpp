@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			splash.c
+		Module:			splash.cpp
 		Description:	Helper function to display a splash screen
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -35,6 +35,11 @@
 
 #ifndef STRICT
 #define STRICT 1
+#endif
+
+#ifdef _MSC_VER
+#	pragma warning( push )
+#	pragma warning( disable: 4996 )
 #endif
 
 /* --------------------------------------------------------------------- */
@@ -326,3 +331,6 @@ void closeStartup()
 #	pragma option -p.
 #endif
 
+#ifdef _MSC_VER
+#	pragma warning( pop )
+#endif

@@ -173,39 +173,7 @@ class FileDialog : public BasicWindow
 	{
 		return m_fileBuffer;
 	}
-	void setFilename( const STRING &filename )
-	{
-		size_t	len = filename.strlen();
-
-		if( len > m_ofn.nMaxFile-1 )
-		{
-			m_fileBuffer.resize( 2*strlen( filename ) );
-			m_ofn.lpstrFile	= m_fileBuffer;
-			m_ofn.nMaxFile	= DWORD(2*strlen( filename )-1);
-		}
-		if( len )
-		{
-			size_t	slashPos = filename.searchRChar( DIRECTORY_DELIMITER );
-			if( slashPos != -1 )
-			{
-				m_directory = filename.leftString( slashPos );
-				m_ofn.lpstrInitialDir = m_directory.c_str();
-				strcpy( m_fileBuffer, filename + size_t(slashPos + 1) );
-			}
-			else
-			{
-				m_directory.release();
-				m_ofn.lpstrInitialDir = nullptr;
-				strcpy( m_fileBuffer, filename );
-			}
-		}
-		else
-		{
-			*m_fileBuffer = 0;
-			m_directory.release();
-			m_ofn.lpstrInitialDir = nullptr;
-		}
-	}
+	void setFilename( const STRING &filename );
 	const STRING &getDirectory() const
 	{
 		return m_directory;

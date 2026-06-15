@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -28,6 +28,16 @@
 		OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 		SUCH DAMAGE.
 */
+
+// --------------------------------------------------------------------- //
+// ----- switches ------------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+#ifndef STRICT
+#define STRICT 1
+#endif
+
+#define _CRT_SECURE_NO_WARNINGS 1
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
@@ -137,6 +147,40 @@ ReplaceDialog::ReplaceDialog()
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void FileDialog::setFilename( const STRING &filename )
+{
+	size_t	len = filename.strlen();
+
+	if( len > m_ofn.nMaxFile-1 )
+	{
+		m_fileBuffer.resize( 2*strlen( filename ) );
+		m_ofn.lpstrFile	= m_fileBuffer;
+		m_ofn.nMaxFile	= DWORD(2*strlen( filename )-1);
+	}
+	if( len )
+	{
+		size_t	slashPos = filename.searchRChar( DIRECTORY_DELIMITER );
+		if( slashPos != STRING::no_index )
+		{
+			m_directory = filename.leftString( slashPos );
+			m_ofn.lpstrInitialDir = m_directory.c_str();
+			strcpy( m_fileBuffer, filename + size_t(slashPos + 1) );
+		}
+		else
+		{
+			m_directory.release();
+			m_ofn.lpstrInitialDir = nullptr;
+			strcpy( m_fileBuffer, filename );
+		}
+	}
+	else
+	{
+		*m_fileBuffer = 0;
+		m_directory.release();
+		m_ofn.lpstrInitialDir = nullptr;
+	}
+}
 
 void SaveFileAsDialog::handleMessage(
 	UINT uiMsg,	// message identifier
