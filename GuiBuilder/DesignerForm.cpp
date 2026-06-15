@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -180,11 +180,15 @@ void DesignerForm::endSelect( WPARAM modifier, const Point &position )
 	}
 }
 
-bool DesignerForm::checkUnique( const PODmatrix<BasicWindow*>::ArrayType &line, BasicWindow *child )
+/*
+	return true, if there is no other child
+*/
+template <typename IteratorT>
+bool DesignerForm::checkOther( const IteratorT &begin, const IteratorT &end, BasicWindow *child )
 {
-	for( size_t i=0; i<line.size(); i++ )
+	for( IteratorT it=begin; it!=end; ++it )
 	{
-		BasicWindow *otherChild = line[i];
+		BasicWindow *otherChild = *it;
 		if( otherChild && otherChild != child )
 		{
 			return false;
@@ -192,6 +196,15 @@ bool DesignerForm::checkUnique( const PODmatrix<BasicWindow*>::ArrayType &line, 
 	}
 
 	return true;
+}
+
+/*
+	return true, if there is no other child
+*/
+template <typename ContainerT>
+inline bool DesignerForm::checkOther( const ContainerT &line, BasicWindow *child )
+{
+	return checkOther(line.cbegin(), line.cend(), child);
 }
 
 /*
@@ -269,7 +282,7 @@ void DesignerForm::restoreChildren()
 				if( layoutData )
 				{
 					xml::Element *resource = child->getResource();
-					xml::Element	*layout = resource->getElement( LayoutData::className );
+					xml::Element *layout = resource->getElement( LayoutData::className );
 					int	xPos = layout->getAttribute( LayoutData::xPosAttr ).getValueN<unsigned>();
 					int	yPos = layout->getAttribute( LayoutData::yPosAttr ).getValueN<unsigned>();
 					if( layoutData->xPos != xPos || layoutData->yPos != yPos )
@@ -281,7 +294,7 @@ void DesignerForm::restoreChildren()
 							xPos, yPos, xPos + layoutData->width, yPos + layoutData->height, 
 							&area 
 						);
-						if( checkUnique( area.getArray(), child ) )
+						if( checkOther( area.getArray(), child ) )
 						{
 							// yes, we can restore that child
 							layoutData->xPos = xPos;
@@ -341,19 +354,23 @@ void DesignerForm::performTableDrag( const Point &position )
 		|| col >= int(numColums) )			// move right outside current frame
 		 
 		{
-			PODarray<BasicWindow*>	colData;
-			m_tableManager->getColumn( layoutData->xPos, &colData );
 			// check if selected control is on edge of window
-			if( checkUnique( colData, m_lastChildClick ) )
+			if( checkOther( 
+				m_tableManager->getColumnBegin(layoutData->xPos), 
+				m_tableManager->getColumnEnd(layoutData->xPos), 
+				m_lastChildClick ) 
+			)
 /***/			return;
 		}
 		if( row < 0 					// move top outside current frame
 		|| row >= int(numRows) )		// move bottom outside current frame
 		{
-			PODarray<BasicWindow*>	rowData;
-			m_tableManager->getRow( layoutData->yPos, &rowData );
 			// check if selected control is on edge of window
-			if( checkUnique( rowData, m_lastChildClick ) )
+			if( checkOther( 
+				m_tableManager->getRowBegin( layoutData->yPos ), 
+				m_tableManager->getRowEnd( layoutData->yPos ), 
+				m_lastChildClick 
+			) )
 			{
 /***/			return;
 			}
@@ -427,7 +444,7 @@ void DesignerForm::performTableDrag( const Point &position )
 				layoutData->yPos + layoutData->height, 
 				&oldChildren 
 			);
-			if( !checkUnique( oldChildren.getArray(), m_lastChildClick ) )
+			if( !checkOther( oldChildren.getArray(), m_lastChildClick ) )
 			{
 				RectBorder	area;
 

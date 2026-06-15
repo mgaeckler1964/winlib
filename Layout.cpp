@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -142,8 +142,8 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 {
 	Size wantedSize = newSize;
 
-	colDimensions.clear();
-	rowDimensions.clear();
+	m_colDimensions.clear();
+	m_rowDimensions.clear();
 
 	/*
 		determine layout data for each row and col
@@ -163,7 +163,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 			for( unsigned j=0; j<childLayout->width; j++ )
 			{
 				size_t		col = childLayout->xPos+j;
-				Dimension	&colDim = colDimensions[col];
+				Dimension	&colDim = m_colDimensions[col];
 
 				if( !childLayout->growWidth )
 				{
@@ -180,7 +180,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 			for( unsigned j=0; j<childLayout->height; j++ )
 			{
 				size_t		row = childLayout->yPos+j;
-				Dimension	&rowDim = rowDimensions[row];
+				Dimension	&rowDim = m_rowDimensions[row];
 
 				if( !childLayout->growHeight )
 				{
@@ -199,9 +199,9 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 	// calculate the col widths that can grow all positions
 	int colGrowSum = 0;
 	int	width = newSize.width - m_margin.left - m_margin.right;
-	for( size_t i=0; i<colDimensions.size(); i++ )
+	for( size_t i=0; i<m_colDimensions.size(); i++ )
 	{
-		Dimension &colDim = colDimensions[i];
+		Dimension &colDim = m_colDimensions[i];
 		if( colDim.grow )
 			colGrowSum += colDim.grow;
 		else
@@ -214,9 +214,9 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 
 	double colFactor = colGrowSum ? width/colGrowSum : 0;
 	int colPos = m_margin.left;
-	for( size_t i=0; i<colDimensions.size(); i++ )
+	for( size_t i=0; i<m_colDimensions.size(); i++ )
 	{
-		Dimension &colDim = colDimensions[i];
+		Dimension &colDim = m_colDimensions[i];
 		colDim.pos = colPos;
 		if( colDim.grow )
 			colDim.length = int(colDim.grow * colFactor);
@@ -226,9 +226,9 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 	// calculate the row heights that can grow and all positions
 	int rowGrowSum = 0;
 	int	height = newSize.height - m_margin.top - m_margin.bottom;
-	for( size_t i=0; i<rowDimensions.size(); i++ )
+	for( size_t i=0; i<m_rowDimensions.size(); i++ )
 	{
-		Dimension &rowDim = rowDimensions[i];
+		Dimension &rowDim = m_rowDimensions[i];
 		if( rowDim.grow )
 			rowGrowSum += rowDim.grow;
 		else
@@ -241,9 +241,9 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 
 	double rowFactor = rowGrowSum ? height/rowGrowSum : 0;
 	int rowPos = m_margin.top;
-	for( size_t i=0; i<rowDimensions.size(); i++ )
+	for( size_t i=0; i<m_rowDimensions.size(); i++ )
 	{
-		Dimension &rowDim = rowDimensions[i];
+		Dimension &rowDim = m_rowDimensions[i];
 		rowDim.pos = rowPos;
 		if( rowDim.grow )
 			rowDim.length = int(rowDim.grow * rowFactor);
@@ -252,9 +252,9 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 
 
 	// now we can move & resize the child windows and setup the matrix
-	childrenMatrix.create( 
-		colDimensions.size(),
-		rowDimensions.size()
+	m_childrenMatrix.create( 
+		m_colDimensions.size(),
+		m_rowDimensions.size()
 	);
 	for( size_t i=0; i<children.size(); i++ )
 	{
@@ -264,15 +264,15 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 		{
 			int					col = childLayout->xPos;
 			int					row = childLayout->yPos;
-			const Dimension		&colDim = colDimensions[col];
-			const Dimension		&rowDim = rowDimensions[row];
+			const Dimension		&colDim = m_colDimensions[col];
+			const Dimension		&rowDim = m_rowDimensions[row];
 
 			Size				childSize = child->getSize();
 
 			if( childLayout->width > 1 || childLayout->height > 1 )
-				childrenMatrix.fill( col, row, col+childLayout->width, row+childLayout->height, child );
+				m_childrenMatrix.fill( col, row, col+childLayout->width, row+childLayout->height, child );
 			else
-				childrenMatrix( col, row ) = child;
+				m_childrenMatrix( col, row ) = child;
 
 			int xPos = colDim.pos + childLayout->padding.left;
 			int yPos = rowDim.pos + childLayout->padding.top;
@@ -284,7 +284,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 				for( unsigned j=0; j<childLayout->width; j++ )
 				{
 					int					col = childLayout->xPos+j;
-					const Dimension		&colDim = colDimensions[col];
+					const Dimension		&colDim = m_colDimensions[col];
 					width += colDim.length;
 				}
 				
@@ -298,7 +298,7 @@ Size TableManager::doLayout( const ChildWindows &children, const Size &newSize, 
 				for( unsigned j=0; j<childLayout->height; j++ )
 				{
 					int					row = childLayout->yPos+j;
-					const Dimension		&rowDim = rowDimensions[row];
+					const Dimension		&rowDim = m_rowDimensions[row];
 					height += rowDim.length;
 				}
 				height -= childLayout->padding.top + childLayout->padding.bottom;

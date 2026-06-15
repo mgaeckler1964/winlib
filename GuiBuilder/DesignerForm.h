@@ -124,7 +124,13 @@ class DesignerForm : public OverlappedWindow
 
 	void startSelect( const Point &position );
 	void endSelect( WPARAM modifier, const Point &position );
-	bool checkUnique( const gak::PODmatrix<BasicWindow*>::ArrayType &line, BasicWindow *child );
+
+	template <typename IteratorT>
+	bool checkOther( const IteratorT &begin, const IteratorT &end, BasicWindow *child );
+
+	template <typename ContainerT>
+	bool checkOther( const ContainerT &line, BasicWindow *child );
+
 	bool checkRectangle( const gak::PODmatrix<BasicWindow*>::ArrayType &children, RectBorder *rectangle );
 	void findChildren( RectBorder *area, gak::PODmatrix<BasicWindow*> *children );
 	void restoreChildren();

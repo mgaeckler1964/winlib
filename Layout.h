@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -271,9 +271,11 @@ class TableManager : public LayoutManager
 			pos = length = grow = 0;
 		}
 	};
+	typedef gak::PODmatrix<BasicWindow*>	WindowMatrix;
+	typedef gak::PODarray<Dimension>		Dimensions;
 
-	gak::PODarray<Dimension>		colDimensions, rowDimensions;
-	gak::PODmatrix<BasicWindow*>	childrenMatrix;
+	Dimensions		m_colDimensions, m_rowDimensions;
+	WindowMatrix	m_childrenMatrix;
 
 	Size doLayout( const ChildWindows &children, const Size &newSize, bool resize );
 
@@ -296,33 +298,33 @@ class TableManager : public LayoutManager
 
 	size_t getNumColumns() const
 	{
-		return colDimensions.size();
+		return m_colDimensions.size();
 	}
 	int getColWidth( size_t col ) const
 	{
-		return colDimensions[col].length;
+		return m_colDimensions[col].length;
 	}
 	int getColLeft( size_t col ) const
 	{
-		return colDimensions[col].pos;
+		return m_colDimensions[col].pos;
 	}
 
 	size_t getNumRows() const
 	{
-		return rowDimensions.size();
+		return m_rowDimensions.size();
 	}
 	int getRowHeight( size_t row ) const
 	{
-		return rowDimensions[row].length;
+		return m_rowDimensions[row].length;
 	}
 	int getRowTop( size_t row ) const
 	{
-		return rowDimensions[row].pos;
+		return m_rowDimensions[row].pos;
 	}
 	BasicWindow	*getChildAt( size_t col, size_t row )
 	{
-		if( col < childrenMatrix.getNumCols() && row < childrenMatrix.getNumRows() )
-			return childrenMatrix( col, row );
+		if( col < m_childrenMatrix.getNumCols() && row < m_childrenMatrix.getNumRows() )
+			return m_childrenMatrix( col, row );
 		return NULL;
 	}
 	void extract( 
@@ -330,24 +332,33 @@ class TableManager : public LayoutManager
 		gak::PODmatrix<BasicWindow*> *result 
 	)
 	{
-		if( leftCol < childrenMatrix.getNumCols() && upperRow < childrenMatrix.getNumRows() )
+		if( leftCol < m_childrenMatrix.getNumCols() && upperRow < m_childrenMatrix.getNumRows() )
 		{
-			if( rightCol > childrenMatrix.getNumCols() )
-				rightCol = childrenMatrix.getNumCols();
-			if( lowerRow > childrenMatrix.getNumRows() )
-				lowerRow = childrenMatrix.getNumRows();
+			if( rightCol > m_childrenMatrix.getNumCols() )
+				rightCol = m_childrenMatrix.getNumCols();
+			if( lowerRow > m_childrenMatrix.getNumRows() )
+				lowerRow = m_childrenMatrix.getNumRows();
 
-			childrenMatrix.extract( leftCol, upperRow, rightCol, lowerRow, result );
+			m_childrenMatrix.extract( leftCol, upperRow, rightCol, lowerRow, result );
 		}
 	}
 
-	void getRow( size_t row, gak::PODarray<BasicWindow*> *rowData )
+	WindowMatrix::const_row_iterator getRowBegin( size_t row )
 	{
-		childrenMatrix.getRow(row, rowData );
+		return m_childrenMatrix.crowbegin(row);
 	}
-	void getColumn( size_t col, gak::PODarray<BasicWindow*> *colData )
+	WindowMatrix::const_row_iterator getRowEnd( size_t row )
 	{
-		childrenMatrix.getColumn( col, colData );
+		return m_childrenMatrix.crowend(row);
+	}
+
+	WindowMatrix::const_iterator getColumnBegin( size_t col ) const
+	{
+		return m_childrenMatrix.cbegin( col );
+	}
+	WindowMatrix::const_iterator getColumnEnd( size_t col ) const
+	{
+		return m_childrenMatrix.cend( col );
 	}
 
 };
