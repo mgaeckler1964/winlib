@@ -249,12 +249,13 @@ bool ColorDialog::createWithPalette(
 	const char *paletteName 
 )
 {
-	STRING	keyName = paletteName ? paletteName : "colorEntry";
-	const size_t nameLen = keyName.strlen();
+	NumberBuffer	tmp;
+	STRING			keyName = paletteName ? paletteName : "colorEntry";
+	const size_t	nameLen = keyName.strlen();
 
 	for( int i=0; i<NUM_COLORS; i++ )
 	{
-		keyName += formatNumber(i);
+		keyName += formatNumberFast(&tmp, i);
 		STRING	colorStr = appObject->GetProfile( nullptr, keyName, "16777215" );
 		m_palette[i] = colorStr.getValueN<COLORREF>();
 		keyName.cut(nameLen);
@@ -263,7 +264,7 @@ bool ColorDialog::createWithPalette(
 	{
 		for( int i=0; i<NUM_COLORS; i++ )
 		{
-			keyName += formatNumber(i);
+			keyName += formatNumberFast(&tmp, i);
 			STRING	colorStr = formatNumber(m_palette[i]);
 
 			appObject->WriteProfile( false, nullptr, keyName, colorStr );
