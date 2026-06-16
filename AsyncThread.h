@@ -83,7 +83,7 @@ class AsyncThread : public gak::Thread
 	void			*m_data;
 
 	public:
-	AsyncThread(CallbackWindow *callWin, void *data=NULL, bool autoDelete = true) 
+	AsyncThread(CallbackWindow *callWin, void *data=nullptr, bool autoDelete = true) 
 		: Thread( autoDelete ), m_callwin(callWin), m_data(data)  {}
 
 	virtual void ExecuteTask() = 0;

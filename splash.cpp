@@ -37,11 +37,6 @@
 #define STRICT 1
 #endif
 
-#ifdef _MSC_VER
-#	pragma warning( push )
-#	pragma warning( disable: 4996 )
-#endif
-
 /* --------------------------------------------------------------------- */
 /* ----- includes ------------------------------------------------------ */
 /* --------------------------------------------------------------------- */
@@ -63,6 +58,12 @@
 /* --------------------------------------------------------------------- */
 /* ----- module switches ----------------------------------------------- */
 /* --------------------------------------------------------------------- */
+
+
+#ifdef _MSC_VER
+#	pragma warning( push )
+#	pragma warning( disable: 4996 )
+#endif
 
 #ifdef __BORLANDC__
 #	pragma option -RT-
@@ -140,9 +141,9 @@ static bool RegisterStartupWindow()
 	wc.hInstance     = GetInstanceId();
 	wc.hInstance     = 0;
 	wc.hIcon         = 0;
-	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	wc.hCursor       = LoadCursor(nullptr, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-	wc.lpszMenuName  = NULL;
+	wc.lpszMenuName  = nullptr;
 
 	wc.lpszClassName = s_StartupClass;
 
@@ -211,8 +212,8 @@ void openStartup( const char *title, const char *bitmap )
 
 	// showBusyMouse();
 
-	hRes = FindResource( NULL, bitmap, RT_BITMAP );
-	hBitmap	= LoadResource( NULL, hRes );
+	hRes = FindResource( nullptr, bitmap, RT_BITMAP );
+	hBitmap	= LoadResource( nullptr, hRes );
 	pBitmap = (BITMAPINFO *)LockResource( hBitmap );
 
 	if( pBitmap->bmiHeader.biClrUsed )
@@ -255,8 +256,8 @@ void openStartup( const char *title, const char *bitmap )
 	/* Create the window. */
 	s_hwndStartWin = CreateWindow( s_StartupClass, title,
 								 title && *title ? WS_OVERLAPPED : WS_POPUP, (int)xPos, (int)yPos,
-								 (int)width, (int)height+s_menuHeight, NULL, NULL,
-								 GetInstanceId(), NULL );
+								 (int)width, (int)height+s_menuHeight, nullptr, nullptr,
+								 GetInstanceId(), nullptr );
 
 	s_textBuffer = strdup("Loading program, please wait");
 	ShowWindow( s_hwndStartWin, SW_SHOW );

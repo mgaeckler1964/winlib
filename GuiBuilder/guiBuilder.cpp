@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -154,13 +154,13 @@ CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *, int  )
 			{ FVIRTKEY|FCONTROL,	'L', VIEW_ITEM_LIST_id },
 			{ FVIRTKEY|FCONTROL,	'T', VIEW_ITEM_TREE_id },
 		};
-		theWindow->setAccelerators( accelerators, arraySize( accelerators ) );
+		theWindow->setAccelerators( accelerators, int(arraySize( accelerators )) );
 
 		SuccessCode error = theWindow->create();
 		if( error == scERROR )
 		{
 			delete theWindow;
-			theWindow = NULL;
+			theWindow = nullptr;
 		}
 	}
 	catch( std::exception & )

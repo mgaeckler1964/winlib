@@ -115,7 +115,7 @@ class EditChild : public ManagerChild
 	private:
 	void reloadFile( bool restorePosition )
 	{
-		size_t start, end, line, textLength;
+		size_t start=0, end=0, line=0, textLength=0;
 		if( restorePosition )
 		{
 			line = getControl()->getFirstVisible();
@@ -253,7 +253,7 @@ class EditChild : public ManagerChild
 		bool		wholeWord,
 		bool		matchCase,
 		bool		downSearch,
-		const char	*replaceText=NULL,
+		const char	*replaceText=nullptr,
 		bool		all = false )
 	{
 		return static_cast<EDIT*>(m_control)->searchText(
@@ -323,7 +323,7 @@ class EditChild : public ManagerChild
 	{
 		return static_cast<EDIT*>(m_control)->getSelection();
 	}
-	void getSelection( size_t *startPos, size_t *endPos = NULL ) const
+	void getSelection( size_t *startPos, size_t *endPos = nullptr ) const
 	{
 		static_cast<EDIT*>(m_control)->getSelection( startPos, endPos );
 	}

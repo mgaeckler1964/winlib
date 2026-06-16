@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -87,7 +87,7 @@ struct IdValues
 class MyAboutForm : public ABOUT_form
 {
 	public:
-	MyAboutForm() : ABOUT_form( NULL ) {}
+	MyAboutForm() : ABOUT_form( nullptr ) {}
 
 	virtual winlib::ProcessStatus handleCreate()
 	{
@@ -261,7 +261,7 @@ void GuiBuilderWindow::deleteGuiDoc()
 	if( m_guiDoc )
 	{
 		delete m_guiDoc;
-		m_guiDoc = NULL;
+		m_guiDoc = nullptr;
 	}
 
 	m_dictionarys.clear();
@@ -380,7 +380,7 @@ TreeNode *GuiBuilderWindow::addChildItem( xml::Element *resource, TreeNode *pare
 	childSelect.addEntry( name );
 	m_childResources += resource;
 
-	return m_editorMode != emSTRINGS ? treeSelect.appendItem( parent, name, resource ) : NULL;
+	return m_editorMode != emSTRINGS ? treeSelect.appendItem( parent, name, resource ) : nullptr;
 }
 
 void GuiBuilderWindow::fillMenuItemList( xml::Element *resource, TreeNode *parent )
@@ -426,7 +426,7 @@ void GuiBuilderWindow::refreshChildSelect()
 			childSelect.clearEntries();
 			m_childResources.clear();
 
-			fillChildItemList( resource, NULL );
+			fillChildItemList( resource, nullptr );
 
 			if( !childSelect.isVisible() )
 			{
@@ -458,10 +458,10 @@ void GuiBuilderWindow::loadResource()
 
 				designerForm = new DesignerForm( resource, this );
 
-				createForm( m_docFileName, resource, designerForm, NULL, true );
+				createForm( m_docFileName, resource, designerForm, nullptr, true );
 				designerForm->catchControls();
 
-				fillChildItemList( resource, NULL );
+				fillChildItemList( resource, nullptr );
 
 				if( !childSelect.isVisible() )
 				{
@@ -474,7 +474,7 @@ void GuiBuilderWindow::loadResource()
 			{
 				m_editorMode = emSTRINGS;
 
-				fillChildItemList( resource, NULL );
+				fillChildItemList( resource, nullptr );
 
 				stringListEditor = new StringListEditor();
 				stringListEditor->create( this, m_childResources );
@@ -490,7 +490,7 @@ void GuiBuilderWindow::loadResource()
 			{
 				m_editorMode = emMENU;
 
-				fillMenuItemList( resource, NULL );
+				fillMenuItemList( resource, nullptr );
 
 				if( !treeSelect.isVisible() )
 				{
@@ -1973,9 +1973,9 @@ void GuiBuilderWindow::handleFormEditor( WPARAM wParam )
 					parent->doLayout();
 			}
 
-			if( layoutManager && layoutManager->getIndex() <= index )
+			if( layoutManager && size_t(layoutManager->getIndex()) <= index )
 				index++;
-			if( layoutData && layoutData->getIndex() <= index )
+			if( layoutData && size_t(layoutData->getIndex()) <= index )
 				index++;
 			resource->moveTo( index );
 		}
@@ -2008,9 +2008,9 @@ void GuiBuilderWindow::handleFormEditor( WPARAM wParam )
 						parent->doLayout();
 				}
 
-				if( layoutManager && layoutManager->getIndex() <= index )
+				if( layoutManager && size_t(layoutManager->getIndex()) <= index )
 					index++;
-				if( layoutData && layoutData->getIndex() <= index )
+				if( layoutData && size_t(layoutData->getIndex()) <= index )
 					index++;
 				resource->moveTo( index );
 			}
@@ -2082,18 +2082,18 @@ bool GuiBuilderWindow::handleTreeViewDrag( TreeView *, TreeNode *dragItem, TreeN
 			CallbackWindow *dropChild = dynamic_cast<CallbackWindow *>( 
 				const_cast<BasicWindow *>( getChildByResource( dropResource ) ) 
 			);
-			allow = (dropChild != NULL);
+			allow = (dropChild != nullptr);
 		}
 	}
 
-	SetCursor( LoadCursor( NULL, allow ? IDC_ARROW : IDC_NO ) );
+	SetCursor( LoadCursor( nullptr, allow ? IDC_ARROW : IDC_NO ) );
 
 	return allow;
 }
 
 void GuiBuilderWindow::handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget )
 {
-	SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+	SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 
 	if( !handleTreeViewDrag( dragTreeView, dragItem, dropTarget ) )
 		return;
@@ -2333,7 +2333,7 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 							menu->moveTo(index-1);
 							setChangedFlag();
 							xml::Element	*resource = getSelectedTopResource();
-							fillMenuItemList( resource, NULL );
+							fillMenuItemList( resource, nullptr );
 							treeSelect.selectItem( treeSelect.findItem(menu) );
 						}
 					}
@@ -2358,13 +2358,13 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 					if( menu )
 					{
 						long index = menu->getIndex();
-						long numSiblings = menu->getParent()->getNumObjects()-1;
+						long numSiblings = long(menu->getParent()->getNumObjects())-1;
 						if( index < numSiblings )
 						{
 							menu->moveTo(index+1);
 							setChangedFlag();
 							xml::Element	*resource = getSelectedTopResource();
-							fillMenuItemList( resource, NULL );
+							fillMenuItemList( resource, nullptr );
 							treeSelect.selectItem( treeSelect.findItem(menu) );
 						}
 					}
@@ -2470,7 +2470,7 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 
 		case MenuTestModalPopup_id:
 		{
-			TestModalPoup_form	myForm(NULL);
+			TestModalPoup_form	myForm(nullptr);
 			myForm.create( this );
 			break;
 		}
@@ -2513,7 +2513,7 @@ SuccessCode GuiBuilderWindow::create()
 /*@*/	return scERROR;
 	}
 
-	SuccessCode error = OverlappedWindow::create( NULL, 640, 480 );
+	SuccessCode error = OverlappedWindow::create( nullptr, 640, 480 );
 	if( error == scSUCCESS )
 	{
 		setBackgroundColorByIndex( scDIALOG_FACE );
@@ -2790,7 +2790,7 @@ void GuiBuilderWindow::removeSelected( bool withDesigner )
 	treeSelect.clear();
 	if( !withDesigner )
 	{
-		fillChildItemList( designerForm->getResource(), NULL );
+		fillChildItemList( designerForm->getResource(), nullptr );
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -74,9 +74,9 @@ class TestWindow : public PopupWindow
 		DrawDevice	hDC( this );
 		Size		size = getClientSize();
 
-		unsigned char red = randomNumber( 255 );
-		unsigned char green = randomNumber( 255 );
-		unsigned char blue = randomNumber( 255 );
+		unsigned char red = (unsigned char)randomNumber( 255 );
+		unsigned char green = (unsigned char)randomNumber( 255 );
+		unsigned char blue = (unsigned char)randomNumber( 255 );
 
 		hDC.getBrush().create( red, green, blue );
 		hDC.rectangle( 0, 0, size.width, size.height );
@@ -85,17 +85,17 @@ class TestWindow : public PopupWindow
 	}
 	virtual ProcessStatus handleOk()
 	{
-		OverlappedWindow	*popup = new OverlappedWindow( NULL );
+		OverlappedWindow	*popup = new OverlappedWindow( nullptr );
 		Label *label = new Label( popup );
 		label->setText( "POPUP with WS_POPUP && CAPTION" );
 		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->addStyle( WS_POPUP|WS_CAPTION );
 		popup->move( 0, 0 );
-		popup->create( NULL, 300, 100 );
+		popup->create( nullptr, 300, 100 );
 		label->create( popup, 0, 0, 0, 0 );
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP with WS_POPUP && Parent && DLG" );
 		popup->setText( "Overlapped" );
@@ -105,16 +105,16 @@ class TestWindow : public PopupWindow
 		popup->create( this, 300, 100 );
 		label->create( popup, 0, 0, 0, 0 );
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP" );
 		popup->setText( "Overlapped" );
 		popup->removeStyle( WS_OVERLAPPEDWINDOW );
 		popup->move( 0, 200 );
-		popup->create( NULL, 300, 100 );
+		popup->create( nullptr, 300, 100 );
 		label->create( popup, 0, 0, 0, 0 );
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP with parent" );
 		popup->setText( "Overlapped" );
@@ -123,7 +123,7 @@ class TestWindow : public PopupWindow
 		popup->create( this, 300, 100 );
 		label->create( popup, 0, 0, 0, 0 );
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP with parent thick" );
 		popup->setText( "Overlapped" );
@@ -133,7 +133,7 @@ class TestWindow : public PopupWindow
 		popup->create( this, 300, 100 );
 		label->create( popup, 0, 0, 0, 0 );
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP with parent dlg" );
 		popup->setText( "Overlapped" );
@@ -144,7 +144,7 @@ class TestWindow : public PopupWindow
 		label->create( popup, 0, 0, 0, 0 );
 
 
-		popup = new OverlappedWindow( NULL );
+		popup = new OverlappedWindow( nullptr );
 		label = new Label( popup );
 		label->setText( "POPUP with parent dlg&thick" );
 
@@ -175,7 +175,7 @@ class TestWindow : public PopupWindow
 		addStyle( WS_CLIPCHILDREN );
 
 		setText( "Test" );
-		SuccessCode error = PopupWindow::create( NULL, 300, 200 );
+		SuccessCode error = PopupWindow::create( nullptr, 300, 200 );
 		if( error == scSUCCESS)
 		{
 			myButton.setId( IDOK );
@@ -216,7 +216,7 @@ class TestWindow : public PopupWindow
 
 class TestApp : Application
 {
-	virtual CallbackWindow  *createMainWindow( const char *cmdLine, int nCmdShow )
+	virtual CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
 	{
 		TestWindow	*newWindow = new TestWindow;
 		newWindow->create();
@@ -265,8 +265,8 @@ int main()
 			buffer[i].printerName,
 			buffer[i].portName,
 			DC_MAXEXTENT,
-			NULL,
-			NULL
+			nullptr,
+			nullptr
 		);
 
 		printf(
@@ -280,8 +280,8 @@ int main()
 			buffer[i].printerName,
 			buffer[i].portName,
 			DC_ENUMRESOLUTIONS,
-			NULL,
-			NULL
+			nullptr,
+			nullptr
 		);
 		if( numRes > 0 )
 		{
@@ -291,7 +291,7 @@ int main()
 				buffer[i].portName,
 				DC_ENUMRESOLUTIONS,
 				(LPTSTR)resolutions,
-				NULL
+				nullptr
 			);
 			for( j=0;j<numRes; j++ )
 			{

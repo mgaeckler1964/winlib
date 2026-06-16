@@ -168,7 +168,7 @@ static long writeRegistration(
 
 static long deleteRegistration( bool publicVal, const char *company, const char *app="", const char *section="", const char *var="" )
 {
-	long	openResult;
+	long	openResult=0;
 	REGSAM	perm[2];
 	size_t	permCount;
 	bool	deleted = false;
@@ -260,7 +260,7 @@ static RESULTTYPE readRegistration(
 	REGSAM		perm;
 	Registry	software;
 	bool		valueFound = false;
-	RESULTTYPE	result;
+	RESULTTYPE	result = RESULTTYPE();
 	STRING		valueBuff;
 
 	if( !publicVal )

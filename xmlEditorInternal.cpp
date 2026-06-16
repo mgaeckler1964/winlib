@@ -503,7 +503,7 @@ int XML_VIEWER_BOX::cssSizeToPixel(
 
 int XML_VIEWER_BOX::findTop( int y, int boxWidth, int innerLeft, int innerRight )
 {
-	int		leftBorder, rightBorder, nextY;
+	int		leftBorder, rightBorder, nextY=0;
 
 	size_t	leftRectIdx = 0;
 	size_t	rightRectIdx = 0;
@@ -2080,9 +2080,9 @@ int XML_TABLE_ROW_VIEWER_BOX::calcSize(
 {
 
 	doEnterFunctionEx(gakLogging::llDetail, "XML_TABLE_ROW_VIEWER_BOX::calcSize");
-	XML_VIEWER_BOX	*cellBox;
+	XML_VIEWER_BOX	*cellBox = nullptr;
 	RectBorder		cellRect;
-	int				cellHeight, columnWidth, innerWidth;
+	int				cellHeight, columnWidth, innerWidth = 0;
 	int				maxHeight = 0;
 
 	m_docPosition.left = left;
@@ -2331,7 +2331,7 @@ int XML_VIEWER_BOX::calcSize(
 	bool	autoWrap = true;
 	bool	preserveBreaks = false;
 	bool	preserveBlanks = false;
-	size_t	newLinePos;
+	size_t	newLinePos = STRING::no_index;
 
 	css::TextAlign	text_align = style->getTextAlign();
 
@@ -2420,7 +2420,7 @@ int XML_VIEWER_BOX::calcSize(
 					if( preserveBreaks )
 					{
 						newLinePos = text.searchChar( '\n', wrapPos );
-						if( newLinePos != -1 )
+						if( newLinePos != STRING::no_index )
 						{
 							chunkLen = newLinePos - wrapPos;
 						}
@@ -2484,7 +2484,7 @@ int XML_VIEWER_BOX::calcSize(
 						newChunk.len = chunkLen;
 						currentLine.m_lineWidth += size.width;
 
-						if( !preserveBreaks || newLinePos == -1 )
+						if( !preserveBreaks || newLinePos == STRING::no_index )
 						{
 							i++;
 							wrapPos = 0;
@@ -2851,7 +2851,7 @@ void XML_VIEWER_BOX::drawLine(
 	if( clearScreen )
 	{
 		css::Styles		*cssStyle;
-		css::Color		color;
+		css::Color		color={255,255,0255};
 		bool			colorFound = false;
 		xml::Element	*theElement = m_theElement;
 		while( theElement )
@@ -2862,10 +2862,7 @@ void XML_VIEWER_BOX::drawLine(
 				break;
 			theElement = theElement->getParent();
 		}
-		if( colorFound )
-			context.getBrush().create( color.red, color.green, color.blue );
-		else
-			context.getBrush().create( 255, 255, 255 );
+		context.getBrush().create( color.red, color.green, color.blue );
 		context.getPen().selectPen( Pen::spNull );
 		context.rectangle(
 			theLine.m_position.x-horizOffset,
@@ -3206,7 +3203,7 @@ void XML_VIEWER_BOX::findBoxes( const Device &context, xml::Element *theElement 
 	xml::XmlText	*theText = dynamic_cast<xml::XmlText *>(theElement);
 	if( theText )
 	{
-		bool			autoWrap, preserveBlanks, preserveBreaks;
+		bool			autoWrap=false, preserveBlanks=false, preserveBreaks=false;
 		STRING			value = theText->getValue( xml::PLAIN_MODE );
 		css::WhiteSpace	whiteSpace = m_theElement->getCssStyle()->getWhiteSpace();
 

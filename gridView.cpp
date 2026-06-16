@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -124,7 +124,7 @@ void GridViewer::registerClass()
 		fillDefaultClass( &wc );
 //			wc.style			|= CS_DBLCLKS;
 		wc.lpszClassName	 = className;
-		wc.hCursor			 = NULL;
+		wc.hCursor			 = nullptr;
 
 		registered = ChildWindow::registerClass( &wc );
 	}
@@ -788,16 +788,16 @@ ProcessStatus GridViewer::handleMouseMove( WPARAM /*modifier*/, const Point &pos
 	}
 	else if( !(style & gvCOL_SIZABLE) )
 	{
-		SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+		SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 	}
 
 	if( newState != m_mouseState )
 	{
 		m_mouseState = newState;
 		if( m_mouseState == msSTART_COL_SIZER || m_mouseState == msDO_COL_SIZER )
-			SetCursor( LoadCursor( NULL, IDC_SIZEWE ) );
+			SetCursor( LoadCursor( nullptr, IDC_SIZEWE ) );
 		else
-			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+			SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 	}
 
 	return psPROCESSED;
@@ -819,8 +819,8 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modi
 		size_t lastCol = m_editCol;
 		size_t lastRow = m_editRow;
 
-		m_editCell = NULL;
-		int		caretLeft;
+		m_editCell = nullptr;
+		int		caretLeft=0;
 		size_t	col = 0;
 		for(
 			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();

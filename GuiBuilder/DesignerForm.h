@@ -174,7 +174,7 @@ class DesignerForm : public OverlappedWindow
 			&& position.y < childRect.top + s_handleSize )
 			{
 				// it's the upper left corner
-				SetCursor( LoadCursor( NULL, IDC_SIZENWSE ) );
+				SetCursor( LoadCursor( nullptr, IDC_SIZENWSE ) );
 				m_sizeMode = smUPPERLEFT;
 			}
 			else if( position.x <= childRect.right 
@@ -183,7 +183,7 @@ class DesignerForm : public OverlappedWindow
 			&& position.y < childRect.top + s_handleSize )
 			{
 				// it's the upper right corner
-				SetCursor( LoadCursor( NULL, IDC_SIZENESW ) );
+				SetCursor( LoadCursor( nullptr, IDC_SIZENESW ) );
 				m_sizeMode = smUPPERRIGHT;
 			}
 			else if( position.x >= childRect.left 
@@ -192,7 +192,7 @@ class DesignerForm : public OverlappedWindow
 			&& position.y > childRect.bottom - s_handleSize )
 			{
 				// it's the lower left corner
-				SetCursor( LoadCursor( NULL, IDC_SIZENESW ) );
+				SetCursor( LoadCursor( nullptr, IDC_SIZENESW ) );
 				m_sizeMode = smLOWERLEFT;
 			}
 			else if( position.x <= childRect.right 
@@ -201,12 +201,12 @@ class DesignerForm : public OverlappedWindow
 			&& position.y > childRect.bottom - s_handleSize )
 			{
 				// it's the lower right corner
-				SetCursor( LoadCursor( NULL, IDC_SIZENWSE ) );
+				SetCursor( LoadCursor( nullptr, IDC_SIZENWSE ) );
 				m_sizeMode = smLOWERRIGHT;
 			}
 			else
 			{
-				SetCursor( LoadCursor( NULL, IDC_HAND ) );
+				SetCursor( LoadCursor( nullptr, IDC_HAND ) );
 				if( m_sizeMode != smNONE )
 				{
 					m_sizeMode = smNONE;
@@ -215,7 +215,7 @@ class DesignerForm : public OverlappedWindow
 		}
 		else
 		{
-			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+			SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 			if( m_sizeMode != smNONE )
 			{
 				m_sizeMode = smNONE;
@@ -225,13 +225,13 @@ class DesignerForm : public OverlappedWindow
 
 	void resetClickStatus()
 	{
-		m_lastChildClick = NULL;
+		m_lastChildClick = nullptr;
 		m_tableMoved = m_startDraging = false;
 		m_relativePositions.clear();
 		m_oldPositions.clear();
 	}
 	public:
-	DesignerForm( gak::xml::Element *resource, GuiBuilderWindow	*theGuiBuilder ) : OverlappedWindow( NULL ) 
+	DesignerForm( gak::xml::Element *resource, GuiBuilderWindow	*theGuiBuilder ) : OverlappedWindow( nullptr ) 
 	{
 		m_theGuiBuilder = theGuiBuilder;
 		this->setResource( resource );
@@ -701,7 +701,7 @@ class DesignerForm : public OverlappedWindow
 					{
 						resource->removeObject( layoutManagerResource );
 						delete layoutManagerResource;
-						layoutManagerResource = NULL;
+						layoutManagerResource = nullptr;
 					}
 					if( layoutManagerResource )
 					{
@@ -838,7 +838,9 @@ class DesignerForm : public OverlappedWindow
 			if( element )
 			{
 				long index = element->getIndex();
-				long numSiblings = element->getParent()->getNumObjects()-1;
+				assert( index >= 0 );
+				long numSiblings = long(element->getParent()->getNumObjects())-1;
+				assert( numSiblings >= 0 );
 				if( index < numSiblings )
 				{
 					element->moveTo(index+1);
@@ -907,7 +909,7 @@ class DesignerForm : public OverlappedWindow
 		public:
 		static void perform( BasicWindow *child )
 		{
-			child->setLayoutData( NULL );
+			child->setLayoutData( nullptr );
 			gak::xml::Element	*resource = child->getResource();
 			if( resource )
 			{
@@ -959,7 +961,7 @@ class DesignerForm : public OverlappedWindow
 
 	BasicWindow *getSelected() const
 	{
-		return m_selected.size() ? m_selected[0] : NULL;
+		return m_selected.size() ? m_selected[0] : nullptr;
 	}
 };
 

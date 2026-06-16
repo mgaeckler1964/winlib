@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -97,11 +97,11 @@ unsigned int SyncExec( const char *command, unsigned int )
 	memset( &startInfo, 0, sizeof( startInfo ) );
 	startInfo.cb = sizeof( startInfo );
 	
-	if( CreateProcess(	NULL, (char *)command, NULL, NULL, FALSE, CREATE_SEPARATE_WOW_VDM,
-						NULL, NULL, &startInfo, &procInfo ) )
+	if( CreateProcess(	nullptr, (char *)command, nullptr, nullptr, FALSE, CREATE_SEPARATE_WOW_VDM,
+						nullptr, nullptr, &startInfo, &procInfo ) )
 	{
 		procHandle = OpenProcess( SYNCHRONIZE, FALSE, procInfo.dwProcessId );
-		while( WaitForSingleObject( procHandle, -1 ) == WAIT_TIMEOUT )
+		while( WaitForSingleObject( procHandle, INFINITE ) == WAIT_TIMEOUT )
 			;
 	}
 	return 0;
@@ -116,11 +116,11 @@ unsigned int SyncExec( const char *command, const char *arguments, unsigned int 
 	memset( &startInfo, 0, sizeof( startInfo ) );
 	startInfo.cb = sizeof( startInfo );
 	
-	if( CreateProcess(	command, (char *)arguments, NULL, NULL, FALSE, CREATE_SEPARATE_WOW_VDM,
-						NULL, NULL, &startInfo, &procInfo ) )
+	if( CreateProcess(	command, (char *)arguments, nullptr, nullptr, FALSE, CREATE_SEPARATE_WOW_VDM,
+						nullptr, nullptr, &startInfo, &procInfo ) )
 	{
 		procHandle = OpenProcess( SYNCHRONIZE, FALSE, procInfo.dwProcessId );
-		while( WaitForSingleObject( procHandle, -1 ) == WAIT_TIMEOUT )
+		while( WaitForSingleObject( procHandle, INFINITE ) == WAIT_TIMEOUT )
 			;
 	}
 	return 0;
