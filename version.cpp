@@ -116,7 +116,6 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 	doEnterFunction("ProgramVersionInfo::ProgramVersionInfo");
 	DWORD	dummy1, versionInfoSize;
 	UINT	dummy2;
-	char	tmpBuffer[128];
 
 	versionInfoSize = GetFileVersionInfoSize(
 		appFileName, &dummy1
@@ -151,8 +150,8 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 				WORD wCodePage;
 			} *lpTranslate;
 
-			const char *cpData;
-
+			const char		*cpData;
+			gak::STRING		valueName;
 
 			if( VerQueryValue(
 				data,
@@ -160,15 +159,14 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 				&dummy2
 			) )
 			{
-				sprintf(
-					tmpBuffer,
-					"\\StringFileInfo\\%04x%04x\\LegalCopyright",
-					lpTranslate->wLanguage,
-					lpTranslate->wCodePage
-				);
+				gak::STRING		valueNameStart =  gak::STRING("\\StringFileInfo\\") 
+						.add(gak::formatBinary( lpTranslate->wLanguage, 16, 4, '0' ))
+						.add(gak::formatBinary( lpTranslate->wCodePage, 16, 4, '0' ));
+
+				valueName = valueNameStart + "\\LegalCopyright";
 				if( VerQueryValue(
 					data,
-					tmpBuffer, (void**)&cpData,
+					valueName, (void**)&cpData,
 					&dummy2
 				) )
 				{
@@ -176,45 +174,30 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 					doLogValue(m_legalCopyRight);
 				}
 
-				sprintf(
-					tmpBuffer,
-					"\\StringFileInfo\\%04x%04x\\FileDescription",
-					lpTranslate->wLanguage,
-					lpTranslate->wCodePage
-				);
+				valueName = valueNameStart + "\\FileDescription";
 				if( VerQueryValue(
 					data,
-					tmpBuffer, (void**)&cpData,
+					valueName, (void**)&cpData,
 					&dummy2
 				) )
 				{
 					m_fileDescription = cpData;
 					doLogValue(m_fileDescription);
 				}
-				sprintf(
-					tmpBuffer,
-					"\\StringFileInfo\\%04x%04x\\CompanyName",
-					lpTranslate->wLanguage,
-					lpTranslate->wCodePage
-				);
+				valueName = valueNameStart + "\\CompanyName";
 				if( VerQueryValue(
 					data,
-					tmpBuffer, (void**)&cpData,
+					valueName, (void**)&cpData,
 					&dummy2
 				) )
 				{
 					m_companyName = cpData;
 					doLogValue(m_companyName);
 				}
-				sprintf(
-					tmpBuffer,
-					"\\StringFileInfo\\%04x%04x\\ProductName",
-					lpTranslate->wLanguage,
-					lpTranslate->wCodePage
-				);
+				valueName = valueNameStart + "\\ProductName";
 				if( VerQueryValue(
 					data,
-					tmpBuffer, (void**)&cpData,
+					valueName, (void**)&cpData,
 					&dummy2
 				) )
 				{

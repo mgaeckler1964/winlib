@@ -45,6 +45,7 @@
 // --------------------------------------------------------------------- //
 
 #include <gak/xml.h>
+#include <gak/fmtNumber.h>
 
 #include <winlib/xmlEditorChild.h>
 #include <winlib/device.h>
@@ -3033,31 +3034,34 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 			}
 			else
 			{
-				Size	size;
-				char	tmpBuffer[16];
-				int		listNumber = m_itemNumber+1;
+				Size			size;
+				NumberBuffer	tmpBuffer;
+				int				listNumber = m_itemNumber+1;
 
 				createFont( context, m_theElement, true );
 				if( m_listStyle == css::LIST_ZERO_DECIMAL )
 				{
-					sprintf( tmpBuffer, "%02d. ", listNumber%100 );
+					formatNumberFast( &tmpBuffer, listNumber%100, 2, '0' );
 				}
 				else if( m_listStyle == css::LIST_UPPER )
 				{
-					sprintf( tmpBuffer, "%c. ", 'A'-1 + listNumber%26 );
+					tmpBuffer.addDigit( 'A'-1 + listNumber%26 ) ;
 				}
 				else if( m_listStyle == css::LIST_LOWER )
 				{
-					sprintf( tmpBuffer, "%c. ", 'a'-1 + listNumber%26 );
+					tmpBuffer.addDigit( 'a'-1 + listNumber%26 ) ;
 				}
 				else
 				{
-					sprintf( tmpBuffer, "%d. ", listNumber%100 );
+					formatNumberFast( &tmpBuffer, listNumber%100 );
 				}
-				context.getTextExtent( tmpBuffer, strlen(tmpBuffer), &size );
+				tmpBuffer.addDigit( '.' );
+				tmpBuffer.addDigit( ' ' );
+				const char *cp = tmpBuffer.c_str();
+				context.getTextExtent( cp, tmpBuffer.size(), &size );
 				context.moveTo( left-size.width-horizOffset, top-vertOffset );
 				context.clrBackgroundColor();
-				context.printText( tmpBuffer );
+				context.printText( cp );
 			}
 		}
 		for( size_t i=0; i<m_theContent.size(); i++ )
