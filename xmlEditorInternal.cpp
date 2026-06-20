@@ -455,7 +455,7 @@ int XML_VIEWER_BOX::cssSizeToPixel(
 	xml::Element	*fontSource
 )
 {
-	double cssValue = atof( cssString );
+	double cssValue = cssString.getValueN<double>();
 
 	if( cssString.endsWith( "pt" ) )
 		return context.pointToPixel( cssValue );
