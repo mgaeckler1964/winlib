@@ -192,29 +192,24 @@ class XML_LINE_CHUNK
 		m_text = nullptr;
 	}
 #ifdef _DEBUG
-	void dump( FILE *fp, unsigned level )
+	void dump( std::ostream &out, unsigned level )
 	{
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fprintf(
-			fp,
-			"Pos: %d,%d width: %d\n",
-			m_position.x, m_position.y,
-			width
-		);
+			out << "    ";
+		out << "Pos: " <<m_position.x << ',' << m_position.y << " width: " << width << '\n';
 
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
+			out << "    ";
 		if( m_theElement )
-			fprintf( fp, "CHUNK Element %s", (const char *)m_theElement->getParent()->getTag() );
+			out << "CHUNK Element " << m_theElement->getParent()->getTag();
 		else
-			fputs( "No Element", fp );
-		fprintf( fp, "%p\n", getInlineBox() );
+			out << "No Element";
+		out <<  reinterpret_cast<void*>(getInlineBox()) << '\n';
 
 		if( !m_theElement && !getInlineBox() )
-			fputs( ">>> WARN: EMPTY CHUNK\n", fp );
+			out <<  ">>> WARN: EMPTY CHUNK\n";
 		else if( m_theElement && getInlineBox() )
-			fputs( ">>> WARN: OVERLOADED CHUNK\n", fp );
+			out <<  ">>> WARN: OVERLOADED CHUNK\n";
 	}
 #endif
 };
@@ -248,23 +243,19 @@ struct XML_LINE
 		return m_theLine[chunk];
 	}
 #ifdef _DEBUG
-	void dump( FILE *fp, unsigned level )
+	void dump( std::ostream &out, unsigned level )
 	{
 		int newLevel = level+1;
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fprintf(
-			fp,
-			"Pos: %d,%d width: %d height: %d\n",
-			m_position.x, m_position.y,
-			m_lineWidth, m_lineHeight
-		);
+			out << "    ";
+		out << "Pos: " << m_position.x << ',' << m_position.y << " width: " << m_lineWidth << " height: " << m_lineHeight << '\n';
+
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fprintf( fp, "Num Chunks: %d\n", int(m_theLine.size()) );
+			out << "    ";
+		out << "Num Chunks: " << m_theLine.size() << '\n';
 
 		for( size_t i=0; i<m_theLine.size(); i++ )
-			m_theLine[i].dump( fp, newLevel );
+			m_theLine[i].dump( out, newLevel );
 
 	}
 #endif
@@ -685,38 +676,38 @@ class XML_VIEWER_BOX : public gak::SharedObject
 	}
 
 #ifdef _DEBUG
-	void dump( FILE *fp, unsigned level )
+	void dump( std::ostream &out, unsigned level )
 	{
 		unsigned newLevel = level+1;
 
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
+			out << "    ";
 		if( m_theElement )
-			fprintf( fp, "%s\n", (const char *)m_theElement->getTag() );
+			out << m_theElement->getTag() << '\n';
 		else
-			fputs( "<NO ELEMENT>\n", fp );
+			out << "<NO ELEMENT>\n";
 
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fprintf( fp, "Num Lines: %d\n", (int)m_theContent.size() );
+			out << "    ";
+		out << "Num Lines: " << m_theContent.size() << '\n';
 		for( size_t i=0; i<m_theContent.size(); i++ )
-			m_theContent[i].dump( fp, newLevel );
+			m_theContent[i].dump( out, newLevel );
 
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fputs( "Subboxes:\n", fp );
+			out <<  "    ";
+		out << "Subboxes:\n";
 		for( size_t i=0; i<m_subBoxes.size(); i++ )
-			m_subBoxes[i]->dump( fp, newLevel );
+			m_subBoxes[i]->dump( out, newLevel );
 
 		for( unsigned i=0; i<level; i++ )
-			fputs( "    ", fp );
-		fputs( "Childboxes:\n", fp );
+			out << "    ";
+		out << "Childboxes:\n";
 		for( size_t i=0; i<m_childElements.size(); i++ )
 		{
 			XML_VIEWER_ITEM	&theItem = m_childElements[i];
 			XML_VIEWER_BOX	*childBox = theItem.getViewerBox();
 			if( childBox )
-				childBox->dump( fp, newLevel );
+				childBox->dump( out, newLevel );
 		}
 	}
 #endif
@@ -914,9 +905,9 @@ class XMLeditorChild : public ChildWindow
 	{
 		STRING	tmp = getenv( "TEMP" );
 		tmp += "\\temp.txt";
-		FILE *fp = fopen( tmp, "w" );
-		m_theViewerBox->dump( fp, 0 );
-		fclose( fp );
+		
+		std::ofstream	out( tmp);
+		m_theViewerBox->dump( out, 0 );
 	}
 #endif
 	void enableCursor()
