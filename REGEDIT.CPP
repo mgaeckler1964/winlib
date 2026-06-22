@@ -60,7 +60,7 @@ void RegistryEditor::create( BasicWindow *parent, const char *keyValue, bool use
 
 	char *keyName;
 	const char *valueName;
-	Buffer<char> tmpKey(strdup( keyValue ));
+	Buffer<char> tmpKey(keyValue, '0');
 	char *slashPos = strrchr( tmpKey, '\\' );
 
 	if( !slashPos )

@@ -197,13 +197,13 @@ LRESULT _export pascal StartupWindowProc( HWND window, UINT msg, WPARAM wParam, 
 
 void openStartup( const char *title, const char *bitmap )
 {
-	HRSRC		hRes;
-	HGLOBAL		hBitmap;
-	BITMAPINFO	*pBitmap;
-	long		i, numColors;
-	gak::Buffer<LOGPALETTE>	_lPal(nullptr);
-	HPALETTE	hPal = 0;
-	void		*bitmapData = 0;
+	HRSRC					hRes;
+	HGLOBAL					hBitmap;
+	BITMAPINFO				*pBitmap;
+	long					i, numColors;
+	gak::Buffer<LOGPALETTE>	lPal;
+	HPALETTE				hPal = 0;
+	void					*bitmapData = 0;
 
 	HDC			hdc;
 	HBITMAP		hbmpMyBitmap;
@@ -223,17 +223,17 @@ void openStartup( const char *title, const char *bitmap )
 
 	if( numColors && numColors <= 256 )
 	{
-		_lPal = malloc( sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ) );
-		_lPal->palVersion = 0x300;
-		_lPal->palNumEntries = (WORD)numColors;
+		lPal.resize( sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ) );
+		lPal->palVersion = 0x300;
+		lPal->palNumEntries = (WORD)numColors;
 		for( i=0; i<numColors; i++ )
 		{
-			_lPal->palPalEntry[i].peRed = pBitmap->bmiColors[i].rgbRed;
-			_lPal->palPalEntry[i].peGreen = pBitmap->bmiColors[i].rgbGreen;
-			_lPal->palPalEntry[i].peBlue = pBitmap->bmiColors[i].rgbBlue;
-			_lPal->palPalEntry[i].peFlags = 0;
+			lPal->palPalEntry[i].peRed = pBitmap->bmiColors[i].rgbRed;
+			lPal->palPalEntry[i].peGreen = pBitmap->bmiColors[i].rgbGreen;
+			lPal->palPalEntry[i].peBlue = pBitmap->bmiColors[i].rgbBlue;
+			lPal->palPalEntry[i].peFlags = 0;
 		}
-		hPal = CreatePalette( _lPal );
+		hPal = CreatePalette( lPal );
 		bitmapData = (void*)&(pBitmap->bmiColors[i]);
 	}
 
