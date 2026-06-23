@@ -66,26 +66,31 @@ namespace winlib
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void idleLoop()
+extern "C" 
 {
-	MSG		msg;
 
-	while( PeekMessage( &msg, 0, 0, 0, PM_REMOVE ) )
+	void idleLoop()
 	{
-		TranslateMessage( &msg );
-		DispatchMessage( &msg );
+		MSG		msg;
+
+		while( PeekMessage( &msg, 0, 0, 0, PM_REMOVE ) )
+		{
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
+		}
 	}
-}
 
-void winSleep( unsigned miliSec )
-{
-	clock_t		endTime;
-
-	endTime = clock() + (clock_t)((double)miliSec/1000.0 * (double)CLK_TCK);
-	do
+	void winSleep( unsigned miliSec )
 	{
-		idleLoop();
-	} while( clock() < endTime );
+		clock_t		endTime;
+
+		endTime = clock() + (clock_t)((double)miliSec/1000.0 * (double)CLK_TCK);
+		do
+		{
+			idleLoop();
+		} while( clock() < endTime );
+	}
+
 }
 
 unsigned int SyncExec( const char *command, unsigned int )

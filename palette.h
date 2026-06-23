@@ -58,6 +58,7 @@
 
 #include <WINLIB/gdi.h>
 #include <gak/stdlib.h>
+#include <gak/CopyProtection.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -93,7 +94,7 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class Palette : public GdiObject<HPALETTE>
+class Palette : public GdiObject<HPALETTE>, gak::CopyProtection
 {
 	gak::Buffer<LOGPALETTE>	m_colors;
 
@@ -107,10 +108,6 @@ class Palette : public GdiObject<HPALETTE>
 	{
 		return getHandle();
 	}
-
-	// don't copy
-	Palette( const Palette &src ) ;
-	const Palette & operator = ( const Palette &src ) ;
 
 	public:
 	void clearPalette()

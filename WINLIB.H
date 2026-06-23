@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -121,8 +121,15 @@ namespace winlib
 // ----- prototypes ---------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void idleLoop();
-void winSleep( unsigned miliSec );
+#ifdef __cplusplus
+extern "C" {
+#endif
+	// YES, there is still C-code in the image lib that use these functions
+	void idleLoop();
+	void winSleep( unsigned miliSec );
+#ifdef __cplusplus
+}
+#endif
 unsigned int SyncExec( const char *command, unsigned int show );
 unsigned int SyncExec( const char *command, const char *arguments, unsigned int show );
 
