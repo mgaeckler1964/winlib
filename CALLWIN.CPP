@@ -1066,7 +1066,7 @@ void CallbackWindow::handleAsyncTaskEnd( void * /*data*/ )
 {
 }
 
-ProcessStatus CallbackWindow::handleData(const ForeignWindow &, int, const void *, size_t )
+ProcessStatus CallbackWindow::handleData(const ForeignWindow &, gak::uint64, const void *, size_t )
 {
 	return psDO_DEFAULT;
 }

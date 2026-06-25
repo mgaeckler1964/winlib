@@ -384,7 +384,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	virtual void handleAsyncTaskEnd( void *data );
 
 	// WM_COPYDATA
-	virtual	ProcessStatus handleData(const ForeignWindow &src, int dataType, const void *data, size_t size);
+	virtual	ProcessStatus handleData(const ForeignWindow &src, gak::uint64 dataType, const void *data, size_t size);
 
 	// all other messages
 	virtual ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
