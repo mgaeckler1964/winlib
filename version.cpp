@@ -123,7 +123,7 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 	doLogValue(appFileName);
 	if( versionInfoSize )
 	{
-		void *data = malloc( versionInfoSize );
+		gak::Buffer<char> data( versionInfoSize );
 		if( data )
 		{
 			VS_FIXEDFILEINFO	*fixedFileInfo;
@@ -205,7 +205,6 @@ ProgramVersionInfo::ProgramVersionInfo( const gak::STRING &appFileName )
 					doLogValue(m_productName);
 				}
 			}
-			free( data );
 		}
 	}
 }

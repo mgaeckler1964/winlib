@@ -382,12 +382,12 @@ STRING ComboBox::getSelectedText() const
 	if( selectedIndex >= 0 )
 	{
 		int textLen = getSelectedTextLen( selectedIndex );
-		char *cp = (char *)malloc( textLen +2 );
+		text.setMinSize(textLen+2);
+		const char *cp = text.c_str();
 		if( cp )
 		{
-			message( CB_GETLBTEXT, selectedIndex, (long)cp );
-			text = cp;
-			free( cp );
+			message( CB_GETLBTEXT, selectedIndex, reinterpret_cast<long>(cp) );
+			text.setActSize(textLen);
 		}
 	}
 

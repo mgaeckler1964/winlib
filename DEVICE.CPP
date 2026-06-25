@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -240,30 +240,28 @@ void PrintDevice::printText( const char *document, const char *text ) const
 
 int	GetListOfPrinters( PRINTER_ARRAY &list )
 {
-	unsigned long	requiredSize, numPrinters, i;
-	PRINTER_INFO_2	*buffer = NULL;
-	PRINTER			thePrinter;
+	unsigned long					requiredSize, numPrinters;
+	gak::Buffer<PRINTER_INFO_2>		buffer;
 
 	EnumPrinters(
-		PRINTER_ENUM_LOCAL, "", 2, (LPBYTE)buffer, 0, &requiredSize, &numPrinters
+		PRINTER_ENUM_LOCAL, "", 2, LPBYTE(buffer.get()), 0, &requiredSize, &numPrinters
 	);
 
-	buffer = (PRINTER_INFO_2 *)malloc( requiredSize );
+	buffer.resize( requiredSize );
 
 	EnumPrinters(
-		PRINTER_ENUM_LOCAL, "", 2, (LPBYTE)buffer,
+		PRINTER_ENUM_LOCAL, "", 2, LPBYTE(buffer.get()),
 		requiredSize, &requiredSize, &numPrinters
 	);
 
-	for( i=0; i<numPrinters; i++ )
+	for( size_t i=0; i<numPrinters; i++ )
 	{
+		PRINTER	&thePrinter = list.createElement();
 		thePrinter.printerName = buffer[i].pPrinterName;
 		thePrinter.portName = buffer[i].pPortName;
-
-		list[i] = thePrinter;
 	}
 
-	return (int)numPrinters;
+	return int(numPrinters);
 }
 
 }	// namespace winlib
