@@ -251,9 +251,9 @@ static TestApp app;
 
 int main()
 {
-	PRINTER_ARRAY	buffer;
-	long			*resolutions;
-	long			numRes;
+	Printers	buffer;
+	long		*resolutions;
+	long		numRes;
 
 	int	numPrinters = GetListOfPrinters( buffer );
 

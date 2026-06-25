@@ -688,14 +688,14 @@ class MetaDevice : public Device
 	}
 };
 
-struct PRINTER
+struct Printer
 {
 	STRING	printerName;
 	STRING	portName;
 };
 
-typedef gak::Array<PRINTER>	PRINTER_ARRAY;
-int	GetListOfPrinters( PRINTER_ARRAY &list );
+typedef gak::Array<Printer>	Printers;
+int	GetListOfPrinters( Printers &list );
 
 
 // --------------------------------------------------------------------- //

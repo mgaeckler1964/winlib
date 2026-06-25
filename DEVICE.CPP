@@ -238,7 +238,7 @@ void PrintDevice::printText( const char *document, const char *text ) const
 	endDocument();
 }
 
-int	GetListOfPrinters( PRINTER_ARRAY &list )
+int	GetListOfPrinters( Printers &list )
 {
 	unsigned long					requiredSize, numPrinters;
 	gak::Buffer<PRINTER_INFO_2>		buffer;
@@ -256,7 +256,7 @@ int	GetListOfPrinters( PRINTER_ARRAY &list )
 
 	for( size_t i=0; i<numPrinters; i++ )
 	{
-		PRINTER	&thePrinter = list.createElement();
+		Printer	&thePrinter = list.createElement();
 		thePrinter.printerName = buffer[i].pPrinterName;
 		thePrinter.portName = buffer[i].pPortName;
 	}
