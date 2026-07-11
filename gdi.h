@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -151,11 +151,15 @@ class GdiObject
 {
 	GdiObjectHandle<GdiType>	*m_handle;
 	HDC							m_deviceContext;
+	HGDIOBJ						m_old;
 
 	void remove()
 	{
 		if( m_handle && !--m_handle->m_usageCounter )
+		{
+			disconnect();
 			delete m_handle;
+		}
 	}
 	void setHandle( GdiObjectHandle<GdiType> *newHandle )
 	{
@@ -164,12 +168,12 @@ class GdiObject
 	}
 
 	protected:
-	GdiObject( HDC newDevice = nullptr )
+	GdiObject( HDC newDevice = nullptr ) : m_old(0)
 	{
 		m_handle = nullptr;
 		m_deviceContext = newDevice;
 	}
-	GdiObject( GdiType newHandle )
+	GdiObject( GdiType newHandle ) : m_old(0)
 	{
 		m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr;
 		m_deviceContext = nullptr;
@@ -235,10 +239,15 @@ class GdiObject
 		m_deviceContext = hDC;
 		GdiType handle = getHandle();
 		if( handle )
-			SelectObject( m_deviceContext, handle );
+			 m_old = SelectObject( m_deviceContext, handle );
 	}
 	void disconnect()
 	{
+		if( m_old && m_deviceContext )
+		{
+			SelectObject( m_deviceContext, m_old );
+			m_old = 0;
+		}
 		m_deviceContext = nullptr;
 	}
 	HDC getConnection() const

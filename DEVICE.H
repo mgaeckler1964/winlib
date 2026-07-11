@@ -386,6 +386,10 @@ class Device
 	{
 		Rectangle( m_device, rect.left, rect.top, rect.right, rect.bottom );
 	}
+	void rectangle( const RectBorder &rect, Brush &brush ) const
+	{
+		FillRect( m_device, &rect, brush );
+	}
 
 	void textOut( int x, int y, const STRING &text )
 	{
@@ -416,20 +420,41 @@ class Device
 		return SetROP2( m_device, drawMode );
 	}
 
-	void setTextAlignment( HorizontalAlignment ha, VerticalAlignment va ) const
+	Device &setTextAlignment( HorizontalAlignment ha, VerticalAlignment va )
 	{
 		SetTextAlign( m_device, int(ha)|int(va)|TA_UPDATECP );
+		return *this;
 	}
 
-	void removeClipping()
+	Device &removeClipping()
 	{
 		SelectClipRgn( m_device, nullptr );
+		return *this;
 	}
-	void setClipping(  int left, int top, int right, int bottom  )
+	Device &setClipping(  int left, int top, int right, int bottom  )
 	{
 		m_clipRegion = CreateRectRgn( left, top, right, bottom );
 		SelectClipRgn( m_device, m_clipRegion.getHandle() );
+		return *this;
 	}
+	Device &setMapMode( int mode )
+	{
+		SetMapMode(m_device, mode);
+		return *this;
+	}
+
+	Device &setWindowOrgEx( const Point &org )
+	{
+		SetWindowOrgEx(m_device, org.x, org.y, nullptr);
+		return *this;
+	}
+
+	Device &setWindowExtEx(const Size &size )
+	{
+		SetWindowExtEx(m_device, size.width, size.height, nullptr);
+		return *this;
+	}
+
 	/*
 		palette
 	*/
@@ -683,6 +708,29 @@ class MetaDevice : public Device
 	{
 		if( !m_metaFile )
 			m_metaFile = CloseMetaFile( m_device );
+
+		return m_metaFile;
+	}
+};
+
+class EnhMetaDevice : public Device
+{
+	HENHMETAFILE	m_metaFile;
+	public:
+	EnhMetaDevice( const char *fileName, const char *descr, const RectBorder *rect ) : Device( CreateEnhMetaFile( nullptr, fileName, rect, descr) )
+	{
+		m_metaFile = nullptr;
+	}
+	~EnhMetaDevice()
+	{
+//		if( m_metaFile )						// not yet
+//			DeleteMetaFile( m_metaFile );
+	}
+
+	HENHMETAFILE createFile()
+	{
+		if( !m_metaFile )
+			m_metaFile = CloseEnhMetaFile( m_device );
 
 		return m_metaFile;
 	}

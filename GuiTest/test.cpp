@@ -42,6 +42,7 @@
 #include <WINLIB/CONTROLW.H>
 #include <WINLIB/xmlEditorChild.h>
 #include <WINLIB/chartWin.h>
+#include <WINLIB/OLESRVR.H>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -216,6 +217,8 @@ class TestWindow : public PopupWindow
 
 class TestApp : Application
 {
+	virtual bool startApplication( HINSTANCE hInstance, const char *cmdLine );
+
 	virtual CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
 	{
 		TestWindow	*newWindow = new TestWindow;
@@ -223,27 +226,280 @@ class TestApp : Application
 
 		return newWindow;
 	}
+	virtual void deleteMainWindow( BasicWindow  *mainWindow );
+};
+
+class MyOleDocument : public OleBaseDocument
+{
+	STRING				m_currentText;
+
+	public:
+	MyOleDocument( GUID guid ) : OleBaseDocument(guid), m_currentText( gak::DateTime().getOriginalTime() )
+	{
+	}
+
+	// ==========================================================
+	// IPersistStorage
+	// ==========================================================
+	virtual HRESULT STDMETHODCALLTYPE Load( 
+	/* [unique][in] */ __RPC__in_opt IStorage *pStgLoad)
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "MyOleDocument::Load");
+
+		if (!pStgLoad) 
+			return E_POINTER;
+
+		IStream* pStream = nullptr;
+		// Den bestehenden Stream "Contents" zum Lesen öffnen
+		HRESULT hr = pStgLoad->OpenStream(
+			L"Contents", 
+			nullptr, 
+			STGM_READ | STGM_SHARE_EXCLUSIVE, 
+			0, &pStream
+		);
+
+		if (SUCCEEDED(hr))
+		{
+			ULONG bytesRead = 0;
+			ULONG length = 0;
+
+			// 1. Länge einlesen
+			hr = pStream->Read(&length, sizeof(length), &bytesRead);
+        
+			if (SUCCEEDED(hr) && length > 0)
+			{
+				m_currentText.setMinSize(length+1);
+				hr = pStream->Read((void *)m_currentText.c_str(), length, &bytesRead);
+				m_currentText.setActSize(length);
+				if (!SUCCEEDED(hr))
+				{
+					m_currentText.release();
+				}
+				if(getDataAdviseHolder())
+				{
+					doLogPositionEx(gakLogging::llInfo);
+					getDataAdviseHolder()->SendOnDataChange(this, 0, 0);
+				}
+				doLogValueEx(gakLogging::llInfo, m_currentText);
+			}
+
+			pStream->Release();
+		}
+
+
+		return hr;
+	}
+
+	virtual HRESULT STDMETHODCALLTYPE Save( 
+	/* [unique][in] */ __RPC__in_opt IStorage *pStgSave,
+	/* [in] */ BOOL /*fSameAsLoad*/)
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "MyOleDocument::Save");
+
+		if (!pStgSave) return E_POINTER;
+
+		IStream* pStream = nullptr;
+		// Einen Stream namens "Contents" im übergebenen Storage erstellen/öffnen
+		HRESULT hr = pStgSave->CreateStream(
+			L"Contents", 
+			STGM_WRITE | STGM_SHARE_EXCLUSIVE | STGM_CREATE, 
+			0, 0, &pStream
+		);
+
+		if (SUCCEEDED(hr))
+		{
+			ULONG bytesWritten = 0;
+			ULONG length = static_cast<ULONG>(m_currentText.size());
+
+			// 1. Zuerst die Länge des Strings schreiben
+			pStream->Write(&length, sizeof(length), &bytesWritten);
+        
+			// 2. Dann den String-Inhalt selbst schreiben
+			pStream->Write(m_currentText.c_str(), length, &bytesWritten);
+
+			pStream->Release();
+		}
+
+
+		return S_OK;
+	}
+
+	// ==========================================================
+	// IOleObject       
+	// ==========================================================
+
+	virtual HRESULT STDMETHODCALLTYPE DoVerb( 
+	/* [in] */ LONG iVerb,
+	/* [unique][in] */ __RPC__in_opt LPMSG /*lpmsg*/,
+	/* [unique][in] */ __RPC__in_opt IOleClientSite *pActiveSite,
+	/* [in] */ LONG /*lindex*/,
+	/* [in] */ __RPC__in HWND hwndParent,
+	/* [unique][in] */ __RPC__in_opt LPCRECT /*lprcPosRect*/)
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "MyOleDocument::DoVerb");
+
+		if (iVerb == OLEIVERB_PRIMARY || iVerb == OLEIVERB_SHOW || iVerb == OLEIVERB_OPEN)
+		{
+			SetClientSite(pActiveSite);
+			std::auto_ptr<BasicWindow> wnd( new BasicWindow(hwndParent));
+			StringEditor	editor;
+			STRING newText = editor.create( wnd.get(), "Edit Text", m_currentText );
+			if( m_currentText != newText )
+			{
+				m_currentText = newText;
+				OnDataModified();
+			}
+		}
+		return S_OK;
+	}
+
+	// ==========================================================
+	// IDataObject
+	// ==========================================================
+
+	void RenderText(Device &hMetaDC, const RectBorder &rect )
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "MyOleDocument::RenderText");
+		Font	font;
+
+		// Hintergrund weiß füllen (oder Rectangle zeichnen, um Grenzen zu definieren)
+		Brush hBrush;
+		hBrush.create(colors::WHITE);
+		hMetaDC.rectangle(rect, hBrush);
+
+		font.setFontSize(10)
+			.setNormal()
+			.setDefaultFont()
+			.setOutPrecision(OUT_TT_ONLY_PRECIS) // WICHTIG: Erzwingt TrueType für stufenlose Skalierung
+			.setClipPrecision(CLIP_DEFAULT_PRECIS)
+			.setQuality(ANTIALIASED_QUALITY)
+			.setPitchAndFamily(DEFAULT_PITCH | FF_DONTCARE)
+			.setFontName("Arial");
+		hMetaDC.selectFont( font );
+
+		hMetaDC.clrBackgroundColor();
+		hMetaDC.setTextColor(colors::BLACK);
+		hMetaDC.drawText( m_currentText, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX );
+	}
+	
+	virtual /* [local] */ HRESULT STDMETHODCALLTYPE GetData( 
+	/* [unique][in] */ FORMATETC *pformatetcIn,
+	/* [out] */ STGMEDIUM *pmedium)
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "MyOleDocument::GetData");
+
+		RectBorder rect( 0, 0, WIDTH, HEIGHT );
+		// OLE fragt nach der visuellen Repräsentation (Content als Metafile)
+		if (pformatetcIn->cfFormat == CF_METAFILEPICT && (pformatetcIn->dwAspect & DVASPECT_CONTENT))
+		{
+			// 1. Metafile Device Context erstellen
+			MetaDevice hMetaDC;
+			if (!hMetaDC) 
+				return E_FAIL;
+
+			{
+				// all GDI tasks must be finnished before creating the meta file
+				// => this is one BLOCK and all GDI Objects are destroyed
+				// 2. WICHTIG: Dem OLE-Container mitteilen, welchen Bereich das Metafile einnimmt
+				hMetaDC.setMapMode(MM_ANISOTROPIC);
+				hMetaDC.setWindowOrgEx( winlib::Point(0,0) );
+				hMetaDC.setWindowExtEx( Size(WIDTH, HEIGHT));
+
+				RenderText(hMetaDC, rect);
+			}
+			// 4. Metafile schließen und Handle holen
+			HMETAFILE hMetafile = hMetaDC.createFile();
+
+			// 5. In die OLE-Struktur METAFILEPICT verpacken
+			LPMETAFILEPICT pMFP = (LPMETAFILEPICT)GlobalAlloc(GMEM_SHARE | GMEM_MOVEABLE, sizeof(METAFILEPICT));
+			if (!pMFP)
+			{
+				DeleteMetaFile(hMetafile);
+				return E_OUTOFMEMORY;
+			}
+
+			LPMETAFILEPICT pRes = (LPMETAFILEPICT)GlobalLock(pMFP);
+			pRes->mm   = MM_ANISOTROPIC;
+			pRes->xExt = WIDTH;		// Breite in OLE-Maßeinheiten (hi-metric)
+			pRes->yExt = HEIGHT;	// Höhe in OLE-Maßeinheiten
+			pRes->hMF  = hMetafile;
+			GlobalUnlock(pMFP);
+
+			// 6. Speicher an das OLE-Medium übergeben
+			pmedium->tymed          = TYMED_MFPICT;
+			pmedium->hMetaFilePict  = pMFP;
+			pmedium->pUnkForRelease = nullptr; // OLE kümmert sich um die Freigabe
+
+			return S_OK;
+		}
+		else if (pformatetcIn->cfFormat == CF_ENHMETAFILE && (pformatetcIn->tymed & TYMED_ENHMF))
+		{
+			// 1. Einen Enhanced Metafile Device Context (DC) erstellen
+			// Wir übergeben nullptr, damit es standardmäßig auf den Bildschirm referenziert
+			// Das RECT bestimmt die Begrenzung (kann für den Anfang nullptr sein oder die echten Maße enthalten)
+
+			EnhMetaDevice hMetaDC( nullptr, "My DEMO OLE Server\0Text Objekt\0", &rect );
+			if (!hMetaDC) 
+				return E_FAIL;
+
+			RenderText(hMetaDC, rect);
+
+			// 3. Das EMF-Handle schließen und generieren
+			HENHMETAFILE hEMF = hMetaDC.createFile();
+			if (!hEMF) return E_FAIL;
+
+			// 4. Die OLE-Struktur befüllen
+			pmedium->tymed = TYMED_ENHMF;
+			pmedium->hEnhMetaFile = hEMF;      // Das Handle direkt übergeben
+			pmedium->pUnkForRelease = nullptr; // OLE übernimmt den Besitz und löscht es selbst via DeleteEnhMetaFile
+
+			return S_OK;
+		}
+
+
+		return DV_E_FORMATETC;
+	}
 };
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 static TestApp app;
+static OleClassFactory<MyOleDocument>	s_factory;
 
+bool TestApp::startApplication( HINSTANCE , const char *cmdLine )
+{
+	doEnableLogEx(gakLogging::llInfo);
+	STRING	guidStr = GetProfile(nullptr, "guid", STRING() );
+	GUID	guid;
+	DWORD registerID = initOleServer(&guidStr, &guid, &s_factory);
+	s_factory.setRegister( registerID, guid );
+	WriteProfile( true, nullptr, "guid", guidStr ); 
+	if( !guidStr.isEmpty() )
+		registerOleServer(guidStr,"Mein Testobjekt");
+	return 0;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+void TestApp::deleteMainWindow( BasicWindow  *mainWindow )
+{
+	delete mainWindow;
+	exitOleServer(s_factory.getRegisterID());
+}
 
 
 #if 0

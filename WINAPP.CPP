@@ -698,8 +698,9 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 {
 	/// TODO: Logfile crashes in Borland C++ Builder -> analyse and fix
 	doEnableLogEx( gakLogging::llInfo );
-	doDisableLog();
+	//doDisableLog();
 	doEnterFunctionEx(gakLogging::llInfo, "WinMain");
+	doLogValueEx(gakLogging::llInfo, cmdLine);
 	int	result = 0;
 
 	try

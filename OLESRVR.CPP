@@ -1,383 +1,237 @@
 /*
 		Project:		Windows Class Library
-		Module:			olesrvr.cpp
-		Description:	ole related functions (ole server)
+		Module:			olesvr.cpp
+		Description:	Defines an OLE server (not complete)
 		Author:			Martin Gäckler
-		Address:		Landsberger Str. 68, D-886938 Schondorf, Germany
-		Phone:			0049 - 08192 - 999 098
-		Telefax:		0049 - 08192 - 999 099
-		Date:			13. 03. 1993
-		History:
+		Address:		Hofmannsthalweg 14, A-4030 Linz
+		Web:			https://www.gaeckler.at/
 
+		Copyright:		(c) 1988-2026 Martin Gäckler
+
+		This program is free software: you can redistribute it and/or modify  
+		it under the terms of the GNU General Public License as published by  
+		the Free Software Foundation, version 3.
+
+		You should have received a copy of the GNU General Public License 
+		along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+		THIS SOFTWARE IS PROVIDED BY Martin Gäckler, Linz, Austria ``AS IS''
+		AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+		PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
+		CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+		SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+		LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+		USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+		ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+		OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+		OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+		SUCH DAMAGE.
 */
+
+// --------------------------------------------------------------------- //
+// ----- switches ------------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+#ifndef STRICT
+#define STRICT 1
+#endif
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <winlib\olesrvr.h>
+#include <gak/wideString.h>
+#include <gak/string.h>
+#include <winlib/olesrvr.h>
+#include <winlib/winapp.h>
+#include <WINLIB/registry.h>
 
 // --------------------------------------------------------------------- //
-// ----- class statics ------------------------------------------------- //
+// ----- imported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-int				OLE_SERVER_WINDOW::usageCount    = 0;
-OLESERVERVTBL	OLE_SERVER_WINDOW::oleServerVTBL;
-
 // --------------------------------------------------------------------- //
-// ----- static datas -------------------------------------------------- //
+// ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-#if 0
-static OLEDOCVTBL		oleDocumentVTBL;
-static OLEOBJECTVTPL	oleObjectVTBL:
+#ifdef __BORLANDC__
+#	pragma option -RT-
+#	pragma option -b
+#	pragma option -a4
+#	pragma option -pc
 #endif
 
-static LIST_CONTAINER	oleServerList;
+namespace winlib
+{
+
+using namespace gak;
+
+
+// --------------------------------------------------------------------- //
+// ----- constants ----------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- macros -------------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- type definitions ---------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- class definitions --------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- exported datas ------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- module static data -------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+static int s_registeredFactoriesCount = 0;
+
+// --------------------------------------------------------------------- //
+// ----- class static data --------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
+// ----- prototypes ---------------------------------------------------- //
+// --------------------------------------------------------------------- //
 
 // --------------------------------------------------------------------- //
 // ----- module functions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-static OLE_SERVER_WINDOW *findOleServerWindow( LPOLESERVER oleServer )
-{
-	OLE_SERVER_WINDOW	*window;
-	LIST_CURSOR			searchBuffer;
+// --------------------------------------------------------------------- //
+// ----- class inlines ------------------------------------------------- //
+// --------------------------------------------------------------------- //
 
-	window = (OLE_SERVER_WINDOW *)oleServerList.getFirst( &searchBuffer );
-	if( window ) do
-	{
-		if( window->getServer() == oleServer )
-			break;
+// --------------------------------------------------------------------- //
+// ----- class constructors/destructors -------------------------------- //
+// --------------------------------------------------------------------- //
 
-		window = (OLE_SERVER_WINDOW *)oleServerList.getNext( &searchBuffer );
-	}
-	while( window );
+// --------------------------------------------------------------------- //
+// ----- class static functions ---------------------------------------- //
+// --------------------------------------------------------------------- //
 
-	return window;
-}
+// --------------------------------------------------------------------- //
+// ----- class privates ------------------------------------------------ //
+// --------------------------------------------------------------------- //
 
-/*
-	Ole Server Functions
-*/
-extern "C"
-OLESTATUS FAR PASCAL srvCreate( LPOLESERVER		lpolesrvr,
-								LHSERVERDOC		lhdoc,
-								OLE_LPCSTR		lpszClassName,
-								OLE_LPCSTR		lpszDoc,
-								LPOLESERVERDOC	FAR *lplpoledoc )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-#if defined( __SMALL__ ) || defined( __MEDIUM__ )
-	char	className[128],
-			docName[256];
-
-	lstrcpy( className, lpszClassName );
-	lstrcpy( docName, lpszDoc );
-#else
-#	define className	lpszClassName
-#	define docName		lpszDoc
-#endif
-
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Create( lhdoc,
-										className,
-										docName,
-										lplpoledoc );
-	else
-		return OLE_ERROR_NEW;
-}
-
-extern "C"
-OLESTATUS FAR PASCAL srvCreateFromTemplate( LPOLESERVER		lpolesrvr,
-											LHSERVERDOC		lhdoc,
-											OLE_LPCSTR		lpszClassName,
-											OLE_LPCSTR		lpszDoc,
-											OLE_LPCSTR		lpszTemplate,
-											LPOLESERVERDOC	FAR *lplpoledoc )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-#if defined( __SMALL__ ) || defined( __MEDIUM__ )
-	char	className[128],
-			docName[256],
-			templateName[256];
-
-	lstrcpy( className, lpszClassName );
-	lstrcpy( docName, lpszDoc );
-	lstrcpy( templateName, lpszTemplate );
-#else
-#	define className	lpszClassName
-#	define docName		lpszDoc
-#	define templateName	lpszTemplate
-#endif
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->CreateFromTemplate( lhdoc,
-													className,
-													docName,
-													templateName,
-													lplpoledoc );
-	else
-		return OLE_ERROR_NEW;
-}
-
-extern "C"
-OLESTATUS FAR PASCAL srvOpen( LPOLESERVER		lpolesrvr,
-							  LHSERVERDOC		lhdoc,
-							  OLE_LPCSTR		lpszDoc,
-							  LPOLESERVERDOC	FAR *lplpoledoc )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-#if defined( __SMALL__ ) || defined( __MEDIUM__ )
-	char	docName[256];
-
-	lstrcpy( docName, lpszDoc );
-#else
-#	define docName		lpszDoc
-#endif
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Open( lhdoc,
-									  docName,
-									  lplpoledoc );
-	else
-		return OLE_ERROR_OPEN;
-}
-
-
-extern "C"
-OLESTATUS FAR PASCAL srvEdit( LPOLESERVER		lpolesrvr,
-							  LHSERVERDOC		lhdoc,
-							  OLE_LPCSTR		lpszClassName,
-							  OLE_LPCSTR		lpszDoc,
-							  LPOLESERVERDOC	FAR *lplpoledoc )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-#if defined( __SMALL__ ) || defined( __MEDIUM__ )
-	char	className[128],
-			docName[256];
-
-	lstrcpy( className, lpszClassName );
-	lstrcpy( docName, lpszDoc );
-#else
-#	define className	lpszClassName
-#	define docName		lpszDoc
-#endif
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Edit( lhdoc,
-									  className,
-									  docName,
-									  lplpoledoc );
-	else
-		return OLE_ERROR_EDIT;
-}
-
-OLESTATUS FAR PASCAL srvExecute( LPOLESERVER	lpolesrvr,
-								 HGLOBAL		hCommands )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Execute( hCommands );
-	else
-		return OLE_ERROR_EDIT;
-}
-
-extern "C"
-OLESTATUS FAR PASCAL srvExit( LPOLESERVER lpolesrvr )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Exit();
-	else
-		return OLE_ERROR_OPEN;
-}
-
-extern "C"
-OLESTATUS FAR PASCAL srvRelease( LPOLESERVER lpolesrvr )
-{
-	OLE_SERVER_WINDOW	*oleServerWindow;
-
-	oleServerWindow = findOleServerWindow( lpolesrvr );
-	if( oleServerWindow )
-		return oleServerWindow->Release();
-	else
-		return OLE_ERROR_OPEN;
-}
-
-#if 0
-/*
-	Ole Document Functions
-*/
-
-static docClose()
-{
-}
-
-static docGetObject()
-{
-}
-
-static docExecute()
-{
-}
-
-static docRelease()
-{
-}
-
-static docSave()
-{
-}
-
-static docSetColorScheme()
-{
-}
-
-static docSetDocDimensions()
-{
-}
-
-static docSetHostNames()
-{
-}
-
-/*
-	Ole Object Functions
-*/
-
-static objDoVerb()
-{
-}
-
-static objEnumFormats()
-{
-}
-
-static objGetData()
-{
-}
-
-static objQueryProtocol()
-{
-}
-
-static objRelease()
-{
-}
-
-static objSetBounds()
-{
-}
-
-static objSetColorScheme()
-{
-}
-
-static objSetData()
-{
-}
-
-static objSetTargetDevice()
-{
-}
-
-static objShow()
-{
-}
-
-#endif
+// --------------------------------------------------------------------- //
+// ----- class protected ----------------------------------------------- //
+// --------------------------------------------------------------------- //
 
 // --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-
+   
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-BOOL OLE_SERVER_WINDOW::registerServer( HINSTANCE	hInstance,
-										const char	*oleClass )
-{
-	// Server Functions
-	if( !usageCount++ )
-	{
-		oleServerVTBL.Create             = srvCreate;
-		oleServerVTBL.CreateFromTemplate = srvCreateFromTemplate;
-		oleServerVTBL.Open               = srvOpen;
-		oleServerVTBL.Edit               = srvEdit;
-		oleServerVTBL.Execute            = srvExecute;
-		oleServerVTBL.Exit               = srvExit;
-		oleServerVTBL.Release            = srvRelease;
-    }
-
-#if 0
-	// Document Functions
-	oleDocumentVTBL.Close            = MakeProcInstance( docClose,
-    													 hInstance );
-	oleDocumentVTBL.GetObject        = MakeProcInstance( docGetObject,
-    													 hInstance );
-	oleDocumentVTBL.Execute          = MakeProcInstance( docExecute,
-    													 hInstance );
-	oleDocumentVTBL.Release          = MakeProcInstance( docRelease,
-    													 hInstance );
-	oleDocumentVTBL.Save             = MakeProcInstance( docSave,
-    													 hInstance );
-	oleDocumentVTBL.SetColorScheme   = MakeProcInstance( docSetColorScheme,
-    													 hInstance );
-	oleDocumentVTBL.SetDocDimensions = MakeProcInstance( docSetDocDimensions,
-    													 hInstance );
-	oleDocumentVTBL.SetHostNames     = MakeProcInstance( docSetHostNames,
-														 hInstance );
-
-	// Object Functions
-	oleObjectVTBL.DoVerb             = MakeProcInstance( objDoVerb,
-														 hInstance );
-	oleObjectVTBL.EnumFormats        = MakeProcInstance( objEnumFormats,
-														 hInstance );
-	oleObjectVTBL.GetData            = MakeProcInstance( objGetData,
-														 hInstance );
-	oleObjectVTBL.QueryProtocol      = MakeProcInstance( objQueryProtocol,
-														 hInstance );
-	oleObjectVTBL.Release            = MakeProcInstance( objRelease,
-														 hInstance );
-	oleObjectVTBL.SetBounds          = MakeProcInstance( objSetBounds,
-														 hInstance );
-	oleObjectVTBL.SetColorScheme     = MakeProcInstance( objSetColorScheme,
-														 hInstance );
-	oleObjectVTBL.SetData            = MakeProcInstance( objSetData,
-														 hInstance );
-	oleObjectVTBL.SetTargetDevice    = MakeProcInstance( objSetTargetDevice,
-														 hInstance );
-	oleObjectVTBL.Show               = MakeProcInstance( objShow,
-														 hInstance );
-#endif
-
-	server.lpvtbl = &oleServerVTBL;
-
-	if( !registered )
-	{
-		oleServerList.appendObject( this );
-		registered = TRUE;
-	}
-	return OleRegisterServer( oleClass,
-							  &server,
-							  &serverHandle,
-							  hInstance,
-							  OLE_SERVER_SINGLE ) == OLE_OK ? FALSE
-															: TRUE;
-}
-
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory)
+{
+	DWORD	registerID = 0;
+	bool	ok = false;
+
+	if( !s_registeredFactoriesCount && !SUCCEEDED(OleInitialize(nullptr) ) )
+	{
+		return 0;
+	}
+
+	if( !guidStr->isEmpty() )
+	{
+		uSTRING	guidWstring;
+		guidWstring.decodeUTF8(*guidStr);
+		if( SUCCEEDED(CLSIDFromString(guidWstring, guid ) ) )
+		{
+			ok = true;
+		}
+	}
+	else
+	{
+		if (SUCCEEDED(CoCreateGuid(guid))) 
+		{
+			LPOLESTR wstr;
+			if (SUCCEEDED(StringFromCLSID(*guid, &wstr))) 
+			{
+				uSTRING	guidWstring(wstr);
+				*guidStr = guidWstring.toString();
+				CoTaskMemFree(wstr);
+				ok = true;
+			}
+		}
+	}
+
+	if( ok )
+	{
+		if( !SUCCEEDED(CoRegisterClassObject(*guid, factory, CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &registerID) ) )
+		{
+			registerID=0;
+		}
+		else
+		{
+			++s_registeredFactoriesCount;
+		}
+
+	}
+
+	return registerID;
+}
+
+void registerOleServer(const gak::STRING &guidStr, const gak::STRING &descr, const char *document )
+{
+	STRING appDoc = STRING(appObject->getApplication()).add(document);
+	STRING appDocVersion = STRING(appObject->getApplication()).add(document).add(".1");
+
+	if( RegistryClassesRoot().setKeyValue( appDoc, descr ) == ERROR_SUCCESS )
+	{
+		Registry reg;
+		reg.openSubkey( RegistryClassesRoot(), appDoc );
+		reg.setKeyValue("Insertable", "");
+		reg.setKeyValue("CLSID", guidStr);
+	}
+
+	Registry reg;
+	if( reg.openSubkey( RegistryClassesRoot(), "CLSID", KEY_ALL_ACCESS|KEY_WOW64_64KEY ) == ERROR_SUCCESS )
+	{
+		if( reg.setKeyValue( guidStr, descr ) == ERROR_SUCCESS )
+		{
+			Registry guidKey;
+			if( guidKey.openSubkey(reg, guidStr) == ERROR_SUCCESS )
+			{
+				STRING exeName = STRING('"') + appObject->getFileName() + STRING('"');
+				guidKey.setKeyValue("Insertable", "");
+				guidKey.setKeyValue("InprocHandler32", "ole32.dll");
+				guidKey.setKeyValue("LocalServer32", exeName);
+				guidKey.setKeyValue("ProgID", appDoc);
+			}
+		}
+	}
+}
+
+void exitOleServer( DWORD registerID )
+{
+	CoRevokeClassObject(registerID);
+	if( !--s_registeredFactoriesCount )
+		OleUninitialize();
+}
+
+}	// namespace winlib
+
+#ifdef __BORLANDC__
+#	pragma option -RT.
+#	pragma option -b.
+#	pragma option -a.
+#	pragma option -p.
+#endif
 

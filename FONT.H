@@ -150,6 +150,14 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
+	Font &setDefaultFont()
+	{
+		m_fontData.lfCharSet = DEFAULT_CHARSET;
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
 	Font &setOemFont()
 	{
 		m_fontData.lfCharSet = OEM_CHARSET;
@@ -166,6 +174,31 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
+	Font &setOutPrecision( unsigned char prec )
+	{
+		m_fontData.lfOutPrecision = prec;
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
+	Font &setClipPrecision( unsigned char prec )
+	{
+		m_fontData.lfClipPrecision = prec;
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
+	Font &setQuality( unsigned char quali )
+	{
+		m_fontData.lfQuality = quali;
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
+
 	Font &setVariableFont()
 	{
 		m_fontData.lfPitchAndFamily &= 0xFC;
@@ -184,6 +217,16 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
+	Font &setPitchAndFamily( unsigned char val )
+	{
+		m_fontData.lfPitchAndFamily = val;
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
+
+
 	Font &setFontName( const char *name );
 	const char *getFontName() const
 	{

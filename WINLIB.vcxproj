@@ -47,6 +47,7 @@
     <ClCompile Include="MANAGER.CPP" />
     <ClCompile Include="MDIWIN.CPP" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="OLESRVR.CPP" />
     <ClCompile Include="POPUP.CPP" />
     <ClCompile Include="Processor.cpp" />
     <ClCompile Include="REGEDIT.CPP" />

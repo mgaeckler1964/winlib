@@ -454,12 +454,20 @@ class ForeignWindow
 	/*
 		focus/enable/disable control
 	*/
-	void focus()
+	void setForeground()
+	{
+		SetForegroundWindow(m_winHandle);
+	}
+
+	void focus( bool withForground = false )
 	{
 		if( IsIconic( m_winHandle ) )
 		{
 			show( SW_RESTORE );
 		}
+		SetWindowPos(m_winHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+		if( withForground )
+			setForeground();
 		SetFocus( m_winHandle );
 	}
 	bool hasFocus() const
@@ -1038,6 +1046,11 @@ class BasicWindow : public ForeignWindow
 		{
 			owner->addWindow( this );
 		}
+	}
+	BasicWindow(HWND foreignHandle) : ForeignWindow(foreignHandle)
+	{
+		init();
+		m_owner = nullptr;
 	}
 
 	/*
