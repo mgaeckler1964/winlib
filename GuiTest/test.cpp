@@ -320,7 +320,6 @@ class MyOleDocument : public OleBaseDocument
 			pStream->Release();
 		}
 
-
 		return S_OK;
 	}
 
@@ -392,7 +391,7 @@ class MyOleDocument : public OleBaseDocument
 		// OLE fragt nach der visuellen Repräsentation (Content als Metafile)
 		if (pformatetcIn->cfFormat == CF_METAFILEPICT && (pformatetcIn->dwAspect & DVASPECT_CONTENT))
 		{
-			// 1. Metafile Device Context erstellen
+			// Metafile Device Context erstellen
 			MetaDevice hMetaDC;
 			if (!hMetaDC) 
 				return E_FAIL;
@@ -400,23 +399,24 @@ class MyOleDocument : public OleBaseDocument
 			{
 				// all GDI tasks must be finnished before creating the meta file
 				// => this is one BLOCK and all GDI Objects are destroyed
-				// 2. WICHTIG: Dem OLE-Container mitteilen, welchen Bereich das Metafile einnimmt
+				// WICHTIG: Dem OLE-Container mitteilen, welchen Bereich das Metafile einnimmt
 				hMetaDC.setMapMode(MM_ANISOTROPIC);
 				hMetaDC.setWindowOrgEx( winlib::Point(0,0) );
 				hMetaDC.setWindowExtEx( Size(WIDTH, HEIGHT));
 
 				RenderText(hMetaDC, rect);
 			}
-			// 4. Metafile schließen und Handle holen
-			HMETAFILE hMetafile = hMetaDC.createFile();
 
-			// 5. In die OLE-Struktur METAFILEPICT verpacken
+			// In die OLE-Struktur METAFILEPICT verpacken
 			LPMETAFILEPICT pMFP = (LPMETAFILEPICT)GlobalAlloc(GMEM_SHARE | GMEM_MOVEABLE, sizeof(METAFILEPICT));
 			if (!pMFP)
 			{
-				DeleteMetaFile(hMetafile);
 				return E_OUTOFMEMORY;
 			}
+
+			// Metafile schließen und Handle holen
+			HMETAFILE hMetafile = hMetaDC.releaseFile();
+			if (!hMetafile) return E_FAIL;
 
 			LPMETAFILEPICT pRes = (LPMETAFILEPICT)GlobalLock(pMFP);
 			pRes->mm   = MM_ANISOTROPIC;
@@ -425,7 +425,7 @@ class MyOleDocument : public OleBaseDocument
 			pRes->hMF  = hMetafile;
 			GlobalUnlock(pMFP);
 
-			// 6. Speicher an das OLE-Medium übergeben
+			// Speicher an das OLE-Medium übergeben
 			pmedium->tymed          = TYMED_MFPICT;
 			pmedium->hMetaFilePict  = pMFP;
 			pmedium->pUnkForRelease = nullptr; // OLE kümmert sich um die Freigabe
@@ -434,21 +434,17 @@ class MyOleDocument : public OleBaseDocument
 		}
 		else if (pformatetcIn->cfFormat == CF_ENHMETAFILE && (pformatetcIn->tymed & TYMED_ENHMF))
 		{
-			// 1. Einen Enhanced Metafile Device Context (DC) erstellen
-			// Wir übergeben nullptr, damit es standardmäßig auf den Bildschirm referenziert
-			// Das RECT bestimmt die Begrenzung (kann für den Anfang nullptr sein oder die echten Maße enthalten)
-
 			EnhMetaDevice hMetaDC( nullptr, "My DEMO OLE Server\0Text Objekt\0", &rect );
 			if (!hMetaDC) 
 				return E_FAIL;
 
 			RenderText(hMetaDC, rect);
 
-			// 3. Das EMF-Handle schließen und generieren
-			HENHMETAFILE hEMF = hMetaDC.createFile();
+			// Das EMF-Handle schließen und generieren
+			HENHMETAFILE hEMF = hMetaDC.releaseFile();
 			if (!hEMF) return E_FAIL;
 
-			// 4. Die OLE-Struktur befüllen
+			// Die OLE-Struktur befüllen
 			pmedium->tymed = TYMED_ENHMF;
 			pmedium->hEnhMetaFile = hEMF;      // Das Handle direkt übergeben
 			pmedium->pUnkForRelease = nullptr; // OLE übernimmt den Besitz und löscht es selbst via DeleteEnhMetaFile
@@ -456,26 +452,9 @@ class MyOleDocument : public OleBaseDocument
 			return S_OK;
 		}
 
-
 		return DV_E_FORMATETC;
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

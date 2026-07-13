@@ -700,8 +700,8 @@ class MetaDevice : public Device
 	}
 	~MetaDevice()
 	{
-//		if( m_metaFile )						// not yet
-//			DeleteMetaFile( m_metaFile );
+		if( m_metaFile )
+			DeleteMetaFile( m_metaFile );
 	}
 
 	HMETAFILE createFile()
@@ -710,6 +710,15 @@ class MetaDevice : public Device
 			m_metaFile = CloseMetaFile( m_device );
 
 		return m_metaFile;
+	}
+	HMETAFILE releaseFile()
+	{
+		if( !m_metaFile )
+			return CloseMetaFile( m_device );
+
+		HMETAFILE	result = m_metaFile;
+		m_metaFile = 0;
+		return result;
 	}
 };
 
@@ -723,8 +732,8 @@ class EnhMetaDevice : public Device
 	}
 	~EnhMetaDevice()
 	{
-//		if( m_metaFile )						// not yet
-//			DeleteMetaFile( m_metaFile );
+		if( m_metaFile )
+			DeleteEnhMetaFile( m_metaFile );
 	}
 
 	HENHMETAFILE createFile()
@@ -733,6 +742,14 @@ class EnhMetaDevice : public Device
 			m_metaFile = CloseEnhMetaFile( m_device );
 
 		return m_metaFile;
+	}
+	HENHMETAFILE releaseFile()
+	{
+		if( !m_metaFile )
+			return CloseEnhMetaFile( m_device );
+		HENHMETAFILE	result = m_metaFile;
+		m_metaFile = 0;
+		return result;
 	}
 };
 
