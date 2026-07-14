@@ -363,7 +363,7 @@ class MyOleDocument : public OleBaseDocument
 		if (iVerb == OLEIVERB_PRIMARY || iVerb == OLEIVERB_SHOW || iVerb == OLEIVERB_OPEN)
 		{
 			SetClientSite(pActiveSite);
-			std::auto_ptr<BasicWindow> wnd( new BasicWindow(hwndParent));
+			std::unique_ptr<BasicWindow> wnd( new BasicWindow(hwndParent));
 			StringEditor	editor;
 			STRING newText = editor.create( wnd.get(), "Edit Text", m_currentText );
 			if( m_currentText != newText )

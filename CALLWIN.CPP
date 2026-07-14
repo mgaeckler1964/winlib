@@ -89,16 +89,16 @@ using namespace gak;
 // ----- module statics ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-static ListContainer	*openWin = NULL;
+static ListContainer	*openWin = nullptr;
 
 // --------------------------------------------------------------------- //
 // ----- class statics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-HACCEL			CallbackWindow::s_hAccel	= 0;
-AcceleratorMap	CallbackWindow::s_accelerators;
-UINT			CallbackWindow::s_findMessage	= UINT(-1);
-SearchDialog	*CallbackWindow::s_findDialog	= NULL;
+HACCEL							CallbackWindow::s_hAccel	= 0;
+AcceleratorMap					CallbackWindow::s_accelerators;
+UINT							CallbackWindow::s_findMessage	= UINT(-1);
+std::unique_ptr<SearchDialog>	CallbackWindow::s_findDialog;
 
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //
@@ -116,11 +116,7 @@ CallbackWindow::CallbackWindow( BasicWindow *owner )
 		s_findMessage = RegisterWindowMessage( FINDMSGSTRING );
 	}
 
-	m_menu  = 0;
-	m_statusBar = NULL;
-	m_toolWin = NULL;
 	m_toolWinTimer = m_applicationTimer = 0;
-	m_layoutManager = NULL;
 
 	m_callBackCount = 0;
 
@@ -130,8 +126,8 @@ CallbackWindow::CallbackWindow( BasicWindow *owner )
 	m_altKey = m_shiftKey = m_controlKey = false;
 	m_terminate = m_closed = m_destroyed = false;
 
-	m_dragTreeView = NULL;
-	m_dragItem = NULL;
+	m_dragTreeView = nullptr;
+	m_dragItem = nullptr;
 
 	if( !openWin )
 	{
@@ -145,18 +141,9 @@ CallbackWindow::~CallbackWindow()
 {
 	assert( !m_callBackCount );
 	removeTimer();
-	removeToolHelp();
+	removeToolHelp(true);
 	removeStatusBar();
-	openWin->removeObject( (ListEntry *)this );
-
-	if( m_layoutManager )
-	{
-		delete m_layoutManager;
-	}
-	if( m_menu )
-	{
-		delete m_menu;
-	}
+	openWin->removeObject( static_cast<ListEntry *>(this) );
 }
 
 // --------------------------------------------------------------------- //
@@ -168,10 +155,9 @@ void CallbackWindow::registerSearchDialog( SearchDialog *newFindDialog )
 	if( s_findDialog )
 	{
 		s_findDialog->close();
-		delete s_findDialog;
 	}
 
-	s_findDialog = newFindDialog;
+	s_findDialog.reset( newFindDialog );
 }
 
 LRESULT CallbackWindow::dispatch( HWND handle, unsigned msg, WPARAM wParam, LPARAM lParam )
@@ -182,7 +168,7 @@ LRESULT CallbackWindow::dispatch( HWND handle, unsigned msg, WPARAM wParam, LPAR
 	LRESULT			returnVal = true;
 
 	for( 
-		curWindow =	openWin ? (CallbackWindow*)openWin->getFirst( &cursor ) : NULL;
+		curWindow =	openWin ? (CallbackWindow*)openWin->getFirst( &cursor ) : nullptr;
 		curWindow;
 		curWindow = (CallbackWindow *)cursor.getNext()
 	)
@@ -268,7 +254,7 @@ void CallbackWindow::handleFiles( HDROP drop )
 			i;
 	char	fileName[1024];
 
-	numFiles = DragQueryFile( drop, UINT(-1), NULL, 0 );
+	numFiles = DragQueryFile( drop, UINT(-1), nullptr, 0 );
 	for( i=0; i < numFiles; )
 	{
 		UINT result = DragQueryFile( drop, UINT(i), fileName, sizeof( fileName ) );
@@ -282,8 +268,7 @@ void CallbackWindow::handleFindReplace( FINDREPLACE *findReplace )
 {
 	if( findReplace->Flags & FR_DIALOGTERM )
 	{
-		delete s_findDialog;
-		s_findDialog = NULL;
+		s_findDialog.reset();
 		return;
 	}
 	else if( findReplace->Flags & FR_FINDNEXT )
@@ -296,7 +281,7 @@ void CallbackWindow::handleFindReplace( FINDREPLACE *findReplace )
 	else if( findReplace->Flags & FR_REPLACE )
 	{
 		handleReplace(	s_findDialog->getFindText(),
-						((ReplaceDialog*)s_findDialog)->getReplaceText(),
+						((ReplaceDialog*)s_findDialog.get())->getReplaceText(),
 						false,
 						findReplace->Flags & FR_WHOLEWORD ? true : false,
 						findReplace->Flags & FR_MATCHCASE ? true : false );
@@ -304,7 +289,7 @@ void CallbackWindow::handleFindReplace( FINDREPLACE *findReplace )
 	else if( findReplace->Flags & FR_REPLACEALL )
 	{
 		handleReplace(	s_findDialog->getFindText(),
-						((ReplaceDialog*)s_findDialog)->getReplaceText(),
+						((ReplaceDialog*)s_findDialog.get())->getReplaceText(),
 						true,
 						findReplace->Flags & FR_WHOLEWORD ? true : false,
 						findReplace->Flags & FR_MATCHCASE ? true : false );
@@ -475,7 +460,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 					if( treeView )
 					{
 						NM_TREEVIEW  *notify = reinterpret_cast<NM_TREEVIEW *>(lParam);
-						if( (m_dragItem = treeView->startDrag( notify )) != NULL )
+						if( (m_dragItem = treeView->startDrag( notify )) != nullptr )
 						{
 							msgStatus = psPROCESSED;
 							m_dragTreeView = treeView;
@@ -573,7 +558,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 				}
 				//ShowCursor( TRUE );
 				releaseMouse();
-				m_dragTreeView = NULL;
+				m_dragTreeView = nullptr;
 				msgStatus = psPROCESSED;
 				break;
 			}
@@ -788,7 +773,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 	}
 
 	const BasicWindow *parent;
-	if( (parent=getParent()) != NULL )
+	if( (parent=getParent()) != nullptr )
 	{
 		if( msgStatus == psSEND_TO_PARENT )
 		{
@@ -1101,12 +1086,11 @@ ProcessStatus CallbackWindow::ddeExecute( const char * )
 
 void CallbackWindow::showHelp( int , int controlId )
 {
-	m_toolWin = new ToolTipWindow;
+	m_toolWin.reset(new ToolTipWindow);
 
 	if( m_toolWin->create( this, controlId ) == scERROR )
 	{
-		delete m_toolWin;
-		m_toolWin = NULL;
+		m_toolWin.reset();
 	}
 	else
 	{
@@ -1181,7 +1165,7 @@ void CallbackWindow::mainLoop()
 /*^*/			continue;
 			}
 
-			curWindow = openWin ? static_cast<CallbackWindow *>(openWin->getFirst(&cursor)) : NULL;
+			curWindow = openWin ? static_cast<CallbackWindow *>(openWin->getFirst(&cursor)) : nullptr;
 			while( curWindow )
 			{
 				if( curWindow->isValid()
@@ -1218,7 +1202,7 @@ void CallbackWindow::showToolHelp( const char *text )
 	}
 	else
 	{
-		m_toolWin = new ToolTipWindow;
+		m_toolWin.reset( new ToolTipWindow );
 
 		m_toolWin->create( this, text );
 		if( !m_toolWinTimer )
@@ -1230,20 +1214,19 @@ void CallbackWindow::showToolHelp( const char *text )
 	}
 }
 
-void CallbackWindow::removeToolHelp()
+void CallbackWindow::removeToolHelp(bool force)
 {
-	if( m_toolWin && !m_toolWin->active() )
+	if( m_toolWin && (force || !m_toolWin->active()) )
 	{
 		m_toolWin->close();
-		delete m_toolWin;
-		m_toolWin = NULL;
+		m_toolWin.reset();
 	}
 }
 
 void CallbackWindow::processTooltipTimer()
 {
-	static BasicWindow *lastChild = NULL;
-	static BasicWindow *lastTipChild = NULL;
+	static BasicWindow *lastChild = nullptr;
+	static BasicWindow *lastTipChild = nullptr;
 
 	doEnterFunctionEx(gakLogging::llDetail, "CallbackWindow::processTooltipTimer");
 
@@ -1284,7 +1267,7 @@ void CallbackWindow::processTooltipTimer()
 			showToolHelp(help);
 			lastTipChild = child;
 		}
-		lastChild = NULL;
+		lastChild = nullptr;
 	}
 	lastChild = child;
 }
@@ -1293,7 +1276,7 @@ void CallbackWindow::addStatusBar()
 {
 	if( !m_statusBar )
 	{
-		m_statusBar = new EditControl;
+		m_statusBar.reset( new EditControl );
 
 		if( m_statusBar )
 		{
@@ -1316,9 +1299,7 @@ void CallbackWindow::removeStatusBar()
 	if( m_statusBar )
 	{
 		m_statusBar->close();
-		delete m_statusBar;
-
-		m_statusBar = 0;
+		m_statusBar.reset();
 	}
 }
 
@@ -1334,7 +1315,7 @@ extern "C" LRESULT PASCAL WindowProc(
 	LRESULT returnVal = 0;
 	try
 	{
-		CallbackWindow	*curWindow = NULL;
+		CallbackWindow	*curWindow = nullptr;
 		ListCursor		cursor;
 
 		if( message == WM_CREATE || message == WM_NCCREATE )
@@ -1345,7 +1326,7 @@ extern "C" LRESULT PASCAL WindowProc(
 			{
 				int controlId = GetWindowLong( handle, GWL_ID );
 				for(
-					curWindow = openWin ? (CallbackWindow*)openWin->getFirst( &cursor ) : NULL;
+					curWindow = openWin ? (CallbackWindow*)openWin->getFirst( &cursor ) : nullptr;
 					curWindow;
 					curWindow = (CallbackWindow *)cursor.getNext()
 				)
@@ -1371,11 +1352,11 @@ extern "C" LRESULT PASCAL WindowProc(
 	}
 	catch( std::exception &e )
 	{
-		::MessageBox( NULL, e.what(), "Error", MB_ICONERROR );
+		::MessageBox( nullptr, e.what(), "Error", MB_ICONERROR );
 	}
 	catch( ... )
 	{
-		::MessageBox( NULL, "Unknown error", "Error", MB_ICONERROR );
+		::MessageBox( nullptr, "Unknown error", "Error", MB_ICONERROR );
 	}
 	return returnVal;
 }

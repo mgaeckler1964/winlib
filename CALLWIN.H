@@ -62,6 +62,8 @@
 
 #include <gak/list.h>
 #include <gak/string.h>
+#include <gak/memory>
+
 #include <winlib/basicwin.h>
 #include <winlib/winapp.h>
 #include <winlib/font.h>
@@ -172,13 +174,14 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	static HACCEL			s_hAccel;
 	static AcceleratorMap	s_accelerators;
-	static UINT 			s_findMessage;
-	static SearchDialog		*s_findDialog;
 
-	Menu				*m_menu;
-	EDIT				*m_statusBar;
-	ToolTipWindow		*m_toolWin;
-	bool				m_applicationTimer, m_toolWinTimer;
+	static UINT 							s_findMessage;
+	static std::unique_ptr<SearchDialog>	s_findDialog;
+
+	std::unique_ptr<Menu>			m_menu;
+	std::unique_ptr<EDIT>			m_statusBar;
+	std::unique_ptr<ToolTipWindow>	m_toolWin;
+	bool							m_applicationTimer, m_toolWinTimer;
 
 	TreeView			*m_dragTreeView;
 	TreeNode			*m_dragItem;
@@ -192,7 +195,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	bool				m_watchMe;
 #endif
 	int					m_callBackCount;
-	LayoutManager		*m_layoutManager;
+	std::unique_ptr<LayoutManager>		m_layoutManager;
 
 	Size				m_clientSize;
 
@@ -219,7 +222,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		wc->hIcon			= appObject->getIcon();
 		wc->hCursor			= LoadCursor( 0, IDC_ARROW );
 		wc->hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-		wc->lpszMenuName   	= NULL;
+		wc->lpszMenuName   	= nullptr;
 	}
 	static bool registerClass( WNDCLASS *wc )
 	{
@@ -258,9 +261,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	protected:
 
-	SuccessCode create( BasicWindow *parent, LPSTR lpParam=NULL )
+	SuccessCode create( BasicWindow *parent, LPSTR lpParam=nullptr )
 	{
-		SuccessCode error = BasicWindow::create( parent, m_menu, lpParam );
+		SuccessCode error = BasicWindow::create( parent, m_menu.get(), lpParam );
 		if( error == scSUCCESS )
 		{
 			getFont().selectFont( Font::sfAnsiVar );
@@ -464,7 +467,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 	static Accelerators* getAccelerator( int comand )
 	{
-		return s_accelerators.hasElement( comand ) ? &s_accelerators[comand] : NULL;
+		return s_accelerators.hasElement( comand ) ? &s_accelerators[comand] : nullptr;
 	}
 	/*
 		dialogs
@@ -492,13 +495,12 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	template <class MENU_T>
 	const Menu *setMenu( MENU_T menuName )
 	{
-		if( m_menu )
-			delete m_menu;
-		return m_menu = appObject->loadMenu( menuName );
+		m_menu.reset(appObject->loadMenu( menuName ));
+		return getMenu();
 	}
 	const Menu *getMenu() const
 	{
-		return m_menu;
+		return m_menu.get();
 	}
 	void drawMenuBar() const
 	{
@@ -521,7 +523,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	{
 		if( milliSeconds )
 		{
-			SetTimer( handle(), appTimer ? APPL_TIMER_ID : TOOL_WIN_TIMER_ID, milliSeconds, NULL );
+			SetTimer( handle(), appTimer ? APPL_TIMER_ID : TOOL_WIN_TIMER_ID, milliSeconds, nullptr );
 			if( appTimer )
 				m_applicationTimer = true;
 			else
@@ -552,7 +554,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		tool help
 	*/
 	void showToolHelp( const char *text );
-	void removeToolHelp();
+	void removeToolHelp( bool force=false );
 	void processTooltipTimer();
 
 	/*
@@ -565,7 +567,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	void addStatusBar();
 	bool hasStatusBar() const
 	{
-		return( m_statusBar ) ? true : false;
+		return m_statusBar ? true : false;
 	}
 	void setStatusText( const STRING &value );
 	void removeStatusBar();
@@ -575,11 +577,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	*/
 	void scrollHorizontal( int position )
 	{
-		handleHorizScroll( hscTHUMB_POSITION, position, NULL );
+		handleHorizScroll( hscTHUMB_POSITION, position, nullptr );
 	}
 	void scrollVertical( int position )
 	{
-		handleVertScroll( vscTHUMB_POSITION, position, NULL );
+		handleVertScroll( vscTHUMB_POSITION, position, nullptr );
 	}
 
 	/*
@@ -595,13 +597,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	public:
 	void setLayoutManager( LayoutManager *newLayoutManager )
 	{
-		if( m_layoutManager )
-			delete m_layoutManager;
-		m_layoutManager = newLayoutManager;
+		m_layoutManager.reset( newLayoutManager );
 	}
 	LayoutManager *getLayoutManager() const
 	{
-		return m_layoutManager;
+		return m_layoutManager.get();
 	}
 	Size calcSize( const Size &newSize ) const
 	{

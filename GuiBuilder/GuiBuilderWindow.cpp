@@ -1010,7 +1010,7 @@ void GuiBuilderWindow::loadDocument()
 		if( gak::exists( translationFileName ) )
 		{
 			xml::Parser		theTranslationParser( translationFileName );
-			std::auto_ptr<xml::Document> translationDoc( theTranslationParser.readFile( false ) );
+			std::unique_ptr<xml::Document> translationDoc( theTranslationParser.readFile( false ) );
 			if( translationDoc.get() )
 			{
 				loadTranslations( translationDoc.get() );
@@ -1342,7 +1342,7 @@ void GuiBuilderWindow::saveTranslations( const F_STRING &fileName )
 		F_STRING newName = plainName + '.' + it->getKey() + ".gui";
 		const Dictionary &dict = it->getValue();
 
-		std::auto_ptr<xml::Element> newDocument( m_guiDoc->copy() );
+		std::unique_ptr<xml::Element> newDocument( m_guiDoc->copy() );
 
 		translateCaptions( newDocument.get(), dict );
 
