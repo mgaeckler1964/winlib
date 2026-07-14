@@ -182,7 +182,6 @@ DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory)
 		{
 			++s_registeredFactoriesCount;
 		}
-
 	}
 
 	return registerID;
