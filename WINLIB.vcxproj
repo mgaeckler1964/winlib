@@ -88,6 +88,7 @@
     <ClInclude Include="gdi.h" />
     <ClInclude Include="GlobalMem.h" />
     <ClInclude Include="gridView.h" />
+    <ClInclude Include="Guid.h" />
     <ClInclude Include="Layout.h" />
     <ClInclude Include="LISTCONT.H" />
     <ClInclude Include="LSTBCHLD.H" />

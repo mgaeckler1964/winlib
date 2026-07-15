@@ -548,16 +548,15 @@ bool TestApp::startApplication( HINSTANCE , const char *cmdLine )
 {
 	doEnableLogEx(gakLogging::llInfo);
 
-	const STRING	guidStr = "{2AA3F3C8-0038-42F4-AF8A-F0114CE0DB5D}"; // GetProfile(nullptr, "guid", STRING() );
-	GUID			guid;
+	const Guid		guid(STRING("{2AA3F3C8-0038-42F4-AF8A-F0114CE0DB5D}"));
 
 //	STRING tmp;
 //	createGuid( &tmp, &guid );
 
-	DWORD	registerID = initOleServer(guidStr, &guid, &s_factory);
+	DWORD	registerID = initOleServer(guid, &s_factory);
 	s_factory.setRegister( registerID, guid );
 	//WriteProfile( true, nullptr, "guid", guidStr ); 
-	registerOleServer(guidStr,"Mein Testobjekt");
+	registerOleServer(guid,"Mein Testobjekt");
 	return 0;
 }
 

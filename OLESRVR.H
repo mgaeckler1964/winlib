@@ -62,6 +62,7 @@
 #include <WINLIB/DEVICE.H>
 #include <WINLIB/colors.h>
 #include <WINLIB/STREDIT.H>
+#include <WINLIB/Guid.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -172,7 +173,6 @@ class OleBaseDocument : public IPersistStorage, public IOleObject, public IDataO
 			m_pViewAdviseSink->OnViewChange(DVASPECT_CONTENT, -1);
 		}
 	}
-
 
 	public:
     OleBaseDocument(GUID guid) : m_guid(guid), m_refCount(1), m_viewAspects(0), m_viewAdvf(0), m_pDataAdviseHolder(nullptr), m_pOleAdviseHolder(nullptr), m_pOleClientSite(nullptr), 
@@ -750,9 +750,10 @@ class OleBaseDocument : public IPersistStorage, public IOleObject, public IDataO
 template <class DocT>
 class OleClassFactory : public IClassFactory
 {
-	GUID			m_guid;
-	DWORD			m_registerID;
-	LONG			m_refCount;
+	GUID	m_guid;
+	DWORD	m_registerID;
+	LONG	m_refCount;
+
 	public:
 	OleClassFactory() : m_registerID(0), m_refCount(1) {}
 	
@@ -760,7 +761,7 @@ class OleClassFactory : public IClassFactory
 	{
 		return m_registerID;
 	}
-	void setRegister( long registerID, GUID guid )
+	void setRegister( long registerID, const GUID &guid )
 	{
 		m_registerID = registerID;
 		m_guid = guid;
@@ -839,7 +840,7 @@ class OleClassFactory : public IClassFactory
 // ----- prototypes ---------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-DWORD initOleServer(const STRING &guidStr, GUID *guid, IClassFactory *factory);
+DWORD initOleServer(const Guid &guid, IClassFactory *factory);
 bool createGuid(STRING *guidStr, GUID *guid);
 void exitOleServer( DWORD registerID );
 void registerOleServer(const gak::STRING &guidStr, const gak::STRING &descr, const char *document="Document" );

@@ -1,7 +1,7 @@
 /*
-		Project:		Windows Class Library
-		Module:			olesvr.cpp
-		Description:	Defines an OLE server (not complete)
+		Project:		WINLIB
+		Module:			Guid.h
+		Description:	Guid creation and conversion
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -29,6 +29,9 @@
 		SUCH DAMAGE.
 */
 
+#ifndef WINLIB_GIOD_H
+#define WINLIB_GIOD_H
+
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -41,11 +44,11 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <gak/wideString.h>
+#include <windows.h>
+#include <ole2.h>
+
 #include <gak/string.h>
-#include <winlib/olesrvr.h>
-#include <winlib/winapp.h>
-#include <WINLIB/registry.h>
+#include <gak/wideString.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -65,9 +68,6 @@
 namespace winlib
 {
 
-using namespace gak;
-
-
 // --------------------------------------------------------------------- //
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -84,6 +84,61 @@ using namespace gak;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+class Guid
+{
+	bool		m_valid;
+	gak::STRING	m_guidStr;
+	GUID		m_guid;
+
+	public:
+	Guid() : m_valid(false)
+	{
+		if (SUCCEEDED(CoCreateGuid(&m_guid))) 
+		{
+			LPOLESTR wstr;
+			if (SUCCEEDED(StringFromCLSID(m_guid, &wstr))) 
+			{
+				gak::uSTRING	guidWstring(wstr);
+				m_guidStr = guidWstring.toString();
+				CoTaskMemFree(wstr);
+				m_valid = true;
+			}
+		}
+	}
+	Guid(const gak::STRING &guidStr) : m_valid(false), m_guidStr(guidStr)
+	{
+		gak::uSTRING	guidWstring;
+		guidWstring.decodeUTF8(guidStr);
+		if( SUCCEEDED(CLSIDFromString(guidWstring, &m_guid ) ) )
+		{
+			m_valid = true;
+		}
+	}
+	Guid(const GUID &guid) : m_guid(guid)
+	{
+		LPOLESTR wstr;
+		if (SUCCEEDED(StringFromCLSID(guid, &wstr))) 
+		{
+			gak::uSTRING	guidWstring(wstr);
+			m_guidStr = guidWstring.toString();
+			CoTaskMemFree(wstr);
+			m_valid = true;
+		}
+	}
+	operator bool () const
+	{
+		return m_valid;
+	}
+	operator const STRING &() const
+	{
+		return m_guidStr;
+	}
+	operator const GUID &() const
+	{
+		return m_guid;
+	}
+};
+
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -91,8 +146,6 @@ using namespace gak;
 // --------------------------------------------------------------------- //
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
-
-static int s_registeredFactoriesCount = 0;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
@@ -138,84 +191,6 @@ static int s_registeredFactoriesCount = 0;
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-DWORD initOleServer(const Guid &guid, IClassFactory *factory)
-{
-	DWORD	registerID = 0;
-
-	if( !s_registeredFactoriesCount && !SUCCEEDED(OleInitialize(nullptr) ) )
-	{
-		return 0;
-	}
-
-	if( SUCCEEDED(CoRegisterClassObject(guid, factory, CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &registerID) ) )
-	{
-		++s_registeredFactoriesCount;
-	}
-	else
-	{
-		registerID=0;
-	}
-
-	return registerID;
-}
-
-bool createGuid(STRING *guidStr, GUID *guid)
-{
-	bool	ok = false;
-
-	if (SUCCEEDED(CoCreateGuid(guid))) 
-	{
-		LPOLESTR wstr;
-		if (SUCCEEDED(StringFromCLSID(*guid, &wstr))) 
-		{
-			uSTRING	guidWstring(wstr);
-			*guidStr = guidWstring.toString();
-			CoTaskMemFree(wstr);
-			ok = true;
-		}
-	}
-
-	return ok;
-}
-
-void registerOleServer(const gak::STRING &guidStr, const gak::STRING &descr, const char *document )
-{
-	STRING appDoc = STRING(appObject->getApplication()).add(document);
-	STRING appDocVersion = STRING(appObject->getApplication()).add(document).add(".1");
-
-	if( RegistryClassesRoot().setKeyValue( appDoc, descr ) == ERROR_SUCCESS )
-	{
-		Registry reg;
-		reg.openSubkey( RegistryClassesRoot(), appDoc );
-		reg.setKeyValue("Insertable", "");
-		reg.setKeyValue("CLSID", guidStr);
-	}
-
-	Registry reg;
-	if( reg.openSubkey( RegistryClassesRoot(), "CLSID", KEY_ALL_ACCESS|KEY_WOW64_64KEY ) == ERROR_SUCCESS )
-	{
-		if( reg.setKeyValue( guidStr, descr ) == ERROR_SUCCESS )
-		{
-			Registry guidKey;
-			if( guidKey.openSubkey(reg, guidStr) == ERROR_SUCCESS )
-			{
-				STRING exeName = STRING('"') + appObject->getFileName() + STRING('"');
-				guidKey.setKeyValue("Insertable", "");
-				guidKey.setKeyValue("InprocHandler32", "ole32.dll");
-				guidKey.setKeyValue("LocalServer32", exeName);
-				guidKey.setKeyValue("ProgID", appDoc);
-			}
-		}
-	}
-}
-
-void exitOleServer( DWORD registerID )
-{
-	CoRevokeClassObject(registerID);
-	if( !--s_registeredFactoriesCount )
-		OleUninitialize();
-}
-
 }	// namespace winlib
 
 #ifdef __BORLANDC__
@@ -225,3 +200,4 @@ void exitOleServer( DWORD registerID )
 #	pragma option -p.
 #endif
 
+#endif	// WINLIB_GIOD_H
