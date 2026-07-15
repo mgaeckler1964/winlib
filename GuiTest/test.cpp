@@ -547,11 +547,11 @@ static OleClassFactory<MyOleDocument>	s_factory;
 bool TestApp::startApplication( HINSTANCE , const char *cmdLine )
 {
 	doEnableLogEx(gakLogging::llInfo);
-	STRING	guidStr = GetProfile(nullptr, "guid", STRING() );
+	STRING	guidStr = "{2AA3F3C8-0038-42F4-AF8A-F0114CE0DB5D}"; // GetProfile(nullptr, "guid", STRING() );
 	GUID	guid;
 	DWORD	registerID = initOleServer(&guidStr, &guid, &s_factory);
 	s_factory.setRegister( registerID, guid );
-	WriteProfile( true, nullptr, "guid", guidStr ); 
+	//WriteProfile( true, nullptr, "guid", guidStr ); 
 	if( !guidStr.isEmpty() )
 		registerOleServer(guidStr,"Mein Testobjekt");
 	return 0;
