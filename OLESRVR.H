@@ -839,7 +839,8 @@ class OleClassFactory : public IClassFactory
 // ----- prototypes ---------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory);
+DWORD initOleServer(const STRING &guidStr, GUID *guid, IClassFactory *factory);
+bool createGuid(STRING *guidStr, GUID *guid);
 void exitOleServer( DWORD registerID );
 void registerOleServer(const gak::STRING &guidStr, const gak::STRING &descr, const char *document="Document" );
 

@@ -138,7 +138,7 @@ static int s_registeredFactoriesCount = 0;
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory)
+DWORD initOleServer(const STRING &guidStr, GUID *guid, IClassFactory *factory)
 {
 	DWORD	registerID = 0;
 	bool	ok = false;
@@ -148,30 +148,15 @@ DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory)
 		return 0;
 	}
 
-	if( !guidStr->isEmpty() )
+	if( !guidStr.isEmpty() )
 	{
 		uSTRING	guidWstring;
-		guidWstring.decodeUTF8(*guidStr);
+		guidWstring.decodeUTF8(guidStr);
 		if( SUCCEEDED(CLSIDFromString(guidWstring, guid ) ) )
 		{
 			ok = true;
 		}
 	}
-	else
-	{
-		if (SUCCEEDED(CoCreateGuid(guid))) 
-		{
-			LPOLESTR wstr;
-			if (SUCCEEDED(StringFromCLSID(*guid, &wstr))) 
-			{
-				uSTRING	guidWstring(wstr);
-				*guidStr = guidWstring.toString();
-				CoTaskMemFree(wstr);
-				ok = true;
-			}
-		}
-	}
-
 	if( ok )
 	{
 		if( !SUCCEEDED(CoRegisterClassObject(*guid, factory, CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &registerID) ) )
@@ -185,6 +170,25 @@ DWORD initOleServer(STRING *guidStr, GUID *guid, IClassFactory *factory)
 	}
 
 	return registerID;
+}
+
+bool createGuid(STRING *guidStr, GUID *guid)
+{
+	bool	ok = false;
+
+	if (SUCCEEDED(CoCreateGuid(guid))) 
+	{
+		LPOLESTR wstr;
+		if (SUCCEEDED(StringFromCLSID(*guid, &wstr))) 
+		{
+			uSTRING	guidWstring(wstr);
+			*guidStr = guidWstring.toString();
+			CoTaskMemFree(wstr);
+			ok = true;
+		}
+	}
+
+	return ok;
 }
 
 void registerOleServer(const gak::STRING &guidStr, const gak::STRING &descr, const char *document )
