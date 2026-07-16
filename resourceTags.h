@@ -1,6 +1,6 @@
 /*
 		Project:		Windows Class Library
-		Module:			ressourceTags.h
+		Module:			resourceTags.h
 		Description:	Some XML tags used
 		Author:			Martin Gäckler
 		Address:		Hopfengasse 15, A-4020 Linz

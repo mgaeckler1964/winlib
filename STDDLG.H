@@ -90,17 +90,17 @@ static const size_t SEARCH_TEXT_SIZE=256;
 // --------------------------------------------------------------------- //
 
 template <typename IdType>
-struct RessourceIDs
+struct ResourceIDs
 {
-	RessourceIDs(IdType);
+	ResourceIDs(IdType);
 };
 
 template <>
-struct RessourceIDs<int>
+struct ResourceIDs<int>
 {
 	int		m_curID;
 
-	RessourceIDs(int curID) : m_curID(curID) {}
+	ResourceIDs(int curID) : m_curID(curID) {}
 	int getNextID()
 	{
 		return m_curID++;
@@ -108,11 +108,11 @@ struct RessourceIDs<int>
 };
 
 template <>
-struct RessourceIDs<const int*>
+struct ResourceIDs<const int*>
 {
 	const int	*m_curID;
 
-	RessourceIDs(const int *curID) : m_curID(curID) {}
+	ResourceIDs(const int *curID) : m_curID(curID) {}
 	int getNextID()
 	{
 		return *m_curID++;
@@ -381,10 +381,10 @@ void FileDialog::init( const BasicWindow *parent, int titleId, IdType filterID, 
 
 	if( filterID )
 	{
-		RessourceIDs<IdType>	ressourceID( filterID );
+		ResourceIDs<IdType>	resourceID( filterID );
 		while( numFilter )
 		{
-			m_filter += appObject->loadString( ressourceID.getNextID() );
+			m_filter += appObject->loadString( resourceID.getNextID() );
 			numFilter--;
 		}
 		if( !m_filter.isEmpty() )

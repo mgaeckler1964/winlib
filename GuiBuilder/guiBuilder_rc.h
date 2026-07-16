@@ -1,7 +1,7 @@
 /*
 		Project:		GUI Builder
 		Module:			guiBuilder_rc.h
-		Description:	Constants for the ressource file
+		Description:	Constants for the resource file
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/

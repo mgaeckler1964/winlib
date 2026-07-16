@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
-		Module:			ressource.h
-		Description:	Create windows from a ressource file
+		Module:			resource.h
+		Description:	Create windows from a resource file
 		Author:			Martin Gäckler
 		Address:		Hopfengasse 15, A-4020 Linz
 		Web:			https://www.gaeckler.at/

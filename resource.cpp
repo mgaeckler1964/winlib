@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
-		Module:			ressource.cpp
-		Description:	Create windows from a ressource file
+		Module:			resource.cpp
+		Description:	Create windows from a resource file
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
