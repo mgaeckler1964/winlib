@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
 		Module:			DIALOGWI.CPP
-		Description:	Implementation of dialog windows
+		Description:	Implementation of dialogs defined in resource files
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -36,7 +36,6 @@
 #ifndef STRICT
 #define STRICT 1
 #endif
-
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //

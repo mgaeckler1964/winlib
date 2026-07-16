@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
 		Module:			DIALOGWI.H
-		Description:	Implementation of dialog windows
+		Description:	Implementation of dialogs defined in resource files
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -28,7 +28,6 @@
 		OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 		SUCH DAMAGE.
 */
-
 
 #ifndef DIALOG_WIN_H
 #define DIALOG_WIN_H
