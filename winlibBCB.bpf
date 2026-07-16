@@ -27,6 +27,7 @@ USEUNIT("chartWin.cpp");
 USEUNIT("registry.cpp");
 USEUNIT("OLESRVR.CPP");
 USEUNIT("STREDIT.CPP");
+USEUNIT("frame.cpp");
 //---------------------------------------------------------------------------
 #define Library
 

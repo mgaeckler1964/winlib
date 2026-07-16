@@ -17,7 +17,8 @@
       ..\..\Object\Winlib\bcb\version.obj ..\..\Object\Winlib\bcb\menu.obj 
       ..\..\Object\Winlib\bcb\xmlEditorInternal.obj 
       ..\..\Object\Winlib\bcb\chartWin.obj ..\..\Object\Winlib\bcb\registry.obj 
-      ..\..\Object\Winlib\bcb\OLESRVR.obj ..\..\Object\Winlib\bcb\STREDIT.obj"/>
+      ..\..\Object\Winlib\bcb\OLESRVR.obj ..\..\Object\Winlib\bcb\STREDIT.obj 
+      ..\..\Object\Winlib\bcb\frame.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>

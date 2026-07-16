@@ -53,6 +53,7 @@
 
 #include <winlib/controlw.h>
 #include <winlib/device.h>
+#include <WINLIB/frame.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -96,6 +97,7 @@ const char TrackBar::className[] = "TrackBar";
 const char DateTimePicker::className[] = "DateTimePicker";
 const char UpDownButton::className[] = "UpDownButton";
 const char TreeView::className[] = "TreeView";
+const char TabControl::className[] = "TabControl";
 
 // --------------------------------------------------------------------- //
 // ----- prototypes ---------------------------------------------------- //
@@ -302,6 +304,10 @@ STRING TreeView::getWindowClassName() const
 	return WC_TREEVIEW; // "SysTreeView";
 }
 
+STRING TabControl::getWindowClassName() const
+{
+	return WC_TABCONTROL; // "SysTabControl";
+}
 
 
 LRESULT ControlWindow::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
@@ -965,6 +971,47 @@ long DateTimePicker::setTimeT( time_t seconds )
 	systime.wSecond = dt.getSecond();
 
 	return setSystemTime(systime);; 
+}
+
+/*
+--------------------------------------------------------------------------------
+	TabControl
+--------------------------------------------------------------------------------
+*/
+FrameChild *TabControl::addTab( const char *name )
+{
+	FrameChild *newFrame = nullptr;
+	TCITEM	tcItem;
+	tcItem.mask = TCIF_TEXT;
+	tcItem.pszText = LPSTR(name);
+	size_t idx = message( TCM_INSERTITEM, m_numTabs, LPARAM(&tcItem) );
+	if( idx>=0 )
+	{
+		newFrame = new FrameChild(this);
+		m_tabs.addElement( newFrame );
+
+		RectBorder rect = getClientRectangle();
+		adjustRect( &rect );
+		newFrame->sizeNmove( rect );
+		newFrame->create( this );
+		if( m_active )
+			newFrame->hide();
+		else
+			m_active = newFrame;
+		m_numTabs++;
+	}
+	return newFrame;
+}
+
+void TabControl::showTab(size_t i)
+{
+	if( i<m_numTabs )
+	{
+		if( m_active )
+			m_active->hide();
+		m_active = m_tabs[i];
+		m_active->show();
+	}
 }
 
 // --------------------------------------------------------------------- //

@@ -83,8 +83,8 @@ namespace winlib
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-#define BEGIN_SELECTION 	(size_t)-1
-#define END_SELECTION		(size_t)-2
+static const size_t BEGIN_SELECTION = size_t(-1);
+static const size_t END_SELECTION	= size_t(-2);
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -94,6 +94,11 @@ int CALLBACK WordBreakProc( LPSTR text, int cursPos, int length, int action );
 class PrintDevice;
 class PopupMenu;
 
+/*
+	getWindowClassName returns the class name used in Windows.
+	the static member className contains the name used in our XML files
+	the may differ e.g. MemoControl and EditControl both use the same window class
+*/
 class ControlWindow : public BasicWindow
 {
 	WNDPROC		m_wpOrigControlProc;
@@ -112,7 +117,7 @@ class ControlWindow : public BasicWindow
 	void restoreProc();
 
 	public:
-	virtual SuccessCode create( CallbackWindow *parent )
+	virtual SuccessCode create( BasicWindow *parent )
 	{
 		addStyle( WS_CHILD );
 		SuccessCode error = BasicWindow::create( parent );
@@ -136,7 +141,7 @@ class ControlWindow : public BasicWindow
 		}
 		return error;
 	}
-	SuccessCode create( CallbackWindow *parent, int x, int y, int w, int h )
+	SuccessCode create( BasicWindow *parent, int x, int y, int w, int h )
 	{
 		sizeNmove( x, y, w, h );
 
@@ -274,7 +279,7 @@ class Button : public ControlWindow
 		else if( hasStyle( BS_ICON ) )
 			setIcon( controlId );
 	};
-	SuccessCode create( CallbackWindow *parent )
+	SuccessCode create( BasicWindow *parent )
 	{
 		SuccessCode error = ControlWindow::create( parent );
 		if( hasStyle( BS_BITMAP ) )
@@ -788,7 +793,7 @@ class MemoControl : public EDIT
 		}
 		return errFlag;
 	}
-	SuccessCode create( CallbackWindow *parent )
+	SuccessCode create( BasicWindow *parent )
 	{
 		SuccessCode	errFlag = EDIT::create( parent );
 
@@ -851,17 +856,13 @@ class ScrollBar : public ControlWindow
 	static const char className[];
 
 	ScrollBar( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
-	SuccessCode create( CallbackWindow *parent, int x, int y, int w, int h )
+	using ControlWindow::create;
+	SuccessCode create( BasicWindow *parent, int x, int y, int w, int h )
 	{
 		addStyle( ( w >= h ) ? SBS_HORZ : SBS_VERT );
 
 		return ControlWindow::create( parent, x, y, w, h );
 	}
-	SuccessCode create( CallbackWindow *parent )
-	{
-		return ControlWindow::create( parent );
-	}
-
 	void setRange( short minVal, short maxVal )
 	{
 		message( SBM_SETRANGE, minVal, maxVal );
@@ -1219,6 +1220,37 @@ class TreeView : public ControlWindow
 		TreeView_SelectDropTarget( handle(), NULL );
 
 		return target;
+	}
+};
+
+
+class TabControl : public ControlWindow
+{
+	public:
+	static const char className[];
+	private:
+	size_t						m_numTabs;
+	gak::Array<FrameChild *>	m_tabs;
+	FrameChild					*m_active;
+
+	virtual STRING getWindowClassName() const;
+	public:
+	TabControl( BasicWindow *owner=nullptr ) : ControlWindow( owner ), m_numTabs(0), m_active(nullptr)
+	{}
+
+	FrameChild *addTab( const char *name );
+	size_t getCurrentTab()
+	{
+		return message(TCM_GETCURSEL);
+	}
+	void adjustRect(RectBorder *r)
+	{
+		TabCtrl_AdjustRect(handle(), FALSE, r);
+	}
+	void showTab(size_t i);
+	void showCurrent()
+	{
+		showTab(getCurrentTab());
 	}
 };
 

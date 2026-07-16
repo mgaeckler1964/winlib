@@ -473,6 +473,14 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 				{
 					msgStatus = handleSelectionChange( int(notify->idFrom) );
 				}
+				else if( notify->code == TCN_SELCHANGE )
+				{
+					TabControl *tabControl = static_cast<TabControl *>(findChild( notify->hwndFrom ));
+					if( tabControl )
+					{
+						tabControl->showCurrent();
+					}
+				}
 			}
 			break;
 		}

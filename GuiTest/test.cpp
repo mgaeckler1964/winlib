@@ -47,6 +47,7 @@
 #include <WINLIB/xmlEditorChild.h>
 #include <WINLIB/chartWin.h>
 #include <WINLIB/OLESRVR.H>
+#include <WINLIB/frame.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -92,6 +93,9 @@ class TestWindow : public PopupWindow
 	ChartChild		myChartChild;
 	ChartChild		myPieChild;
 	ComboBox		myCombo;
+	TabControl		myTabControl;
+
+	Label			myPage1Label, myPage2Label;
 
 	void doRepaint()
 	{
@@ -193,13 +197,13 @@ class TestWindow : public PopupWindow
 		return psDO_DEFAULT;
 	}
 	public:
-	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr) {}
+	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr), myTabControl(nullptr) {}
 	void create()
 	{
 		addStyle( WS_CLIPCHILDREN );
 
 		setText( "Test" );
-		SuccessCode error = PopupWindow::create( nullptr, 300, 200 );
+		SuccessCode error = PopupWindow::create( nullptr, 500, 200 );
 		if( error == scSUCCESS)
 		{
 			myButton.setId( IDOK );
@@ -234,6 +238,23 @@ class TestWindow : public PopupWindow
 			myCombo.addEntry( "the" );
 			myCombo.addEntry( "lazy" );
 			myCombo.addEntry( "dog" );
+
+			myTabControl.sizeNmove(300, 10, 100, 100 );
+			myTabControl.create(this);
+			FrameChild *page = myTabControl.addTab("Tab1");
+			if( page )
+			{
+				myPage1Label.sizeNmove( 5, 5, 0, 0 );
+				myPage1Label.setText( "Tab1" );
+				myPage1Label.create( page );
+			}
+			page = myTabControl.addTab("Tab2");
+			if( page )
+			{
+				myPage2Label.sizeNmove( 40, 40, 0, 0 );
+				myPage2Label.setText( "Tab2" );
+				myPage2Label.create( page );
+			}
 		}
 	}
 };
