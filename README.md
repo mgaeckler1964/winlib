@@ -17,5 +17,4 @@ convention (all uppercase letters with underscores). Please let me know if you
 find old type names.
 
 ## Screenshot
-
-![screen](https://github.com/user-attachments/assets/91fb7f76-d8f4-441b-bf65-0ceef56f5256)
+<img width="931" height="861" alt="screen" src="https://github.com/user-attachments/assets/1b7a6f20-79e5-4b37-bb9e-e8a129a8e23b" />
