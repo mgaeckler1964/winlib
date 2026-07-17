@@ -437,6 +437,31 @@ static void createLayoutData( xml::Element *resource, BasicWindow *child )
 	child->setLayoutData( layoutData );
 }
 
+static SuccessCode createFrame2( const F_STRING &resourceFileName, xml::Element *resource, FrameChild *frame, BasicWindow *parent, bool designerMode )
+{
+	unsigned	x = resource->getAttribute( LayoutData::xPosAttr ).getValueN<unsigned>();
+	unsigned	y = resource->getAttribute( LayoutData::yPosAttr ).getValueN<unsigned>();
+	unsigned	width = resource->getAttribute( LayoutData::widthAttr ).getValueN<unsigned>();
+	unsigned	height = resource->getAttribute( LayoutData::heightAttr ).getValueN<unsigned>();
+
+	unsigned long style = resource->getAttribute( STYLE_ATTR ).getValueN<unsigned>();
+
+	frame->setResource( resource );
+	frame->setStyle( style|WS_CHILD );
+	frame->sizeNmove( x, y, width, height );
+	if( frame->create( parent ) == scSUCCESS )
+	{
+		frame->disallowNotifications();
+		createChildWindows( resourceFileName, resource, frame, designerMode );
+		frame->getControls();
+		frame->allowDialogProcessing();
+		frame->allowNotifications();
+
+		return scSUCCESS;
+	}
+	return scERROR;
+}
+
 // --------------------------------------------------------------------- //
 // ----- class inlines ------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -487,32 +512,7 @@ void createChildWindows( const F_STRING &resourceFileName, xml::Element *resourc
 	}
 }
 
-SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *resource, FrameChild *frame, CallbackWindow *parent, bool designerMode )
-{
-	unsigned	x = resource->getAttribute( LayoutData::xPosAttr ).getValueN<unsigned>();
-	unsigned	y = resource->getAttribute( LayoutData::yPosAttr ).getValueN<unsigned>();
-	unsigned	width = resource->getAttribute( LayoutData::widthAttr ).getValueN<unsigned>();
-	unsigned	height = resource->getAttribute( LayoutData::heightAttr ).getValueN<unsigned>();
-
-	unsigned long style = resource->getAttribute( STYLE_ATTR ).getValueN<unsigned>();
-
-	frame->setResource( resource );
-	frame->setStyle( style|WS_CHILD );
-	frame->sizeNmove( x, y, width, height );
-	if( frame->create( parent ) == scSUCCESS )
-	{
-		frame->disallowNotifications();
-		createChildWindows( resourceFileName, resource, frame, designerMode );
-		frame->getControls();
-		frame->allowDialogProcessing();
-		frame->allowNotifications();
-
-		return scSUCCESS;
-	}
-	return scERROR;
-}
-
-SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, const char *frameName, FrameChild *frameChild, CallbackWindow *parent, bool designerMode )
+SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, const char *frameName, FrameChild *frameChild, BasicWindow *parent, bool designerMode )
 {
 	SuccessCode	errorFlag = scERROR;
 	if( root )
@@ -525,7 +525,7 @@ SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, c
 				xml::Element	*resource = frames->getElement( i );
 				if( resource->getTag() == FRAME_TAG && resource->getAttribute( NAME_ATTR ) == frameName )
 				{
-					errorFlag = createFrame( resourceFileName, resource, frameChild, parent, designerMode );
+					errorFlag = createFrame2( resourceFileName, resource, frameChild, parent, designerMode );
 					break;
 				}
 			}

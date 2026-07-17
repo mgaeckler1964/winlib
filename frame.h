@@ -78,9 +78,9 @@ class FrameChild : public ChildWindow
 	{
 		return ChildWindow::create( parent );
 	}
-	SuccessCode create( CallbackWindow *parent, const char *resourceName, bool designerMode=false )
+	SuccessCode create( BasicWindow *parent, const char *resourceName, bool designerMode=false )
 	{
-		return createFrame( appObject->getGuiDoc(), resourceName, this, parent, designerMode );
+		return createFrameByXml( appObject->getGuiDoc(), resourceName, this, parent, designerMode );
 	}
 };
 

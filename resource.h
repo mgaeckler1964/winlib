@@ -112,7 +112,7 @@ BasicWindow::BackgroundColor getColorValue( const STRING &name );
 
 SuccessCode createFrame( 
 	const F_STRING &resourceFileName, gak::xml::Element *root, 
-	const char *frameName, FrameChild *frame, CallbackWindow *parent, 
+	const char *frameName, FrameChild *frame, BasicWindow *parent, 
 	bool designerMode 
 );
 
@@ -197,9 +197,9 @@ SuccessCode createForm(
 	return scERROR;
 }
 
-inline SuccessCode createFrame( 
+inline SuccessCode createFrameByXml( 
 	gak::xml::Document *resourceDoc, const char *frameName, 
-	FrameChild *frame, CallbackWindow *parent, 
+	FrameChild *frame, BasicWindow *parent, 
 	bool designerMode 
 )
 {
