@@ -346,10 +346,14 @@ class GuiBuilderWindow : public OverlappedWindow
 	public:
 	void selectControl( BasicWindow *child, SelectionSource source )
 	{
+		gak::xml::Element	*res = child->getResource();
+		if( !res )		// do not select children not created by the designer
+			return;		// otherwise crash
+
 		if( source == FromTreeSelect )
 			childSelect.clearSelection();
 		else
-			treeSelect.selectItem( treeSelect.findItem( child->getResource() ) );
+			treeSelect.selectItem( treeSelect.findItem( res ) );
 
 		if( source != FromChildSelect )
 		{
@@ -407,7 +411,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	void editItemList();
 	void newMenu();
 	void newStringList();
-	void newFrame();
+	void newFrame(const STRING &name = "FRAME");
 	void newScroller();
 	void newForm();
 

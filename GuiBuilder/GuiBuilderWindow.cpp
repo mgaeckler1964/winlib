@@ -808,7 +808,7 @@ void GuiBuilderWindow::newStringList()
 		setChangedFlag();
 	}
 }
-void GuiBuilderWindow::newFrame()
+void GuiBuilderWindow::newFrame(const STRING &name)
 {
 	xml::Element	*gui = m_guiDoc->getRoot();
 	if( gui )
@@ -818,7 +818,6 @@ void GuiBuilderWindow::newFrame()
 			frames = gui->addObject( new xml::Any( FRAMES_TAG ) );
 
 		xml::Element *newFrame = frames->addObject( new xml::Any( FRAME_TAG ) );
-		STRING name = "FRAME";
 		newFrame->setStringAttribute( NAME_ATTR, name );
 		addSelectedTopResource( newFrame, name );
 		loadResource();
@@ -1579,7 +1578,7 @@ void GuiBuilderWindow::editItemList()
 		/*
 			create the XML tree
 		*/
-		xml::Element	*newItems = new xml::Any( ITEMS_TAG );
+		std::unique_ptr<xml::Element>	newItems( new xml::Any( ITEMS_TAG ) );
 		for( 
 			ArrayOfStrings::iterator it = itemList.begin(), endIT = itemList.end();
 			it != endIT;
@@ -1605,7 +1604,7 @@ void GuiBuilderWindow::editItemList()
 			if( itemList.size() )
 			{
 				STRING	type = resource->getAttribute( TYPE_ATTR );
-				if( type==ListBox::className || type==ComboBox::className || type==TabControl::className)
+				if( type==ListBox::className || type==ComboBox::className || type==TabControl::className )
 				{
 					resource->addObject( newItems->copy() );
 
@@ -1619,13 +1618,29 @@ void GuiBuilderWindow::editItemList()
 						}
 					}
 				}
+				if( type==TabControl::className )
+				{
+					STRING	name = resource->getAttribute( NAME_ATTR );
+					for( 
+						ArrayOfStrings::const_iterator it = itemList.cbegin(), endIT = itemList.cend();
+						it != endIT;
+						++it
+					)
+					{
+						STRING frameName = STRING().add(name).add('_').add(*it);
+						if( !::findFrame( m_guiDoc, frameName ) )
+						{
+							newFrame( frameName );
+						}
+					}
+				}
 			}
 		}
 
 		/*
 			since we have added a copy to the items, we can delete the newItems tree
 		*/
-		delete newItems;
+		newItems.reset();
 
 		setChangedFlag();
 	}

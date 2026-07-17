@@ -498,7 +498,7 @@ void createChildWindows( const F_STRING &resourceFileName, xml::Element *resourc
 {
 	CallbackWindow	*callParent = (parent->getWindowClass() & CallbackWindowFlag)
 		? static_cast<CallbackWindow*>( parent )
-		: NULL;
+		: nullptr;
 
 	for( size_t i=0; i<resource->getNumObjects(); i++ )
 	{
@@ -512,9 +512,8 @@ void createChildWindows( const F_STRING &resourceFileName, xml::Element *resourc
 	}
 }
 
-SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, const char *frameName, FrameChild *frameChild, BasicWindow *parent, bool designerMode )
+gak::xml::Element *findFrame(gak::xml::Element *root, const char *frameName)
 {
-	SuccessCode	errorFlag = scERROR;
 	if( root )
 	{
 		xml::Element	*frames = root->getElement( FRAMES_TAG );
@@ -525,11 +524,21 @@ SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, c
 				xml::Element	*resource = frames->getElement( i );
 				if( resource->getTag() == FRAME_TAG && resource->getAttribute( NAME_ATTR ) == frameName )
 				{
-					errorFlag = createFrame2( resourceFileName, resource, frameChild, parent, designerMode );
-					break;
+/***/				return resource;
 				}
 			}
 		}
+	}
+	return nullptr;
+}
+
+SuccessCode createFrame( const F_STRING &resourceFileName, xml::Element *root, const char *frameName, FrameChild *frameChild, BasicWindow *parent, bool designerMode )
+{
+	SuccessCode	errorFlag = scERROR;
+	xml::Element	*resource = findFrame(root, frameName );
+	if( resource )
+	{
+		errorFlag = createFrame2( resourceFileName, resource, frameChild, parent, designerMode );
 	}
 
 	return errorFlag;
@@ -550,7 +559,7 @@ LayoutManager *createLayoutManager( const STRING &type, bool designerMode )
 	else if( type == "AttachmentManager" )
 		layoutManager = new AttachmentManager;
 	else
-		layoutManager = NULL;
+		layoutManager = nullptr;
 
 	if( designerMode && layoutManager )
 		layoutManager->setDesigerMode();

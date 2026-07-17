@@ -106,11 +106,11 @@ class ControlWindow : public BasicWindow
 	PopupMenu	*m_popupMenu;
 
 	protected:
-	ControlWindow( BasicWindow *owner=NULL ) : BasicWindow( ControlWindowFlag, owner )
+	ControlWindow( BasicWindow *owner=nullptr ) : BasicWindow( ControlWindowFlag, owner )
 	{
-		m_wpOrigControlProc = NULL;
+		m_wpOrigControlProc = nullptr;
 		m_subclassCounter = 0;
-		m_popupMenu = NULL;
+		m_popupMenu = nullptr;
 		setStyle( WS_CHILD|WS_VISIBLE|WS_TABSTOP );
 	}
 	void subclassControl();
@@ -162,7 +162,7 @@ class ControlWindow : public BasicWindow
 	void clrPopupMenu()
 	{
 		restoreProc();
-		m_popupMenu = NULL;
+		m_popupMenu = nullptr;
 	}
 };
 
@@ -178,7 +178,7 @@ class Button : public ControlWindow
 
 	protected:
 	friend class DialogWindow;
-	Button( BasicWindow *owner = NULL ) : ControlWindow( owner ) {}
+	Button( BasicWindow *owner = nullptr ) : ControlWindow( owner ) {}
 
 	public:
 	bool isActive() const
@@ -301,14 +301,14 @@ class PushButton : public Button
 {
 	public:
 	static const char className[];
-	PushButton( BasicWindow *owner=NULL ) : Button( owner ) {}
+	PushButton( BasicWindow *owner=nullptr ) : Button( owner ) {}
 };
 
 class CheckBox : public Button
 {
 	public:
 	static const char className[];
-	CheckBox( BasicWindow *owner = NULL ) : Button( owner )
+	CheckBox( BasicWindow *owner = nullptr ) : Button( owner )
 	{
 		addStyle( BS_AUTOCHECKBOX );
 		setWidthOffset( 25 );
@@ -319,7 +319,7 @@ class GroupBox : public Button
 {
 	public:
 	static const char className[];
-	GroupBox( BasicWindow *owner = NULL ) : Button( owner )
+	GroupBox( BasicWindow *owner = nullptr ) : Button( owner )
 	{
 		addStyle( BS_GROUPBOX );
 	}
@@ -330,7 +330,7 @@ class RadioButton : public Button
 	public:
 	static const char className[];
 
-	RadioButton( BasicWindow *owner = NULL ) : Button( owner )
+	RadioButton( BasicWindow *owner = nullptr ) : Button( owner )
 	{
 		addStyle( BS_AUTORADIOBUTTON );
 		setWidthOffset( 25 );
@@ -347,7 +347,7 @@ class ComboBox : public ControlWindow
 	}
 	public:
 	static const char className[];
-	ComboBox( BasicWindow *owner = NULL ) : ControlWindow( owner )
+	ComboBox( BasicWindow *owner = nullptr ) : ControlWindow( owner )
 	{
 		addStyle( WS_VSCROLL|CBS_DROPDOWNLIST|CBS_NOINTEGRALHEIGHT );
 	}
@@ -394,7 +394,7 @@ class ListBox : public ControlWindow
 
 	public:
 	static const char className[];
-	ListBox( BasicWindow *owner = NULL ) : ControlWindow( owner )
+	ListBox( BasicWindow *owner = nullptr ) : ControlWindow( owner )
 	{
 		addStyle(LBS_NOINTEGRALHEIGHT|LBS_NOTIFY|WS_VSCROLL|WS_HSCROLL|WS_BORDER|WS_TABSTOP);
 	}
@@ -521,7 +521,7 @@ class Label : public ControlWindow
 
 	public:
 	static const char className[];
-	Label( BasicWindow *owner=NULL ) : ControlWindow( owner )
+	Label( BasicWindow *owner=nullptr ) : ControlWindow( owner )
 	{
 		addStyle( SS_SIMPLE );
 	}
@@ -573,7 +573,7 @@ class EDIT : public ControlWindow
 	RLINE_ENDS			m_lineEnd;
 
 	public:
-	EDIT( BasicWindow *owner=NULL ) : ControlWindow( owner )
+	EDIT( BasicWindow *owner=nullptr ) : ControlWindow( owner )
 	{
 		m_lineEnd	= RL_END_CRLF;
 		m_tabWidth	= 8;
@@ -590,7 +590,7 @@ class EDIT : public ControlWindow
 		bool		wholeWord,
 		bool		matchCase,
 		bool		downSearch,
-		const char	*replaceText=NULL,
+		const char	*replaceText=nullptr,
 		bool		all=false
 	);
 	void replaceSelection( const char *replace )
@@ -677,7 +677,7 @@ class EDIT : public ControlWindow
 		message(EM_LINESCROLL, 0, line);
 	}
 	STRING getSelection() const;
-	void getSelection( size_t *start, size_t *end = NULL ) const;
+	void getSelection( size_t *start, size_t *end = nullptr ) const;
 	void getCursorPosition( size_t *line, size_t *colum ) const;
 	void setSelection( size_t start, size_t end );
 	void hideSelection()
@@ -778,7 +778,7 @@ class MemoControl : public EDIT
 	public:
 	static const char className[];
 
-	MemoControl( BasicWindow *owner=NULL ) : EDIT( owner )
+	MemoControl( BasicWindow *owner=nullptr ) : EDIT( owner )
 	{
 		addStyle( ES_MULTILINE|ES_WANTRETURN|ES_AUTOVSCROLL|WS_HSCROLL|WS_VSCROLL );
 	}
@@ -815,7 +815,7 @@ class EditControl : public EDIT
 	public:
 	static const char className[];
 
-	EditControl( BasicWindow *owner=NULL ) : EDIT( owner )
+	EditControl( BasicWindow *owner=nullptr ) : EDIT( owner )
 	{
 	}
 	void operator = ( const STRING &value )
@@ -830,7 +830,7 @@ class UpDownButton : public ControlWindow
 
 	public:
 	static const char className[];
-	UpDownButton( BasicWindow *owner=NULL ) : ControlWindow( owner )
+	UpDownButton( BasicWindow *owner=nullptr ) : ControlWindow( owner )
 	{
 		addStyle( UDS_SETBUDDYINT|UDS_ALIGNRIGHT|UDS_AUTOBUDDY|UDS_ARROWKEYS );
 	}
@@ -855,7 +855,7 @@ class ScrollBar : public ControlWindow
 	public:
 	static const char className[];
 
-	ScrollBar( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
+	ScrollBar( BasicWindow *owner=nullptr ) : ControlWindow( owner ) {}
 	using ControlWindow::create;
 	SuccessCode create( BasicWindow *parent, int x, int y, int w, int h )
 	{
@@ -884,7 +884,7 @@ class TrackBar : public ControlWindow
 	public:
 	static const char className[];
 
-	TrackBar( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
+	TrackBar( BasicWindow *owner=nullptr ) : ControlWindow( owner ) {}
 	int getPosition() const
 	{
 		return int(message( TBM_GETPOS ));
@@ -911,7 +911,7 @@ class DateTimePicker : public ControlWindow
 	public:
 	static const char className[];
 
-	DateTimePicker( BasicWindow *owner=NULL ) : ControlWindow( owner ) {}
+	DateTimePicker( BasicWindow *owner=nullptr ) : ControlWindow( owner ) {}
 
 	long getSystemTime(SYSTEMTIME &result)
 	{
@@ -948,10 +948,10 @@ class TreeNode
 	TreeNode *findItem( void *data ) const;
 
 	public:
-	TreeNode( HTREEITEM handle = NULL, TreeNode *parent = NULL ) 
+	TreeNode( HTREEITEM handle = nullptr, TreeNode *parent = nullptr ) 
 	: handle( handle ), parent( parent )
 	{
-		data = NULL;
+		data = nullptr;
 	}
 
 	HTREEITEM getHandle() const
@@ -980,14 +980,14 @@ class TreeNode
 		if( children.size() )
 			return children[0];
 		else
-			return NULL;
+			return nullptr;
 	}
 	TreeNode *getLastChild() const
 	{
 		if( children.size() )
 			return children[children.size() -1];
 		else
-			return NULL;
+			return nullptr;
 	}
 	void setData( void *newData )
 	{
@@ -1081,9 +1081,9 @@ class TreeView : public ControlWindow
 	}
 
 	public:
-	TreeView( BasicWindow *owner=NULL ) : ControlWindow( owner )
+	TreeView( BasicWindow *owner=nullptr ) : ControlWindow( owner )
 	{
-		root = NULL;
+		root = nullptr;
 		addStyle( TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_DISABLEDRAGDROP|TVS_SHOWSELALWAYS );
 	}
 	~TreeView()
@@ -1128,7 +1128,7 @@ class TreeView : public ControlWindow
 		{
 			message( TVM_DELETEITEM, 0, LPARAM( TVI_ROOT ) );
 			delete root;
-			root = NULL;
+			root = nullptr;
 		}
 	}
 	TreeNode *getSelection() const
@@ -1140,7 +1140,7 @@ class TreeView : public ControlWindow
 			return root->findItem( item );
 		}
 		else
-			return NULL;
+			return nullptr;
 	}
 	void selectItem( TreeNode *item )
 	{
@@ -1148,7 +1148,7 @@ class TreeView : public ControlWindow
 	}
 	TreeNode *findItem( void *data ) const
 	{
-		return root ? root->findItem( data ) : NULL;
+		return root ? root->findItem( data ) : nullptr;
 	}
 	void enableDragDrop()
 	{
@@ -1183,7 +1183,7 @@ class TreeView : public ControlWindow
 	}
 	TreeNode *doDrag( const Point &point )
 	{
-		TreeNode		*dragOver = NULL;
+		TreeNode		*dragOver = nullptr;
 		HTREEITEM		htiTarget;	// Handle to target item. 
 		TV_HITTESTINFO	tvht;		// Hit test information.
 
@@ -1198,7 +1198,7 @@ class TreeView : public ControlWindow
   
 		tvht.pt.x = point.x; 
 		tvht.pt.y = point.y; 
-		if ((htiTarget = TreeView_HitTest(handle(), &tvht)) != NULL) 
+		if ((htiTarget = TreeView_HitTest(handle(), &tvht)) != nullptr) 
 		{
 			dragOver = root->findItem( htiTarget );
 			TreeView_SelectDropTarget(handle(), htiTarget); 
@@ -1209,15 +1209,15 @@ class TreeView : public ControlWindow
 	}
 	TreeNode *doDrop()
 	{
-		TreeNode *target = NULL;
+		TreeNode *target = nullptr;
 
 		HTREEITEM htiDest = TreeView_GetDropHilight(handle());
-		if (htiDest != NULL)
+		if (htiDest != nullptr)
 		{
 			target = root->findItem( htiDest );
 		}
 		ImageList_EndDrag(); 
-		TreeView_SelectDropTarget( handle(), NULL );
+		TreeView_SelectDropTarget( handle(), nullptr );
 
 		return target;
 	}
@@ -1234,6 +1234,8 @@ class TabControl : public ControlWindow
 	FrameChild					*m_active;
 
 	virtual STRING getWindowClassName() const;
+	void resizeTab(FrameChild *tab);
+
 	public:
 	TabControl( BasicWindow *owner=nullptr ) : ControlWindow( owner ), m_numTabs(0), m_active(nullptr)
 	{}
@@ -1247,6 +1249,7 @@ class TabControl : public ControlWindow
 		}
 		return nullptr;
 	}
+	// FrameChild *replaceTab( size_t i, FrameChild *newFrame );
 	size_t getCurrentTab()
 	{
 		return message(TCM_GETCURSEL);
@@ -1260,6 +1263,7 @@ class TabControl : public ControlWindow
 	{
 		showTab(getCurrentTab());
 	}
+	void resizeTabs();
 };
 
 }	// namespace winlib

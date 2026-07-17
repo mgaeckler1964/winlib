@@ -126,7 +126,7 @@ TreeNode *TreeNode::findItem( HTREEITEM itemHandle ) const
 			return result;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 TreeNode *TreeNode::findItem( void *data ) const
@@ -141,7 +141,7 @@ TreeNode *TreeNode::findItem( void *data ) const
 			return result;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -316,7 +316,7 @@ LRESULT ControlWindow::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
 	{
 		POINT p;
 		GetCursorPos(&p);
-		int id = TrackPopupMenu(m_popupMenu->getMenu(), TPM_LEFTALIGN|TPM_VCENTERALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD, p.x, p.y, 0, handle(), NULL );
+		int id = TrackPopupMenu(m_popupMenu->getMenu(), TPM_LEFTALIGN|TPM_VCENTERALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD, p.x, p.y, 0, handle(), nullptr );
 		doLogValue(id);
 /***/	return getParent()->message(WM_COMMAND, id);
 	}
@@ -331,7 +331,7 @@ LRESULT EDIT::callback( UINT uMsg, WPARAM wParam, LPARAM lParam  )
 		{
 			long start;
 
-			message( EM_GETSEL, (WPARAM)&start, NULL );
+			message( EM_GETSEL, (WPARAM)&start );
 			char *text = new char[start+1];
 			if( text )
 			{
@@ -978,6 +978,13 @@ long DateTimePicker::setTimeT( time_t seconds )
 	TabControl
 --------------------------------------------------------------------------------
 */
+void TabControl::resizeTab(FrameChild *tab)
+{
+	RectBorder rect = getClientRectangle();
+	adjustRect( &rect );
+	tab->sizeNmove( rect );
+}
+
 FrameChild *TabControl::addTab( const char *name )
 {
 	FrameChild *newFrame = nullptr;
@@ -1003,6 +1010,20 @@ FrameChild *TabControl::addTab( const char *name )
 	return newFrame;
 }
 
+#if 0
+FrameChild *TabControl::replaceTab( size_t i, FrameChild *newFrame )
+{
+	if( i<m_numTabs )
+	{
+		m_tabs[i]->close();
+		m_tabs[i] = newFrame;
+		resizeTab(newFrame);
+		return newFrame;
+	}
+	return nullptr;
+}
+#endif
+
 void TabControl::showTab(size_t i)
 {
 	if( i<m_numTabs )
@@ -1010,7 +1031,21 @@ void TabControl::showTab(size_t i)
 		if( m_active )
 			m_active->hide();
 		m_active = m_tabs[i];
+		resizeTab( m_active );
+
 		m_active->show();
+	}
+}
+
+void TabControl::resizeTabs()
+{
+	for( 
+		gak::Array<FrameChild *>::iterator it = m_tabs.begin(), endIT = m_tabs.end();
+		it != endIT;
+		++it
+	)
+	{
+		resizeTab( *it );
 	}
 }
 

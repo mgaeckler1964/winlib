@@ -49,6 +49,10 @@
 #include <WINLIB/OLESRVR.H>
 #include <WINLIB/frame.h>
 
+#ifndef __BORLANDC__
+#include "test.gui.h"
+#endif
+
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -85,6 +89,30 @@ static const int HEIGHT = 1000;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+#ifndef __BORLANDC__
+class TestForm : public winlibGUI::TestFORM_form
+{
+	winlibGUI::MyTab_Tab1_frame	*tab1;
+	winlibGUI::MyTab_Tab2_frame	*tab2;
+	public:
+	TestForm() : winlibGUI::TestFORM_form(nullptr) {}
+	virtual ProcessStatus handleCreate()
+	{
+		tab1 = new winlibGUI::MyTab_Tab1_frame(this);
+		tab2 = new winlibGUI::MyTab_Tab2_frame(this);
+		tab1->create( MyTab->getTab(0) );
+		tab2->create( MyTab->getTab(1) );
+/// TODO: enable replaceTab
+/// In this case we must allow to to create Itemes defined with GuiBuilder without CallBackWindow - parent
+//		MyTab->replaceTab( 0, tab1 );
+//		MyTab->replaceTab( 1, tab2 );
+		MyTab->resizeTabs();
+
+		return psDO_DEFAULT;
+	}
+};
+#endif
+
 class TestWindow : public PopupWindow
 {
 	PushButton		myButton;
@@ -113,6 +141,12 @@ class TestWindow : public PopupWindow
 	}
 	virtual ProcessStatus handleOk()
 	{
+
+#ifndef __BORLANDC__
+		TestForm *testForm = new TestForm;
+		testForm->create(this);
+#endif
+
 		OverlappedWindow	*popup = new OverlappedWindow( nullptr );
 		Label *label = new Label( popup );
 		label->setText( "POPUP with WS_POPUP && CAPTION" );
@@ -259,7 +293,11 @@ class TestWindow : public PopupWindow
 	}
 };
 
+#ifndef __BORLANDC__
+class TestApp : winlibGUI::GuiApplication
+#else
 class TestApp : Application
+#endif
 {
 	virtual bool startApplication( HINSTANCE hInstance, const char *cmdLine );
 

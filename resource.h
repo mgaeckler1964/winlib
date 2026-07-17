@@ -110,6 +110,7 @@ LayoutManager *createLayoutManager( const STRING &type, bool designerMode );
 STRING getColorName( size_t index );
 BasicWindow::BackgroundColor getColorValue( const STRING &name );
 
+gak::xml::Element *findFrame(gak::xml::Element *root, const char *frameName);
 SuccessCode createFrame( 
 	const F_STRING &resourceFileName, gak::xml::Element *root, 
 	const char *frameName, FrameChild *frame, BasicWindow *parent, 

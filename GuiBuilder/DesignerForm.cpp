@@ -129,7 +129,7 @@ void DesignerForm::startSelect( const Point &position )
 {
 	resetClickStatus();
 	BasicWindow	*child = findChild( position );
-	if( child )
+	if( child && child->getResource() )	// do not select children not created by the designer
 	{
 		if( !isSelected( child ) )
 		{
@@ -159,7 +159,7 @@ void DesignerForm::startSelect( const Point &position )
 void DesignerForm::endSelect( WPARAM modifier, const Point &position )
 {
 	BasicWindow	*child = findChild( position );
-	if( child )
+	if( child && child->getResource() )
 	{
 		if( modifier & MK_SHIFT )
 		{
