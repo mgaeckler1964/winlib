@@ -108,6 +108,24 @@ class TestForm : public winlibGUI::TestFORM_form
 		MyTab->replaceTab( 0, tab0 );
 		MyTab->replaceTab( 1, tab1 );
 
+		scroller->LABEL->removeStyle(SS_SIMPLE);
+		scroller->LABEL->setText(
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+		);
+		scroller->resize(199,199);
 		return psDO_DEFAULT;
 	}
 };

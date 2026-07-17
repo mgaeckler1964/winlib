@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1988-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -129,6 +129,19 @@ void ScrollFrame::registerClass()
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
+BasicWindow	*ScrollFrame::getFirstChild()
+{
+	const ChildWindows &children = getChildren();
+	if( children.size() >= 1 )
+	{
+		return children[0];
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 CallbackWindow	*ScrollFrame::getChild()
 {
 	const ChildWindows &children = getChildren();
@@ -162,12 +175,25 @@ STRING ScrollFrame::getWindowClassName() const
 
 ProcessStatus ScrollFrame::handleResize( const Size &newSize )
 {
+	Size			calcedSize(0,0);
+
 	CallbackWindow	*child = getChild();
 	if( child )
 	{
-		Size	calcedSize = child->calcSize( newSize );
-
+		calcedSize = child->calcSize( newSize );
 		child->sizeNmove( 0, 0, calcedSize.width, calcedSize.height );
+	}
+	else
+	{
+		BasicWindow	*first = getFirstChild();
+		if( first )
+		{
+			calcedSize = first->getSize();
+			first->sizeNmove( 0, 0, calcedSize.width, calcedSize.height );
+		}
+	}
+	if(calcedSize)
+	{
 		if( calcedSize.width <= newSize.width )
 		{
 			hideHorizScrollBar();
@@ -195,7 +221,7 @@ ProcessStatus ScrollFrame::handleResize( const Size &newSize )
 
 ProcessStatus ScrollFrame::handleVertScroll( VertScrollCode scrollCode, int nPos, HWND  )
 {
-	CallbackWindow	*child = getChild();
+	BasicWindow	*child = getFirstChild();
 	if( child )
 	{
 		int		rowHeight = 20;
@@ -257,7 +283,7 @@ ProcessStatus ScrollFrame::handleVertScroll( VertScrollCode scrollCode, int nPos
 
 ProcessStatus ScrollFrame::handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND )
 {
-	CallbackWindow	*child = getChild();
+	BasicWindow	*child = getFirstChild();
 	if( child )
 	{
 		int		rowHeight = 20;

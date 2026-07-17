@@ -200,6 +200,13 @@ class Device
 		if( y )
 			*y = pos.y;
 	}
+	void calcSize( const char *text, Size *size )
+	{
+		RectBorder rect( 0, 0, 0, 0 );
+		DrawText(m_device, text, -1, &rect, DT_CALCRECT);
+		size->height = rect.bottom;
+		size->width = rect.right;
+	}
 	void getTextExtentWithBreak( const char *text, Size *size ) const;
 	void getTextExtent( const char *text, size_t len, Size *size ) const;
 	void getTextExtent( const char *text, size_t startPos, size_t len, Size *size ) const

@@ -89,7 +89,9 @@
     <ClInclude Include="test.gui.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.gui" />
+    <None Include="test.gui">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

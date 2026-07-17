@@ -104,7 +104,8 @@ void BasicWindow::checkSize( int width, int height )
 			hdc.selectFont( m_font );
 		}
 
-		hdc.getTextExtent( m_caption, m_caption.strlen(), &size );
+		hdc.calcSize(m_caption.c_str(), &size );
+		//hdc.getTextExtent( m_caption, m_caption.strlen(), &size );
 		if( !width )
 		{
 			width = size.width + m_widthOffset;
