@@ -1130,28 +1130,26 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 		++it
 	)
 	{
-		xml::Element		*resource = *it;
+		xml::Element	*resource = *it;
 		STRING			tag = resource->getTag();
 		STRING			name = fixIfBad(resource->getAttribute( NAME_ATTR ));
 		if( (tag == FORM_TAG || tag==FRAME_TAG || tag==SCROLLER_TAG) && !name.isEmpty() )
 		{
-			STRING	parentClass, baseClass;
+			const STRING	parentClass = "BasicWindow";
+			STRING	baseClass;
 			if( tag == FORM_TAG )
 			{
 				baseClass = resource->getAttribute( "baseClass" );
 				if( baseClass.isEmpty() )
 					baseClass = "PopupWindow";
-				parentClass = "BasicWindow";
 			}
 			else if( tag == SCROLLER_TAG )
 			{
 				baseClass = ScrollFrame::className;
-				parentClass = "CallbackWindow";
 			}
 			else
 			{
 				baseClass = FrameChild::className;
-				parentClass = "BasicWindow";
 			}
 			stream << "\n\tclass " << name << '_' << tag << " : public winlib::" << baseClass << " {\n"
 				"\t\tpublic:\n"
@@ -1628,7 +1626,7 @@ void GuiBuilderWindow::editItemList()
 					)
 					{
 						STRING frameName = STRING().add(name).add('_').add(*it);
-						if( !::findFrame( m_guiDoc, frameName ) )
+						if( !::findFrame( m_guiDoc->getRoot(), frameName ) )
 						{
 							newFrame( frameName );
 						}

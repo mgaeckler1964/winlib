@@ -92,18 +92,21 @@ static const int HEIGHT = 1000;
 #ifndef __BORLANDC__
 class TestForm : public winlibGUI::TestFORM_form
 {
-	winlibGUI::MyTab_Tab1_frame	*tab1;
-	winlibGUI::MyTab_Tab2_frame	*tab2;
+	winlibGUI::MyTab_Tab0_frame		*tab0;
+	winlibGUI::MyTab_Tab1_frame		*tab1;
+	winlibGUI::SCROLLER_scroller	*scroller;
 	public:
 	TestForm() : winlibGUI::TestFORM_form(nullptr) {}
 	virtual ProcessStatus handleCreate()
 	{
+		tab0 = new winlibGUI::MyTab_Tab0_frame(this);
 		tab1 = new winlibGUI::MyTab_Tab1_frame(this);
-		tab2 = new winlibGUI::MyTab_Tab2_frame(this);
+		scroller = new winlibGUI::SCROLLER_scroller(this);
+		tab0->create( MyTab );
 		tab1->create( MyTab );
-		tab2->create( MyTab );
-		MyTab->replaceTab( 0, tab1 );
-		MyTab->replaceTab( 1, tab2 );
+		scroller->create( tab0 );
+		MyTab->replaceTab( 0, tab0 );
+		MyTab->replaceTab( 1, tab1 );
 
 		return psDO_DEFAULT;
 	}

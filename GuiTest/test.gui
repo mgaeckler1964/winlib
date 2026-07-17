@@ -3,20 +3,23 @@
 <forms>
 <form name="TestFORM" style="281018368" width="640" height="480" caption="Test" id="128">
 <layoutManager type="SingleChildManager" />
-<child type="TabControl" name="MyTab" caption="" x="175" y="153" width="80" height="25" style="1342242816" id="131">
+<child type="TabControl" name="MyTab" caption="" x="175" y="153" width="80" height="25" style="1342242816" id="132">
 <items>
+<item>Tab0</item>
 <item>Tab1</item>
-<item>Tab2</item>
 </items>
 </child>
 </form>
 </forms>
 <frames>
-<frame name="MyTab_Tab1" width="300" height="300" id="129" style="276824064">
-<child type="Label" name="LABEL" caption="MyTab1" x="28" y="49" width="0" height="0" style="1342242827" id="132" />
+<frame name="MyTab_Tab0" width="300" height="300" id="129" style="276824064">
+<child type="Label" name="LABEL" caption="MyTab0" x="28" y="49" width="0" height="0" style="1342242827" id="133" />
 </frame>
-<frame name="MyTab_Tab2" width="300" height="300" id="130" style="276824064">
-<child type="Label" name="LABEL" caption="MyTab2" x="89" y="121" width="80" height="25" style="1342242827" id="132" />
+<frame name="MyTab_Tab1" width="300" height="300" id="130" style="276824064">
+<child type="Label" name="LABEL" caption="MyTab1" x="89" y="121" width="80" height="25" style="1342242827" id="133" />
 </frame>
+<scroller name="SCROLLER" width="313" height="339" id="131" style="268435456">
+<child type="Label" name="LABEL" caption="The Scroller" x="67" y="70" width="0" height="0" style="1342242827" id="133" />
+</scroller>
 </frames>
 </gui>

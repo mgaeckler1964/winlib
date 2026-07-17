@@ -522,7 +522,8 @@ gak::xml::Element *findFrame(gak::xml::Element *root, const char *frameName)
 			for( size_t i=0; i<frames->getNumObjects(); i++ )
 			{
 				xml::Element	*resource = frames->getElement( i );
-				if( resource->getTag() == FRAME_TAG && resource->getAttribute( NAME_ATTR ) == frameName )
+				if( (resource->getTag() == FRAME_TAG || resource->getTag() == SCROLLER_TAG) 
+					&& resource->getAttribute( NAME_ATTR ) == frameName )
 				{
 /***/				return resource;
 				}

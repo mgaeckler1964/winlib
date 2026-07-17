@@ -18,10 +18,11 @@
 
 namespace winlibGUI {
 
-	const int LABEL_id=132;
-	const int MyTab_id=131;
-	const int MyTab_Tab1_id=129;
-	const int MyTab_Tab2_id=130;
+	const int LABEL_id=133;
+	const int MyTab_id=132;
+	const int MyTab_Tab0_id=129;
+	const int MyTab_Tab1_id=130;
+	const int SCROLLER_id=131;
 	const int TestFORM_id=128;
 
 	class GuiApplication : public winlib::Application {
@@ -42,6 +43,18 @@ namespace winlibGUI {
 		virtual void getControls();
 	};	// end of TestFORM
 
+	class MyTab_Tab0_frame : public winlib::FrameChild {
+		public:
+		MyTab_Tab0_frame(winlib::BasicWindow *owner) : FrameChild(owner) {}
+		winlib::SuccessCode create(winlib::BasicWindow*parent) {
+			return FrameChild::create(parent,"MyTab_Tab0");
+		}
+
+		winlib::Label *LABEL;
+		private:
+		virtual void getControls();
+	};	// end of MyTab_Tab0
+
 	class MyTab_Tab1_frame : public winlib::FrameChild {
 		public:
 		MyTab_Tab1_frame(winlib::BasicWindow *owner) : FrameChild(owner) {}
@@ -54,17 +67,17 @@ namespace winlibGUI {
 		virtual void getControls();
 	};	// end of MyTab_Tab1
 
-	class MyTab_Tab2_frame : public winlib::FrameChild {
+	class SCROLLER_scroller : public winlib::ScrollFrame {
 		public:
-		MyTab_Tab2_frame(winlib::BasicWindow *owner) : FrameChild(owner) {}
+		SCROLLER_scroller(winlib::BasicWindow *owner) : ScrollFrame(owner) {}
 		winlib::SuccessCode create(winlib::BasicWindow*parent) {
-			return FrameChild::create(parent,"MyTab_Tab2");
+			return ScrollFrame::create(parent,"SCROLLER");
 		}
 
 		winlib::Label *LABEL;
 		private:
 		virtual void getControls();
-	};	// end of MyTab_Tab2
+	};	// end of SCROLLER
 }	// namespace winlibGUI
 
 #endif // C__CRESD_SOURCE_WINLIB_GUITEST_TEST_GUI_H
