@@ -1239,6 +1239,14 @@ class TabControl : public ControlWindow
 	{}
 
 	FrameChild *addTab( const char *name );
+	FrameChild *getTab( size_t i )
+	{
+		if( i<m_numTabs )
+		{
+			return m_tabs[i];
+		}
+		return nullptr;
+	}
 	size_t getCurrentTab()
 	{
 		return message(TCM_GETCURSEL);

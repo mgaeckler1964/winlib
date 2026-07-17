@@ -189,6 +189,23 @@ static void addListItems( CONTROL *listBox, xml::Element *child )
 	}
 }
 
+static void addTabItems( TabControl *tabControl, xml::Element *child )
+{
+	xml::Element	*items = child->getElement( ITEMS_TAG );
+	if( items )
+	{
+		for( size_t i=0; i<items->getNumObjects(); i++ )
+		{
+			xml::Element	*item = items->getElement( i );
+			if( item && item->getTag() == ITEM_TAG )
+			{
+				STRING	value = item->getValue( xml::PLAIN_MODE );
+				tabControl->addTab( value );
+			}
+		}
+	}
+}
+
 static void setGridViewer( GridViewer * gridViewer, xml::Element *child )
 {
 	unsigned numCols = child->getAttribute( "numCols" ).getValueN<unsigned>();
@@ -220,6 +237,7 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 	TreeView		*treeView = nullptr;
 	GridViewer		*gridViewer = nullptr;
 	ChartChild		*chartChild = nullptr;
+	TabControl		*tabControl = nullptr;
 
 	unsigned		x = child->getAttribute( LayoutData::xPosAttr ).getValueN<unsigned>();
 	unsigned		y = child->getAttribute( LayoutData::yPosAttr ).getValueN<unsigned>();
@@ -269,6 +287,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		newBasicChild = newChild = gridViewer = new GridViewer( parent );
 	else if( type == ChartChild::className )
 		newBasicChild = newChild = chartChild = new ChartChild( parent );
+	else if( type == TabControl::className )
+		newBasicChild = tabControl = new TabControl( parent );
 	else
 		throw gak::LibraryException( gak::STRING( "Unkown item type: " ) + type );
 
@@ -296,7 +316,6 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 					iStyle |= WS_BORDER;
 				}
 			}
-
 			newBasicChild->setStyle( iStyle );
 		}
 
@@ -334,6 +353,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 			scrollFrame->create( parent );
 		else if( newChild )
 			newChild->create( parent );
+		else if( tabControl )
+			tabControl->create( parent );
 		else
 			throw gak::LibraryException( gak::STRING( "Unkown child type: " ) + type );
 
@@ -362,6 +383,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		addListItems( listBox, child );
 	else if( comboBox )
 		addListItems( comboBox, child );
+	else if( tabControl )
+		addTabItems( tabControl, child );
 	else if( gridViewer )
 		setGridViewer( gridViewer, child );
 }

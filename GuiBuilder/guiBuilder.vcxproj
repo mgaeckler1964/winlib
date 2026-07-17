@@ -152,6 +152,7 @@
     <ResourceCompile Include="guiBuilder.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\addNewControlClassToBuilder.txt" />
     <None Include="button.ico" />
     <None Include="checkbox.ico" />
     <None Include="combobox.ico" />
@@ -166,6 +167,7 @@
     <None Include="scrollbar.ico" />
     <None Include="scroller.ico" />
     <None Include="select.ico" />
+    <None Include="tabControl.ico" />
     <None Include="trackbar.ico" />
     <None Include="treeview.ico" />
     <None Include="updownButton.ico" />

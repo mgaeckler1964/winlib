@@ -762,6 +762,12 @@ void DesignerForm::createControl( const Point *position )
 		newCaption = "";
 		type = ChartChild::className;
 	}
+	else if(m_theGuiBuilder->getCurrentId() == TABCONTROL_PUSH )
+	{
+		newWindow = newControl = new TabControl( parent );
+		newCaption = "";
+		type = TabControl::className;
+	}
 
 	newName = type.uperCaseCopy();
 
@@ -787,6 +793,7 @@ void DesignerForm::createControl( const Point *position )
 	}
 	catchControl( newWindow );
 	m_theGuiBuilder->addChildItem( newResource );
+	m_theGuiBuilder->setChangedFlag();
 }
 
 // --------------------------------------------------------------------- //

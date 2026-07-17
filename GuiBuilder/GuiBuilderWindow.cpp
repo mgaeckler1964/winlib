@@ -702,6 +702,7 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 
 	bool	listbox = false;
 	bool	combobox = false;
+	bool	tabControl = false;
 	bool	form = false;
 	bool	grid = false;
 
@@ -716,6 +717,10 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 		else if( type == ComboBox::className )
 		{
 			combobox = true;
+		}
+		else if( type == TabControl::className )
+		{
+			tabControl = true;
 		}
 		else if( type == GridViewer::className )
 		{
@@ -738,7 +743,7 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 		disableChild( properties.baseClass );
 	}
 
-	if( combobox || listbox )
+	if( combobox || listbox || tabControl )
 	{
 		enableChild( properties.itemListLabel );
 		enableChild( properties.itemList );
@@ -1600,7 +1605,7 @@ void GuiBuilderWindow::editItemList()
 			if( itemList.size() )
 			{
 				STRING	type = resource->getAttribute( TYPE_ATTR );
-				if( type==ListBox::className || type==ComboBox::className )
+				if( type==ListBox::className || type==ComboBox::className || type==TabControl::className)
 				{
 					resource->addObject( newItems->copy() );
 
@@ -2226,9 +2231,6 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		/*
 			tool bar
 		*/
-
-
-	
 		case SELECT_PUSH:
 		case LABEL_PUSH:
 		case BUTTON_PUSH:
@@ -2249,6 +2251,7 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 		case CHARTWIN_PUSH:
 		case FRAME_PUSH:
 		case SCROLLER_PUSH:
+		case TABCONTROL_PUSH:
 			m_currentId = control;
 			break;
 
@@ -2605,6 +2608,10 @@ SuccessCode GuiBuilderWindow::create()
 		btnCreateScroller.setText( "Scroller" );
 		btnCreateScroller.setId( SCROLLER_PUSH );
 		btnCreateScroller.create( &toolbar );
+
+		btnCreateTabControl.setText( "TabControl" );
+		btnCreateTabControl.setId( TABCONTROL_PUSH );
+		btnCreateTabControl.create( &toolbar );
 
 		mainArea.create( this );
 		mainArea.setLayoutData( (new LayoutData)->setAttachment( LayoutData::ATTACH_CLIENT )->setGrowHeight( 1 )->setGrowWidth( 1 ) );

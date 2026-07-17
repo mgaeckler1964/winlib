@@ -117,5 +117,9 @@
     <None Include="updownButton.ico">
       <Filter>Ressourcendateien</Filter>
     </None>
+    <None Include="tabControl.ico">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="..\addNewControlClassToBuilder.txt" />
   </ItemGroup>
 </Project>

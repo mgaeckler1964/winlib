@@ -1,0 +1,37 @@
+﻿resource.cpp
+============
+void createChild( const F_STRING &resourceFileName, xml::Element *child, CallbackWindow *parent, bool designerMode )
+erzeuge neues control für die Anwendung
+
+designerForm.cpp
+================
+void DesignerForm::createControl( const Point *position )
+erzeuge neues control für den Designer
+
+guiBuilder.rc
+=============
+Erzeuge neuen Namen und Icon
+#define XXX nnn
+
+guiBuilder_rc.h
+===============
+Add new ID
+#define XXX nnn
+
+GuiBuilderWindow.cpp
+====================
+ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
+Reagiere auf den neuen MySelectButton
+
+SuccessCode GuiBuilderWindow::create()
+Erzeuge neuen MySelectButton
+
+GuiBuilderWindow.h
+==================
+Deklariere neuen button MySelectButton
+
+
+Allgemein
+---------
+Suche die exisitierende ID z.B. SCROLLER_PUSH und erzeuge eine neue und kopiere die Verwendungen mit der neuen.
+Suche die exisitierende Pushbutton z.B. btnCreateScroller und erzeuge einen neuen und kopiere die Verwendungen mit dem neuen.

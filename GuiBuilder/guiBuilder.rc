@@ -62,6 +62,7 @@ GRIDVIEW_PUSH		ICON "grid.ico"
 CHARTWIN_PUSH		ICON "chartwin.ico"
 FRAME_PUSH			ICON "frame.ico"
 SCROLLER_PUSH		ICON "scroller.ico"
+TABCONTROL_PUSH		ICON "tabControl.ico"
 
 GAK_ICON			ICON "GAK.ico"
 GUIBUILDER_ICON		ICON "guiBuilder.ico"
@@ -88,6 +89,7 @@ BEGIN
 	CHARTWIN_PUSH		, "Chart"
 	FRAME_PUSH			, "Frame"
 	SCROLLER_PUSH		, "Scroller"
+	TABCONTROL_PUSH		, "Tab Control"
 END
 
 
