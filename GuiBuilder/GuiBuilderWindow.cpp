@@ -1151,7 +1151,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 			else
 			{
 				baseClass = FrameChild::className;
-				parentClass = "CallbackWindow";
+				parentClass = "BasicWindow";
 			}
 			stream << "\n\tclass " << name << '_' << tag << " : public winlib::" << baseClass << " {\n"
 				"\t\tpublic:\n"

@@ -1249,7 +1249,7 @@ class TabControl : public ControlWindow
 		}
 		return nullptr;
 	}
-	// FrameChild *replaceTab( size_t i, FrameChild *newFrame );
+	FrameChild *replaceTab( size_t i, FrameChild *newFrame );
 	size_t getCurrentTab()
 	{
 		return message(TCM_GETCURSEL);

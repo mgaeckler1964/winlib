@@ -44,7 +44,7 @@
 <form name="ABOUT" id="128" width="330" height="185" caption="About GUI Builder" baseClass="ModalPopup" style="2428502016">
 <child type="Label" Caption="MG GUI Builder" x="8" y="9" height="0" width="0" style="268435456" />
 <child type="PushButton" Caption="OK" name="IDOK" x="96" y="112" height="20" width="80" id="1" style="268500993" />
-<child type="Label" name="" caption="(c) 2017-2024 by Martin Gäckler all rights reserved." x="8" y="83" width="308" height="19" style="1342242827" />
+<child type="Label" name="" caption="(c) 2017-2026 by Martin Gäckler all rights reserved." x="8" y="80" width="0" height="0" style="1342242827" />
 <child type="Label" name="SysType" caption="32/64" x="256" y="8" width="53" height="18" style="1342242818" id="157" />
 <child type="Label" name="GakIcon" caption="#2" x="8" y="32" width="32" height="32" style="1342242819" id="158" />
 <child type="Label" name="GuiIcon" caption="#1" x="272" y="32" width="32" height="32" style="1342242819" id="159" />

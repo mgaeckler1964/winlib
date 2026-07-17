@@ -1010,19 +1010,33 @@ FrameChild *TabControl::addTab( const char *name )
 	return newFrame;
 }
 
-#if 0
 FrameChild *TabControl::replaceTab( size_t i, FrameChild *newFrame )
 {
-	if( i<m_numTabs )
+	if( i<m_numTabs && newFrame->getParent() == this )
 	{
-		m_tabs[i]->close();
+		FrameChild *old = m_tabs[i];
+		old->hide();
 		m_tabs[i] = newFrame;
 		resizeTab(newFrame);
+
+		if( old == m_active )
+		{
+			m_active = newFrame;
+			newFrame->show();
+		}
+		else
+		{
+			newFrame->hide();
+		}
+		if( old != newFrame )
+		{
+			old->close();
+		}
+
 		return newFrame;
 	}
 	return nullptr;
 }
-#endif
 
 void TabControl::showTab(size_t i)
 {

@@ -100,13 +100,10 @@ class TestForm : public winlibGUI::TestFORM_form
 	{
 		tab1 = new winlibGUI::MyTab_Tab1_frame(this);
 		tab2 = new winlibGUI::MyTab_Tab2_frame(this);
-		tab1->create( MyTab->getTab(0) );
-		tab2->create( MyTab->getTab(1) );
-/// TODO: enable replaceTab
-/// In this case we must allow to to create Itemes defined with GuiBuilder without CallBackWindow - parent
-//		MyTab->replaceTab( 0, tab1 );
-//		MyTab->replaceTab( 1, tab2 );
-		MyTab->resizeTabs();
+		tab1->create( MyTab );
+		tab2->create( MyTab );
+		MyTab->replaceTab( 0, tab1 );
+		MyTab->replaceTab( 1, tab2 );
 
 		return psDO_DEFAULT;
 	}

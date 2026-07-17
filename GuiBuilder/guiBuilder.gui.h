@@ -314,7 +314,7 @@ namespace winlibGUI {
 	class Properties_frame : public winlib::FrameChild {
 		public:
 		Properties_frame(winlib::BasicWindow *owner) : FrameChild(owner) {}
-		winlib::SuccessCode create(winlib::CallbackWindow*parent) {
+		winlib::SuccessCode create(winlib::BasicWindow*parent) {
 			return FrameChild::create(parent,"Properties");
 		}
 
@@ -385,7 +385,7 @@ namespace winlibGUI {
 	class TabFrame1_frame : public winlib::FrameChild {
 		public:
 		TabFrame1_frame(winlib::BasicWindow *owner) : FrameChild(owner) {}
-		winlib::SuccessCode create(winlib::CallbackWindow*parent) {
+		winlib::SuccessCode create(winlib::BasicWindow*parent) {
 			return FrameChild::create(parent,"TabFrame1");
 		}
 
