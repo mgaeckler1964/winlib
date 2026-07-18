@@ -92,22 +92,13 @@ static const int HEIGHT = 1000;
 #ifndef __BORLANDC__
 class TestForm : public winlibGUI::TestFORM_form
 {
-	winlibGUI::MyTab_Tab0_frame		*tab0;
-	winlibGUI::MyTab_Tab1_frame		*tab1;
 	winlibGUI::SCROLLER_scroller	*scroller;
 	public:
 	TestForm() : winlibGUI::TestFORM_form(nullptr) {}
 	virtual ProcessStatus handleCreate()
 	{
-		tab0 = new winlibGUI::MyTab_Tab0_frame(this);
-		tab1 = new winlibGUI::MyTab_Tab1_frame(this);
 		scroller = new winlibGUI::SCROLLER_scroller(this);
-		tab0->create( MyTab );
-		tab1->create( MyTab );
-		scroller->create( tab0 );
-		MyTab->replaceTab( 0, tab0 );
-		MyTab->replaceTab( 1, tab1 );
-
+		scroller->create( MyTab_Tab0 );
 		scroller->LABEL->setText(
 			"y\nthe quick brown fox jumps over the lazy dog\n"
 			"y\nthe quick brown fox jumps over the lazy dog\n"

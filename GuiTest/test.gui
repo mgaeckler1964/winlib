@@ -13,7 +13,7 @@
 </forms>
 <frames>
 <frame name="MyTab_Tab0" width="300" height="300" id="129" style="276824064">
-<child type="Label" name="LABEL" caption="MyTab0" x="28" y="49" width="0" height="0" style="1342242827" id="133" />
+<child type="Label" name="LABEL" caption="MyTab0" x="216" y="216" width="0" height="0" style="1342242827" id="133" />
 </frame>
 <frame name="MyTab_Tab1" width="300" height="300" id="130" style="276824064">
 <child type="Label" name="LABEL" caption="MyTab1" x="89" y="121" width="80" height="25" style="1342242827" id="133" />

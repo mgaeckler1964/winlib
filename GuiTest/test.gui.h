@@ -39,6 +39,8 @@ namespace winlibGUI {
 		}
 
 		winlib::TabControl *MyTab;
+		class MyTab_Tab0_frame *MyTab_Tab0;
+		class MyTab_Tab1_frame *MyTab_Tab1;
 		private:
 		virtual void getControls();
 	};	// end of TestFORM

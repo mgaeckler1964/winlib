@@ -27,7 +27,7 @@ namespace winlibGUI {
 "</forms>\n"
 "<frames>\n"
 "<frame name=\"MyTab_Tab0\" width=\"300\" height=\"300\" id=\"129\" style=\"276824064\">\n"
-"<child type=\"Label\" name=\"LABEL\" caption=\"MyTab0\" x=\"28\" y=\"49\" width=\"0\" height=\"0\" style=\"1342242827\" id=\"133\" />\n"
+"<child type=\"Label\" name=\"LABEL\" caption=\"MyTab0\" x=\"216\" y=\"216\" width=\"0\" height=\"0\" style=\"1342242827\" id=\"133\" />\n"
 "</frame>\n"
 "<frame name=\"MyTab_Tab1\" width=\"300\" height=\"300\" id=\"130\" style=\"276824064\">\n"
 "<child type=\"Label\" name=\"LABEL\" caption=\"MyTab1\" x=\"89\" y=\"121\" width=\"80\" height=\"25\" style=\"1342242827\" id=\"133\" />\n"
@@ -45,6 +45,14 @@ namespace winlibGUI {
 
 	void TestFORM_form::getControls() {
 		MyTab=static_cast<winlib::TabControl*>(findChild(MyTab_id));
+{ size_t i=0;
+MyTab_Tab0= new MyTab_Tab0_frame(this);
+MyTab_Tab0->create(MyTab);
+MyTab->replaceTab( i++,MyTab_Tab0);
+MyTab_Tab1= new MyTab_Tab1_frame(this);
+MyTab_Tab1->create(MyTab);
+MyTab->replaceTab( i++,MyTab_Tab1);
+}
 	}	// TestFORM
 
 	void MyTab_Tab0_frame::getControls() {

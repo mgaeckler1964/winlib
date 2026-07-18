@@ -113,6 +113,16 @@
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
+void DesignerForm::internalClearSelected()
+{
+	for( size_t i=m_selected.size()-1; i!=-1; i-- )
+	{
+		internalUnselect( m_selected[i] );
+	}
+
+	m_selected.clear();
+}
+
 void DesignerForm::internalSelect( BasicWindow *control )
 {
 	selectControl( control, false );
@@ -180,6 +190,69 @@ void DesignerForm::endSelect( WPARAM modifier, const Point &position )
 	}
 }
 
+void DesignerForm::checkSizeStart( const Point &position )
+{
+	doEnterFunction("DesignerForm::checkSizeStart");
+
+	BasicWindow	*child = findChild( position );
+	if( child && isSelected( child ) )
+	{
+		RectBorder	childRect = child->getRelativeRectangle();
+		if( position.x >= childRect.left 
+		&& position.y >= childRect.top
+		&& position.x < childRect.left + s_handleSize
+		&& position.y < childRect.top + s_handleSize )
+		{
+			// it's the upper left corner
+			SetCursor( LoadCursor( nullptr, IDC_SIZENWSE ) );
+			m_sizeMode = smUPPERLEFT;
+		}
+		else if( position.x <= childRect.right 
+		&& position.y >= childRect.top
+		&& position.x > childRect.right - s_handleSize
+		&& position.y < childRect.top + s_handleSize )
+		{
+			// it's the upper right corner
+			SetCursor( LoadCursor( nullptr, IDC_SIZENESW ) );
+			m_sizeMode = smUPPERRIGHT;
+		}
+		else if( position.x >= childRect.left 
+		&& position.y <= childRect.bottom
+		&& position.x < childRect.left + s_handleSize
+		&& position.y > childRect.bottom - s_handleSize )
+		{
+			// it's the lower left corner
+			SetCursor( LoadCursor( nullptr, IDC_SIZENESW ) );
+			m_sizeMode = smLOWERLEFT;
+		}
+		else if( position.x <= childRect.right 
+		&& position.y <= childRect.bottom
+		&& position.x > childRect.right - s_handleSize
+		&& position.y > childRect.bottom - s_handleSize )
+		{
+			// it's the lower right corner
+			SetCursor( LoadCursor( nullptr, IDC_SIZENWSE ) );
+			m_sizeMode = smLOWERRIGHT;
+		}
+		else
+		{
+			SetCursor( LoadCursor( nullptr, IDC_HAND ) );
+			if( m_sizeMode != smNONE )
+			{
+				m_sizeMode = smNONE;
+			}
+		}
+	}
+	else
+	{
+		SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
+		if( m_sizeMode != smNONE )
+		{
+			m_sizeMode = smNONE;
+		}
+	}
+}
+
 /*
 	return true, if there is no other child
 */
@@ -219,7 +292,7 @@ bool DesignerForm::checkRectangle( const PODmatrix<BasicWindow*>::ArrayType &chi
 	{
 		BasicWindow *child;
 		LayoutData *layoutData;
-		if( (child = children[i]) != NULL && (layoutData = child->getLayoutData()) != NULL )
+		if( (child = children[i]) != nullptr && (layoutData = child->getLayoutData()) != nullptr )
 		{
 			if( rectangle->left > layoutData->xPos )
 			{
@@ -628,9 +701,9 @@ void DesignerForm::endDragging()
 void DesignerForm::createControl( const Point *position )
 {
 	STRING			newCaption, type, newName;
-	BasicWindow		*newWindow = NULL;
-	ControlWindow	*newControl = NULL;
-	ChildWindow		*newChild = NULL;
+	BasicWindow		*newWindow = nullptr;
+	ControlWindow	*newControl = nullptr;
+	ChildWindow		*newChild = nullptr;
 	CallbackWindow	*parent = findFrame( *position );
 	Point			newChildPos;
 
@@ -1004,6 +1077,641 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void DesignerForm::moveHorizontal( int xPos )
+{
+	int	dummy, yPos;
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow *child = *it;
+		child->getRelativePosition( &dummy, &yPos );
+		child->move( xPos, yPos );
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			resource->setIntegerAttribute( LayoutData::xPosAttr, xPos );
+		}
+	}
+}
+
+void DesignerForm::moveVertical( int yPos )
+{
+	int	dummy, xPos;
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow *child = *it;
+		child->getRelativePosition( &xPos, &dummy );
+		child->move( xPos, yPos );
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			resource->setIntegerAttribute( LayoutData::yPosAttr, yPos );
+		}
+	}
+}
+
+void DesignerForm::setWidth( int width )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		Size		size = child->getSize();
+		size.width = width;
+		child->resize( size );
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			resource->setIntegerAttribute( LayoutData::widthAttr, width );
+		}
+	}
+}
+
+void DesignerForm::setHeight( int height )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		Size		size = child->getSize();
+		size.height = height;
+		child->resize( size );
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			resource->setIntegerAttribute( LayoutData::heightAttr, height );
+		}
+	}
+}
+
+void DesignerForm::setCaption( const STRING &caption )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		child->setText( caption );
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+			resource->setStringAttribute( CAPTION_ATTR, caption );
+	}
+}
+	
+void DesignerForm::setLayoutHorizontal( int xPos )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->xPos = xPos;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::xPosAttr, xPos );
+		}
+	}
+}
+
+void DesignerForm::setLayoutVertical( int yPos )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->yPos = yPos;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::yPosAttr, yPos );
+		}
+	}
+}
+
+void DesignerForm::setLayoutSizeHorizontal( unsigned width )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->width = width;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::widthAttr, width );
+		}
+	}
+}
+
+void DesignerForm::setLayoutSizeVertical( unsigned height )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->height = height;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::heightAttr, height );
+		}
+	}
+}
+
+void DesignerForm::setLayoutGrowHorizontal( unsigned growWidth )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->growWidth = growWidth;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::growWidthAttr, growWidth );
+		}
+	}
+}
+
+void DesignerForm::setLayoutGrowVertical( unsigned growHeight )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->growHeight = growHeight;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::growHeightAttr, growHeight );
+		}
+	}
+}
+
+void DesignerForm::setPaddingLeft( int paddingLeft )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->padding.left = paddingLeft;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::paddingLeft, paddingLeft );
+		}
+	}
+}
+
+void DesignerForm::setPaddingRight( int paddingRight )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->padding.right = paddingRight;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::paddingRight, paddingRight );
+		}
+	}
+}
+
+void DesignerForm::setPaddingTop( int paddingTop )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->padding.top = paddingTop;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::paddingTop, paddingTop );
+		}
+	}
+}
+
+void DesignerForm::setPaddingBottom( int paddingBottom )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->padding.bottom = paddingBottom;
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+
+			layout->setIntegerAttribute( LayoutData::paddingBottom, paddingBottom );
+		}
+	}
+}
+
+void DesignerForm::setAttachment( int attachment )
+{
+	if( attachment < 0 )
+	{
+		return;		// do not change
+	}
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow	*child = *it;
+		LayoutData	*layoutData = child->getLayoutData();
+		if( !layoutData )
+			child->setLayoutData( layoutData = new LayoutData );
+		layoutData->attach = LayoutData::Attachment( attachment );
+
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			gak::xml::Element *layout = resource->getElement( LayoutData::className );
+			if( !layout )
+			{
+				layout = resource->addObject( new gak::xml::Any( LayoutData::className ) );
+			}
+
+			layout->setIntegerAttribute( LayoutData::attachment, attachment );
+		}
+	}
+}
+
+void DesignerForm::setLayoutManager( const STRING &type )
+{
+	// reset size and position from resource
+	const ChildWindows &children = getChildren();
+
+	for( size_t i=0; i<children.size(); i++ )
+	{
+		BasicWindow	*control = children[i];
+		gak::xml::Element	*resource = control->getResource();
+		if( resource )
+		{
+			int x = resource->getAttribute( LayoutData::xPosAttr ).getValueN<int>();
+			int y = resource->getAttribute( LayoutData::yPosAttr ).getValueN<int>();
+			int width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+			int height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+			control->sizeNmove( x, y, width, height );
+		}
+	}
+	
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		CallbackWindow *child = dynamic_cast<CallbackWindow*>( *it );
+		if( child )
+		{
+			LayoutManager *m_layoutManager = createLayoutManager( type, true );
+
+			child->setLayoutManager( m_layoutManager );
+
+			gak::xml::Element	*resource = child->getResource();
+			if( resource )
+			{
+				gak::xml::Element	*layoutManagerResource = resource->getElement( LayoutManager::className );
+				if( layoutManagerResource && !m_layoutManager )
+				{
+					resource->removeObject( layoutManagerResource );
+					delete layoutManagerResource;
+				}
+				else if( !layoutManagerResource && m_layoutManager )
+				{
+					gak::xml::Element	*layoutManagerResource = resource->addObject( new gak::xml::Any( LayoutManager::className ) );
+					layoutManagerResource->setStringAttribute( TYPE_ATTR, type );
+				}
+				else if( layoutManagerResource && m_layoutManager )
+				{
+					layoutManagerResource->setStringAttribute( TYPE_ATTR, type );
+				}
+			}
+		}
+	}
+}
+
+void DesignerForm::setMargin( int marginLeft, int marginRight, int marginTop, int marginBottom )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		CallbackWindow	*child = dynamic_cast<CallbackWindow*>(*it);
+		if( child )
+		{
+			LayoutManager	*m_layoutManager = child->getLayoutManager();
+			if( m_layoutManager )
+			{
+				m_layoutManager->m_margin.left = marginLeft;
+				m_layoutManager->m_margin.right = marginRight;
+				m_layoutManager->m_margin.top = marginTop;
+				m_layoutManager->m_margin.bottom = marginBottom;
+			}
+			gak::xml::Element		*resource = child->getResource();
+			if( resource )
+			{
+				gak::xml::Element *layoutManagerResource = resource->getElement( LayoutManager::className );
+				if( !layoutManagerResource && m_layoutManager )
+					layoutManagerResource = resource->addObject( new gak::xml::Any( LayoutManager::className ) );
+				else if( layoutManagerResource && !m_layoutManager )
+				{
+					resource->removeObject( layoutManagerResource );
+					delete layoutManagerResource;
+					layoutManagerResource = nullptr;
+				}
+				if( layoutManagerResource )
+				{
+					layoutManagerResource->setIntegerAttribute( LayoutManager::marginLeft, marginLeft );
+					layoutManagerResource->setIntegerAttribute( LayoutManager::marginRight, marginRight );
+					layoutManagerResource->setIntegerAttribute( LayoutManager::marginTop, marginTop );
+					layoutManagerResource->setIntegerAttribute( LayoutManager::marginBottom, marginBottom );
+				}
+			}
+		}
+	}
+}
+
+void DesignerForm::setFont( const STRING &font )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow			*child = *it;
+		gak::xml::Element	*resource = child->getResource();
+		if( resource )
+		{
+			resource->setStringAttribute( "font", font );
+			child->getFont().fromString( font, true );
+		}
+	}
+}
+
+void DesignerForm::setBaseClass( const STRING &baseClass )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		BasicWindow			*child = *it;
+		gak::xml::Element	*resource = child->getResource();
+		if( resource && resource->getTag() == FORM_TAG )
+		{
+			resource->setStringAttribute( "baseClass", baseClass );
+		}
+	}
+}
+
+void DesignerForm::setNumCols( unsigned numCols )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		GridViewer	*child = dynamic_cast<GridViewer*>(*it);
+		if( child )
+		{
+			child->setNumCols( numCols );
+			gak::xml::Element	*resource = child->getResource();
+			if( resource )
+			{
+				resource->setIntegerAttribute( "numCols", numCols );
+			}
+		}
+	}
+}
+
+void DesignerForm::setNumRows( unsigned numRows )
+{
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+		GridViewer	*child = dynamic_cast<GridViewer*>(*it);
+		if( child )
+		{
+			child->setNumRows( numRows );
+			gak::xml::Element	*resource = child->getResource();
+			if( resource )
+			{
+				resource->setIntegerAttribute( "numRows", numRows );
+			}
+		}
+	}
+}
+
+bool DesignerForm::moveUp()
+{
+	bool hasChanged = false;
+	for( 
+		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
+		it != endIT;
+		++it
+	)
+	{
+
+		BasicWindow *child = *it;
+		gak::xml::Element *element = child->getResource();
+		if( element )
+		{
+			long index = element->getIndex();
+			if( index )
+			{
+				element->moveTo(index-1);
+				hasChanged = true;
+			}
+			else
+			{
+/*v*/				break;
+			}
+		}
+		else
+		{
+/*v*/			break;
+		}
+	}
+		
+	return hasChanged;
+}
+
+bool DesignerForm::moveDown()
+{
+	bool hasChanged = false;
+	for( 
+		ChildWindows::const_reverse_iterator it = m_selected.crbegin(), endIT = m_selected.crend();
+		it != endIT;
+		++it
+	)
+	{
+
+		BasicWindow *child = *it;
+		gak::xml::Element *element = child->getResource();
+		if( element )
+		{
+			long index = element->getIndex();
+			assert( index >= 0 );
+			long numSiblings = long(element->getParent()->getNumObjects())-1;
+			assert( numSiblings >= 0 );
+			if( index < numSiblings )
+			{
+				element->moveTo(index+1);
+				hasChanged = true;
+			}
+			else
+			{
+/*v*/				break;
+			}
+		}
+		else
+		{
+/*v*/			break;
+		}
+	}
+		
+	return hasChanged;
+}
+
 
 void DesignerForm::refreshSelection()
 {

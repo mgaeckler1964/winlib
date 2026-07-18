@@ -1178,6 +1178,24 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 						name += type;
 					}
 					stream << "\t\twinlib::" << type << " *" << name << ";\n";
+					if( type == TabControl::className )
+					{
+						xml::Element		*items = child->getElement( ITEMS_TAG );
+						if( items )
+						{
+							for( size_t i=0; i<items->getNumObjects(); i++ )
+							{
+								xml::Element	*item = items->getElement( i );
+								STRING itemName = item->getValue( xml::PLAIN_MODE );
+								STRING frameName = getFrameName4Tab( name, itemName );
+								STRING frameClass = getFrameClass4Tab( frameName );
+								if( ::findFrame( m_guiDoc->getRoot(), frameName ) )
+								{
+									stream << "\t\tclass " << frameClass << " *" << frameName << ";\n";
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -1257,6 +1275,33 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 						idName += "_id";
 
 					stream << "\t\t" << name << "=static_cast<winlib::" << type << "*>(findChild(" << idName << "));\n";
+
+
+					if( type == TabControl::className )
+					{
+						xml::Element		*items = child->getElement( ITEMS_TAG );
+						if( items )
+						{
+							stream << "{ size_t i=0;\n";
+							for( size_t i=0; i<items->getNumObjects(); i++ )
+							{
+								xml::Element	*item = items->getElement( i );
+								STRING itemName = item->getValue( xml::PLAIN_MODE );
+								STRING frameName = getFrameName4Tab( name, itemName );
+								STRING frameClass = getFrameClass4Tab( frameName );
+
+								if( ::findFrame( m_guiDoc->getRoot(), frameName ) )
+								{
+									stream << frameName << "= new " << frameClass << "(this);\n";
+									stream << frameName << "->create(" << name << ");\n";
+									stream << name << "->replaceTab( i++," << frameName << ");\n";
+								}
+							}
+							stream << "}\n";
+						}
+					}
+
+
 				}
 			}
 
@@ -1625,7 +1670,7 @@ void GuiBuilderWindow::editItemList()
 						++it
 					)
 					{
-						STRING frameName = STRING().add(name).add('_').add(*it);
+						STRING frameName = getFrameName4Tab(name, *it);
 						if( !::findFrame( m_guiDoc->getRoot(), frameName ) )
 						{
 							newFrame( frameName );
@@ -2813,6 +2858,38 @@ void GuiBuilderWindow::loadChildProperties( BasicWindow *child )
 	properties.numRows->setText( resource->getAttribute( "numRows" ) );
 
 	m_loading = false;
+	enableDisaleProperties();
+}
+
+void GuiBuilderWindow::selectControl( BasicWindow *child, SelectionSource source )
+{
+	gak::xml::Element	*res = child->getResource();
+	if( !res )		// do not select children not created by the designer
+		return;		// otherwise crash
+
+	if( source == FromTreeSelect )
+		childSelect.clearSelection();
+	else
+		treeSelect.selectItem( treeSelect.findItem( res ) );
+
+	if( source != FromChildSelect )
+	{
+		xml::Element	*resource = child->getResource();
+		size_t		pos = m_childResources.findElement( resource );
+		if( pos != m_childResources.no_index )
+		{
+			childSelect.selectEntry( int(pos) );
+		}
+	}
+	loadChildProperties( child );
+}
+
+void GuiBuilderWindow::unselectControl( BasicWindow *child )
+{
+	xml::Element	*resource = child->getResource();
+	size_t		pos = m_childResources.findElement( resource );
+	if( pos != -1 )
+		childSelect.unselectEntry( int(pos) );
 	enableDisaleProperties();
 }
 

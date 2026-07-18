@@ -183,12 +183,12 @@ class GuiBuilderWindow : public OverlappedWindow
 	}
 
 	public:
-	GuiBuilderWindow() : properties( NULL ), OverlappedWindow( NULL )
+	GuiBuilderWindow() : properties( nullptr ), OverlappedWindow( nullptr )
 	{
 		m_loading = false;
-		designerForm = NULL;
-		stringListEditor = NULL;
-		m_guiDoc = NULL;
+		designerForm = nullptr;
+		stringListEditor = nullptr;
+		m_guiDoc = nullptr;
 		m_changedFlag = false;
 		m_currentId = SELECT_PUSH;
 		m_editorMode = emFORM;
@@ -209,7 +209,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	public:
 	TreeNode *addChildItem( xml::Element *resource )
 	{
-		return addChildItem( resource, m_editorMode != emSTRINGS ? treeSelect.findItem( resource->getParent() ) : NULL );
+		return addChildItem( resource, m_editorMode != emSTRINGS ? treeSelect.findItem( resource->getParent() ) : nullptr );
 	}
 
 	private:
@@ -225,7 +225,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 	}
 	void deleteDesignerForm()
@@ -234,13 +234,13 @@ class GuiBuilderWindow : public OverlappedWindow
 		{
 			designerForm->close();
 			delete designerForm;
-			designerForm = NULL;
+			designerForm = nullptr;
 		}
 		if( stringListEditor )
 		{
 			stringListEditor->close();
 			delete stringListEditor;
-			stringListEditor = NULL;
+			stringListEditor = nullptr;
 		}
 	}
 	void renameTopSelected( const STRING &newName )
@@ -256,7 +256,7 @@ class GuiBuilderWindow : public OverlappedWindow
 		{
 			return m_topResources[selResource];
 		}
-		return NULL;
+		return nullptr;
 	}
 	void addTopResource( xml::Element *resource, const STRING &name )
 	{
@@ -302,13 +302,22 @@ class GuiBuilderWindow : public OverlappedWindow
 		if( treeNode )
 			child = getChildByResource( (xml::Element*)treeNode->getData() );
 		else
-			child = NULL;
+			child = nullptr;
 
 		return child;
 	}
 	void handleChildSelect();
 	void handleItemTreeSelect();
 	void handleStringSelect();
+
+	STRING getFrameName4Tab( const STRING &controlName, const STRING &tabEntry )
+	{
+		return STRING().add(controlName).add('_').add(tabEntry);
+	}
+	STRING getFrameClass4Tab( const STRING &frameName )
+	{
+		return STRING().add(frameName).add("_frame");
+	}
 
 	public:
 	void removeSelected( bool withDesigner );
@@ -344,36 +353,8 @@ class GuiBuilderWindow : public OverlappedWindow
 	int checkDefaultIdentifier( const STRING &name );
 
 	public:
-	void selectControl( BasicWindow *child, SelectionSource source )
-	{
-		gak::xml::Element	*res = child->getResource();
-		if( !res )		// do not select children not created by the designer
-			return;		// otherwise crash
-
-		if( source == FromTreeSelect )
-			childSelect.clearSelection();
-		else
-			treeSelect.selectItem( treeSelect.findItem( res ) );
-
-		if( source != FromChildSelect )
-		{
-			xml::Element	*resource = child->getResource();
-			size_t		pos = m_childResources.findElement( resource );
-			if( pos != m_childResources.no_index )
-			{
-				childSelect.selectEntry( int(pos) );
-			}
-		}
-		loadChildProperties( child );
-	}
-	void unselectControl( BasicWindow *child )
-	{
-		xml::Element	*resource = child->getResource();
-		size_t		pos = m_childResources.findElement( resource );
-		if( pos != -1 )
-			childSelect.unselectEntry( int(pos) );
-		enableDisaleProperties();
-	}
+	void selectControl( BasicWindow *child, SelectionSource source );
+	void unselectControl( BasicWindow *child );
 	private:
 	void loadMenuProperties( xml::Element *resource )
 	{
