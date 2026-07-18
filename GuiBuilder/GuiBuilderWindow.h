@@ -310,15 +310,6 @@ class GuiBuilderWindow : public OverlappedWindow
 	void handleItemTreeSelect();
 	void handleStringSelect();
 
-	STRING getFrameName4Tab( const STRING &controlName, const STRING &tabEntry )
-	{
-		return STRING().add(controlName).add('_').add(tabEntry);
-	}
-	STRING getFrameClass4Tab( const STRING &frameName )
-	{
-		return STRING().add(frameName).add("_frame");
-	}
-
 	public:
 	void removeSelected( bool withDesigner );
 

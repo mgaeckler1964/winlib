@@ -191,6 +191,16 @@ static STRING fixIfBad( const STRING &s )
 	return s;
 }
 
+static STRING getFrameName4Tab( const STRING &controlName, const STRING &tabEntry )
+{
+	return fixIfBad(STRING().add(controlName).add('_').add(tabEntry));
+}
+
+static STRING getFrameClass4Tab( const STRING &frameName )
+{
+	return fixIfBad(STRING().add(frameName).add("_frame"));
+}
+
 // --------------------------------------------------------------------- //
 // ----- class inlines ------------------------------------------------- //
 // --------------------------------------------------------------------- //

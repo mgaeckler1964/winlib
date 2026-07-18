@@ -5,8 +5,8 @@
 <layoutManager type="SingleChildManager" />
 <child type="TabControl" name="MyTab" caption="" x="175" y="153" width="80" height="25" style="1342242816" id="132">
 <items>
-<item>Tab0</item>
-<item>Tab1</item>
+<item>Tab 0</item>
+<item>Tab 1</item>
 </items>
 </child>
 </form>
