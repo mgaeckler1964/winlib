@@ -19,7 +19,7 @@
 <child type="Label" name="LABEL" caption="MyTab1" x="89" y="121" width="80" height="25" style="1342242827" id="133" />
 </frame>
 <scroller name="SCROLLER" width="200" height="200" id="131" style="268435456">
-<child type="Label" name="LABEL" caption="The Scroller" x="0" y="0" width="0" height="0" style="1342242827" id="133" />
+<child type="Label" name="LABEL" caption="The Scroller" x="0" y="0" width="0" height="0" style="1342242816" id="133" />
 </scroller>
 </frames>
 </gui>

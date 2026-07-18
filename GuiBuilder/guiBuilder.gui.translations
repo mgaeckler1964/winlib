@@ -5,6 +5,7 @@
 <item caption="Down" translation="Owie" />
 <item caption="Up" translation="aufie" />
 <item caption="&amp;Cancel" translation="Doch Ned" />
+<item caption="&amp;Delete" translation="Weg haun" />
 <item caption="&amp;Edit" translation="Ändern" />
 <item caption="&amp;Exit" translation="Hoam geh'n" />
 <item caption="&amp;File" translation="Datei" />
@@ -61,6 +62,7 @@
 <item caption="height" translation="Höhe" />
 <item caption="width" translation="Breite" />
 <item caption="&amp;Cancel" translation="&amp;Abbruch" />
+<item caption="&amp;Delete" translation="&amp;Löschen" />
 <item caption="&amp;Edit" translation="&amp;Bearbeiten" />
 <item caption="&amp;Exit" translation="&amp;Ende" />
 <item caption="&amp;File" translation="&amp;Datei" />

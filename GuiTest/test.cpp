@@ -108,24 +108,24 @@ class TestForm : public winlibGUI::TestFORM_form
 		MyTab->replaceTab( 0, tab0 );
 		MyTab->replaceTab( 1, tab1 );
 
-		scroller->LABEL->removeStyle(SS_SIMPLE);
 		scroller->LABEL->setText(
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
-			"y\r\nthe quick brown fox\r\njumps over the lazy dog\r\n"
+			"y\nthe quick brown fox jumps over the lazy dog\n"
+			"y\nthe quick brown fox jumps over the lazy dog\n"
+			"y\nthe quick brown fox jumps over the lazy dog\n"
+			"y\nthe quick brown fox jumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
+			"y\nthe quick brown fox\njumps over the lazy dog\n"
 		);
 		scroller->resize(199,199);
+		MyTab->setCurrentTab(1);
 		return psDO_DEFAULT;
 	}
 };

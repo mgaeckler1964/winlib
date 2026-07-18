@@ -1038,6 +1038,17 @@ FrameChild *TabControl::replaceTab( size_t i, FrameChild *newFrame )
 	return nullptr;
 }
 
+size_t TabControl::setCurrentTab(size_t i)
+{
+	if( i<m_numTabs )
+	{
+		size_t old = message(TCM_SETCURSEL, i);
+		showTab( i );
+		return old;
+	}
+	return i;
+}
+
 void TabControl::showTab(size_t i)
 {
 	if( i<m_numTabs )

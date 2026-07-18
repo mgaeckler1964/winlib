@@ -2465,6 +2465,21 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 			}
 			break;
 		}
+		case EDIT_DELETE_id:
+		{
+			xml::Element	*resource = getSelectedTopResource();
+			if( resource )
+			{
+				resource->remove();
+				topResourceSelect.clearEntries();
+				m_topResources.clear();
+
+				deleteDesignerForm();
+				setChangedFlag();
+				loadGUI( m_guiDoc );
+			}
+			break;
+		}
 
 		case VIEW_ITEM_LIST_id:
 			if( m_editorMode == emFORM )

@@ -1254,6 +1254,7 @@ class TabControl : public ControlWindow
 	{
 		return message(TCM_GETCURSEL);
 	}
+	size_t setCurrentTab(size_t i);
 	void adjustRect(RectBorder *r)
 	{
 		TabCtrl_AdjustRect(handle(), FALSE, r);

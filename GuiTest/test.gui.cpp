@@ -33,7 +33,7 @@ namespace winlibGUI {
 "<child type=\"Label\" name=\"LABEL\" caption=\"MyTab1\" x=\"89\" y=\"121\" width=\"80\" height=\"25\" style=\"1342242827\" id=\"133\" />\n"
 "</frame>\n"
 "<scroller name=\"SCROLLER\" width=\"200\" height=\"200\" id=\"131\" style=\"268435456\">\n"
-"<child type=\"Label\" name=\"LABEL\" caption=\"The Scroller\" x=\"0\" y=\"0\" width=\"0\" height=\"0\" style=\"1342242827\" id=\"133\" />\n"
+"<child type=\"Label\" name=\"LABEL\" caption=\"The Scroller\" x=\"0\" y=\"0\" width=\"0\" height=\"0\" style=\"1342242816\" id=\"133\" />\n"
 "</scroller>\n"
 "</frames>\n"
 "</gui>";
