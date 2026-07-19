@@ -68,6 +68,9 @@ using namespace gak;
 
 static Array<SaveFileAsDialog*>	saveDialogs;
 
+#define FILE_DIALOG_COMBO_ID	1136
+#define FILE_DIALOG_EDIT_ID		1152
+
 #ifdef __WIN64__
 UINT_PTR
 #else
@@ -191,17 +194,17 @@ void SaveFileAsDialog::handleMessage(
 	doEnterFunction("SaveFileAsDialog::handleMessage");
 	if( uiMsg == WM_INITDIALOG )
 	{
-		filterList.initHandle( this, 1136 );
-		filenameEdit.initHandle( this, 1136 );
+		filterList.initHandle( this, FILE_DIALOG_COMBO_ID );
+		filenameEdit.initHandle( this, FILE_DIALOG_EDIT_ID );
 
 	}
 	else if( uiMsg == WM_COMMAND )
 	{
 		int myID = LOWORD( wParam );
-		if( myID == 1136 )
+		if( myID == FILE_DIALOG_COMBO_ID )
 		{
 			int myFilter = filterList.getSelection();
-			STRING myExtension = defaultExtensions[myFilter];
+			STRING myExtension = m_defaultExtensions[myFilter];
 			STRING myName = filenameEdit.getText();
 			int		dotPos = int(myName.searchRChar( '.' ));
 			int		slashPos = int(myName.searchRChar( DIRECTORY_DELIMITER ));

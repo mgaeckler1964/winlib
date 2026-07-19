@@ -242,7 +242,7 @@ class SaveFileAsDialog : public FileDialog
 {
 	ComboBox	  		filterList;
 	EditControl	  		filenameEdit;
-	gak::ArrayOfStrings	defaultExtensions;
+	gak::ArrayOfStrings	m_defaultExtensions;
 
 	public:
 	void handleMessage(
@@ -263,7 +263,7 @@ class SaveFileAsDialog : public FileDialog
 
 	void addDefaultExtension( const STRING &ext )
 	{
-		defaultExtensions += ext;
+		m_defaultExtensions += ext;
 	}
 };
 
@@ -438,7 +438,7 @@ bool SaveFileAsDialog::create(
 	FileDialog::init( parent, titleId, filterID, numIds );
 
 	m_ofn.Flags = OFN_PATHMUSTEXIST|OFN_OVERWRITEPROMPT|OFN_HIDEREADONLY|OFN_LONGNAMES;
-	if( defaultExtensions.size() )
+	if( m_defaultExtensions.size() )
 	{
 		m_ofn.Flags |= OFN_ENABLEHOOK;
 		m_ofn.lpfnHook = OFNHookProc;
