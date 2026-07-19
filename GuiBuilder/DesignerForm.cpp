@@ -1464,6 +1464,7 @@ void DesignerForm::setAttachment( int attachment )
 			layout->setIntegerAttribute( LayoutData::attachment, attachment );
 		}
 	}
+	m_theGuiBuilder->setChangedFlag();
 }
 
 void DesignerForm::setLayoutManager( const STRING &type )
@@ -1595,6 +1596,7 @@ void DesignerForm::setBaseClass( const STRING &baseClass )
 		if( resource && resource->getTag() == FORM_TAG )
 		{
 			resource->setStringAttribute( "baseClass", baseClass );
+			m_theGuiBuilder->setChangedFlag();
 		}
 	}
 }

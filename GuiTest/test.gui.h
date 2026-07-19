@@ -18,7 +18,10 @@
 
 namespace winlibGUI {
 
+	const int COMBOBOX_id=136;
 	const int LABEL_id=133;
+	const int LABEL1_id=134;
+	const int LABEL2_id=135;
 	const int MyTab_id=132;
 	const int MyTab_Tab0_id=129;
 	const int MyTab_Tab1_id=130;
@@ -64,7 +67,9 @@ namespace winlibGUI {
 			return FrameChild::create(parent,"MyTab_Tab1");
 		}
 
-		winlib::Label *LABEL;
+		winlib::Label *LABEL1;
+		winlib::Label *LABEL2;
+		winlib::ComboBox *COMBOBOX;
 		private:
 		virtual void getControls();
 	};	// end of MyTab_Tab1

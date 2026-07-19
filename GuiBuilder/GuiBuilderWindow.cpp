@@ -1292,7 +1292,8 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 						xml::Element		*items = child->getElement( ITEMS_TAG );
 						if( items )
 						{
-							stream << "{ size_t i=0;\n";
+							stream << "\t\t{\n"
+								"\t\t\tsize_t i=0;\n";
 							for( size_t i=0; i<items->getNumObjects(); i++ )
 							{
 								xml::Element	*item = items->getElement( i );
@@ -1302,12 +1303,12 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 
 								if( ::findFrame( m_guiDoc->getRoot(), frameName ) )
 								{
-									stream << frameName << "= new " << frameClass << "(this);\n";
-									stream << frameName << "->create(" << name << ");\n";
-									stream << name << "->replaceTab( i++," << frameName << ");\n";
+									stream << "\t\t\t" << frameName << "= new " << frameClass << "(this);\n";
+									stream << "\t\t\t" << frameName << "->create(" << name << ");\n";
+									stream << "\t\t\t" << name << "->replaceTab( i++," << frameName << ");\n";
 								}
 							}
-							stream << "}\n";
+							stream << "\t\t}\n";
 						}
 					}
 
@@ -1778,6 +1779,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 			int xPos = properties.xPOS->getText().getValueN<int>();
 			designerForm->moveHorizontal( xPos );
 			designerForm->invalidateWindow();
+			properties.xPOS->focus();
 			break;
 		}
 		case yPOS_id:
@@ -1785,6 +1787,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 			int yPos = properties.yPOS->getText().getValueN<int>();
 			designerForm->moveVertical( yPos );
 			designerForm->invalidateWindow();
+			properties.yPOS->focus();
 			break;
 		}
 		case childWidth_id:
@@ -1792,6 +1795,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 			int width = properties.childWidth->getText().getValueN<int>();
 			designerForm->setWidth( width );
 			designerForm->invalidateWindow();
+			properties.childWidth->focus();
 			break;
 		}
 		case childHeight_id:
@@ -1799,6 +1803,7 @@ ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 			int height = properties.childHeight->getText().getValueN<int>();
 			designerForm->setHeight( height );
 			designerForm->invalidateWindow();
+			properties.childHeight->focus();
 			break;
 		}
 		case layout_xPOS_id:
@@ -2239,6 +2244,7 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 		}
 		case layoutManager_id:
 			setLayoutManager();
+			setChangedFlag();
 			break;
 
 		case baseClass_id:
@@ -2268,6 +2274,8 @@ ProcessStatus GuiBuilderWindow::handleSelectionChange( int cmd )
 				}
 				else
 					designerForm->setBackgroundColor( colorName, 0 );
+
+				setChangedFlag();
 			}
 			break;
 		}

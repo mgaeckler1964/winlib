@@ -237,6 +237,7 @@ class DesignerForm : public OverlappedWindow
 		BackgroundChanger	theChanger( colorName, color );
 		m_selected.forEach( theChanger );
 	}
+
 	using OverlappedWindow::setBackgroundColor;
 	COLORREF getBackgroundColor() const
 	{
