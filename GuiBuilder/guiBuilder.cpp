@@ -141,6 +141,10 @@ CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *, int  )
 	//doEnableLogEx(gakLogging::llError);
 	doEnterFunctionEx(gakLogging::llInfo, "GuiBuilderApplication::createMainWindow");
 
+	STRING language = GetProfile( "", LANG, STRING() );
+	if( !language.isEmpty() )
+		setCountry(language);
+
 	GuiBuilderWindow *theWindow = new GuiBuilderWindow;
 	try
 	{

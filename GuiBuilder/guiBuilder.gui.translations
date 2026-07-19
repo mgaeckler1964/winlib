@@ -2,13 +2,31 @@
 <translations>
 <language lang="by">
 <item caption="Attachment" translation="Ohang" />
+<item caption="Cancel" translation="Doch ned" />
+<item caption="Caption" translation="Üwaschrift" />
+<item caption="CheckBox" translation="Prüfschachtel" />
+<item caption="ColManager" translation="Spalten Chef" />
+<item caption="Control Styles" translation="Kontrol Stile" />
+<item caption="Create Later" translation="Spater" />
+<item caption="Create Sooner" translation="Friarer" />
+<item caption="Dark Gray" translation="Dunkls Grau" />
+<item caption="Default" translation="Oiwei" />
 <item caption="Down" translation="Owie" />
+<item caption="Edit" translation="Ändern" />
+<item caption="Font" translation="Schrift" />
+<item caption="Full" translation="Voi" />
+<item caption="F&amp;rame" translation="Rahmen" />
+<item caption="Gray" translation="Grau" />
+<item caption="Grow Height" translation="Wachs in die Höhe" />
+<item caption="Grow Width" translation="Wachs in die Breite" />
 <item caption="Up" translation="aufie" />
 <item caption="&amp;Cancel" translation="Doch Ned" />
 <item caption="&amp;Delete" translation="Weg haun" />
 <item caption="&amp;Edit" translation="Ändern" />
 <item caption="&amp;Exit" translation="Hoam geh'n" />
 <item caption="&amp;File" translation="Datei" />
+<item caption="&amp;Language" translation="&amp;Sprach" />
+<item caption="&amp;New Document" translation="&amp;Wos neichs" />
 <item caption="&amp;OK" translation="Basst" />
 <item caption="&amp;Open..." translation="Aufmacha" />
 <item caption="&amp;Save As..." translation="Nei Schreim" />

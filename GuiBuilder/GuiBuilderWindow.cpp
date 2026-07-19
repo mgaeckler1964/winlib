@@ -1708,6 +1708,23 @@ void GuiBuilderWindow::editItemList()
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
+
+ProcessStatus GuiBuilderWindow::handleCreate()
+{
+	STRING language = appObject->GetProfile( "", LANG, STRING() );
+	if( language == "by" )
+		getMenu()->checkMenuItem(LANG_BAVARIAN_id);
+	else if( language == "de" )
+		getMenu()->checkMenuItem(LANG_GERMAN_id);
+	else if( language == "uk" )
+		getMenu()->checkMenuItem(LANG_ENGLISH_id);
+	else
+		getMenu()->checkMenuItem(LANG_AUTO_id);
+
+	return OverlappedWindow::handleCreate();
+}
+
+
 ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 {
 	if( m_loading )
@@ -2560,6 +2577,19 @@ ProcessStatus GuiBuilderWindow::handleCommand( int cmd )
 				treeSelect.show();
 				mainArea.doLayout();
 			}
+			break;
+
+		case LANG_AUTO_id:
+			appObject->DeleteProfile(false,"",LANG);
+			break;
+		case LANG_BAVARIAN_id:
+			appObject->WriteProfile(false,"",LANG,"by");
+			break;
+		case LANG_ENGLISH_id:
+			appObject->WriteProfile(false,"",LANG,"uk");
+			break;
+		case LANG_GERMAN_id:
+			appObject->WriteProfile(false,"",LANG,"de");
 			break;
 
 		case MenuTestModalPopup_id:

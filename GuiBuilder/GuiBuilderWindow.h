@@ -78,6 +78,8 @@ using namespace winlibGUI;
 // ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+static const char LANG[] = "language";
+
 // --------------------------------------------------------------------- //
 // ----- macros -------------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -322,6 +324,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	void changeStringResource( size_t idx, const STRING &name, const STRING &value, const BasicWindow *source );
 
 	private:
+	virtual ProcessStatus handleCreate();
 	virtual ProcessStatus handleEditChange( int control );
 	virtual bool handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver );
 	virtual void handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget );
