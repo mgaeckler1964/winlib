@@ -157,7 +157,7 @@ class GdiObject
 	{
 		if( m_handle && !--m_handle->m_usageCounter )
 		{
-			disconnect();
+			restore();
 			delete m_handle;
 		}
 	}
@@ -168,15 +168,11 @@ class GdiObject
 	}
 
 	protected:
-	GdiObject( HDC newDevice = nullptr ) : m_old(0)
+	GdiObject( HDC newDevice = nullptr ) : m_handle(nullptr), m_deviceContext(newDevice), m_old(0) {}
+
+	GdiObject( GdiType newHandle ) 
+		: m_handle(m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr), m_deviceContext(nullptr), m_old(0)
 	{
-		m_handle = nullptr;
-		m_deviceContext = newDevice;
-	}
-	GdiObject( GdiType newHandle ) : m_old(0)
-	{
-		m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr;
-		m_deviceContext = nullptr;
 	}
 	const GdiObject & operator = ( GdiType src )
 	{
@@ -241,13 +237,17 @@ class GdiObject
 		if( handle )
 			 m_old = SelectObject( m_deviceContext, handle );
 	}
-	void disconnect()
+	void restore()
 	{
 		if( m_old && m_deviceContext )
 		{
 			SelectObject( m_deviceContext, m_old );
 			m_old = 0;
 		}
+	}
+	void disconnect()
+	{
+		restore();
 		m_deviceContext = nullptr;
 	}
 	HDC getConnection() const
