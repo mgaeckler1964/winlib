@@ -281,7 +281,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 	void noFileAccept()
 	{
-		DragAcceptFiles( handle(), true );
+		DragAcceptFiles( handle(), false );
 	}
 
 	// mouse capture

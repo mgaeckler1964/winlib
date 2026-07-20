@@ -66,7 +66,7 @@ namespace winlib
 
 using namespace gak;
 
-static Array<SaveFileAsDialog*>	saveDialogs;
+static Array<SaveFileAsDialog*>	s_saveDialogs;
 
 #define FILE_DIALOG_COMBO_ID	1136
 #define FILE_DIALOG_EDIT_ID		1152
@@ -83,7 +83,7 @@ APIENTRY OFNHookProc(
 	LPARAM	lParam 	// message parameter
 )
 {
-	SaveFileAsDialog	*theDialog = NULL;
+	SaveFileAsDialog	*theDialog = nullptr;
 	if( uiMsg == WM_INITDIALOG )
 	{
 		OPENFILENAME	*ofn = (OPENFILENAME *)lParam;
@@ -92,9 +92,13 @@ APIENTRY OFNHookProc(
 	}
 	else
 	{
-		for( size_t i =0; i<saveDialogs.size(); i++ )
+		for(
+			Array<SaveFileAsDialog*>::iterator it = s_saveDialogs.begin(), endIT = s_saveDialogs.end();
+			it != endIT;
+			++it
+		)
 		{
-			theDialog = saveDialogs[i];
+			theDialog = *it;
 			if( theDialog->handle() == hdlg )
 				break;
 		}
@@ -122,12 +126,12 @@ FileDialog::FileDialog() : BasicWindow( FileDialogFlag, NULL ), m_fileBuffer(102
 
 SaveFileAsDialog::SaveFileAsDialog()
 {
-	saveDialogs += this;
+	s_saveDialogs += this;
 }
 
 SaveFileAsDialog::~SaveFileAsDialog()
 {
-	saveDialogs.removeElementVal( this );
+	s_saveDialogs.removeElementVal( this );
 }
 
 SearchDialog::SearchDialog() : BasicWindow( SearchDialogFlag, (BasicWindow*)NULL )
