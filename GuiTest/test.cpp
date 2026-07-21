@@ -122,7 +122,7 @@ class TestForm : public winlibGUI::TestFORM_form
 };
 #endif
 
-class TestWindow : public PopupWindow
+class TestPopup : public PopupWindow
 {
 	PushButton		myButton;
 	EditControl		myResult;
@@ -240,7 +240,7 @@ class TestWindow : public PopupWindow
 		return psDO_DEFAULT;
 	}
 	public:
-	TestWindow() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr), myTabControl(nullptr) {}
+	TestPopup() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr), myTabControl(nullptr) {}
 	void create()
 	{
 		addStyle( WS_CLIPCHILDREN );
@@ -312,9 +312,11 @@ class TestApp : Application
 
 	virtual CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
 	{
-		TestWindow	*newWindow = new TestWindow;
+		TestPopup	*newWindow = new TestPopup;
 		newWindow->create();
 
+		OverlappedWindow	*testOverLapped = new OverlappedWindow( newWindow );
+		testOverLapped->create( nullptr );
 		return newWindow;
 	}
 	virtual void deleteMainWindow( BasicWindow  *mainWindow );

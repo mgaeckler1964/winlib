@@ -56,6 +56,11 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/*
+	a popup window has no title bar if there is no caption added and 
+	can not use	CW_USEDEFAULT for the position and the size. The position 
+	and size is zero, if you did not configure otherwise.
+*/
 class PopupWindow : public CallbackWindow
 {
 	private:
@@ -128,6 +133,11 @@ class ModalPopup : public PopupWindow
 	}
 };
 
+/*
+	an overlapped window alwasy has a title bar and can use
+	CW_USEDEFAULT for the position and the size (this is the 
+	default size and width)
+*/
 class OverlappedWindow : public CallbackWindow
 {
 	private:
