@@ -24,7 +24,7 @@
 <menu caption="&amp;Translate..." name="EDIT_TRANSLATE" id="149" />
 <menu caption="Weg haun" name="EDIT_DELETE" id="150" />
 </menu>
-<menu caption="Oschaun">
+<menu caption="&amp;Oschaun">
 <menu caption="Item &amp;List" name="VIEW_ITEM_LIST" id="151" />
 <menu caption="Item &amp;Tree" name="VIEW_ITEM_TREE" id="152" />
 </menu>

@@ -28,7 +28,7 @@
 <menu caption="Element &amp;Liste" name="VIEW_ITEM_LIST" id="151" />
 <menu caption="Element &amp;Baum" name="VIEW_ITEM_TREE" id="152" />
 </menu>
-<menu caption="&amp;Language" name="">
+<menu caption="&amp;Sprache" name="">
 <menu caption="&amp;Auto" name="LANG_AUTO" id="153" />
 <menu caption="-" />
 <menu caption="&amp;Boarisch" name="LANG_BAVARIAN" id="154" />
@@ -185,7 +185,7 @@
 <child type="PushButton" name="PUSHBUTTON_Left" caption="Links" x="158" y="170" width="80" height="80" style="1342242816" id="198">
 <layout attachment="0" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
-<child type="PushButton" name="PUSHBUTTON_Full" caption="Full" x="307" y="279" width="80" height="80" style="1342242816" id="199">
+<child type="PushButton" name="PUSHBUTTON_Full" caption="Voll" x="307" y="279" width="80" height="80" style="1342242816" id="199">
 <layout attachment="4" paddingLeft="4" paddingTop="4" paddingRight="4" paddingBottom="4" />
 </child>
 <child type="TabControl" name="TABCONTROL" caption="" x="1024" y="96" width="200" height="200" style="1342242816" id="200">
@@ -346,7 +346,7 @@
 <item>Oben</item>
 <item>Rechts</item>
 <item>Unten</item>
-<item>Full</item>
+<item>Voll</item>
 </items>
 </child>
 <child type="Label" Caption="Layout Manager" style="268435467" name="layoutManagerLabel" id="242">
@@ -355,7 +355,7 @@
 <child type="ComboBox" NAME="layoutManager" height="200" id="243" style="268500995" x="121" y="35" width="80">
 <layout x="1" y="17" width="1" height="1" growWidth="1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2" />
 <items>
-<item>None</item>
+<item>Nichts</item>
 <item>TableManager</item>
 <item>RowManager</item>
 <item>ColManager</item>
@@ -396,9 +396,9 @@
 <item>Default</item>
 <item>White</item>
 <item>Light Gray</item>
-<item>Gray</item>
-<item>Dark Gray</item>
-<item>Black</item>
+<item>Grau</item>
+<item>Dunkelgrau</item>
+<item>Schwarz</item>
 <item>Transprarent</item>
 <item>COLOR_SCROLLBAR</item>
 <item>COLOR_BACKGROUND</item>
@@ -421,7 +421,7 @@
 <item>COLOR_BTNTEXT</item>
 <item>COLOR_INACTIVECAPTIONTEXT</item>
 <item>COLOR_BTNHIGHLIGHT</item>
-<item>Select</item>
+<item>Auswahl</item>
 </items>
 </child>
 <child type="CheckBox" name="SelectFontCheck" caption="Zeichensatz" x="59" y="711" width="0" height="25" style="1342242851" id="254">

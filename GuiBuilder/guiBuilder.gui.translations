@@ -30,22 +30,26 @@
 <item caption="&amp;OK" translation="Basst" />
 <item caption="&amp;Open..." translation="Aufmacha" />
 <item caption="&amp;Save As..." translation="Nei Schreim" />
-<item caption="&amp;View" translation="Oschaun" />
+<item caption="&amp;View" translation="&amp;Oschaun" />
 </language>
 <language lang="de">
 <item caption="About GUI Builder" translation="Über GUI Builder" />
 <item caption="Attachment" translation="Anheftung" />
 <item caption="Background Color" translation="Hintergrundfarbe" />
 <item caption="Base Class" translation="Basisklasse" />
+<item caption="Black" translation="Schwarz" />
 <item caption="Bottom" translation="Unten" />
 <item caption="Cancel" translation="Abbruch" />
 <item caption="Caption" translation="Titel" />
 <item caption="Create Later" translation="Später erstellen" />
 <item caption="Create Sooner" translation="Früher erstellen" />
+<item caption="Dark Gray" translation="Dunkelgrau" />
 <item caption="Down" translation="Unten" />
 <item caption="Edit" translation="Bearbeiten" />
 <item caption="Font" translation="Zeichensatz" />
+<item caption="Full" translation="Voll" />
 <item caption="F&amp;rame" translation="&amp;Rahmen" />
+<item caption="Gray" translation="Grau" />
 <item caption="Grow Height" translation="Höher" />
 <item caption="Grow Width" translation="Breiter" />
 <item caption="Items" translation="Elemente" />
@@ -60,6 +64,7 @@
 <item caption="Margin Right" translation="Rand Rechts" />
 <item caption="Margin Top" translation="Rand Oben" />
 <item caption="New &amp;Item" translation="Neues &amp;Element" />
+<item caption="None" translation="Nichts" />
 <item caption="Num. Cols" translation="Anz. Spalten" />
 <item caption="Num. Rows" translation="Anz. Reihen" />
 <item caption="Open a GUI definition" translation="Öffne eine GUI Definition" />
@@ -70,6 +75,7 @@
 <item caption="Right" translation="Rechts" />
 <item caption="Save" translation="Speichern" />
 <item caption="Save a GUI definition" translation="Speichern einer GUI Definition" />
+<item caption="Select" translation="Auswahl" />
 <item caption="Select Font" translation="Auswahl Zeichensatz" />
 <item caption="Style" translation="Stil" />
 <item caption="Styles" translation="Stile" />
@@ -85,6 +91,7 @@
 <item caption="&amp;Exit" translation="&amp;Ende" />
 <item caption="&amp;File" translation="&amp;Datei" />
 <item caption="&amp;Form" translation="&amp;Formular" />
+<item caption="&amp;Language" translation="&amp;Sprache" />
 <item caption="&amp;Menu" translation="&amp;Menü" />
 <item caption="&amp;New Document" translation="&amp;Neues Document" />
 <item caption="&amp;Open..." translation="&amp;Öffnen..." />
