@@ -60,6 +60,8 @@ namespace winlib
 	a popup window has no title bar if there is no caption added and 
 	can not use	CW_USEDEFAULT for the position and the size. The position 
 	and size is zero, if you did not configure otherwise.
+
+	A popup window uses button face color as background
 */
 class PopupWindow : public CallbackWindow
 {
@@ -137,6 +139,8 @@ class ModalPopup : public PopupWindow
 	an overlapped window alwasy has a title bar and can use
 	CW_USEDEFAULT for the position and the size (this is the 
 	default size and width)
+
+	A popup window uses default window color as background
 */
 class OverlappedWindow : public CallbackWindow
 {
