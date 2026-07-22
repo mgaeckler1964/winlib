@@ -259,8 +259,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		return bool(m_closed && m_destroyed);
 	}
 
-	protected:
+	public:
+	void adjustWindoRect();
+	void setClientSize( int width, int height );
 
+	protected:
 	SuccessCode create( BasicWindow *parent, LPSTR lpParam=nullptr )
 	{
 		SuccessCode error = BasicWindow::create( parent, m_menu.get(), lpParam );

@@ -252,6 +252,7 @@ SuccessCode PopupWindow::create( BasicWindow *parent, int nWidth, int nHeight )
 	addStyle( WS_POPUP );
 
 	sizeNmove( x, y, nWidth, nHeight );
+	adjustWindoRect();
 	return CallbackWindow::create( parent );
 };
 

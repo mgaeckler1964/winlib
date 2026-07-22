@@ -466,9 +466,13 @@ void GuiBuilderWindow::loadResource()
 			{
 				m_editorMode = emFORM;
 
+				int width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+				int height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+
 				designerForm = new DesignerForm( resource, this );
 
 				createForm( m_docFileName, resource, designerForm, nullptr, true );
+				designerForm->setClientSize(width, height);
 				designerForm->catchControls();
 
 				fillChildItemList( resource, nullptr );
@@ -479,6 +483,7 @@ void GuiBuilderWindow::loadResource()
 					childSelect.show();
 					mainArea.doLayout();
 				}
+				designerForm->setReady();
 			}
 			else if( tag == LIST_TAG )
 			{

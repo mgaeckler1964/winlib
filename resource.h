@@ -191,7 +191,14 @@ SuccessCode createForm(
 
 		form->handleCreate();
 
-		form->setReady();
+		int width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+		int height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+
+		form->setClientSize(width, height);
+
+		if( !designerMode )
+			form->setReady();
+
 		return scSUCCESS;
 	}
 

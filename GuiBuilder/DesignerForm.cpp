@@ -910,11 +910,24 @@ ProcessStatus DesignerForm::handleKeyDown( int key )
 
 ProcessStatus DesignerForm::handleResize( const Size &clientSize )
 {
-	Size			windowSize = getSize();
 	xml::Element	*resource = getResource();
-
-	resource->setIntegerAttribute( LayoutData::widthAttr, windowSize.width );
-	resource->setIntegerAttribute( LayoutData::heightAttr, windowSize.height );
+	int				width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+	int				height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+	bool			changed = false;
+	if( width != clientSize.width )
+	{
+		resource->setIntegerAttribute( LayoutData::widthAttr, clientSize.width );		// Popup or Overlapped use the client size
+		changed = true;
+	}
+	if( height != clientSize.height )
+	{
+		resource->setIntegerAttribute( LayoutData::heightAttr, clientSize.height );
+		changed = true;
+	}
+	if( changed && isReady() )	// do not set the changed flag, if the designer is currently loading the form
+	{
+		m_theGuiBuilder->setChangedFlag();
+	}
 
 	return OverlappedWindow::handleResize( clientSize );
 }
@@ -1127,10 +1140,21 @@ void DesignerForm::setWidth( int width )
 	)
 	{
 		BasicWindow	*child = *it;
-		Size		size = child->getSize();
-		size.width = width;
-		child->resize( size );
+
 		gak::xml::Element	*resource = child->getResource();
+		if( child == this && resource )
+		{
+//			int width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+			int height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+
+			setClientSize(width, height);
+		}
+		else
+		{
+			Size		size = child->getSize();
+			size.width = width;
+			child->resize( size );
+		}
 		if( resource )
 		{
 			resource->setIntegerAttribute( LayoutData::widthAttr, width );
@@ -1147,10 +1171,20 @@ void DesignerForm::setHeight( int height )
 	)
 	{
 		BasicWindow	*child = *it;
-		Size		size = child->getSize();
-		size.height = height;
-		child->resize( size );
 		gak::xml::Element	*resource = child->getResource();
+		if( child == this && resource )
+		{
+			int width = resource->getAttribute( LayoutData::widthAttr ).getValueN<int>();
+//			int height = resource->getAttribute( LayoutData::heightAttr ).getValueN<int>();
+
+			setClientSize(width, height);
+		}
+		else
+		{
+			Size		size = child->getSize();
+			size.height = height;
+			child->resize( size );
+		}
 		if( resource )
 		{
 			resource->setIntegerAttribute( LayoutData::heightAttr, height );

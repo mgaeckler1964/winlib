@@ -34,11 +34,11 @@ namespace winlibGUI {
 		GuiApplication(int iconID=-1) : winlib::Application(iconID) {}
 	};
 
-	class TestFORM_form : public winlib::PopupWindow {
+	class TestFORM_form : public winlib::OverlappedWindow {
 		public:
-		TestFORM_form(winlib::BasicWindow *owner) : PopupWindow(owner) {}
+		TestFORM_form(winlib::BasicWindow *owner) : OverlappedWindow(owner) {}
 		winlib::SuccessCode create(winlib::BasicWindow*parent) {
-			return PopupWindow::create(parent,"TestFORM");
+			return OverlappedWindow::create(parent,"TestFORM");
 		}
 
 		winlib::TabControl *MyTab;

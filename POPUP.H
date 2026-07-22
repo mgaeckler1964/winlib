@@ -159,6 +159,7 @@ class OverlappedWindow : public CallbackWindow
 	{
 		if( width || height )
 			resize( width, height );
+		adjustWindoRect();
 		return CallbackWindow::create( parent );
 	}
 	SuccessCode create( BasicWindow *parent, const char *resourceName );

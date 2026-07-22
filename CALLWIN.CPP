@@ -867,6 +867,10 @@ ProcessStatus CallbackWindow::checkControlColor( HWND handle, HDC device )
 }
 
 // --------------------------------------------------------------------- //
+// ----- class protected------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+// --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
@@ -1149,6 +1153,33 @@ void CallbackWindow::postControlCallback( BasicWindow * /*control*/, unsigned /*
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void CallbackWindow::adjustWindoRect()
+{
+	Size size = getSize();
+	if( size.height != CW_USEDEFAULT || size.width != CW_USEDEFAULT )
+	{
+		RectBorder	rect(0,0,size.width, size.height );
+
+		AdjustWindowRect(&rect,getStyle(), bool(m_menu) );
+		resize( size.width == CW_USEDEFAULT ? CW_USEDEFAULT : rect.getWidth(), size.height == CW_USEDEFAULT ? CW_USEDEFAULT :  rect.getHeight() );
+	}
+}
+
+void CallbackWindow::setClientSize( int width, int height )
+{
+	if( width != CW_USEDEFAULT && height != CW_USEDEFAULT )
+	{
+		RectBorder rect = getClientRectangle();
+		if( rect.getWidth() != width || rect.getHeight() != height )
+		{
+			Size	size = getSize();
+			size.height += height - rect.getHeight();
+			size.width += width - rect.getWidth();
+			resize( size );
+		}
+	}
+}
 
 void CallbackWindow::mainLoop()
 {

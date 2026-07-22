@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <gui>
 <forms>
-<form name="TestFORM" style="281018368" width="640" height="480" caption="Test" id="128">
+<form name="TestFORM" style="281018368" width="640" height="480" caption="Test" id="128" baseClass="OverlappedWindow">
 <layoutManager type="SingleChildManager" />
 <child type="TabControl" name="MyTab" caption="" x="175" y="153" width="80" height="25" style="1342242816" id="132">
 <items>

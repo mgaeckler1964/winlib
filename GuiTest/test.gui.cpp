@@ -15,7 +15,7 @@ namespace winlibGUI {
 			gak::STRING xmlSrc = "<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>\n"
 "<gui>\n"
 "<forms>\n"
-"<form name=\"TestFORM\" style=\"281018368\" width=\"640\" height=\"480\" caption=\"Test\" id=\"128\">\n"
+"<form name=\"TestFORM\" style=\"281018368\" width=\"640\" height=\"480\" caption=\"Test\" id=\"128\" baseClass=\"OverlappedWindow\">\n"
 "<layoutManager type=\"SingleChildManager\" />\n"
 "<child type=\"TabControl\" name=\"MyTab\" caption=\"\" x=\"175\" y=\"153\" width=\"80\" height=\"25\" style=\"1342242816\" id=\"132\">\n"
 "<items>\n"

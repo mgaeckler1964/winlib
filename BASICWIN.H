@@ -979,12 +979,7 @@ class BasicWindow : public ForeignWindow
 		wsNew, wsInCreation, wsLoading, wsReady
 	} m_state;
 
-	template <class WindowClass> 
-	friend
-	SuccessCode createForm( 
-		const F_STRING &resourceFileName, gak::xml::Element *resource, 
-		WindowClass *form, BasicWindow *parent, bool designerMode 
-	);
+	public:
 	void setLoading()
 	{
 		m_state = wsLoading;
@@ -993,7 +988,6 @@ class BasicWindow : public ForeignWindow
 	{
 		m_state = wsReady;
 	}
-	public:
 	bool isReady() const
 	{
 		return m_state == wsReady;
