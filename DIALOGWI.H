@@ -58,6 +58,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	The dialog window is used for all dialogs defined in an RC-script.
+*/
 class DialogWindow : public CallbackWindow
 {
 	public:
@@ -209,6 +212,9 @@ class NonModalDialog : public DialogWindow
 	}
 };
 
+/**
+	The ApplicationDialog is used for the main window of an application
+*/
 class ApplicationDialog : public NonModalDialog
 {
 	public:

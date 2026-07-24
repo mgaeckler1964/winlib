@@ -77,6 +77,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	The child window is the base for all self defined "controls" with 
+	style WS_CHILD.
+*/
 class ChildWindow : public CallbackWindow
 {
 	private:

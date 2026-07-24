@@ -94,7 +94,9 @@ int CALLBACK WordBreakProc( LPSTR text, int cursPos, int length, int action );
 class PrintDevice;
 class PopupMenu;
 
-/*
+/**
+	A control window is the base for all predefined window classes
+
 	getWindowClassName returns the class name used in Windows.
 	the static member className contains the name used in our XML files
 	the may differ e.g. MemoControl and EditControl both use the same window class

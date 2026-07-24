@@ -59,6 +59,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	the EditChild is a ManagerChild, that contains a MemoControl
+*/
 class EditChild : public ManagerChild
 {
 	gak::STRING	m_fileName;

@@ -165,6 +165,9 @@ class OverlappedWindow : public CallbackWindow
 	SuccessCode create( BasicWindow *parent, const char *resourceName );
 };
 
+/**
+	A tool window is use for small tool boxes. It a an ExStyle with WS_EX_TOOLWINDOW
+*/
 class ToolWindow : public CallbackWindow
 {
 	private:

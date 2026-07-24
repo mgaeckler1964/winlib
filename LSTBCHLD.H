@@ -57,6 +57,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	the ListboxChild is a ManagerChild, that contains a ListBox
+*/
 class ListboxChild : public ManagerChild
 {
 	public:

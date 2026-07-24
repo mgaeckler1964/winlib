@@ -194,12 +194,16 @@ struct LayoutData
 	}
 };
 
-struct LayoutManager
+/**
+	the  LayoutManager is the base for all Managers	that control the layout of 
+	the child windows of a form or frame
+*/
+class LayoutManager
 {
+	public:
 	RectBorder	m_margin;
-
 	protected:
-	bool	m_designerMode;
+	bool		m_designerMode;
 
 	public:
 	static const char className[];
@@ -241,6 +245,9 @@ struct LayoutManager
 	virtual ~LayoutManager();
 };
 
+/**
+	the ColManager places one children and grows it, if the parent grows
+*/
 class SingleChildManager : public LayoutManager
 {
 	public:
@@ -259,6 +266,9 @@ class SingleChildManager : public LayoutManager
 	virtual void doLayout( const ChildWindows &children, const Size &newSize );
 };
 
+/**
+	the TableManager places all children int a "table" with rows and columns
+*/
 class TableManager : public LayoutManager
 {
 	struct Dimension
@@ -363,6 +373,9 @@ class TableManager : public LayoutManager
 
 };
 
+/**
+	the ColManager places all children from top to bottom
+*/
 class RowManager : public LayoutManager
 {
 	public:
@@ -382,6 +395,9 @@ class RowManager : public LayoutManager
 	virtual void doLayout( const ChildWindows &children, const Size &newSize );
 };
 
+/**
+	the ColManager places all children from left to right
+*/
 class ColManager : public LayoutManager
 {
 	public:
@@ -401,6 +417,10 @@ class ColManager : public LayoutManager
 	virtual void doLayout( const ChildWindows &children, const Size &newSize );
 };
 
+/*
+	the AttachmentManager check on which side of a parent the control ist attached.
+	the child grows, of the parent grows
+*/
 class AttachmentManager : public LayoutManager
 {
 	public:

@@ -57,6 +57,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A frame child is used to contain several controls or child windows and
+	manages the layout of the control
+*/
 class FrameChild : public ChildWindow
 {
 	private:

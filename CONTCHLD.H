@@ -71,6 +71,9 @@ static const size_t CHILD_TEXT_SIZE=256;
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	the ChildEntry is base for new entries in a ContainerChild
+*/
 class ChildEntry : public gak::ListEntry
 {
 	char	m_name[CHILD_TEXT_SIZE];
@@ -87,6 +90,9 @@ class ChildEntry : public gak::ListEntry
     };
 };
 
+/**
+	the ContainerChild is a ManagerChild, that contains a ListBox and controls a linked list of ChildEntrys
+*/
 class ContainerChild : public ListboxChild
 {
 	gak::ListContainer	m_container;

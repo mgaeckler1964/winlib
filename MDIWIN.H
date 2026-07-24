@@ -73,6 +73,9 @@ class MdiChildList : public gak::ListEntry
 {
 };
 
+/**
+	An MDIchildWindow is used for document windows in an MDIwindow
+*/
 class MDIchildWindow : public CallbackWindow, public MdiChildList
 {
 	private:

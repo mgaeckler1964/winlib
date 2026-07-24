@@ -58,6 +58,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	a ManagerChild is a docment window that contains ONE control.
+*/
 class ManagerChild : public MDIchildWindow
 {
 	protected:

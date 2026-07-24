@@ -96,6 +96,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A devices is used to draw any figures, texts, bitmaps ...
+*/
 class Device
 {
 	public:
@@ -568,6 +571,9 @@ class Device
 	}
 };
 
+/**
+	base device for drawing in a windows client area
+*/
 class WindowDevice : public Device
 {
 	protected:
@@ -577,6 +583,9 @@ class WindowDevice : public Device
 	{}
 };
 
+/**
+	common device for drawing in a windows client area
+*/
 class DrawDevice : public WindowDevice
 {
 	public:
@@ -592,6 +601,9 @@ class DrawDevice : public WindowDevice
 	}
 };
 
+/**
+	special window device for drawing after a WM_PAINT message-
+*/
 class RepaintDevice : public WindowDevice
 {
 	PAINTSTRUCT	m_ps;
@@ -609,6 +621,9 @@ class RepaintDevice : public WindowDevice
 	}
 };
 
+/**
+	special window device for drawing after a WM_ERASEBKGND message-
+*/
 class BackgroundDevice : public WindowDevice
 {
 	public:
@@ -621,6 +636,9 @@ class BackgroundDevice : public WindowDevice
 	}
 };
 
+/**
+	special window device for drawing on an bitmap  that can be copied on an window device
+*/
 class MemoryDevice : public Device
 {
 	const Device	&m_target;
@@ -668,6 +686,9 @@ class MemoryDevice : public Device
 #endif
 };
 
+/**
+	Device for drawing on a printer
+*/
 class PrintDevice : public Device
 {
 	public:
@@ -697,6 +718,9 @@ class PrintDevice : public Device
 	void printText( const char *document, const char *text ) const;
 };
 
+/**
+	Device for drawing on a meta file
+*/
 class MetaDevice : public Device
 {
 	HMETAFILE		m_metaFile;
@@ -729,6 +753,9 @@ class MetaDevice : public Device
 	}
 };
 
+/**
+	Device for drawing on an enhanced meta file
+*/
 class EnhMetaDevice : public Device
 {
 	HENHMETAFILE	m_metaFile;

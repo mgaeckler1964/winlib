@@ -76,6 +76,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A frame child is used to contain one control or child window and
+	manages scroll bars, if the control is too large.
+*/
 class ScrollFrame : public FrameChild
 {
 	CallbackWindow	*m_child;
