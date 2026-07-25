@@ -82,6 +82,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	The GlobalLocker is used to lock and unlock a global memory buffer.
+	We do not free the block, since we are not the owner of the block
+*/
 class GlobalLocker
 {
 	HGLOBAL	m_hMem;

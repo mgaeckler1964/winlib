@@ -73,6 +73,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A WindowProcessor is used to process the windows found by EnumWindows
+*/
 class WindowProcessor
 {
 	gak::Array<ForeignWindow>	m_windowList;

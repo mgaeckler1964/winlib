@@ -78,6 +78,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	Service is used to manage windows services.
+	For services itself the is no class yet.
+*/
 class Service
 {
 	SERVICE_STATUS	m_serviceStatus;

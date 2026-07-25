@@ -55,6 +55,8 @@
 #	pragma warning( pop )
 #endif
 
+#include <gak/stdlib.h>
+
 #include <WINLIB/gdi.h>
 #include <WINLIB/rectangle.h>
 
@@ -95,10 +97,13 @@ namespace winlib
 class Device;
 class Application;
 
+/**
+	Bitmap creates and controls the handle for a bitmap (HBITMAP)
+*/
 class Bitmap : public GdiObject<HBITMAP>
 {
-	BITMAPINFO		*m_bitmapInfo;
-	Size			m_size;
+	gak::Buffer<BITMAPINFO>	m_bitmapInfo;
+	Size					m_size;
 
 	void setBitmap( HBITMAP newBitmap, int width, int height )
 	{
@@ -115,11 +120,7 @@ class Bitmap : public GdiObject<HBITMAP>
 		return getHandle();
 	}
 
-	Bitmap( HDC memoryDevice ) 
-	: GdiObject<HBITMAP>( memoryDevice )
-	{
-		m_bitmapInfo = nullptr;
-	}
+	Bitmap( HDC memoryDevice ) : GdiObject<HBITMAP>( memoryDevice ) {}
 
 	void create( HDC targetDevice, int width, int height )
 	{
@@ -136,12 +137,10 @@ class Bitmap : public GdiObject<HBITMAP>
 	friend class Application;
 	Bitmap( HBITMAP handle ) : GdiObject<HBITMAP>( handle )
 	{
-		m_bitmapInfo = nullptr;
 	}
 	const Bitmap & operator = ( HBITMAP handle )
 	{
 		setHandle( handle );
-		m_bitmapInfo = nullptr;
 
 		return *this;
 	}
@@ -150,12 +149,10 @@ class Bitmap : public GdiObject<HBITMAP>
 	public:
 	Bitmap() 
 	{
-		m_bitmapInfo = nullptr;
 	}
 	Bitmap( const Bitmap &src )	: GdiObject<HBITMAP>( src )
 	{
 		m_size = src.m_size;
-		m_bitmapInfo = nullptr;
 	}
 	const Bitmap & operator = ( const Bitmap &src )
 	{
@@ -170,17 +167,11 @@ class Bitmap : public GdiObject<HBITMAP>
 	}
 	~Bitmap() 
 	{
-		if( m_bitmapInfo )
-			free( m_bitmapInfo );
 	}
 	void clearBitmap()
 	{
 		clear();
-		if( m_bitmapInfo )
-		{
-			free( m_bitmapInfo );
-			m_bitmapInfo = nullptr;
-		};
+		m_bitmapInfo.free();
 	}
 
 	// implementation is in device.h to have it inline
@@ -191,10 +182,7 @@ class Bitmap : public GdiObject<HBITMAP>
 	}
 	void createInfo( int depth, size_t numColors )
 	{
-		if( m_bitmapInfo )
-			free( m_bitmapInfo );
-
-		m_bitmapInfo = (BITMAPINFO *)calloc( 
+		m_bitmapInfo.calloc( 
 			1, 
 			sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * numColors 
 		);

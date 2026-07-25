@@ -82,6 +82,9 @@ namespace winlib
 
 class BasicWindow;
 
+/**
+	Font creates and controls the handle for a font (HFONT)
+*/
 class Font : public GdiObject<HFONT>
 {
 	friend class FontDialog;

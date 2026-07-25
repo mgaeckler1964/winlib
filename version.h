@@ -77,6 +77,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	ProgramVersionInfo extracts the programm version and description out
+	of the executable file.
+*/
 class ProgramVersionInfo
 {
 	gak::STRING		m_productName, m_versionString, m_companyName,

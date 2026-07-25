@@ -94,7 +94,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class Palette : public GdiObject<HPALETTE>, gak::CopyProtection
+/**
+	Palette creates and controls the handle for a color palette (HPALETTE)
+*/
+class Palette : public GdiObject<HPALETTE>
 {
 	gak::Buffer<LOGPALETTE>	m_colors;
 

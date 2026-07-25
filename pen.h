@@ -93,6 +93,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	Pen creates and controls the handle for a pen (HPEN)
+*/
 class Pen : public GdiObject<HPEN>
 {
 	LOGPEN	m_logPen;

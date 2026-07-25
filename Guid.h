@@ -84,6 +84,11 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A Guid stores a guid in string and binary format we create the binary
+	format out of the string or vice versa, For test cases, we also can create a 
+	new guid
+*/
 class Guid
 {
 	bool		m_valid;

@@ -936,6 +936,9 @@ class DateTimePicker : public ControlWindow
 	}
 };
 
+/**
+	A TreeNode is used to control the items in a TreeView
+*/
 class TreeNode
 {
 	friend class TreeView;

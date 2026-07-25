@@ -98,6 +98,9 @@ enum SystemColor
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	GdiHandle<type> controls a GDI-Handle Brush, Font and more
+*/
 template <class GdiType> 
 class GdiHandle
 {
@@ -132,6 +135,9 @@ class GdiHandle
 template <class GdiType> 
 class GdiObject;
 
+/**
+	a GdiObjectHandle<type> also store a usage counter
+*/
 template <class GdiType> 
 class GdiObjectHandle : public GdiHandle<GdiType>
 {
@@ -146,6 +152,11 @@ class GdiObjectHandle : public GdiHandle<GdiType>
 	}
 };
 
+/**
+	the GdiObject<type> is the base for all GDI-Objects, it checks the usage counter 
+	for the gdi handle and stores the GDI device handle for which the GDI-Handle is 
+	used.
+*/
 template <class GdiType> 
 class GdiObject
 {
@@ -171,7 +182,7 @@ class GdiObject
 	GdiObject( HDC newDevice = nullptr ) : m_handle(nullptr), m_deviceContext(newDevice), m_old(0) {}
 
 	GdiObject( GdiType newHandle ) 
-		: m_handle(m_handle = newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr), m_deviceContext(nullptr), m_old(0)
+		: m_handle(newHandle ? new GdiObjectHandle<GdiType>( newHandle ) : nullptr), m_deviceContext(nullptr), m_old(0)
 	{
 	}
 	const GdiObject & operator = ( GdiType src )

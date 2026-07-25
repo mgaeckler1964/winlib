@@ -57,6 +57,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	A WindowArea is used to divide  a windows client areas into several parts
+*/
 class WindowArea : public ChildWindow
 {
 	private:

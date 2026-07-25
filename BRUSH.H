@@ -75,6 +75,9 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	Brush creates and controls the handle for a brush (HBRUSH)
+*/
 class Brush : public GdiObject<HBRUSH>
 {
 	LOGBRUSH	m_logBrush;

@@ -87,6 +87,10 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+/**
+	WindowsAllocator is an array allocator that gets the memory from 
+	GlobalAlloc
+*/
 template <class OBJ> 
 class WindowsAllocator
 {
