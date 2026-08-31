@@ -189,6 +189,10 @@ class EditChild : public ManagerChild
 	{
 		static_cast<EDIT*>(m_control)->setTabWidth( width );
 	}
+	int getTabWidth() const
+	{
+		return static_cast<EDIT*>(m_control)->getTabWidth();
+	}
 	void setEditable()
 	{
 		static_cast<EDIT*>(m_control)->setEditable();
