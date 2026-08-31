@@ -812,7 +812,7 @@ void EDIT::readFromFile( const char *fileName )
 	}
 }
 
-bool EDIT::saveToFile( const char *fileName, bool withBOM )
+bool EDIT::saveToFile( const char *fileName, bool withBOM, bool stripLineEnds )
 {
 	STRING	text;
 	bool	errorFlag;
@@ -823,6 +823,9 @@ bool EDIT::saveToFile( const char *fileName, bool withBOM )
 
 	if( m_charSet == csUTF8 )
 		text = text.encodeUTF8();
+
+	if( stripLineEnds )
+		text.stripLineEnds();
 
 	errorFlag = text.writeToFile( fileName, withBOM );
 	if( !errorFlag )

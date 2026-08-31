@@ -585,7 +585,7 @@ class EDIT : public ControlWindow
 		addStyle( WS_BORDER|ES_NOHIDESEL|ES_AUTOHSCROLL );
 	}
 	void readFromFile( const char *fileName );
-	bool saveToFile( const char *fileName, bool withBOM );
+	bool saveToFile( const char *fileName, bool withBOM, bool stripLineEnds );
 	size_t searchText(
 		const char	*text,
 		size_t		startPos,

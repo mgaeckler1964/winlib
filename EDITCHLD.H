@@ -68,6 +68,7 @@ class EditChild : public ManagerChild
 	std::time_t	m_modifyTime;
 	bool		m_autoReload;
 	bool		m_withBOM;
+	bool		m_stripLineEnds;
 
 	time_t getModifyTime() const
 	{
@@ -89,7 +90,7 @@ class EditChild : public ManagerChild
 	EditChild( BasicWindow *owner ) : ManagerChild( owner, new MemoControl )
 	{
 		m_modifyTime = 0;
-		m_withBOM = m_autoReload = false;
+		m_stripLineEnds = m_withBOM = m_autoReload = false;
 	}
 
 	MemoControl *getControl() 
@@ -100,6 +101,10 @@ class EditChild : public ManagerChild
 	bool &withBOM()
 	{
 		return m_withBOM;
+	}
+	bool &stripLineEnds()
+	{
+		return m_stripLineEnds;
 	}
 	void enableAutoReload()
 	{
@@ -167,7 +172,7 @@ class EditChild : public ManagerChild
 			m_fileName = fileName;
 			setTitle( fileName );
 		}
-		errorFlag = getControl()->saveToFile( m_fileName, m_withBOM );
+		errorFlag = getControl()->saveToFile( m_fileName, m_withBOM, m_stripLineEnds );
 
 		storeModifyTime();
 
