@@ -461,13 +461,16 @@ class ForeignWindow
 
 	void focus( bool withForground = false )
 	{
-		if( IsIconic( m_winHandle ) )
+		if( !(getStyle() & WS_CHILD) )
 		{
-			show( SW_RESTORE );
+			if( IsIconic( m_winHandle ) )
+			{
+				show( SW_RESTORE );
+			}
+			SetWindowPos(m_winHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+			if( withForground )
+				setForeground();
 		}
-		SetWindowPos(m_winHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-		if( withForground )
-			setForeground();
 		SetFocus( m_winHandle );
 	}
 	bool hasFocus() const

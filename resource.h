@@ -98,7 +98,7 @@ class LayoutManager;
 // ----- prototypes ---------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void createChildWindows( 
+BasicWindow *createChildWindows( 
 	const F_STRING &resourceFileName, 
 	gak::xml::Element *resource, 
 	BasicWindow *parent, 
@@ -181,7 +181,7 @@ SuccessCode createForm(
 		form->setLoading();
 		form->disallowNotifications();
 
-		createChildWindows( resourceFileName, resource, form, designerMode );
+		BasicWindow *focusChild = createChildWindows( resourceFileName, resource, form, designerMode );
 
 		form->doLayout();
 
@@ -199,6 +199,8 @@ SuccessCode createForm(
 		if( !designerMode )
 			form->setReady();
 
+		if( focusChild )
+			focusChild->focus();
 		return scSUCCESS;
 	}
 

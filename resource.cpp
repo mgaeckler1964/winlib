@@ -214,9 +214,10 @@ static void setGridViewer( GridViewer * gridViewer, xml::Element *child )
 	gridViewer->setNumRows( numRows );
 }
 
-static void createChild( const F_STRING &resourceFileName, xml::Element *child, CallbackWindow *parent, bool designerMode )
+static BasicWindow *createChild( const F_STRING &resourceFileName, xml::Element *child, CallbackWindow *parent, bool designerMode )
 {
 	BasicWindow		*newBasicChild = nullptr;
+	BasicWindow		*focusChild = nullptr;
 	ChildWindow		*newChild = nullptr;
 	Label			*staticText = nullptr;
 	Button			*button = nullptr;
@@ -254,39 +255,39 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 	else if( type == PushButton::className )
 		newBasicChild = button = pushButton = new PushButton( parent );
 	else if( type == CheckBox::className )
-		newBasicChild = button = checkBox = new CheckBox( parent );
+		focusChild = newBasicChild = button = checkBox = new CheckBox( parent );
 	else if( type == GroupBox::className )
 		newBasicChild = groupBox = new GroupBox( parent );
 	else if( type == RadioButton::className )
-		newBasicChild = button = radioButton = new RadioButton( parent );
+		focusChild = newBasicChild = button = radioButton = new RadioButton( parent );
 	else if( type == EditControl::className )
-		newBasicChild = editControl = new EditControl( parent );
+		focusChild = newBasicChild = editControl = new EditControl( parent );
 	else if( type == MemoControl::className )
-		newBasicChild = memoControl = new MemoControl( parent );
+		focusChild = newBasicChild = memoControl = new MemoControl( parent );
 	else if( type == FrameChild::className )
 		newBasicChild = frameChild = new FrameChild( parent );
 	else if( type == ScrollFrame::className )
 		newBasicChild = scrollFrame = new ScrollFrame( parent );
 	else if( type == ComboBox::className )
-		newBasicChild = comboBox = new ComboBox( parent );
+		focusChild = newBasicChild = comboBox = new ComboBox( parent );
 	else if( type == TreeView::className )
-		newBasicChild = treeView = new TreeView( parent );
+		focusChild = newBasicChild = treeView = new TreeView( parent );
 	else if( type == TrackBar::className )
-		newBasicChild = trackBar = new TrackBar( parent );
+		focusChild = newBasicChild = trackBar = new TrackBar( parent );
 	else if( type == DateTimePicker::className )
-		newBasicChild = dateTimePicker = new DateTimePicker( parent );
+		focusChild = newBasicChild = dateTimePicker = new DateTimePicker( parent );
 	else if( type == ScrollBar::className )
 		newBasicChild = scrollBar = new ScrollBar( parent );
 	else if( type == UpDownButton::className )
-		newBasicChild = upDownButton = new UpDownButton( parent );
+		focusChild = newBasicChild = upDownButton = new UpDownButton( parent );
 	else if( type == ListBox::className )
-		newBasicChild = listBox = new ListBox( parent );
+		focusChild = newBasicChild = listBox = new ListBox( parent );
 	else if( type == XMLeditorChild::className )
-		newBasicChild = newChild = new XMLeditorChild( parent );
+		focusChild = newBasicChild = newChild = new XMLeditorChild( parent );
 	else if( type == GridViewer::className )
-		newBasicChild = newChild = gridViewer = new GridViewer( parent );
+		focusChild = newBasicChild = newChild = gridViewer = new GridViewer( parent );
 	else if( type == ChartChild::className )
-		newBasicChild = newChild = chartChild = new ChartChild( parent );
+		focusChild = newBasicChild = newChild = chartChild = new ChartChild( parent );
 	else if( type == TabControl::className )
 		newBasicChild = tabControl = new TabControl( parent );
 	else
@@ -387,6 +388,8 @@ static void createChild( const F_STRING &resourceFileName, xml::Element *child, 
 		addTabItems( tabControl, child );
 	else if( gridViewer )
 		setGridViewer( gridViewer, child );
+
+	return focusChild;
 }
 
 static void createLayoutManager( xml::Element *resource, CallbackWindow *parent, bool designerMode )
@@ -494,22 +497,29 @@ static SuccessCode createFrame2( const F_STRING &resourceFileName, xml::Element 
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void createChildWindows( const F_STRING &resourceFileName, xml::Element *resource, BasicWindow *parent, bool designerMode )
+BasicWindow *createChildWindows( const F_STRING &resourceFileName, xml::Element *resource, BasicWindow *parent, bool designerMode )
 {
 	CallbackWindow	*callParent = (parent->getWindowClass() & CallbackWindowFlag)
 		? static_cast<CallbackWindow*>( parent )
 		: nullptr;
 
+	BasicWindow *focusChild=nullptr;
 	for( size_t i=0; i<resource->getNumObjects(); i++ )
 	{
+		BasicWindow *newChild = nullptr;
 		xml::Element *child = resource->getElement( i );
 		if( callParent && child->getTag() == CHILD_TAG )
-			createChild( resourceFileName, child, callParent, designerMode );
+			newChild = createChild( resourceFileName, child, callParent, designerMode );
 		else if( callParent && child->getTag() == LayoutManager::className )
 			createLayoutManager( child, callParent, designerMode );
 		else if( child->getTag() == LayoutData::className )
 			createLayoutData( child, parent );
+
+		if( !focusChild && newChild )
+			focusChild = newChild;
 	}
+
+	return focusChild;
 }
 
 gak::xml::Element *findFrame(gak::xml::Element *root, const char *frameName)
