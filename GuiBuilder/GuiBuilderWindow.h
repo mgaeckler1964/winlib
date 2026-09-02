@@ -324,6 +324,10 @@ class GuiBuilderWindow : public OverlappedWindow
 	void changeStringResource( size_t idx, const STRING &name, const STRING &value, const BasicWindow *source );
 
 	private:
+	void handleFontButton();
+	void handleUpButton();
+	void handleDownButton();
+
 	virtual ProcessStatus handleCreate();
 	virtual ProcessStatus handleEditChange( int control );
 	virtual bool handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver );

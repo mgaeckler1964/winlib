@@ -373,7 +373,6 @@ STRING GuiBuilderWindow::getUniqueType()
 	return uniqueType;
 }
 
-
 TreeNode *GuiBuilderWindow::addChildItem( xml::Element *resource, TreeNode *parent )
 {
 	STRING name = resource->getAttribute( NAME_ATTR );
@@ -805,6 +804,7 @@ void GuiBuilderWindow::newMenu()
 		setChangedFlag();
 	}
 }
+
 void GuiBuilderWindow::newStringList()
 {
 	xml::Element	*gui = m_guiDoc->getRoot();
@@ -823,6 +823,7 @@ void GuiBuilderWindow::newStringList()
 		setChangedFlag();
 	}
 }
+
 void GuiBuilderWindow::newFrame(const STRING &name)
 {
 	xml::Element	*gui = m_guiDoc->getRoot();
@@ -1705,6 +1706,151 @@ void GuiBuilderWindow::editItemList()
 	}
 }
 
+void GuiBuilderWindow::handleFontButton()
+{
+	BasicWindow *child = designerForm->getSelected();
+	if( child )
+	{
+		Font	&font = child->getFont();
+		if( !font.isAssigned() )
+		{
+			for( 
+				const BasicWindow *parent = child->getParent();
+				parent;
+				parent = parent->getParent()
+			)
+			{
+				font = parent->getFont();
+				if( font.isAssigned() )
+					break;
+			}
+		}
+		if( font.selectFont( this, false ) )
+		{
+			designerForm->setFont( font.toString() );
+			properties.SelectFontCheck->setActive();
+			setChangedFlag();
+		}
+	}
+}
+
+void GuiBuilderWindow::handleUpButton()
+{
+	if( m_editorMode == emFORM && designerForm && designerForm->moveUp() )
+	{
+		refreshChildSelect();
+		designerForm->refreshSelection();
+		setChangedFlag();
+	}
+	else if( m_editorMode == emMENU )
+	{
+		TreeNode *myNode = treeSelect.getSelection();
+		if( myNode )
+		{
+			xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
+			if( menu )
+			{
+				long index = menu->getIndex();
+				if( index )
+				{
+					menu->moveTo(index-1);
+					setChangedFlag();
+					xml::Element	*resource = getSelectedTopResource();
+					fillMenuItemList( resource, nullptr );
+					treeSelect.selectItem( treeSelect.findItem(menu) );
+				}
+			}
+		}
+	}
+	else if( m_editorMode == emSTRINGS )
+	{
+		int	selected = childSelect.getSelection();
+		if( selected > 0 )		// do not move the first element up it's the string table itsef
+		{
+			xml::Element *element = m_childResources[selected];
+			long index = element->getIndex();
+			if( index )
+			{
+				xml::Element *prevElemen = m_childResources[selected-1];
+
+				STRING prevStr = childSelect.getEntry( selected-1 );
+				STRING curStr = childSelect.getEntry( selected );
+
+				element->moveTo(index-1);
+
+				m_childResources[selected-1] = element;
+				m_childResources[selected] = prevElemen;
+
+				childSelect.replaceEntry( selected-1, curStr );
+				childSelect.replaceEntry( selected, prevStr );
+
+				childSelect.selectEntry( selected-1 );
+
+				setChangedFlag();
+				stringListEditor->reload(m_childResources);
+			}
+		}
+
+	}
+}
+
+void GuiBuilderWindow::handleDownButton()
+{
+	if( m_editorMode == emFORM && designerForm && designerForm->moveDown() )
+	{
+		refreshChildSelect();
+		designerForm->refreshSelection();
+		setChangedFlag();
+	}
+	else if( m_editorMode == emMENU )
+	{
+		TreeNode *myNode = treeSelect.getSelection();
+		if( myNode )
+		{
+			xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
+			if( menu )
+			{
+				long index = menu->getIndex();
+				long numSiblings = long(menu->getParent()->getNumObjects())-1;
+				if( index < numSiblings )
+				{
+					menu->moveTo(index+1);
+					setChangedFlag();
+					xml::Element	*resource = getSelectedTopResource();
+					fillMenuItemList( resource, nullptr );
+					treeSelect.selectItem( treeSelect.findItem(menu) );
+				}
+			}
+		}
+	}
+	else if( m_editorMode == emSTRINGS )
+	{
+		int	selected = childSelect.getSelection();
+		if( selected > 0 && selected < childSelect.getNumEntries()-1 )
+		{
+			xml::Element *nextElemen = m_childResources[selected+1];
+
+			STRING nextStr = childSelect.getEntry( selected+1 );
+			STRING curStr = childSelect.getEntry( selected );
+
+			xml::Element *element = m_childResources[selected];
+			long index = element->getIndex();
+			element->moveTo(index+1);
+
+			m_childResources[selected+1] = element;
+			m_childResources[selected] = nextElemen;
+
+			childSelect.replaceEntry( selected+1, curStr );
+			childSelect.replaceEntry( selected, nextStr );
+
+			childSelect.selectEntry( selected+1 );
+
+			setChangedFlag();
+			stringListEditor->reload(m_childResources);
+		}
+	}
+}
+
 // --------------------------------------------------------------------- //
 // ----- class protected ----------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -1728,7 +1874,6 @@ ProcessStatus GuiBuilderWindow::handleCreate()
 
 	return OverlappedWindow::handleCreate();
 }
-
 
 ProcessStatus GuiBuilderWindow::handleEditChange( int cmd )
 {
@@ -2380,155 +2525,22 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 			{
 				designerForm->setFont( "" );
 				setChangedFlag();
-				break;
 			}
+			break;
 
 		case SelectFontButton_id:
 		{
 			assert( designerForm );
-
-			BasicWindow *child = designerForm->getSelected();
-			if( child )
-			{
-				Font	&font = child->getFont();
-				if( !font.isAssigned() )
-				{
-					for( 
-						const BasicWindow *parent = child->getParent();
-						parent;
-						parent = parent->getParent()
-					)
-					{
-						font = parent->getFont();
-						if( font.isAssigned() )
-							break;
-					}
-				}
-				if( font.selectFont( this, false ) )
-				{
-					designerForm->setFont( font.toString() );
-					properties.SelectFontCheck->setActive();
-					setChangedFlag();
-				}
-			}
+			handleFontButton();
 		}
 		case upBUTTON_id:
 		{
-			if( m_editorMode == emFORM && designerForm && designerForm->moveUp() )
-			{
-				refreshChildSelect();
-				designerForm->refreshSelection();
-				setChangedFlag();
-			}
-			else if( m_editorMode == emMENU )
-			{
-				TreeNode *myNode = treeSelect.getSelection();
-				if( myNode )
-				{
-					xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
-					if( menu )
-					{
-						long index = menu->getIndex();
-						if( index )
-						{
-							menu->moveTo(index-1);
-							setChangedFlag();
-							xml::Element	*resource = getSelectedTopResource();
-							fillMenuItemList( resource, nullptr );
-							treeSelect.selectItem( treeSelect.findItem(menu) );
-						}
-					}
-				}
-			}
-			else if( m_editorMode == emSTRINGS )
-			{
-				int	selected = childSelect.getSelection();
-				if( selected > 0 )		// do not move the first element up it's the string table itsef
-				{
-					xml::Element *element = m_childResources[selected];
-					long index = element->getIndex();
-					if( index )
-					{
-						xml::Element *prevElemen = m_childResources[selected-1];
-
-						STRING prevStr = childSelect.getEntry( selected-1 );
-						STRING curStr = childSelect.getEntry( selected );
-
-						element->moveTo(index-1);
-
-						m_childResources[selected-1] = element;
-						m_childResources[selected] = prevElemen;
-
-						childSelect.replaceEntry( selected-1, curStr );
-						childSelect.replaceEntry( selected, prevStr );
-
-						childSelect.selectEntry( selected-1 );
-
-						setChangedFlag();
-						stringListEditor->reload(m_childResources);
-					}
-				}
-
-			}
-
+			handleUpButton();
 			break;
 		}
 		case downBUTTON_id:
 		{
-			if( m_editorMode == emFORM && designerForm && designerForm->moveDown() )
-			{
-				refreshChildSelect();
-				designerForm->refreshSelection();
-				setChangedFlag();
-			}
-			else if( m_editorMode == emMENU )
-			{
-				TreeNode *myNode = treeSelect.getSelection();
-				if( myNode )
-				{
-					xml::Element *menu = static_cast<xml::Element*>(myNode->getData());
-					if( menu )
-					{
-						long index = menu->getIndex();
-						long numSiblings = long(menu->getParent()->getNumObjects())-1;
-						if( index < numSiblings )
-						{
-							menu->moveTo(index+1);
-							setChangedFlag();
-							xml::Element	*resource = getSelectedTopResource();
-							fillMenuItemList( resource, nullptr );
-							treeSelect.selectItem( treeSelect.findItem(menu) );
-						}
-					}
-				}
-			}
-			else if( m_editorMode == emSTRINGS )
-			{
-				int	selected = childSelect.getSelection();
-				if( selected > 0 && selected < childSelect.getNumEntries()-1 )
-				{
-					xml::Element *nextElemen = m_childResources[selected+1];
-
-					STRING nextStr = childSelect.getEntry( selected+1 );
-					STRING curStr = childSelect.getEntry( selected );
-
-					xml::Element *element = m_childResources[selected];
-					long index = element->getIndex();
-					element->moveTo(index+1);
-
-					m_childResources[selected+1] = element;
-					m_childResources[selected] = nextElemen;
-
-					childSelect.replaceEntry( selected+1, curStr );
-					childSelect.replaceEntry( selected, nextStr );
-
-					childSelect.selectEntry( selected+1 );
-
-					setChangedFlag();
-					stringListEditor->reload(m_childResources);
-				}
-			}
-
+			handleDownButton();
 			break;
 		}
 		default:
