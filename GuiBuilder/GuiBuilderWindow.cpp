@@ -2440,6 +2440,37 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 					}
 				}
 			}
+			else if( m_editorMode == emSTRINGS )
+			{
+				int	selected = childSelect.getSelection();
+				if( selected > 0 )		// do not move the first element up it's the string table itsef
+				{
+					xml::Element *element = m_childResources[selected];
+					long index = element->getIndex();
+					if( index )
+					{
+						xml::Element *prevElemen = m_childResources[selected-1];
+
+						STRING prevStr = childSelect.getEntry( selected-1 );
+						STRING curStr = childSelect.getEntry( selected );
+
+						element->moveTo(index-1);
+
+						m_childResources[selected-1] = element;
+						m_childResources[selected] = prevElemen;
+
+						childSelect.replaceEntry( selected-1, curStr );
+						childSelect.replaceEntry( selected, prevStr );
+
+						childSelect.selectEntry( selected-1 );
+
+						setChangedFlag();
+						stringListEditor->reload(m_childResources);
+					}
+				}
+
+			}
+
 			break;
 		}
 		case downBUTTON_id:
@@ -2471,6 +2502,33 @@ ProcessStatus GuiBuilderWindow::handleButtonClick( int control )
 					}
 				}
 			}
+			else if( m_editorMode == emSTRINGS )
+			{
+				int	selected = childSelect.getSelection();
+				if( selected > 0 && selected < childSelect.getNumEntries()-1 )
+				{
+					xml::Element *nextElemen = m_childResources[selected+1];
+
+					STRING nextStr = childSelect.getEntry( selected+1 );
+					STRING curStr = childSelect.getEntry( selected );
+
+					xml::Element *element = m_childResources[selected];
+					long index = element->getIndex();
+					element->moveTo(index+1);
+
+					m_childResources[selected+1] = element;
+					m_childResources[selected] = nextElemen;
+
+					childSelect.replaceEntry( selected+1, curStr );
+					childSelect.replaceEntry( selected, nextStr );
+
+					childSelect.selectEntry( selected+1 );
+
+					setChangedFlag();
+					stringListEditor->reload(m_childResources);
+				}
+			}
+
 			break;
 		}
 		default:

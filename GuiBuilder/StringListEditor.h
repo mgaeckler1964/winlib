@@ -82,13 +82,14 @@ class GuiBuilderWindow;
 
 class StringListEditor : public StringListEditor_form
 {
-	GuiBuilderWindow	*guiBuilderWindow;
+	GuiBuilderWindow	*m_guiBuilderWindow;
 
 	virtual ProcessStatus handleCommand( int cmd );
 	public:
-	StringListEditor() : StringListEditor_form( NULL )
+	StringListEditor() : StringListEditor_form( nullptr )
 	{
 	}
+	void reload( const xml::XmlArray &strings );
 	SuccessCode create( GuiBuilderWindow *guiBuilderWindow, const xml::XmlArray &strings );
 	void setString( size_t row, const STRING &name, const STRING &value )
 	{

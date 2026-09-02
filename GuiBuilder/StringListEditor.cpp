@@ -127,7 +127,7 @@ ProcessStatus StringListEditor::handleCommand( int cmd )
 		STRING	name = stringListGrid->getCell( 0, resourceRow );
 		STRING	value = stringListGrid->getCell( 1, resourceRow );
 
-		guiBuilderWindow->changeStringResource( resourceIdx, name, value, this );
+		m_guiBuilderWindow->changeStringResource( resourceIdx, name, value, this );
 	}
 
 	return psDO_DEFAULT;
@@ -136,36 +136,41 @@ ProcessStatus StringListEditor::handleCommand( int cmd )
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+void StringListEditor::reload( const xml::XmlArray &childResources )
+{
+	size_t	numItems = childResources.size();
+	size_t	i = 0;
+
+	stringListGrid->createData( 2, numItems+1 );
+	stringListGrid->setFixedRows( 1 );
+	stringListGrid->setCell( 0, 0, "Name" );
+	stringListGrid->setCell( 1, 0, "Value" );
+	stringListGrid->focus();
+	for( 
+		xml::XmlArray::const_iterator it = childResources.cbegin(), endIT = childResources.cend();
+		it != endIT;
+		++it, ++i
+	)
+	{
+		if( i )
+		{
+			xml::Element	*string = *it;
+			STRING	name = string->getAttribute( NAME_ATTR );
+			STRING	value = string->getAttribute( CAPTION_ATTR );
+			stringListGrid->setCell( 0, i, name );
+			stringListGrid->setCell( 1, i, value );
+		}
+	}
+	invalidateWindow();
+}
 
 SuccessCode StringListEditor::create( GuiBuilderWindow *guiBuilderWindow, const xml::XmlArray &childResources )
 {
 	SuccessCode error = StringListEditor_form::create( guiBuilderWindow );
 	if( error == scSUCCESS )
 	{
-		size_t	numItems = childResources.size();
-		size_t	i = 0;
-
-		stringListGrid->createData( 2, numItems+1 );
-		stringListGrid->setFixedRows( 1 );
-		stringListGrid->setCell( 0, 0, "Name" );
-		stringListGrid->setCell( 1, 0, "Value" );
-		stringListGrid->focus();
-		for( 
-			xml::XmlArray::const_iterator it = childResources.cbegin(), endIT = childResources.cend();
-			it != endIT;
-			++it, ++i
-		)
-		{
-			if( i )
-			{
-				xml::Element	*string = *it;
-				STRING	name = string->getAttribute( NAME_ATTR );
-				STRING	value = string->getAttribute( CAPTION_ATTR );
-				stringListGrid->setCell( 0, i, name );
-				stringListGrid->setCell( 1, i, value );
-			}
-		}
-		this->guiBuilderWindow = guiBuilderWindow;
+		m_guiBuilderWindow = guiBuilderWindow;
+		reload( childResources );
 	}
 
 	return error;

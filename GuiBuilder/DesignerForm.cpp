@@ -1699,12 +1699,12 @@ bool DesignerForm::moveUp()
 			}
 			else
 			{
-/*v*/				break;
+/*v*/			break;
 			}
 		}
 		else
 		{
-/*v*/			break;
+/*v*/		break;
 		}
 	}
 		
