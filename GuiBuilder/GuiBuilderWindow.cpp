@@ -609,9 +609,6 @@ void GuiBuilderWindow::enableNameProperties()
 	disableChild( properties.numCols );
 	disableChild( properties.numRowsLABEL );
 	disableChild( properties.numRows );
-
-	disableChild( properties.ModalResultLabel );
-	disableChild( properties.ModalResultCOMBO );
 }
 
 void GuiBuilderWindow::enableDisaleMenuProperties()
@@ -723,7 +720,6 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 	bool	tabControl = false;
 	bool	form = false;
 	bool	grid = false;
-	bool	button = false;
 
 	for( size_t i=0; i<numSelected; i++ )
 	{
@@ -736,10 +732,6 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 		else if( type == ComboBox::className )
 		{
 			combobox = true;
-		}
-		else if( type == PushButton::className )
-		{
-			button = true;
 		}
 		else if( type == TabControl::className )
 		{
@@ -790,16 +782,6 @@ void GuiBuilderWindow::enableDisaleFormProperties()
 		disableChild( properties.numCols );
 		disableChild( properties.numRowsLABEL );
 		disableChild( properties.numRows );
-	}
-	if( button )
-	{
-		enableChild( properties.ModalResultLabel );
-		enableChild( properties.ModalResultCOMBO );
-	}
-	else
-	{
-		disableChild( properties.ModalResultLabel );
-		disableChild( properties.ModalResultCOMBO );
 	}
 }
 
