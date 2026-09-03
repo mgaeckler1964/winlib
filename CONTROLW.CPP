@@ -898,13 +898,53 @@ size_t EDIT::searchText(
 	return findPos;
 }
 
-void EDIT::print( const char *fileName, PrintDevice *printer )
-{
-	STRING	cp;
 
-	cp = getText();
-	printer->setTabWidth( m_tabWidth );
+/*
+--------------------------------------------------------------------------------
+	MemoControl
+--------------------------------------------------------------------------------
+*/
+void MemoControl::print( const char *fileName, PrintDevice *printer )
+{
+	if( isLineBreak() )
+		message( EM_FMTLINES, true );
+	STRING	cp = getText();
+	message( EM_FMTLINES, false );
+	printer->setTabWidth( getTabWidth() );
 	printer->printText( fileName, cp );
+}
+
+void MemoControl::switchLineBreak()
+{
+	STRING	cp = getText();
+	bool	changed = isChanged();
+	const BasicWindow *parent = getParent();
+	close();
+	clrHandle();
+	if( hasStyle(ES_AUTOHSCROLL|WS_HSCROLL) )
+		removeStyle( ES_AUTOHSCROLL|WS_HSCROLL );
+	else
+		addStyle( ES_AUTOHSCROLL|WS_HSCROLL );
+	create(const_cast<BasicWindow *>(parent));
+	setText(cp);
+	if( changed )
+		setChanged();
+}
+
+void MemoControl::setLineBreak()
+{
+	if( !isLineBreak() )
+	{
+		switchLineBreak();
+	}
+}
+
+void MemoControl::clrLineBreak()
+{
+	if( isLineBreak() )
+	{
+		switchLineBreak();
+	}
 }
 
 /*
@@ -1100,32 +1140,39 @@ int CALLBACK WordBreakProc( LPSTR text, int cursPos, int length, int action )
 
 	case WB_LEFT:
 		if( lastAction != WB_ISDELIMITER )
+			cursPos--;
+
+		while( cursPos > 0 )
 		{
-			while( cursPos > 0 )
-			{
-				cursPos--;
-				if( !strchr( WORD_DELIMITERS, text[cursPos] ) )
-					break;
-			}
-			while( cursPos >= 0 )
-			{
-				if( strchr( WORD_DELIMITERS, text[cursPos] ) )
-					break;
-				cursPos--;
-			}
-			cursPos++;
+			if( !strchr( WORD_DELIMITERS, text[cursPos] ) )
+				break;
+			cursPos--;
 		}
+		while( cursPos >= 0 )
+		{
+			if( strchr( WORD_DELIMITERS, text[cursPos] ) )
+				break;
+			cursPos--;
+		}
+		cursPos++;
+
 		break;
 
 	case WB_RIGHT:
 		if( strchr( WORD_DELIMITERS, text[cursPos] ) )
+		{
 			while( cursPos < length )
 			{
 				if( !strchr( WORD_DELIMITERS, text[cursPos] ) )
 					break;
 				cursPos++;
 			}
+		}
 		else
+		{
+			if( cursPos < length )
+				++cursPos;
+
 			while( cursPos < length )
 			{
 				if( strchr( WORD_DELIMITERS, text[cursPos] ) )
@@ -1133,7 +1180,16 @@ int CALLBACK WordBreakProc( LPSTR text, int cursPos, int length, int action )
 				cursPos++;
 			}
 
+			while( cursPos < length )
+			{
+				if( !strchr( WORD_DELIMITERS, text[cursPos] ) )
+					break;
+				cursPos++;
+			}
+		}
+
 		break;
+	
 	default:
 		break;
 	}

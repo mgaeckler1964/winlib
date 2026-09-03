@@ -746,28 +746,10 @@ class EDIT : public ControlWindow
 		return getString();
 	}
 
-	void print( const char *fileName, PrintDevice *printer );
-
-	void setLineBreak()
-	{
-		removeStyle( ES_AUTOHSCROLL|WS_HSCROLL );
-		message( EM_FMTLINES, true );
-
-	}
-	void clrLineBreak()
-	{
-		addStyle( ES_AUTOHSCROLL|WS_HSCROLL );
-		message( EM_FMTLINES, false );
-	}
-	bool isLineBreak()
-	{
-		return (bool)(!hasStyle( ES_AUTOHSCROLL|WS_HSCROLL ));
-	}
 	void setAutoIndent()
 	{
 		subclassControl();
 	}
-
 	void clrAutoIndent()
 	{
 		restoreProc();
@@ -809,6 +791,16 @@ class MemoControl : public EDIT
 	void operator = ( const STRING &value )
 	{
 		setText( value );
+	}
+
+	void print( const char *fileName, PrintDevice *printer );
+
+	void switchLineBreak();
+	void setLineBreak();
+	void clrLineBreak();
+	bool isLineBreak()
+	{
+		return (bool)(!hasStyle( ES_AUTOHSCROLL|WS_HSCROLL ));
 	}
 };
 

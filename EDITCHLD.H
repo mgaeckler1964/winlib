@@ -93,7 +93,7 @@ class EditChild : public ManagerChild
 		m_stripLineEnds = m_withBOM = m_autoReload = false;
 	}
 
-	MemoControl *getControl() 
+	MemoControl *getControl()  const
 	{
 		return static_cast<MemoControl*>(m_control);
 	}
@@ -313,47 +313,47 @@ class EditChild : public ManagerChild
 	{
 		STRING	fileName = getFileName();
 
-		static_cast<EDIT*>(m_control)->print( fileName, device );
+		getControl()->print( fileName, device );
 	}
 	void setLineBreak()
 	{
-		static_cast<EDIT*>(m_control)->setLineBreak();
+		getControl()->setLineBreak();
 	}
 	void clrLineBreak()
 	{
-		static_cast<EDIT*>(m_control)->clrLineBreak();
+		getControl()->clrLineBreak();
 	}
 	bool isLineBreak() const
 	{
-		return static_cast<EDIT*>(m_control)->isLineBreak();
+		return getControl()->isLineBreak();
 	}
 	void setSelection( size_t startPos, size_t endPos )
 	{
-		static_cast<EDIT*>(m_control)->setSelection( startPos, endPos );
+		getControl()->setSelection( startPos, endPos );
 	}
 	STRING getSelection() const
 	{
-		return static_cast<EDIT*>(m_control)->getSelection();
+		return getControl()->getSelection();
 	}
 	void getSelection( size_t *startPos, size_t *endPos = nullptr ) const
 	{
-		static_cast<EDIT*>(m_control)->getSelection( startPos, endPos );
+		return getControl()->getSelection( startPos, endPos );
 	}
 	void getCursorPosition( size_t *line, size_t *col ) const
 	{
-		static_cast<EDIT*>(m_control)->getCursorPosition( line, col );
+		getControl()->getCursorPosition( line, col );
 	}
 	operator STRING() const
 	{
-		return STRING(*static_cast<EDIT*>(m_control));
+		return STRING(*getControl());
 	}
 	STRING getText() const
 	{
-		return m_control->getText();
+		return getControl()->getText();
 	}
 	void setText( const STRING &text )
 	{
-		m_control->setText( text );
+		getControl()->setText( text );
 	}
 	void setTitle( const STRING &text )
 	{
@@ -361,7 +361,7 @@ class EditChild : public ManagerChild
 	}
 	void setText( int textId )
 	{
-		m_control->setText( textId );
+		getControl()->setText( textId );
 	}
 	void setTitle( int textId )
 	{
@@ -370,20 +370,20 @@ class EditChild : public ManagerChild
 
 	void indent()
 	{
-		static_cast<EDIT*>(m_control)->indent();
+		getControl()->indent();
 	}
 	void unindent()
 	{
-		static_cast<EDIT*>(m_control)->unindent();
+		getControl()->unindent();
 	}
 
 	void setAutoIndent()
 	{
-		static_cast<EDIT*>(m_control)->setAutoIndent();
+		getControl()->setAutoIndent();
 	}
 	void clrAutoIndent()
 	{
-		static_cast<EDIT*>(m_control)->clrAutoIndent();
+		getControl()->clrAutoIndent();
 	}
 };
 
