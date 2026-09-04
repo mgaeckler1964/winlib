@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -70,6 +70,12 @@
 #	pragma option -b
 #	pragma option -a4
 #	pragma option -pc
+#endif
+
+#ifdef _MSC_VER
+#	pragma warning( disable: 4481 )	// do not warn
+#elif !defined(override)
+#define override /* ignore with C++ Builder */
 #endif
 
 namespace winlib
@@ -184,7 +190,7 @@ class Menu
 
 class PopupMenu : public Menu
 {
-	virtual HMENU createMenu();
+	HMENU createMenu() override;
 };
 
 // --------------------------------------------------------------------- //

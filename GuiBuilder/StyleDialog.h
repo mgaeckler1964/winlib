@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -42,7 +42,7 @@
 
 #include <gak/string.h>
 
-#include <WINLIB/CONTROLW.H>
+#include <WINLIB/ControlWindow.h>
 
 #include "guiBuilder.gui.h"
 
@@ -93,8 +93,8 @@ class StyleDialog : public StyleDialog_form
 	public:
 	StyleDialog( unsigned  long style, const STRING &curentType );
 
-	virtual ProcessStatus handleCreate();
-	virtual ProcessStatus handleOk();
+	ProcessStatus handleCreate() override;
+	ProcessStatus handleOk() override;
 
 	unsigned long getStyle() const
 	{

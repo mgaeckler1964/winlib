@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -97,24 +97,24 @@ class WinAppTest : public UnitTest
 	{
 		doEnterFunctionEx(gakLogging::llInfo, "WinAppTest::PerformTest");
 		TestScope scope( "PerformTest" );
-		UT_ASSERT_EQUAL( winlib::appObject, &m_appObject );
+		UT_EXPECT_EQUAL( winlib::appObject, &m_appObject );
 
 		m_appObject.setCompany("GakWinlibUnitTester");
 		m_appObject.setApplication("UnitTestApp");
 
 		long tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
+		UT_EXPECT_EQUAL( tester, 666 );
 		long result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 333 );
+		UT_EXPECT_EQUAL( tester, 333 );
 
 		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 		result = m_appObject.DeleteProfile(false);
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+		UT_EXPECT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 		tester = m_appObject.GetProfile("", theKeyName, 666);
-		UT_ASSERT_EQUAL( tester, 666 );
+		UT_EXPECT_EQUAL( tester, 666 );
 
 		result = m_appObject.WriteProfile(true, "", theKeyName, 999, true );
 		if( result == ERROR_SUCCESS )
@@ -124,34 +124,34 @@ class WinAppTest : public UnitTest
 			if( winlib::getWindowsMajorVersion() >= 6 )
 			{
 				tester = m_appObject.GetProfile("", theKeyName, 666, true);
-				UT_ASSERT_EQUAL( tester, 666 );
+				UT_EXPECT_EQUAL( tester, 666 );
 			}
 
 			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 999 );
+			UT_EXPECT_EQUAL( tester, 999 );
 
 			tester = m_appObject.GetProfile("", theKeyName, 666, true);
-			UT_ASSERT_EQUAL( tester, 999 );
+			UT_EXPECT_EQUAL( tester, 999 );
 
 			result = m_appObject.WriteProfile(false, "", theKeyName, 333);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 			tester = m_appObject.GetProfile("", theKeyName, 666);
-			UT_ASSERT_EQUAL( tester, 333 );
+			UT_EXPECT_EQUAL( tester, 333 );
 
 			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 			result = m_appObject.DeleteProfile(true);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+			UT_EXPECT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 
 			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 			result = m_appObject.DeleteProfile(false);
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+			UT_EXPECT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 
 			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 			result = m_appObject.DeleteCompanyProfile( true );
-			UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+			UT_EXPECT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 		}
 		else
 		{
@@ -159,9 +159,9 @@ class WinAppTest : public UnitTest
 		}
 
 		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 		result = m_appObject.DeleteCompanyProfile( false );
-		UT_ASSERT_EQUAL( result, ERROR_FILE_NOT_FOUND );
+		UT_EXPECT_EQUAL( result, ERROR_FILE_NOT_FOUND );
 	}
 };
 

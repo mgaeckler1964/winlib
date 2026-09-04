@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module: 		STREDIT.H
+		Module: 		StringEditor.cpp
 		Description:	A popup window to edit one string
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -29,12 +29,7 @@
 		SUCH DAMAGE.
 */
 
-#ifndef STRING_EDIT_WIN_H
-#define STRING_EDIT_WIN_H
-
-#include <winlib\popup.h>
-
-#include <winlib\controlw.h>
+#include <winlib\StringEditor.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -50,21 +45,55 @@
 namespace winlib
 {
 
-class StringEditor : public ModalPopup
+using namespace gak;
+
+STRING StringEditor::create( BasicWindow *parent, const char *title, const char *string, bool singleLine )
 {
-	Label			m_label;
-	EDIT			*m_theStringEdit;	// will be deleted b the owner
-	PushButton		m_okButton;
-	PushButton		m_cancelButton;
+	int		labelWidth = int(strlen( title ) * 10);
+	int		controlHeight = singleLine ? 20 : 200;
+	m_value = string;
 
-	STRING			m_value;
+	setText( title );
+	if( ModalPopup::create( parent, labelWidth+430, controlHeight + 70 ) == scSUCCESS )
+	{
+		m_label.create( this, 8, 8, labelWidth, 20 );
+		m_label.setText( title );
 
-	public:
-	STRING create( BasicWindow *parent, const char *title, const char *string, bool singleLine=true );
+		if( singleLine )
+		{
+			EditControl	*newControl = new EditControl( this );
+			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
+			m_theStringEdit = newControl;
+		}
+		else
+		{
+			MemoControl	*newControl = new MemoControl( this );
+			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
+			m_theStringEdit = newControl;
+		}
 
-	private:
-	virtual ProcessStatus handleOk();
-};
+		m_theStringEdit->setText( string );
+
+		m_okButton.create( this, 8, controlHeight+16, 50, 20 );
+		m_okButton.setText( "OK" );
+		m_okButton.setId( IDOK );
+
+		m_cancelButton.create( this, 66, controlHeight+16, 50, 20 );
+		m_cancelButton.setText( "Cancel" );
+		m_cancelButton.setId( IDCANCEL );
+
+		focus(true);
+		mainLoop();
+	}
+
+	return m_value;
+}
+
+ProcessStatus StringEditor::handleOk()
+{
+	m_value = m_theStringEdit->getString();
+	return ModalPopup::handleOk();
+}
 
 }	// namespace winlib
 
@@ -75,4 +104,3 @@ class StringEditor : public ModalPopup
 #	pragma option -p.
 #endif
 
-#endif

@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -45,9 +45,9 @@
 #include <WINLIB/POPUP.H>
 #include <WINLIB/frame.h>
 #include <WINLIB/scrollFrame.h>
-#include <WINLIB/CONTROLW.H>
-#include <WINLIB/STREDIT.H>
-#include <WINLIB/STDDLG.H>
+#include <WINLIB/ControlWindow.h>
+#include <WINLIB/StringEditor.h>
+#include <WINLIB/StandardDialogs.h>
 
 #include "guiBuilder.gui.h"
 #include "guiBuilder_rc.h"
@@ -137,7 +137,7 @@ class GuiBuilderWindow : public OverlappedWindow
 	xml::XmlArray		m_topResources;
 
 
-	enum
+	enum editorMode
 	{
 		emFORM, emMENU, emSTRINGS
 	}					m_editorMode;
@@ -328,18 +328,18 @@ class GuiBuilderWindow : public OverlappedWindow
 	void handleUpButton();
 	void handleDownButton();
 
-	virtual ProcessStatus handleCreate();
-	virtual ProcessStatus handleEditChange( int control );
-	virtual bool handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver );
-	virtual void handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget );
-	virtual ProcessStatus handleSelectionChange( int control );
-	virtual ProcessStatus handleButtonClick( int control );
-	virtual ProcessStatus handleCommand( int cmd );
-	virtual bool canClose();
+	ProcessStatus handleCreate() override;
+	ProcessStatus handleEditChange( int control ) override;
+	bool handleTreeViewDrag( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dragOver ) override;
+	void handleTreeViewDrop( TreeView *dragTreeView, TreeNode *dragItem, TreeNode *dropTarget ) override;
+	ProcessStatus handleSelectionChange( int control ) override;
+	ProcessStatus handleButtonClick( int control ) override;
+	ProcessStatus handleCommand( int cmd ) override;
+	bool canClose() override;
 	void handleMenuEditor( WPARAM wParam );
 	void handleFormEditor( WPARAM wParam );
 	void handleStringEditor( WPARAM wParam );
-	virtual void postControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam );
+	void postControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam ) override;
 
 	public:
 	int getCurrentId() const
@@ -400,6 +400,9 @@ class GuiBuilderWindow : public OverlappedWindow
 	void newDocument();
 	void loadTranslations( xml::Document *doc );
 	void loadGUI( xml::Document *doc );
+	public:
+	void loadDocument( const STRING &fileName );
+	private:
 	void loadDocument();
 	IdentifiersMap createIDs();
 	STRING saveGui( const F_STRING &fileName );

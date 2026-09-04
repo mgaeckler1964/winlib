@@ -102,7 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AtomTest.h" />
-    <ClInclude Include="F_TYPE_TEST.h" />
+    <ClInclude Include="FileTypeRegistryTest.h" />
     <ClInclude Include="RegistryTest.h" />
     <ClInclude Include="WinAppTest.h" />
   </ItemGroup>

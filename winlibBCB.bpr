@@ -5,20 +5,23 @@
     <VERSION value="BCB.05.03"/>
     <PROJECT value="..\..\Object\Winlib\winlibBCB.lib"/>
     <OBJFILES value="..\..\Object\Winlib\bcb\BASICWIN.obj ..\..\Object\Winlib\bcb\WINAPP.obj 
-      ..\..\Object\Winlib\bcb\CALLWIN.obj ..\..\Object\Winlib\bcb\F_TYPE.obj 
-      ..\..\Object\Winlib\bcb\DIALOGWI.obj ..\..\Object\Winlib\bcb\ToolTip.obj 
-      ..\..\Object\Winlib\bcb\DEVICE.obj ..\..\Object\Winlib\bcb\CONTROLW.obj 
-      ..\..\Object\Winlib\bcb\WINLIB.obj 
+      ..\..\Object\Winlib\bcb\CALLWIN.obj ..\..\Object\Winlib\bcb\ToolTip.obj 
+      ..\..\Object\Winlib\bcb\DEVICE.obj ..\..\Object\Winlib\bcb\WINLIB.obj 
       ..\..\Object\Winlib\bcb\xmlEditorChild.obj 
-      ..\..\Object\Winlib\bcb\FONT.obj ..\..\Object\Winlib\bcb\STDDLG.obj 
-      ..\..\Object\Winlib\bcb\AREA.obj ..\..\Object\Winlib\bcb\POPUP.obj 
-      ..\..\Object\Winlib\bcb\Layout.obj ..\..\Object\Winlib\bcb\resource.obj 
-      ..\..\Object\Winlib\bcb\splash.obj ..\..\Object\Winlib\bcb\barcode.obj 
-      ..\..\Object\Winlib\bcb\version.obj ..\..\Object\Winlib\bcb\menu.obj 
+      ..\..\Object\Winlib\bcb\FONT.obj ..\..\Object\Winlib\bcb\AREA.obj 
+      ..\..\Object\Winlib\bcb\POPUP.obj ..\..\Object\Winlib\bcb\Layout.obj 
+      ..\..\Object\Winlib\bcb\resource.obj ..\..\Object\Winlib\bcb\splash.obj 
+      ..\..\Object\Winlib\bcb\barcode.obj ..\..\Object\Winlib\bcb\version.obj 
+      ..\..\Object\Winlib\bcb\menu.obj 
       ..\..\Object\Winlib\bcb\xmlEditorInternal.obj 
       ..\..\Object\Winlib\bcb\chartWin.obj ..\..\Object\Winlib\bcb\registry.obj 
-      ..\..\Object\Winlib\bcb\OLESRVR.obj ..\..\Object\Winlib\bcb\STREDIT.obj 
-      ..\..\Object\Winlib\bcb\frame.obj"/>
+      ..\..\Object\Winlib\bcb\frame.obj 
+      ..\..\Object\Winlib\bcb\ForeignWindow.obj ..\..\Object\Winlib\bcb\FileTypeRegistry.obj 
+      ..\..\Object\Winlib\bcb\OLEserver.obj 
+      ..\..\Object\Winlib\bcb\StringEditor.obj 
+      ..\..\Object\Winlib\bcb\DialogWindow.obj 
+      ..\..\Object\Winlib\bcb\ControlWindow.obj 
+      ..\..\Object\Winlib\bcb\StandardDialogs.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>

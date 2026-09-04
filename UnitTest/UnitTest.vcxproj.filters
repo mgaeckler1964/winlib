@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F_TYPE_TEST.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="RegistryTest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -30,6 +27,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AtomTest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTypeRegistryTest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

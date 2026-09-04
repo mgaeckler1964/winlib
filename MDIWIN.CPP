@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -95,7 +95,7 @@ void MDIwindow::registerClass()
 
 		fillDefaultClass( &wc );
 
-		wc.hbrBackground	= (HBRUSH)(COLOR_APPWORKSPACE + 1);
+		wc.hbrBackground	= HBRUSH(COLOR_APPWORKSPACE + 1);
 		wc.lpszClassName	= className;
 
 		registered = CallbackWindow::registerClass( &wc );
@@ -331,9 +331,9 @@ extern "C" LRESULT PASCAL MDIchildWindowProc(
 
 	if( message == WM_CREATE || message == WM_NCCREATE )
 	{
-		CREATESTRUCT	*createStruct = (CREATESTRUCT *)lParam;
-		MDICREATESTRUCT	*mdiCreateStruct = (MDICREATESTRUCT *)createStruct->lpCreateParams;
-		CallbackWindow	*curWindow = (CallbackWindow *)mdiCreateStruct->lParam;
+		CREATESTRUCT	*createStruct = reinterpret_cast<CREATESTRUCT *>(lParam);
+		MDICREATESTRUCT	*mdiCreateStruct = reinterpret_cast<MDICREATESTRUCT *>(createStruct->lpCreateParams);
+		CallbackWindow	*curWindow = reinterpret_cast<CallbackWindow *>(mdiCreateStruct->lParam);
 
 		if( !curWindow->handle() )
 			curWindow->setHandle( handle );

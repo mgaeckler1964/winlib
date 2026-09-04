@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -98,12 +98,12 @@ class AtomTest : public UnitTest
 		
 		if(!expectError)
 		{
-			UT_ASSERT_NOT_EQUAL( atom, ATOM(0) );
-			UT_ASSERT_EQUAL( testText, theReader.getValue() );
+			UT_EXPECT_NOT_EQUAL( atom, ATOM(0) );
+			UT_EXPECT_EQUAL( testText, theReader.getValue() );
 		}
 		else
 		{
-			UT_ASSERT_EQUAL( atom, ATOM(0) );
+			UT_EXPECT_EQUAL( atom, ATOM(0) );
 		}
 
 		return atom;
@@ -114,7 +114,7 @@ class AtomTest : public UnitTest
 		if( atom && !expectError )
 		{
 			winlib::AtomConsumer	theReader(atom);
-			UT_ASSERT_NOT_EQUAL( testText, theReader.getValue() );
+			UT_EXPECT_NOT_EQUAL( testText, theReader.getValue() );
 		}
 
 	}

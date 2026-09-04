@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			LISTCONT.H
-		Description:	Implementation of ListboxContainer
+		Module: 		StringEditor.h
+		Description:	A popup window to edit one string
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -29,16 +29,12 @@
 		SUCH DAMAGE.
 */
 
-#ifndef LIST_CONTAINER_H
-#define LIST_CONTAINER_H
+#ifndef STRING_EDIT_WIN_H
+#define STRING_EDIT_WIN_H
 
-// --------------------------------------------------------------------- //
-// ----- includes ------------------------------------------------------ //
-// --------------------------------------------------------------------- //
+#include <winlib\popup.h>
 
-#include <gak\array.h>
-
-#include <winlib\controlw.h>
+#include <winlib\ControlWindow.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -54,75 +50,20 @@
 namespace winlib
 {
 
-// --------------------------------------------------------------------- //
-// ----- class definitions --------------------------------------------- //
-// --------------------------------------------------------------------- //
-
-class ListObject
+class StringEditor : public ModalPopup
 {
-	STRING		m_value;
+	Label			m_label;
+	EDIT			*m_theStringEdit;	// will be deleted b the owner
+	PushButton		m_okButton;
+	PushButton		m_cancelButton;
+
+	STRING			m_value;
 
 	public:
-	ListObject()
-	{
-		m_value = "";
-	}
-	ListObject( const STRING &value )
-	{
-		setValue( value );
-	}
-	virtual ~ListObject() {}
+	STRING create( BasicWindow *parent, const char *title, const char *string, bool singleLine=true );
 
-	void setValue( const STRING &value )
-	{
-		m_value = value;
-	}
-	operator STRING () const
-	{
-		return m_value;
-	}
-};
-
-class ListboxContainer
-{
-	typedef ListObject		*ListObjectPtr;
-
-	ListBox						*m_control;
-	gak::Array<ListObjectPtr>	m_data;
-
-	public:
-	ListboxContainer()
-	{
-		m_control = nullptr;
-	}
-	ListboxContainer( ListBox *control )
-	{
-		setControl( control );
-	}
-	~ListboxContainer();
-
-	void setControl( ListBox *control )
-	{
-		m_control = control;
-	}
-
-	size_t size() const
-	{
-		return m_data.size();
-	}
-	ListObjectPtr &operator [] ( size_t pos )
-	{
-		return m_data[pos];
-	}
-
-	void addEntry( ListObjectPtr object )
-	{
-		m_data += object;
-		if( m_control )
-			m_control->addEntry( (STRING)*object );
-	}
-	ListObjectPtr	getSelectedEntry();
-	void removeEntry( ListObjectPtr object );
+	private:
+	ProcessStatus handleOk() override;
 };
 
 }	// namespace winlib
@@ -135,4 +76,3 @@ class ListboxContainer
 #endif
 
 #endif
-

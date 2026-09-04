@@ -1,13 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			LISTBCHLD.H
-		Description:	Implementation of LISTBOX_CHILD a MDI-Child contai-
-						ning a listbox.
+		Module:			ListboxContainer.cpp
+		Description:	Implementation of ListboxContainer
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -30,14 +29,11 @@
 		SUCH DAMAGE.
 */
 
-#ifndef LISTBOX_CHILD_H
-#define LISTBOX_CHILD_H
-
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <winlib\manager.h>
+#include <winlib/ListboxContainer.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -53,34 +49,73 @@
 namespace winlib
 {
 
+using namespace gak;
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-/**
-	the ListboxChild is a ManagerChild, that contains a ListBox
-*/
-class ListboxChild : public ManagerChild
+ListboxContainer::~ListboxContainer()
 {
-	public:
-	void setTabStops( WORD numTabs, int *tabs )
+	size_t			i = m_data.size();
+	ListObject		*element;
+	while( i>0 )
 	{
-		static_cast<ListBox*>(m_control)->setTabStops( numTabs, tabs );
-	};
-	void insertEntry( int entryId, const char *text )
+		i--;
+		element = m_data[i];
+
+		delete element;
+	}
+}
+
+
+ListboxContainer::ListObjectPtr ListboxContainer::getSelectedEntry()
+{
+	ListObjectPtr		entry = NULL;
+
+	if( m_control )
 	{
-		static_cast<ListBox*>(m_control)->insertEntry( entryId, text );
-	};
-	void selectEntry( int entryId )
+		T_STRING	selection = m_control->getSelectedItems();
+		if( !selection.isEmpty() )
+		{
+			STRING	line = selection.getFirstToken( "\n" );
+			if( !line.isEmpty() )
+			{
+				size_t	i, numElems;
+
+				numElems = m_data.size();
+				i = 0;
+				while( i<numElems )
+				{
+					entry = m_data[i];
+					if( !entry || STRING(*entry) == line )
+						break;
+					i++;
+				}
+			}
+		}
+	}
+	return entry;
+}
+
+void ListboxContainer::removeEntry( ListObjectPtr object )
+{
+	size_t	i, numElems;
+
+	numElems = m_data.size();
+	for( i=0; i<numElems; i++ )
 	{
-		static_cast<ListBox*>(m_control)->selectEntry( entryId );
-	};
-	int getSelection()
+		if( m_data[i] == object )
+			break;
+	}
+
+	if( i<numElems )
 	{
-		static_cast<ListBox*>(m_control)->getSelection();
-	};
-	ListboxChild(BasicWindow *owner) : ManagerChild( owner, new ListBox ) {};
-};
+		m_data.removeElementAt( i );
+		if( m_control )
+			m_control->deleteEntry( int(i) );
+	}
+}
 
 }	// namespace winlib
 
@@ -91,4 +126,3 @@ class ListboxChild : public ManagerChild
 #	pragma option -p.
 #endif
 
-#endif

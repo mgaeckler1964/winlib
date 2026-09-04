@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			DIALOGWI.H
+		Module:			DialogWindow.h
 		Description:	Implementation of dialogs defined in resource files
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -130,13 +130,13 @@ class DialogWindow : public CallbackWindow
 	}
 
 	// the message handlers
-	virtual LRESULT doDefault( UINT msg, WPARAM wParam, LPARAM lParam );
+	LRESULT doDefault( UINT msg, WPARAM wParam, LPARAM lParam ) override;
 	virtual ProcessStatus handleOk();
 	virtual ProcessStatus handleCancel();
-	virtual SuccessCode handleClose();
-	virtual ProcessStatus handleButtonClick( int cmd );
-	virtual ProcessStatus handleCommand( int cmd );
-	virtual ProcessStatus handleCreate();
+	SuccessCode handleClose() override;
+	ProcessStatus handleButtonClick( int cmd ) override;
+	ProcessStatus handleCommand( int cmd ) override;
+	ProcessStatus handleCreate() override;
 };
 
 class ModalDialog : public DialogWindow
@@ -164,7 +164,7 @@ class ModalDialog : public DialogWindow
 		return create( (const char *)MAKEINTRESOURCE(dialog), parent );
 	}
 
-	virtual SuccessCode close();
+	SuccessCode close() override;
 	SuccessCode close( int result )
 	{
 		m_modalResult = result;
@@ -172,7 +172,7 @@ class ModalDialog : public DialogWindow
 	}
 
 	protected:
-	virtual ProcessStatus handleButtonClick( int cmd );
+	ProcessStatus handleButtonClick( int cmd ) override;
 };
 
 

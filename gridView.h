@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -199,18 +199,18 @@ class GridViewer : public ChildWindow
 		m_editPos = m_selPos = start;
 	}
 
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
-	virtual ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar );
-	virtual ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND scrollBar );
-	virtual ProcessStatus handleRepaint( Device &hDC );
-	virtual ProcessStatus handleResize( const Size &newSize );
+	ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar ) override;
+	ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND scrollBar ) override;
+	ProcessStatus handleRepaint( Device &hDC ) override;
+	ProcessStatus handleResize( const Size &newSize ) override;
 
-	virtual ProcessStatus handleMouseMove( WPARAM modifier, const Point &position );
-	virtual ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position );
+	ProcessStatus handleMouseMove( WPARAM modifier, const Point &position ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position ) override;
 
-	virtual ProcessStatus handleKeyDown( int key );
-	virtual ProcessStatus handleCharacterInput( int c );
+	ProcessStatus handleKeyDown( int key ) override;
+	ProcessStatus handleCharacterInput( int c ) override;
 
 	public:
 	static const char className[];

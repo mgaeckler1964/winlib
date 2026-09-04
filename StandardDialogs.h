@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module: 		STDDLG.H
+		Module: 		StandardDialogs.h
 		Description:	Windows Standard Dialogs
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -60,7 +60,7 @@
 
 #include <winlib/callwin.h>
 #include <winlib/device.h>
-#include <winlib/controlw.h>
+#include <winlib/ControlWindow.h>
 #include <winlib/winapp.h>
 #include <winlib/registry.h>
 

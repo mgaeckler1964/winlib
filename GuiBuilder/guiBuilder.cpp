@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -41,7 +41,7 @@
 #include <gak/numericString.h>
 
 #include <winlib/winapp.h>
-
+#include <winlib/FileTypeRegistry.h>
 #include "GuiBuilderWindow.h"
 
 #include "guiBuilder_rc.h"
@@ -83,8 +83,9 @@ using namespace winlib;
 
 class GuiBuilderApplication : public Application
 {
-	virtual CallbackWindow  *createMainWindow( const char *cmdLine, int nCmdShow );
-	virtual void deleteMainWindow( BasicWindow  *mainWindow );
+	bool startApplication( HINSTANCE hInstance, const char *cmdLine ) override;
+	CallbackWindow  *createMainWindow( const char *cmdLine, int nCmdShow ) override;
+	void deleteMainWindow( BasicWindow  *mainWindow ) override;
 
 	public:
 	GuiBuilderApplication() : Application( GUIBUILDER_ICON ) {}
@@ -136,7 +137,21 @@ static GuiBuilderApplication	theApp;
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
-CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *, int  )
+bool GuiBuilderApplication::startApplication( HINSTANCE hInstance, const char *cmdLine )
+{
+	FileTypeRegistry	ftReg;
+	ftReg.extension = ".gui";
+	ftReg.type = "gui_file";
+	ftReg.type_description = "Winlib GUI Definition";
+	ftReg.cmd = "open";
+	ftReg.cmd_description =	"&open";
+	ftReg.commandLine =	STRING(getFileName()).add(" \"%1\"");
+
+	addFileType(&ftReg);
+	return Application::startApplication( hInstance, cmdLine );
+}
+
+CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *cmdLine, int  )
 {
 	//doEnableLogEx(gakLogging::llError);
 	doEnterFunctionEx(gakLogging::llInfo, "GuiBuilderApplication::createMainWindow");
@@ -165,6 +180,13 @@ CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *, int  )
 		{
 			delete theWindow;
 			theWindow = nullptr;
+		}
+		if( cmdLine && *cmdLine )
+		{
+			STRING file( cmdLine );
+
+			file.stripChar('\"');
+			theWindow->loadDocument(file);
 		}
 	}
 	catch( std::exception & )

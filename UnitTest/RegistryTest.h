@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -136,9 +136,9 @@ class RegistryTest : public UnitTest
 
 		Registry	software;
 		software.openPrivate( "SOFTWARE" );
-		UT_ASSERT_TRUE( software );
+		UT_EXPECT_TRUE( software );
 		long result = software.setKeyValue(GakWindowsTester, unnamedValue );
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 		{
 			/*
@@ -146,59 +146,59 @@ class RegistryTest : public UnitTest
 			*/
 			Registry	testerKey;
 			result = testerKey.openSubkey( software, GakWindowsTester, KEY_ALL_ACCESS );
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 			// ---------------------- 1 --------------------------------
 			result = testerKey.writeValue( valueName, namedValue );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 			size_t size = 0;
-			UT_ASSERT_EQUAL( testerKey.getValueSize(valueName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, namedValue.strlen()+1 );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(valueName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, namedValue.strlen()+1 );
 
 			// ---------------------- 2 --------------------------------
 			result = testerKey.setValueEx( expValName, rtENV, origValue, origValue.size()+1 );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 			EnvSTRING origEnv = origValue;
 			result = testerKey.writeValue( expValName, origEnv );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 			// ---------------------- 3 --------------------------------
 			result = testerKey.writeValue( longName, longValue );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 			// ---------------------- 4 --------------------------------
 			result = testerKey.writeValue( long64Name, long64Value );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
 			// ---------------------- 5 --------------------------------
 			// writing a string that it not 0-terminated
 			result = testerKey.setValueEx( badStrName, rtSTRING, badValue, 3 );  // do not write the trailing 0
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 
-			UT_ASSERT_EQUAL( testerKey.getValueSize(badStrName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, 3 );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(badStrName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, 3 );
 
 			// ---------------------- 6 --------------------------------
 			// writing a null string
 			result = testerKey.writeValue( nullName, nullValue );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(nullName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, 0 );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(nullName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, 0 );
 
 			// ---------------------- 7 --------------------------------
 			// writing an empty string
 			result = testerKey.writeValue( emptyName, emptyValue );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(emptyName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, 1 );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(emptyName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, 1 );
 
 			// ---------------------- 8 --------------------------------
 			// writing an char pointer
 			result = testerKey.writeValue( charName, charPtrValue );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(charName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, strlen(charPtrValue)+1 );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(charName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, strlen(charPtrValue)+1 );
 
 			/*
 				Reading
@@ -206,91 +206,91 @@ class RegistryTest : public UnitTest
 
 			STRING		readValue;
 			ReadSuccess	success = testerKey.readValue( &readValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( readValue, unnamedValue );
-			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( readValue, unnamedValue );
+			UT_EXPECT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
 			success = testerKey.readValue( valueName, &readValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( readValue, namedValue );
-			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( readValue, namedValue );
+			UT_EXPECT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
 			readValue = "not found";
 			success = testerKey.readValue( expValName, &readValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( readValue, expectedValue );
-			UT_ASSERT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( readValue, expectedValue );
+			UT_EXPECT_EQUAL( readValue.strlen(), strlen(readValue.c_str()) );
 
 			EnvSTRING myEnvValue;
 			success = testerKey.readValue( expValName, &myEnvValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( myEnvValue, origValue );
-			UT_ASSERT_EQUAL( myEnvValue.expand(), expectedValue );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( myEnvValue, origValue );
+			UT_EXPECT_EQUAL( myEnvValue.expand(), expectedValue );
 
 			long readLong;
 			success = testerKey.readValue( longName, &readLong );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( readLong, longValue );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( readLong, longValue );
 
 			gak::int64 readLong64;
 			success = testerKey.readValue( long64Name, &readLong64 );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( readLong64, long64Value );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( readLong64, long64Value );
 
 
 			// reading a string that was not 0-terminated
 			STRING read666;
 			success = testerKey.readValue( badStrName, &read666 );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_EQUAL( read666.strlen(), 3 );
-			UT_ASSERT_EQUAL( read666.strlen(), strlen(read666.c_str()) );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_EQUAL( read666.strlen(), 3 );
+			UT_EXPECT_EQUAL( read666.strlen(), strlen(read666.c_str()) );
 
 			/// reading a NULL strings
 			nullValue = "Dummy";	// ensure readValue will change the string
 			success = testerKey.readValue( nullName, &nullValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_TRUE(nullValue.isNullPtr());
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_TRUE(nullValue.isNullPtr());
 
 			/// reading an and empty strings
 			emptyValue = "Dummy";	// ensure readValue will change the string
 			success = testerKey.readValue( emptyName, &emptyValue );
-			UT_ASSERT_EQUAL( success, rsOK );
-			UT_ASSERT_FALSE(emptyValue.isNullPtr());
-			UT_ASSERT_EQUAL( emptyValue.size(), 0 );
+			UT_EXPECT_EQUAL( success, rsOK );
+			UT_EXPECT_FALSE(emptyValue.isNullPtr());
+			UT_EXPECT_EQUAL( emptyValue.size(), 0 );
 
 			/// check errors
 			long testValue=666;
 			result = testerKey.setValueEx( errorName, rtINTEGER, &testValue, 1 );  
-			UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( testerKey.getValueSize(errorName, &size), ERROR_SUCCESS );
-			UT_ASSERT_EQUAL( size, 1 );
+			UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( testerKey.getValueSize(errorName, &size), ERROR_SUCCESS );
+			UT_EXPECT_EQUAL( size, 1 );
 			success = testerKey.readValue( errorName, &testValue );
-			UT_ASSERT_EQUAL( success, rsBadSize );
+			UT_EXPECT_EQUAL( success, rsBadSize );
 
 			success = testerKey.readValue( "dummyNotExisting", &readLong64 );
-			UT_ASSERT_EQUAL( success, rsNotFound );
+			UT_EXPECT_EQUAL( success, rsNotFound );
 
 			success = testerKey.readValue( longName, &readLong64 );
-			UT_ASSERT_EQUAL( success, rsBadType );
+			UT_EXPECT_EQUAL( success, rsBadType );
 
 			{
 				ArrayOfStrings myValuesNames;
 				testerKey._getValueNames( &myValuesNames );
-				UT_ASSERT_EQUAL( myValuesNames.size(), 10U );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( long64Name ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( expValName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( badStrName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( nullName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( emptyName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( errorName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( charName ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
+				UT_EXPECT_EQUAL( myValuesNames.size(), 10U );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( valueName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( longName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( long64Name ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( expValName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( badStrName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( nullName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( emptyName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( errorName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( charName ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myValuesNames.findElement( "" ), ArrayOfStrings::no_index );
 
 				RegValuePairs	myPairs;
 				testerKey._getValuePairs( &myPairs );
-				UT_ASSERT_EQUAL( myValuesNames.size(), myPairs.size() );
+				UT_EXPECT_EQUAL( myValuesNames.size(), myPairs.size() );
 			}
 
 			{
@@ -299,16 +299,16 @@ class RegistryTest : public UnitTest
 
 				ArrayOfStrings myKeys;
 				testerKey._getKeyNames( &myKeys );
-				UT_ASSERT_EQUAL( myKeys.size(), 2U );
-				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key1" ), ArrayOfStrings::no_index );
-				UT_ASSERT_NOT_EQUAL( myKeys.findElement( "key2" ), ArrayOfStrings::no_index );
+				UT_EXPECT_EQUAL( myKeys.size(), 2U );
+				UT_EXPECT_NOT_EQUAL( myKeys.findElement( "key1" ), ArrayOfStrings::no_index );
+				UT_EXPECT_NOT_EQUAL( myKeys.findElement( "key2" ), ArrayOfStrings::no_index );
 			}
 
 			testerKey.deleteSubkey("key1");
 			testerKey.deleteSubkey("key2");
 		}
 		result = software.deleteSubkey(GakWindowsTester);
-		UT_ASSERT_EQUAL( result, ERROR_SUCCESS );
+		UT_EXPECT_EQUAL( result, ERROR_SUCCESS );
 	}
 };
 

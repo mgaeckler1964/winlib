@@ -13,28 +13,10 @@
     <ClCompile Include="ChildWin.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CONTCHLD.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="CONTROLW.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="DEVICE.CPP">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="DIALOGWI.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="F_TYPE.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="FONT.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="LISTCONT.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="LSTBCHLD.CPP">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="MANAGER.CPP">
@@ -47,12 +29,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="REGEDIT.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="STDDLG.CPP">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="STREDIT.CPP">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ToolTip.cpp">
@@ -106,7 +82,34 @@
     <ClCompile Include="registry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="OLESRVR.CPP">
+    <ClCompile Include="ForeignWindow.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ContainerChild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ListboxChild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ListboxContainer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTypeRegistry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEditor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="OLEserver.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardDialogs.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogWindow.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -132,40 +135,16 @@
     <ClInclude Include="ChildWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CONTCHLD.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CONTROLW.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DEVICE.H">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DIALOGWI.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EDITCHLD.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="F_TYPE.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FONT.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LISTCONT.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LSTBCHLD.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MANAGER.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MDIWIN.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OLESRVR.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="POPUP.H">
@@ -175,12 +154,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="REGEDIT.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STDDLG.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STREDIT.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TOOLTIP.H">
@@ -262,6 +235,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Guid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ForeignWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainerChild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListboxChild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListboxContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTypeRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OLEserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardDialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditChild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

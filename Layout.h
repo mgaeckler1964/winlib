@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -263,7 +263,7 @@ class SingleChildManager : public LayoutManager
 	: LayoutManager( margin )
 	{
 	}
-	virtual void doLayout( const ChildWindows &children, const Size &newSize );
+	void doLayout( const ChildWindows &children, const Size &newSize ) override;
 };
 
 /**
@@ -303,8 +303,8 @@ class TableManager : public LayoutManager
 	{
 	}
 
-	virtual Size calcSize( const ChildWindows &children, const Size &newSize );
-	virtual void doLayout( const ChildWindows &children, const Size &newSize );
+	Size calcSize( const ChildWindows &children, const Size &newSize ) override;
+	void doLayout( const ChildWindows &children, const Size &newSize ) override;
 
 	size_t getNumColumns() const
 	{
@@ -392,7 +392,7 @@ class RowManager : public LayoutManager
 	{
 	}
 
-	virtual void doLayout( const ChildWindows &children, const Size &newSize );
+	void doLayout( const ChildWindows &children, const Size &newSize ) override;
 };
 
 /**
@@ -414,7 +414,7 @@ class ColManager : public LayoutManager
 	{
 	}
 
-	virtual void doLayout( const ChildWindows &children, const Size &newSize );
+	void doLayout( const ChildWindows &children, const Size &newSize ) override;
 };
 
 /*
@@ -437,7 +437,7 @@ class AttachmentManager : public LayoutManager
 	{
 	}
 
-	virtual void doLayout( const ChildWindows &children, const Size &newSize );
+	void doLayout( const ChildWindows &children, const Size &newSize ) override;
 };
 
 // --------------------------------------------------------------------- //

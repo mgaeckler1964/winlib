@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -37,7 +37,7 @@
 // --------------------------------------------------------------------- //
 
 #include <winlib\mdiwin.h>
-#include <winlib\controlw.h>
+#include <winlib\ControlWindow.h>
 #include <WINLIB\Layout.h>
 
 // --------------------------------------------------------------------- //
@@ -66,8 +66,8 @@ class ManagerChild : public MDIchildWindow
 	protected:
 	ControlWindow 	*m_control;
 
-	virtual ProcessStatus handleCreate();
-	virtual void handleFocus();
+	ProcessStatus handleCreate() override;
+	void handleFocus() override;
 
 	public:
 	ManagerChild(BasicWindow *owner) : MDIchildWindow(owner)
@@ -85,7 +85,7 @@ class ManagerChild : public MDIchildWindow
 		if( m_control )
 			delete m_control;
 	}
-	virtual SuccessCode close();
+	SuccessCode close() override;
 };
 
 }	// namespace winlib

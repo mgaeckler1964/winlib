@@ -1,7 +1,7 @@
 /*
-		Project:		Windows Class Library
-		Module:			scrollFrame.cpp
-		Description:	A FrameChild with a scroll bar
+		Project:		GAKLIB
+		Module:			FileTypeRegistryTest.h
+		Description:	Registers file extensions
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -29,7 +29,6 @@
 		SUCH DAMAGE.
 */
 
-
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -38,7 +37,10 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <winlib/scrollFrame.h>
+#include <iostream>
+#include <gak/unitTest.h>
+
+#include <WINLIB/FileTypeRegistry.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -54,6 +56,8 @@
 #	pragma option -a4
 #	pragma option -pc
 #endif
+
+using namespace gak;
 
 namespace winlib
 {
@@ -74,6 +78,41 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+class FileTypeRegistryTest : public gak::UnitTest
+{
+	const char *GetClassName() const override
+	{
+		return "FileTypeRegistryTest";
+	}
+	void testExtension( const char *ext, const char *cmd, bool expectIcon )
+	{
+		FileTypeRegistry	reg;
+		getFileType( ext, cmd, &reg );
+
+		UT_EXPECT_EQUAL( reg.extension, STRING('.')+ext );
+		UT_EXPECT_EQUAL( reg.cmd, cmd );
+		if( expectIcon )
+			UT_EXPECT_NOT_EQUAL( reg.icon, reg.type );
+		else
+			UT_EXPECT_EQUAL( reg.icon, reg.type );
+	}
+	void PerformTest() override
+	{
+		doEnterFunctionEx(gakLogging::llInfo, "F_TYPE_Test::PerformTest");
+		gak::TestScope scope( "PerformTest" );
+
+		{
+			gak::TestScope scope( "c->open" );
+			testExtension( "c", "open", true );
+		}
+		{
+			gak::TestScope scope( "md->open" );
+			testExtension( "md", "open", false );
+		}
+
+	}
+};
+
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -82,11 +121,11 @@ namespace winlib
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+static FileTypeRegistryTest myFileTypeRegistryTest;
+
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
 // --------------------------------------------------------------------- //
-
-const char ScrollFrame::className[] = "ScrollFrame";
 
 // --------------------------------------------------------------------- //
 // ----- prototypes ---------------------------------------------------- //
@@ -108,57 +147,9 @@ const char ScrollFrame::className[] = "ScrollFrame";
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
 
-void ScrollFrame::registerClass()
-{
-	static bool registered = false;
-
-	if( !registered )
-	{
-		WNDCLASS	wc;
-
-		fillDefaultClass( &wc );
-		wc.style			|= CS_DBLCLKS;
-		wc.lpszClassName	 = className;
-		wc.hbrBackground	 = NULL;
-
-		registered = CallbackWindow::registerClass( &wc );
-	}
-}
-
 // --------------------------------------------------------------------- //
 // ----- class privates ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-
-BasicWindow	*ScrollFrame::getFirstChild()
-{
-	const ChildWindows &children = getChildren();
-	if( children.size() >= 1 )
-	{
-		return children[0];
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
-CallbackWindow	*ScrollFrame::getChild()
-{
-	const ChildWindows &children = getChildren();
-	if( children.size() >= 1 )
-	{
-		if( m_child != children[0] )
-		{
-			m_child = dynamic_cast<CallbackWindow*>(children[0]);
-		}
-	}
-	else
-	{
-		m_child = nullptr;
-	}
-
-	return m_child;
-}
 
 // --------------------------------------------------------------------- //
 // ----- class protected ----------------------------------------------- //
@@ -168,181 +159,6 @@ CallbackWindow	*ScrollFrame::getChild()
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
-STRING ScrollFrame::getWindowClassName() const
-{
-	return className;
-}
-
-ProcessStatus ScrollFrame::handleResize( const Size &newSize )
-{
-	Size			calcedSize(0,0);
-
-	CallbackWindow	*child = getChild();
-	if( child )
-	{
-		calcedSize = child->calcSize( newSize );
-		child->sizeNmove( 0, 0, calcedSize.width, calcedSize.height );
-	}
-	else
-	{
-		BasicWindow	*first = getFirstChild();
-		if( first )
-		{
-			calcedSize = first->getSize();
-			first->sizeNmove( 0, 0, calcedSize.width, calcedSize.height );
-		}
-	}
-	if(calcedSize)
-	{
-		if( calcedSize.width <= newSize.width )
-		{
-			hideHorizScrollBar();
-		}
-		else
-		{
-			setHorizScrollPos( 0 );
-			showHorizScrollBar(0, calcedSize.width - newSize.width);
-		}
-		if( calcedSize.height <= newSize.height )
-		{
-			hideVertScrollBar();
-		}
-		else
-		{
-			setVertScrollPos( 0 );
-			showVertScrollBar(0, calcedSize.height - newSize.height);
-		}
-
-		return psPROCESSED; 
-	}
-
-	return psDO_DEFAULT; 
-}
-
-ProcessStatus ScrollFrame::handleVertScroll( VertScrollCode scrollCode, int nPos, HWND  )
-{
-	BasicWindow	*child = getFirstChild();
-	if( child )
-	{
-		int		rowHeight = 20;
-		int		vertOffset;
-		int		horizOffset;
-		child->getRelativePosition(&horizOffset, &vertOffset);
-		vertOffset = -vertOffset;
-		horizOffset = -horizOffset;
-
-		Size	size = getClientSize();
-		Size	childSize = child->getSize();
-		int		totalHeight = childSize.height;
-
-		switch( scrollCode )
-		{
-			case vscTOP:
-				nPos = 0;
-				break;
-			case vscLINE_UP:
-				nPos = vertOffset - rowHeight;
-				break;
-			case vscPAGE_UP:
-				nPos = vertOffset - size.height;
-				break;
-			case vscLINE_DOWN:
-				nPos = vertOffset + rowHeight;
-				break;
-			case vscPAGE_DOWN:
-				nPos = vertOffset + size.height;
-				break;
-			case vscBOTTOM:
-				nPos = totalHeight - size.height;
-				break;
-
-			case vscTHUMB_POSITION:
-			case vscTHUMB_TRACK:
-				break;
-
-			default:
-	/***/		return psDO_DEFAULT;
-		}
-
-		int maxNpos;
-		if( nPos < 0 )
-			nPos = 0;
-		else if( nPos > (maxNpos = totalHeight - size.height) )
-			nPos = maxNpos;
-
-		setVertScrollPos( nPos );
-		vertOffset = nPos;
-		child->move( -horizOffset, -vertOffset );
-
-		getTopWindow()->invalidateWindow();
-
-		return psPROCESSED;
-	}
-	return psDO_DEFAULT; 
-}
-
-ProcessStatus ScrollFrame::handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND )
-{
-	BasicWindow	*child = getFirstChild();
-	if( child )
-	{
-		int		rowHeight = 20;
-		int		vertOffset;
-		int		horizOffset;
-		child->getRelativePosition(&horizOffset, &vertOffset);
-		vertOffset = -vertOffset;
-		horizOffset = -horizOffset;
-
-		Size	size = getClientSize();
-		Size	childSize = child->getSize();
-		int		totalWidth = childSize.width;
-
-		switch( scrollCode )
-		{
-			case hscLEFT:
-				nPos = 0;
-				break;
-			case hscLINE_LEFT:
-				nPos = horizOffset - rowHeight;
-				break;
-			case hscPAGE_LEFT:
-				nPos = horizOffset - size.width;
-				break;
-			case hscLINE_RIGHT:
-				nPos = horizOffset + rowHeight;
-				break;
-			case hscPAGE_RIGHT:
-				nPos = horizOffset + size.width;
-				break;
-			case hscRIGHT:
-				nPos = totalWidth - size.width;
-				break;
-
-			case hscTHUMB_POSITION:
-			case hscTHUMB_TRACK:
-				break;
-
-			default:
-/***/			return psDO_DEFAULT;
-		}
-
-		int maxNpos;
-		if( nPos < 0 )
-			nPos = 0;
-		else if( nPos > (maxNpos = totalWidth - size.width) )
-			nPos = maxNpos;
-
-		setHorizScrollPos( nPos );
-		horizOffset = nPos;
-		child->move( -horizOffset, -vertOffset );
-
-		getTopWindow()->invalidateWindow();
-
-		return psPROCESSED;
-	}
-	return psPROCESSED;
-}
-
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -351,7 +167,7 @@ ProcessStatus ScrollFrame::handleHorizScroll( HorizScrollCode scrollCode, int nP
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-}	// namespace winlib
+}	// namespace gak
 
 #ifdef __BORLANDC__
 #	pragma option -RT.
@@ -359,4 +175,3 @@ ProcessStatus ScrollFrame::handleHorizScroll( HorizScrollCode scrollCode, int nP
 #	pragma option -a.
 #	pragma option -p.
 #endif
-

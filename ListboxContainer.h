@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module: 		STREDIT.CPP
-		Description:	A popup window to edit one string
+		Module:			ListboxContainer.h
+		Description:	Implementation of ListboxContainer
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -29,7 +29,16 @@
 		SUCH DAMAGE.
 */
 
-#include <winlib\stredit.h>
+#ifndef LIST_CONTAINER_H
+#define LIST_CONTAINER_H
+
+// --------------------------------------------------------------------- //
+// ----- includes ------------------------------------------------------ //
+// --------------------------------------------------------------------- //
+
+#include <gak\array.h>
+
+#include <winlib\ControlWindow.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -45,55 +54,76 @@
 namespace winlib
 {
 
-using namespace gak;
+// --------------------------------------------------------------------- //
+// ----- class definitions --------------------------------------------- //
+// --------------------------------------------------------------------- //
 
-STRING StringEditor::create( BasicWindow *parent, const char *title, const char *string, bool singleLine )
+class ListObject
 {
-	int		labelWidth = int(strlen( title ) * 10);
-	int		controlHeight = singleLine ? 20 : 200;
-	m_value = string;
+	STRING		m_value;
 
-	setText( title );
-	if( ModalPopup::create( parent, labelWidth+430, controlHeight + 70 ) == scSUCCESS )
+	public:
+	ListObject()
 	{
-		m_label.create( this, 8, 8, labelWidth, 20 );
-		m_label.setText( title );
+		m_value = "";
+	}
+	ListObject( const STRING &value )
+	{
+		setValue( value );
+	}
+	virtual ~ListObject() {}
 
-		if( singleLine )
-		{
-			EditControl	*newControl = new EditControl( this );
-			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
-			m_theStringEdit = newControl;
-		}
-		else
-		{
-			MemoControl	*newControl = new MemoControl( this );
-			newControl->create( this, labelWidth+16, 8, 400, controlHeight );
-			m_theStringEdit = newControl;
-		}
+	void setValue( const STRING &value )
+	{
+		m_value = value;
+	}
+	operator STRING () const
+	{
+		return m_value;
+	}
+};
 
-		m_theStringEdit->setText( string );
+class ListboxContainer
+{
+	typedef ListObject		*ListObjectPtr;
 
-		m_okButton.create( this, 8, controlHeight+16, 50, 20 );
-		m_okButton.setText( "OK" );
-		m_okButton.setId( IDOK );
+	ListBox						*m_control;
+	gak::Array<ListObjectPtr>	m_data;
 
-		m_cancelButton.create( this, 66, controlHeight+16, 50, 20 );
-		m_cancelButton.setText( "Cancel" );
-		m_cancelButton.setId( IDCANCEL );
+	public:
+	ListboxContainer()
+	{
+		m_control = nullptr;
+	}
+	ListboxContainer( ListBox *control )
+	{
+		setControl( control );
+	}
+	~ListboxContainer();
 
-		focus(true);
-		mainLoop();
+	void setControl( ListBox *control )
+	{
+		m_control = control;
 	}
 
-	return m_value;
-}
+	size_t size() const
+	{
+		return m_data.size();
+	}
+	ListObjectPtr &operator [] ( size_t pos )
+	{
+		return m_data[pos];
+	}
 
-ProcessStatus StringEditor::handleOk()
-{
-	m_value = m_theStringEdit->getString();
-	return ModalPopup::handleOk();
-}
+	void addEntry( ListObjectPtr object )
+	{
+		m_data += object;
+		if( m_control )
+			m_control->addEntry( (STRING)*object );
+	}
+	ListObjectPtr	getSelectedEntry();
+	void removeEntry( ListObjectPtr object );
+};
 
 }	// namespace winlib
 
@@ -102,5 +132,7 @@ ProcessStatus StringEditor::handleOk()
 #	pragma option -b.
 #	pragma option -a.
 #	pragma option -p.
+#endif
+
 #endif
 

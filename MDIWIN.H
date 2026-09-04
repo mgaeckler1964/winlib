@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -38,7 +38,7 @@
 
 #include <gak/list.h>
 #include <winlib/callwin.h>
-#include <winlib/controlw.h>
+#include <winlib/ControlWindow.h>
 #include <winlib/winapp.h>
 
 // --------------------------------------------------------------------- //
@@ -85,7 +85,7 @@ class MDIchildWindow : public CallbackWindow, public MdiChildList
 
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	protected:
@@ -105,14 +105,14 @@ class MDIchildWindow : public CallbackWindow, public MdiChildList
 				 const char *title, int menuId, int winMenu );
 	SuccessCode create( const MDIwindow *parent,
 				 int titleId, int menuId, int winMenu );
-	virtual SuccessCode close();
+	SuccessCode close() override;
 
 	// message handling
 	private:
-	virtual LRESULT doDefault( UINT, WPARAM, LPARAM );
+	LRESULT doDefault( UINT, WPARAM, LPARAM ) override;
 	protected:
-	virtual void handleActivate( bool );
-	virtual ProcessStatus handleDestroy();
+	void handleActivate( bool ) override;
+	ProcessStatus handleDestroy() override;
 
 	// querrying
 	public:
@@ -132,7 +132,7 @@ class MDIclientWindow : virtual public ControlWindow
 	friend class MDIwindow;
 	friend class MDIchildWindow;
 
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	private:
 	Menu				*m_winMenu;
@@ -173,7 +173,7 @@ class MDIclientWindow : virtual public ControlWindow
 		return error;
 	}
 
-	virtual SuccessCode close();
+	SuccessCode close() override;
 	virtual SuccessCode handleClose();
 
 	// add new child from children's chain
@@ -250,7 +250,7 @@ class MDIwindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	MDIclientWindow	clientWindow;
@@ -263,7 +263,7 @@ class MDIwindow : public CallbackWindow
 		setStyle( WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN );
 	}
 	SuccessCode create( int menuId, int winMenu );
-	virtual SuccessCode close();
+	SuccessCode close() override;
 
 	// children arrangment
 	public:
@@ -289,12 +289,12 @@ class MDIwindow : public CallbackWindow
 
 	// windows message handling
 	private:
-	virtual LRESULT doDefault( UINT, WPARAM, LPARAM );
+	LRESULT doDefault( UINT, WPARAM, LPARAM ) override;
 
-	virtual bool translateAccell( MSG &msg ) const;
+	bool translateAccell( MSG &msg ) const override;
 	public:
-	virtual SuccessCode handleClose();
-	virtual ProcessStatus handleResize( const Size & );
+	SuccessCode handleClose() override;
+	ProcessStatus handleResize( const Size & ) override;
 
 	// menu commands for children
 	public:

@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -47,7 +47,7 @@
 #include <gak/stringStream.h>
 
 #include <winlib/basicwin.h>
-#include <winlib/stddlg.h>
+#include <winlib/StandardDialogs.h>
 #include <winlib/font.h>
 
 // --------------------------------------------------------------------- //

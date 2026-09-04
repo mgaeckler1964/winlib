@@ -1,6 +1,6 @@
 /*
 		Project:		Windows Class Library
-		Module: 		CONTROLW.H
+		Module: 		ControlWindow.h
 		Description:	Control Windows
 						The "Control Window Class" describes a window, which is
 						a windows defined control e.g. button
@@ -8,7 +8,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -61,7 +61,7 @@
 #include <gak/array.h>
 #include <gak/stopWatch.h>
 
-#include <winlib/dialogwi.h>
+#include <winlib/DialogWindow.h>
 #include <winlib/font.h>
 #include <winlib/DEVICE.H>
 
@@ -173,7 +173,7 @@ class Button : public ControlWindow
 	static const char className[];
 
 	Bitmap		bitmap;
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	private:
 	void clearSiblingsFlag( unsigned int msg ) const;
@@ -341,7 +341,7 @@ class RadioButton : public Button
 
 class ComboBox : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	int getSelectedTextLen( int index ) const
 	{
@@ -392,7 +392,7 @@ class ComboBox : public ControlWindow
 
 class ListBox : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -519,7 +519,7 @@ class ListBox : public ControlWindow
 
 class Label : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -560,7 +560,7 @@ class Label : public ControlWindow
 
 class EDIT : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 	//public:
 	static const char className[];
 	//private:
@@ -754,7 +754,7 @@ class EDIT : public ControlWindow
 	{
 		restoreProc();
 	}
-	virtual LRESULT callback( UINT uMsg, WPARAM wParam, LPARAM lParam  );
+	LRESULT callback( UINT uMsg, WPARAM wParam, LPARAM lParam  ) override;
 };
 
 class MemoControl : public EDIT
@@ -820,7 +820,7 @@ class EditControl : public EDIT
 
 class UpDownButton : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -844,7 +844,7 @@ class UpDownButton : public ControlWindow
 
 class ScrollBar : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -873,7 +873,7 @@ class ScrollBar : public ControlWindow
 
 class TrackBar : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -900,7 +900,7 @@ class TrackBar : public ControlWindow
 
 class DateTimePicker : public ControlWindow
 {
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	public:
 	static const char className[];
@@ -1027,7 +1027,7 @@ class TreeView : public ControlWindow
 	static const char className[];
 	private:
 
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 
 	TreeNode *addItem( TreeNode *parent, const STRING &label, void *data, size_t index )
 	{
@@ -1230,7 +1230,7 @@ class TabControl : public ControlWindow
 	gak::Array<FrameChild *>	m_tabs;
 	FrameChild					*m_active;
 
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 	void resizeTab(FrameChild *tab);
 
 	public:

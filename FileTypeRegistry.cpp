@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			F_TYPE.CPP
+		Module:			FileTypeRegistry.cpp
 		Description:	Registers file extensions
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -53,7 +53,7 @@
 #	pragma warning( pop )
 #endif
 
-#include <winlib/f_type.h>
+#include <winlib/FileTypeRegistry.h>
 #include <winlib/registry.h>
 
 // --------------------------------------------------------------------- //

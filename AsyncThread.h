@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -87,7 +87,7 @@ class AsyncThread : public gak::Thread
 		: Thread( autoDelete ), m_callwin(callWin), m_data(data)  {}
 
 	virtual void ExecuteTask() = 0;
-	virtual void ExecuteThread()
+	void ExecuteThread() override
 	{
 		ExecuteTask();
 		m_callwin->postMessage(WM_ASYNC_TASK_END, 0, LPARAM(m_data));

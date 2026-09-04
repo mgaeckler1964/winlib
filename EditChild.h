@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module: 		EDITCHLD.H
+		Module: 		EditChild.h
 		Description:	Declaration of EditChild a MDI-Child with Editcontrol
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -85,7 +85,7 @@ class EditChild : public ManagerChild
 /*@*/		return 0;
 	}
 
-	virtual void handleTimer();
+	void handleTimer() override;
 	public:
 	EditChild( BasicWindow *owner ) : ManagerChild( owner, new MemoControl )
 	{

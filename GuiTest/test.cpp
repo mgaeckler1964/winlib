@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -43,10 +43,10 @@
 
 #include <WINLIB/WINAPP.H>
 #include <WINLIB/popup.h>
-#include <WINLIB/CONTROLW.H>
+#include <WINLIB/ControlWindow.h>
 #include <WINLIB/xmlEditorChild.h>
 #include <WINLIB/chartWin.h>
-#include <WINLIB/OLESRVR.H>
+#include <WINLIB/OLEserver.h>
 #include <WINLIB/frame.h>
 
 #ifndef __BORLANDC__
@@ -95,7 +95,7 @@ class TestForm : public winlibGUI::TestFORM_form
 	winlibGUI::SCROLLER_scroller	*scroller;
 	public:
 	TestForm() : winlibGUI::TestFORM_form(nullptr) {}
-	virtual ProcessStatus handleCreate()
+	ProcessStatus handleCreate() override
 	{
 		scroller = new winlibGUI::SCROLLER_scroller(this);
 		scroller->create( MyTab_Tab0 );
@@ -148,7 +148,7 @@ class TestPopup : public PopupWindow
 		//hDC.pie(size.width/2, size.height/2, size.height/2, -1, 0 );
 
 	}
-	virtual ProcessStatus handleOk()
+	ProcessStatus handleOk() override
 	{
 
 #ifndef __BORLANDC__
@@ -235,7 +235,7 @@ class TestPopup : public PopupWindow
 		myResult.setText( gak::formatFloat( double(clock() - startTime) / CLOCKS_PER_SEC ) );
 		return psPROCESSED;
 	}
-	virtual ProcessStatus handleCancel()
+	ProcessStatus handleCancel() override
 	{
 		return psDO_DEFAULT;
 	}
@@ -308,9 +308,9 @@ class TestApp : winlibGUI::GuiApplication
 class TestApp : Application
 #endif
 {
-	virtual bool startApplication( HINSTANCE hInstance, const char *cmdLine );
+	bool startApplication( HINSTANCE hInstance, const char *cmdLine ) override;
 
-	virtual CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
+	CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ ) override
 	{
 		TestPopup	*newWindow = new TestPopup;
 		newWindow->create();
@@ -319,7 +319,7 @@ class TestApp : Application
 		testOverLapped->create( nullptr );
 		return newWindow;
 	}
-	virtual void deleteMainWindow( BasicWindow  *mainWindow );
+	void deleteMainWindow( BasicWindow  *mainWindow ) override;
 };
 
 class MyOleDocument : public OleBaseDocument

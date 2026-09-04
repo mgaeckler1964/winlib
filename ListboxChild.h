@@ -1,13 +1,13 @@
 /*
 		Project:		Windows Class Library
-		Module:			CONTCHLD.H
-		Description:	An Container displaying its data in a MDI-Child with
-						Listbox (LISTBOX_CHILD)
+		Module:			ListboxChild.h
+		Description:	Implementation of LISTBOX_CHILD a MDI-Child contai-
+						ning a listbox.
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -30,26 +30,18 @@
 		SUCH DAMAGE.
 */
 
-#ifndef CONTAINER_CHILD_H
-#define CONTAINER_CHILD_H
+#ifndef LISTBOX_CHILD_H
+#define LISTBOX_CHILD_H
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <string.h>
-
-#include <gak\list.h>
-#include <winlib\lstbchld.h>
+#include <winlib\manager.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
-
-#ifdef _MSC_VER
-#	pragma warning( push )
-#	pragma warning( disable: 4996 )
-#endif
 
 #ifdef __BORLANDC__
 #	pragma option -RT-
@@ -62,53 +54,32 @@ namespace winlib
 {
 
 // --------------------------------------------------------------------- //
-// ----- constants ----------------------------------------------------- //
-// --------------------------------------------------------------------- //
-
-static const size_t CHILD_TEXT_SIZE=256;
-
-// --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
 /**
-	the ChildEntry is base for new entries in a ContainerChild
+	the ListboxChild is a ManagerChild, that contains a ListBox
 */
-class ChildEntry : public gak::ListEntry
+class ListboxChild : public ManagerChild
 {
-	char	m_name[CHILD_TEXT_SIZE];
-
 	public:
-	ChildEntry( const char *name )
+	void setTabStops( WORD numTabs, int *tabs )
 	{
-		strncpy( m_name, name, sizeof(m_name) );
-		m_name[sizeof(m_name)-1] = 0;
+		static_cast<ListBox*>(m_control)->setTabStops( numTabs, tabs );
 	};
-	const char *getName() const
+	void insertEntry( int entryId, const char *text )
 	{
-		return m_name;
-    };
-};
-
-/**
-	the ContainerChild is a ManagerChild, that contains a ListBox and controls a linked list of ChildEntrys
-*/
-class ContainerChild : public ListboxChild
-{
-	gak::ListContainer	m_container;
-	int					m_numEntries;
-
-	public:
-	ContainerChild( BasicWindow *owner ) : ListboxChild(owner)
-	{
-		m_numEntries = 0;
+		static_cast<ListBox*>(m_control)->insertEntry( entryId, text );
 	};
-	void appendObject( ChildEntry *newObj )
+	void selectEntry( int entryId )
 	{
-		m_container.addElement( newObj );
-		insertEntry( m_numEntries, newObj->getName() );
-        m_numEntries++;
-    }
+		static_cast<ListBox*>(m_control)->selectEntry( entryId );
+	};
+	int getSelection()
+	{
+		static_cast<ListBox*>(m_control)->getSelection();
+	};
+	ListboxChild(BasicWindow *owner) : ManagerChild( owner, new ListBox ) {};
 };
 
 }	// namespace winlib
@@ -118,10 +89,6 @@ class ContainerChild : public ListboxChild
 #	pragma option -b.
 #	pragma option -a.
 #	pragma option -p.
-#endif
-
-#ifdef _MSC_VER
-#	pragma warning( pop )
 #endif
 
 #endif

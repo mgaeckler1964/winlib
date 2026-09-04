@@ -8,7 +8,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -83,7 +83,9 @@
 #endif
 
 #ifdef _MSC_VER
-#	pragma comment( lib, "Comctl32.lib" )
+#	pragma warning( disable: 4481 )	// do not warn
+#elif !defined(override)
+#define override /* ignore with C++ Builder */
 #endif
 
 namespace winlib
@@ -136,6 +138,16 @@ enum RightButton
 	rbDOWN=WM_RBUTTONDOWN, 
 	rbUP=WM_RBUTTONUP
 };
+
+// --------------------------------------------------------------------- //
+// ----- prototypes ---------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+extern "C"
+{
+	LRESULT PASCAL WindowProc( HWND, UINT, WPARAM, LPARAM );
+	LRESULT PASCAL MDIchildWindowProc( HWND, UINT, WPARAM, LPARAM );
+}
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -277,7 +289,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 
 	public:
-	virtual SuccessCode close();
+	SuccessCode close() override;
 	void acceptFiles()
 	{
 		DragAcceptFiles( handle(), true );

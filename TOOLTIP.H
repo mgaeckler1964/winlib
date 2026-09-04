@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -37,7 +37,7 @@
 // --------------------------------------------------------------------- //
 
 #include <winlib\callwin.h>
-#include <winlib\controlw.h>
+#include <winlib\ControlWindow.h>
 #include <winlib\brush.h>
 
 // --------------------------------------------------------------------- //
@@ -67,7 +67,7 @@ class ToolTipWindow : public CallbackWindow
 
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	public:
@@ -78,11 +78,11 @@ class ToolTipWindow : public CallbackWindow
 	}
 	SuccessCode create( BasicWindow *parent, const char *text );
 	SuccessCode create( BasicWindow *parent, int textId );
-	virtual SuccessCode close();
+	SuccessCode close() override;
 	void changeText( const char *text );
 
 	private:
-	virtual ProcessStatus handleDestroy();
+	ProcessStatus handleDestroy() override;
 };
 
 }	// namespace winlib

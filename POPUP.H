@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -67,7 +67,7 @@ class PopupWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	protected:
@@ -84,7 +84,7 @@ class PopupWindow : public CallbackWindow
 	protected:
 	virtual ProcessStatus handleOk();
 	virtual ProcessStatus handleCancel();
-	virtual ProcessStatus handleButtonClick( int cmd );
+	ProcessStatus handleButtonClick( int cmd ) override;
 };
 
 class ModalPopup : public PopupWindow
@@ -116,11 +116,11 @@ class ModalPopup : public PopupWindow
 		return errFlag;
 	}
 	using PopupWindow::create;
-	virtual ProcessStatus handleOk();
-	virtual ProcessStatus handleCancel();
-	virtual ProcessStatus handleDestroy();
-	virtual ProcessStatus handleShow();
-	virtual ProcessStatus handleHide();
+	ProcessStatus handleOk() override;
+	ProcessStatus handleCancel() override;
+	ProcessStatus handleDestroy() override;
+	ProcessStatus handleShow() override;
+	ProcessStatus handleHide() override;
 
 	public:
 	ModalPopup(BasicWindow *owner=NULL) : PopupWindow( owner )
@@ -146,7 +146,7 @@ class OverlappedWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	public:
@@ -172,7 +172,7 @@ class ToolWindow : public CallbackWindow
 {
 	private:
 	static STRING	className;
-	virtual STRING	getWindowClassName() const;
+	STRING	getWindowClassName() const override;
 	static void registerClass();
 
 	public:

@@ -1,12 +1,13 @@
 /*
 		Project:		Windows Class Library
-		Module:			F_TYPE.H
-		Description:	Registers file extensions
+		Module:			ContainerChild.h
+		Description:	An Container displaying its data in a MDI-Child with
+						Listbox (LISTBOX_CHILD)
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -29,19 +30,26 @@
 		SUCH DAMAGE.
 */
 
-#ifndef F_TYPE_H
-#define F_TYPE_H
+#ifndef CONTAINER_CHILD_H
+#define CONTAINER_CHILD_H
 
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <gak/string.h>
-#include <WINLIB\WINLIB.H>
+#include <string.h>
+
+#include <gak\list.h>
+#include <winlib\ListboxChild.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+#ifdef _MSC_VER
+#	pragma warning( push )
+#	pragma warning( disable: 4996 )
+#endif
 
 #ifdef __BORLANDC__
 #	pragma option -RT-
@@ -54,36 +62,54 @@ namespace winlib
 {
 
 // --------------------------------------------------------------------- //
-// ----- type definitions ---------------------------------------------- //
+// ----- constants ----------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-struct FileTypeRegistry
+static const size_t CHILD_TEXT_SIZE=256;
+
+// --------------------------------------------------------------------- //
+// ----- class definitions --------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+/**
+	the ChildEntry is base for new entries in a ContainerChild
+*/
+class ChildEntry : public gak::ListEntry
 {
-	STRING	extension;
+	char	m_name[CHILD_TEXT_SIZE];
 
-	STRING	type;
-	STRING	type_description;
-
-	STRING	icon;
-
-	STRING	cmd;
-	STRING	cmd_description;
-
-	STRING	commandLine;
-
-	STRING	ddeCommand;
-	STRING	ddeIfExec;
-	STRING	application;
-	STRING	topic;
+	public:
+	ChildEntry( const char *name )
+	{
+		strncpy( m_name, name, sizeof(m_name) );
+		m_name[sizeof(m_name)-1] = 0;
+	};
+	const char *getName() const
+	{
+		return m_name;
+    };
 };
 
-// --------------------------------------------------------------------- //
-// ----- prototypes ---------------------------------------------------- //
-// --------------------------------------------------------------------- //
+/**
+	the ContainerChild is a ManagerChild, that contains a ListBox and controls a linked list of ChildEntrys
+*/
+class ContainerChild : public ListboxChild
+{
+	gak::ListContainer	m_container;
+	int					m_numEntries;
 
-bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type );
-bool addFileType( FileTypeRegistry *type );
-bool removeFileType( FileTypeRegistry *type );
+	public:
+	ContainerChild( BasicWindow *owner ) : ListboxChild(owner)
+	{
+		m_numEntries = 0;
+	};
+	void appendObject( ChildEntry *newObj )
+	{
+		m_container.addElement( newObj );
+		insertEntry( m_numEntries, newObj->getName() );
+        m_numEntries++;
+    }
+};
 
 }	// namespace winlib
 
@@ -94,5 +120,8 @@ bool removeFileType( FileTypeRegistry *type );
 #	pragma option -p.
 #endif
 
+#ifdef _MSC_VER
+#	pragma warning( pop )
 #endif
 
+#endif

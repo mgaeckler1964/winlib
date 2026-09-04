@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -566,7 +566,6 @@ class XML_VIEWER_BOX : public gak::SharedObject
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
 	);
 
-
 	virtual int calcSize(
 		Device &context,
 		int x, int y,
@@ -720,23 +719,23 @@ class XML_TABLE_VIEWER_BOX : public XML_VIEWER_BOX
 	public:
 	XML_TABLE_VIEWER_BOX(int itemNumber) : XML_VIEWER_BOX(itemNumber) {}
 
-	virtual void buildBoxTree(
+	void buildBoxTree(
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
-	);
-	virtual XML_VIEWER_BOX_PTR createBox(
+	) override;
+	XML_VIEWER_BOX_PTR createBox(
 		gak::css::Display childDisplay,
 		int itemNumber
-	);
+	) override;
 	using XML_VIEWER_BOX::createBox;
 	void calcColumnWidth(
 		Device &context, int windowWidth, int windowHeight
 	);
-	virtual int calcSize(
+	int calcSize(
 		Device &context,
 		int x, int y,
 		int maxWidth, int windowWidth, int windowHeight,
 		RectBorder *screen
-	);
+	) override;
 	void initColumn( int itemNumber )
 	{
 		m_columnWidths[itemNumber] = 0;
@@ -765,20 +764,20 @@ class XML_TABLE_GROUP_VIEWER_BOX : public XML_VIEWER_BOX
 	public:
 	XML_TABLE_GROUP_VIEWER_BOX(int itemNumber) : XML_VIEWER_BOX(itemNumber) {}
 
-	virtual void buildBoxTree(
+	void buildBoxTree(
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
-	);
-	virtual XML_VIEWER_BOX_PTR createBox(
+	) override;
+	XML_VIEWER_BOX_PTR createBox(
 		gak::css::Display childDisplay,
 		int itemNumber
-	);
+	) override;
 	using XML_VIEWER_BOX::createBox;
-	virtual int calcSize(
+	int calcSize(
 		Device &context,
 		int x, int y,
 		int maxWidth, int windowWidth, int windowHeight,
 		RectBorder *screen
-	);
+	) override;
 	void calcColumnWidth(
 		Device &context, int windowWidth, int windowHeight
 	);
@@ -811,22 +810,22 @@ class XML_TABLE_ROW_VIEWER_BOX : public XML_VIEWER_BOX
 	public:
 	XML_TABLE_ROW_VIEWER_BOX(int itemNumber) : XML_VIEWER_BOX(itemNumber) {}
 
-	virtual void buildBoxTree(
+	void buildBoxTree(
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
-	);
+	) override;
 	void calcColumnWidth(
 		Device &context, int windowWidth, int windowHeight
 	);
-	virtual int calcSize(
+	int calcSize(
 		Device &context,
 		int x, int y,
 		int maxWidth, int windowWidth, int windowHeight,
 		RectBorder *screen
-	);
-	virtual XML_VIEWER_BOX_PTR createBox(
+	) override;
+	XML_VIEWER_BOX_PTR createBox(
 		gak::css::Display childDisplay,
 		int itemNumber
-	);
+	) override;
 	using XML_VIEWER_BOX::createBox;
 	void initColumn( int itemNumber )
 	{
@@ -855,9 +854,9 @@ class XML_TABLE_CELL_VIEWER_BOX : public XML_VIEWER_BOX
 	public:
 	XML_TABLE_CELL_VIEWER_BOX(int itemNumber) : XML_VIEWER_BOX(itemNumber) {}
 
-	virtual void buildBoxTree(
+	void buildBoxTree(
 		const Device &context, gak::xml::Element *theRoot, XML_VIEWER_BOX *container
-	);
+	) override;
 	void initColumn()
 	{
 		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
@@ -878,12 +877,12 @@ class XML_TABLE_CELL_VIEWER_BOX : public XML_VIEWER_BOX
 		XML_TABLE_ROW_VIEWER_BOX *row = (XML_TABLE_ROW_VIEWER_BOX *)((XML_VIEWER_BOX*)m_parentBox);
 		row->setStyleWidth( m_itemNumber, width );
 	}
-	virtual int calcSize(
+	int calcSize(
 		Device &context,
 		int x, int y,
 		int maxWidth, int windowWidth, int windowHeight,
 		RectBorder *screen
-	);
+	) override;
 };
 
 }	// namespace internal
@@ -935,23 +934,23 @@ class XMLeditorChild : public ChildWindow
 	}
 
 	static void registerClass();
-	virtual STRING getWindowClassName() const;
+	STRING getWindowClassName() const override;
 	public:
 	static const char className[];
 	private:
 
 	void drawCursor( Device &context );
 
-	virtual void handleTimer();
-	virtual ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar );
-	virtual ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND );
-	virtual ProcessStatus handleRepaint( Device &hDC );
-	virtual ProcessStatus handleResize( const Size &newSize );
-	virtual ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position );
-	virtual void handleFocus();
-	virtual ProcessStatus handleKeyDown( int key );
-	virtual ProcessStatus handleCharacterInput( int c );
-	virtual void handleKillFocus();
+	void handleTimer() override;
+	ProcessStatus handleVertScroll( VertScrollCode scrollCode, int nPos, HWND scrollBar ) override;
+	ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND ) override;
+	ProcessStatus handleRepaint( Device &hDC ) override;
+	ProcessStatus handleResize( const Size &newSize ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position ) override;
+	void handleFocus() override;
+	ProcessStatus handleKeyDown( int key ) override;
+	ProcessStatus handleCharacterInput( int c ) override;
+	void handleKillFocus() override;
 
 	public:
 	XMLeditorChild( BasicWindow *owner ) 

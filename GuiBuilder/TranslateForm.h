@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -92,11 +92,11 @@ class TranslateForm : public TranslationForm_form
 	void saveDict();
 	void loadNewDict( const STRING &newLanguage );
 
-	virtual ProcessStatus handleCreate();
-	virtual ProcessStatus handleEditChange( int control );
-	virtual ProcessStatus handleOk();
-	virtual ProcessStatus handleSelectionChange( int control );
-	virtual ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
+	ProcessStatus handleCreate() override;
+	ProcessStatus handleEditChange( int control ) override;
+	ProcessStatus handleOk() override;
+	ProcessStatus handleSelectionChange( int control ) override;
+	ProcessStatus handleMessage( UINT msg, WPARAM wParam, LPARAM lParam ) override;
 
 
 	public:

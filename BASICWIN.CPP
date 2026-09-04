@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2025 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -40,6 +40,8 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
+#include <winlib/basicwin.h>
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -47,7 +49,6 @@
 
 #include <WINLIB/frame.h>
 #include <winlib/layout.h>
-#include <winlib/basicwin.h>
 #include <WINLIB/DEVICE.H>
 
 // --------------------------------------------------------------------- //
@@ -59,6 +60,10 @@
 #	pragma option -b
 #	pragma option -a4
 #	pragma option -pc
+#endif
+
+#ifdef _MSC_VER
+#	pragma comment( lib, "winlib.lib" )
 #endif
 
 namespace winlib
@@ -73,10 +78,6 @@ using namespace gak;
 // --------------------------------------------------------------------- //
 // ----- class constructors/destructors -------------------------------- //
 // --------------------------------------------------------------------- //
-
-ForeignWindow::~ForeignWindow()
-{
-}
 
 BasicWindow::~BasicWindow()
 {
@@ -127,20 +128,6 @@ void BasicWindow::checkSize( int width, int height )
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-STRING ForeignWindow::getWindowClassName() const
-{
-	STRING	myClassName;
-
-	if( m_winHandle )
-	{
-		char buffer[10240];
-		RealGetWindowClass( m_winHandle, buffer, sizeof( buffer ) );
-		myClassName = buffer;
-	}
-
-	return myClassName;
-}
-
 bool BasicWindow::handleChildClose( BasicWindow *child, bool deleted )
 {
 	for(
@@ -183,11 +170,6 @@ bool BasicWindow::canClose()
 
 
 	return true;
-}
-
-SuccessCode ForeignWindow::close()
-{
-	return DestroyWindow( handle() ) ? scSUCCESS : scERROR;
 }
 
 SuccessCode BasicWindow::close()
@@ -321,24 +303,6 @@ void BasicWindow::restoreWindowPos(
 		move( x, y );
 	}
 	show( nCmdShow );
-}
-
-STRING ForeignWindow::getText( bool oemConvert ) const
-{
-	STRING	text;
-	int		length = getTextLength();
-	if( length )
-	{
-		char *textBuffer = text.setActSize( length );
-		GetWindowText( m_winHandle, textBuffer, length+1 );
-
-		if( oemConvert )
-		{
-			AnsiToOem( textBuffer, textBuffer );
-		}
-	}
-
-	return text;
 }
 
 #ifndef __BORLANDC__

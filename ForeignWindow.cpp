@@ -1,12 +1,13 @@
 /*
-		Project:		GAKLIB
-		Module:			F_TYPE_TEST.h
-		Description:	Registers file extensions
+		Project:		Windows Class Library
+		Module:			ForeignWindow.cpp
+		Description:	ForeignWindow a class also used for windows in 
+						other programs
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -37,10 +38,7 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#include <iostream>
-#include <gak/unitTest.h>
-
-#include <WINLIB/F_TYPE.H>
+#include <WINLIB/ForeignWindow.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -56,8 +54,6 @@
 #	pragma option -a4
 #	pragma option -pc
 #endif
-
-using namespace gak;
 
 namespace winlib
 {
@@ -78,41 +74,6 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class F_TYPE_Test : public gak::UnitTest
-{
-	virtual const char *GetClassName() const
-	{
-		return "F_TYPE_Test";
-	}
-	void testExtension( const char *ext, const char *cmd, bool expectIcon )
-	{
-		FileTypeRegistry	reg;
-		getFileType( ext, cmd, &reg );
-
-		UT_ASSERT_EQUAL( reg.extension, STRING('.')+ext );
-		UT_ASSERT_EQUAL( reg.cmd, cmd );
-		if( expectIcon )
-			UT_ASSERT_NOT_EQUAL( reg.icon, reg.type );
-		else
-			UT_ASSERT_EQUAL( reg.icon, reg.type );
-	}
-	virtual void PerformTest()
-	{
-		doEnterFunctionEx(gakLogging::llInfo, "F_TYPE_Test::PerformTest");
-		gak::TestScope scope( "PerformTest" );
-
-		{
-			gak::TestScope scope( "c->open" );
-			testExtension( "c", "open", true );
-		}
-		{
-			gak::TestScope scope( "md->open" );
-			testExtension( "md", "open", false );
-		}
-
-	}
-};
-
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -120,8 +81,6 @@ class F_TYPE_Test : public gak::UnitTest
 // --------------------------------------------------------------------- //
 // ----- module static data -------------------------------------------- //
 // --------------------------------------------------------------------- //
-
-static F_TYPE_Test myF_TYPE_Test;
 
 // --------------------------------------------------------------------- //
 // ----- class static data --------------------------------------------- //
@@ -143,6 +102,10 @@ static F_TYPE_Test myF_TYPE_Test;
 // ----- class constructors/destructors -------------------------------- //
 // --------------------------------------------------------------------- //
 
+ForeignWindow::~ForeignWindow()
+{
+}
+
 // --------------------------------------------------------------------- //
 // ----- class static functions ---------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -159,15 +122,52 @@ static F_TYPE_Test myF_TYPE_Test;
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
+STRING ForeignWindow::getWindowClassName() const
+{
+	STRING	myClassName;
+
+	if( m_winHandle )
+	{
+		char buffer[10240];
+		RealGetWindowClass( m_winHandle, buffer, sizeof( buffer ) );
+		myClassName = buffer;
+	}
+
+	return myClassName;
+}
+
+SuccessCode ForeignWindow::close()
+{
+	return DestroyWindow( handle() ) ? scSUCCESS : scERROR;
+}
+
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+STRING ForeignWindow::getText( bool oemConvert ) const
+{
+	STRING	text;
+	int		length = getTextLength();
+	if( length )
+	{
+		char *textBuffer = text.setActSize( length );
+		GetWindowText( m_winHandle, textBuffer, length+1 );
+
+		if( oemConvert )
+		{
+			AnsiToOem( textBuffer, textBuffer );
+		}
+	}
+
+	return text;
+}
 
 // --------------------------------------------------------------------- //
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-}	// namespace gak
+}	// namespace winlib
 
 #ifdef __BORLANDC__
 #	pragma option -RT.

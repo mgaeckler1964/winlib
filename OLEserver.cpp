@@ -1,12 +1,12 @@
 /*
 		Project:		Windows Class Library
-		Module:			olesvr.cpp
+		Module:			OLEserver.cpp
 		Description:	Defines an OLE server (not complete)
 		Author:			Martin Gäckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -43,7 +43,7 @@
 
 #include <gak/wideString.h>
 #include <gak/string.h>
-#include <winlib/olesrvr.h>
+#include <winlib/OLEserver.h>
 #include <winlib/winapp.h>
 #include <WINLIB/registry.h>
 

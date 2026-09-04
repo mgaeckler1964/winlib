@@ -6,7 +6,7 @@
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
 
-		Copyright:		(c) 1988-2026 Martin Gäckler
+		Copyright:		(c) 1991-2026 Martin Gäckler
 
 		This program is free software: you can redistribute it and/or modify  
 		it under the terms of the GNU General Public License as published by  
@@ -89,7 +89,7 @@ class MyAboutForm : public ABOUT_form
 	public:
 	MyAboutForm() : ABOUT_form( nullptr ) {}
 
-	virtual winlib::ProcessStatus handleCreate()
+	winlib::ProcessStatus handleCreate() override
 	{
 		winlib::ProcessStatus result = ABOUT_form::handleCreate();
 		SysType->setText(gak::formatNumber(sizeof(void*)*8)+" bit");
@@ -1017,28 +1017,8 @@ void GuiBuilderWindow::loadDocument()
 	OpenFileDialog	openFile;
 	if( openFile.create( this, OPEN_GUI_FILE_id, GuiFilterList_ids, GuiFilterList_count ) == IDOK )
 	{
-		F_STRING		guiFileName = openFile.getFilename();
-		xml::Parser		theGuiParser( guiFileName );
-		xml::Document	*newDoc = theGuiParser.readFile( false );
-		if( newDoc )
-		{
-			loadGUI( newDoc );
-		}
-
-		F_STRING	translationFileName = guiFileName + '.';
-		translationFileName += TRANSLATIONS;
-		if( gak::exists( translationFileName ) )
-		{
-			xml::Parser		theTranslationParser( translationFileName );
-			std::unique_ptr<xml::Document> translationDoc( theTranslationParser.readFile( false ) );
-			if( translationDoc.get() )
-			{
-				loadTranslations( translationDoc.get() );
-			}
-		}
-
-		setDocument( guiFileName );
-		clrChangedFlag();
+		STRING	guiFileName = openFile.getFilename();
+		loadDocument(guiFileName);
 	}
 }
 
@@ -1115,7 +1095,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 				"#include <winlib/popup.h>\n"
 				"#include <winlib/frame.h>\n"
 				"#include <winlib/scrollFrame.h>\n"
-				"#include <winlib/ControlW.h>\n"
+				"#include <winlib/ControlWindow.h>\n"
 				"#include <winlib/xmlEditorChild.h>\n"
 				"#include <winlib/chartWin.h>\n"
 				"#include <winlib/gridView.h>\n\n"
@@ -1858,7 +1838,6 @@ void GuiBuilderWindow::handleDownButton()
 // --------------------------------------------------------------------- //
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
-   
 
 ProcessStatus GuiBuilderWindow::handleCreate()
 {
@@ -2703,6 +2682,31 @@ bool GuiBuilderWindow::canClose()
 // --------------------------------------------------------------------- //
 // ----- class publics ------------------------------------------------- //
 // --------------------------------------------------------------------- //
+
+void GuiBuilderWindow::loadDocument(const STRING &guiFileName)
+{
+	xml::Parser		theGuiParser( guiFileName );
+	xml::Document	*newDoc = theGuiParser.readFile( false );
+	if( newDoc )
+	{
+		loadGUI( newDoc );
+	}
+
+	F_STRING	translationFileName = guiFileName + '.';
+	translationFileName += TRANSLATIONS;
+	if( gak::exists( translationFileName ) )
+	{
+		xml::Parser		theTranslationParser( translationFileName );
+		std::unique_ptr<xml::Document> translationDoc( theTranslationParser.readFile( false ) );
+		if( translationDoc.get() )
+		{
+			loadTranslations( translationDoc.get() );
+		}
+	}
+
+	setDocument( guiFileName );
+	clrChangedFlag();
+}
 
 SuccessCode GuiBuilderWindow::create()
 {

@@ -5,15 +5,11 @@
 USEUNIT("BASICWIN.CPP");
 USEUNIT("WINAPP.CPP");
 USEUNIT("CALLWIN.CPP");
-USEUNIT("F_TYPE.CPP");
-USEUNIT("DIALOGWI.CPP");
 USEUNIT("ToolTip.cpp");
 USEUNIT("DEVICE.CPP");
-USEUNIT("CONTROLW.CPP");
 USEUNIT("WINLIB.CPP");
 USEUNIT("xmlEditorChild.cpp");
 USEUNIT("FONT.CPP");
-USEUNIT("STDDLG.CPP");
 USEUNIT("AREA.CPP");
 USEUNIT("POPUP.CPP");
 USEUNIT("Layout.cpp");
@@ -25,9 +21,14 @@ USEUNIT("menu.cpp");
 USEUNIT("xmlEditorInternal.cpp");
 USEUNIT("chartWin.cpp");
 USEUNIT("registry.cpp");
-USEUNIT("OLESRVR.CPP");
-USEUNIT("STREDIT.CPP");
 USEUNIT("frame.cpp");
+USEUNIT("ForeignWindow.cpp");
+USEUNIT("FileTypeRegistry.cpp");
+USEUNIT("OLEserver.cpp");
+USEUNIT("StringEditor.cpp");
+USEUNIT("DialogWindow.cpp");
+USEUNIT("ControlWindow.cpp");
+USEUNIT("StandardDialogs.cpp");
 //---------------------------------------------------------------------------
 #define Library
 
