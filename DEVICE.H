@@ -55,12 +55,15 @@
 #	pragma warning( pop )
 #endif
 
+#include <gak/CopyProtection.h>
+
 #include <winlib/basicwin.h>
 #include <winlib/font.h>
 #include <winlib/pen.h>
 #include <winlib/brush.h>
 #include <winlib/bitmap.h>
 #include <winlib/palette.h>
+#include <WINLIB/Icon.h>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -99,7 +102,7 @@ namespace winlib
 /**
 	A devices is used to draw any figures, texts, bitmaps ...
 */
-class Device
+class Device : public gak::CopyProtection
 {
 	public:
 	enum HorizontalAlignment{ haLeft = TA_LEFT, haCenter = TA_CENTER, haRight = TA_RIGHT };
@@ -116,11 +119,6 @@ class Device
 	int				m_tabWidth;
 
 	GdiHandle<HRGN>	m_clipRegion;
-
-	private:
-	// disallow
-	Device( const Device &src );
-	const Device & operator = ( const Device &src );
 
 	private:
 	void connect()
@@ -486,7 +484,12 @@ class Device
 			bitmap.getInfo(), color
 		);
 	}
+	void drawIcon( int x, int y, const Icon &icon )
+	{
+		DrawIcon(m_device, x, y, icon);
+	}
 	void drawBitmap( int x, int y, const Bitmap &bitmap );
+	void getBitmap( int x, int y, int width, int heigth, Bitmap *bitmap );
 
 	void setPixel( int x, int y, COLORREF color ) const
 	{
@@ -857,6 +860,13 @@ inline void Device::drawBitmap( int x, int y, const Bitmap &bitmap )
 		*this, x, y, bitmap.getWidth(), bitmap.getHeight(),
 		hDCmem, 0, 0, SRCCOPY
 	);
+}
+
+inline void Device::getBitmap( int x, int y, int width, int height, Bitmap *bitmap )
+{
+	bitmap->create(*this, width, height );
+	MemoryDevice	md( *this, *bitmap );
+	BitBlt(md, 0, 0, width, height, *this, x, y, SRCCOPY);
 }
 
 inline void Bitmap::create( const Device &targetDevice, int width, int height )

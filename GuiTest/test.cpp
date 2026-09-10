@@ -40,6 +40,7 @@
 #include <gak/gaklib.h>
 #include <gak/fmtNumber.h>
 #include <gak/logfile.h>
+#include <gak/thread.h>
 
 #include <WINLIB/WINAPP.H>
 #include <WINLIB/popup.h>
@@ -52,6 +53,7 @@
 #ifndef __BORLANDC__
 #include "test.gui.h"
 #endif
+#include "resource.h"
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -302,6 +304,100 @@ class TestPopup : public PopupWindow
 	}
 };
 
+class BitmapThread : public gak::Thread
+{
+	OverlappedWindow *m_win;
+	int m_xMax;
+	int m_yMax;
+public:
+	int m_iconX, m_iconY;
+	int m_bitmapX, m_bitmapY;
+	BitmapThread(OverlappedWindow *win, int xMax, int yMax ) 
+		: gak::Thread(), m_win( win ), 
+		m_iconX(0), m_iconY(0), 
+		m_bitmapX(xMax-1), m_bitmapY(yMax-1), 
+		m_xMax(xMax) , m_yMax(yMax)
+	{
+		StartThread("PainterThread");
+	}
+	void ExecuteThread() override
+	{
+		int xIconMove = 1;
+		int yIconMove = 3;
+
+		int xBitMove = 3;
+		int yBitMove = 2;
+
+		Sleep( 1000 );
+
+		while( !terminated )
+		{
+			m_iconX+=xIconMove;
+			m_iconY+=yIconMove;
+			if( m_iconX>=m_xMax || m_iconX<=0 )
+				xIconMove *= -1;
+			if( m_iconY>=m_yMax || m_iconY<=0 )
+				yIconMove *= -1;
+
+			m_bitmapX+=xBitMove;
+			m_bitmapY+=yBitMove;
+			if( m_bitmapX>=m_xMax || m_bitmapX<=0 )
+				xBitMove *= -1;
+			if( m_bitmapY>=m_yMax || m_bitmapY<=0 )
+				yBitMove *= -1;
+
+			m_win->invalidateWindow(false);
+			Sleep(40);
+		}
+	}
+};
+
+class BitmapWindow : public OverlappedWindow
+{
+	BitmapThread	*m_thread;
+	Icon m_icon;
+	Bitmap m_bg, m_test;
+
+	public:
+	BitmapWindow(BasicWindow *owner) : OverlappedWindow(owner), m_icon(Application::loadIcon(TEST_ICON))
+	{
+		removeStyle(WS_THICKFRAME);
+	}
+	ProcessStatus handleCreate() override
+	{
+		m_bg = Application::loadBitmap(BACKGROUND_BMP);
+		m_test = Application::loadBitmap(TEST_BMP);
+		m_icon = Application::loadIcon(TEST_ICON);
+
+		resize(m_bg.getWidth(), m_bg.getHeight());
+		adjustWindoRect();
+		int width = gak::math::max(m_test.getWidth(),m_icon.getWidth() );
+		int height = gak::math::max(m_test.getHeight(),m_icon.getHeight() );
+
+		m_thread = new BitmapThread( this, m_bg.getWidth()-width, m_bg.getHeight()-height );
+		return psPROCESSED;
+	}
+	ProcessStatus handleDestroy() override
+	{
+		m_thread->StopThread();
+		m_thread->join();
+		return psPROCESSED;
+	}
+	ProcessStatus handleRepaint( Device &hDC ) override
+	{
+		MemoryDevice	mem( hDC, getSize() );
+
+		mem.drawBitmap( 0, 0, m_bg );
+
+		mem.drawBitmap( m_thread->m_bitmapX, m_thread->m_bitmapY, m_test );
+		mem.drawIcon( m_thread->m_iconX, m_thread->m_iconY, m_icon );
+
+		mem.drawToWindow();
+		return psPROCESSED;
+	}
+};
+
+
 #ifndef __BORLANDC__
 class TestApp : winlibGUI::GuiApplication
 #else
@@ -310,15 +406,7 @@ class TestApp : Application
 {
 	bool startApplication( HINSTANCE hInstance, const char *cmdLine ) override;
 
-	CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ ) override
-	{
-		TestPopup	*newWindow = new TestPopup;
-		newWindow->create();
-
-		OverlappedWindow	*testOverLapped = new OverlappedWindow( newWindow );
-		testOverLapped->create( nullptr );
-		return newWindow;
-	}
+	CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ ) override;
 	void deleteMainWindow( BasicWindow  *mainWindow ) override;
 };
 
@@ -628,6 +716,18 @@ bool TestApp::startApplication( HINSTANCE , const char *cmdLine )
 	//WriteProfile( true, nullptr, "guid", guidStr ); 
 	registerOleServer(guid,"Mein Testobjekt");
 	return 0;
+}
+
+CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
+{
+	TestPopup	*newWindow = new TestPopup;
+	newWindow->create();
+
+	OverlappedWindow	*testOverLapped = new BitmapWindow( newWindow );
+	testOverLapped->setText( "My Oberlapped");
+	testOverLapped->create( nullptr );
+
+	return newWindow;
 }
 
 void TestApp::deleteMainWindow( BasicWindow  *mainWindow )

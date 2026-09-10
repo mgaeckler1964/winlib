@@ -1,7 +1,7 @@
 /*
 		Project:		Windows Class Library
-		Module:			bitmap.h
-		Description:	Used to process windows bitmaps
+		Module:			Icon.h
+		Description:	Icons, drawing, loading etc. 
 		Author:			Martin G‰ckler
 		Address:		Hofmannsthalweg 14, A-4030 Linz
 		Web:			https://www.gaeckler.at/
@@ -29,36 +29,20 @@
 		SUCH DAMAGE.
 */
 
-#ifndef WIN_BITMAP_H
-#define WIN_BITMAP_H
+#ifndef WINDOWS_ICONS_H
+#define WINDOWS_ICONS_H
 
 // --------------------------------------------------------------------- //
 // ----- switches ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#ifndef STRICT
-#define STRICT 1
-#endif
-
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
-#ifdef _MSC_VER
-#	pragma warning( push )
-#	pragma warning( disable: 4986 4820 4668 )
-#endif
+#include <Windows.h>
 
-#include <windows.h>
-
-#ifdef _MSC_VER
-#	pragma warning( pop )
-#endif
-
-#include <gak/stdlib.h>
-
-#include <WINLIB/gdi.h>
-#include <WINLIB/rectangle.h>
+#include <WINLIB/WINAPP.H>
 
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
@@ -94,141 +78,70 @@ namespace winlib
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-class Device;
-class Application;
-
-/**
-	Bitmap creates and controls the handle for a bitmap (HBITMAP)
-*/
-class Bitmap : public GdiObject<HBITMAP>
+class Icon
 {
-	gak::Buffer<BITMAPINFO>	m_bitmapInfo;
-	Size					m_size;
+	HICON		m_icon;
+	int			m_width, m_height;
 
-	void setBitmap( HBITMAP newBitmap, int width, int height )
+	void getInfo()
 	{
-		m_size.width = width;
-		m_size.height = height;
-
-		setHandle( newBitmap );
-	}
-	friend class Device;
-	friend class MemoryDevice;
-	friend class Button;
-	operator HBITMAP () const
-	{
-		return getHandle();
-	}
-
-	Bitmap( HDC memoryDevice ) : GdiObject<HBITMAP>( memoryDevice ) {}
-
-	void create( HDC targetDevice, int width, int height )
-	{
-		setBitmap(
-			CreateCompatibleBitmap ( targetDevice, width, height ),
-			width, height
-		);
-	}
-	void create( HDC targetDevice, const Size &size )
-	{
-		create( targetDevice, size.width, size.height );
-	}
-
-	friend class Application;
-	Bitmap( HBITMAP handle ) : GdiObject<HBITMAP>( handle )
-	{
-		if( handle )
+		if( m_icon )
 		{
-			BITMAP	bitmap;
-			GetObject( handle, sizeof(bitmap), &bitmap );
-			m_size.width = bitmap.bmWidth;
-			m_size.height = bitmap.bmHeight;
-		}
-		else
-		{
-			m_size.width = 0;
-			m_size.height = 0;
+			ICONINFO	iconInfo;
+			BITMAP		bm;
+			GetIconInfo(m_icon, &iconInfo);
+			if( iconInfo.hbmColor) 
+			{
+				GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bm);
+				m_width = bm.bmWidth;
+				m_height = bm.bmHeight;
+			} 
+			// Bei Schwarz-Weiﬂ-Icons existiert nur hbmMask (enth‰lt Maske + Bild vertikal gestapelt)
+			else if (iconInfo.hbmMask) 
+			{
+				GetObject(iconInfo.hbmMask, sizeof(BITMAP), &bm);
+				m_width = bm.bmWidth;
+				m_height = bm.bmHeight/2;
+			}
+			if (iconInfo.hbmColor) 
+				DeleteObject(iconInfo.hbmColor);
+			if (iconInfo.hbmMask)  
+				DeleteObject(iconInfo.hbmMask);
 		}
 	}
-	const Bitmap & operator = ( HBITMAP handle )
-	{
-		setHandle( handle );
-
-		return *this;
-	}
-
 
 	public:
-	Bitmap() 
+	Icon( HICON icon ) : m_icon( icon )
+	{
+		getInfo();
+	}
+	Icon( int iconID )
+	{
+		m_icon = Application::loadIcon( iconID );
+		getInfo();
+	}
+	Icon( const char *iconName )
+	{
+		m_icon = Application::loadIcon( iconName );
+		getInfo();
+	}
+	~Icon()
 	{
 	}
-	Bitmap( const Bitmap &src )	: GdiObject<HBITMAP>( src )
+	operator HICON() const
 	{
-		m_size = src.m_size;
-	}
-	const Bitmap & operator = ( const Bitmap &src )
-	{
-		if( this != &src )
-		{
-			clearBitmap();
-			GdiObject<HBITMAP>::operator = ( src );
-			m_size = src.m_size;
-		}
-
-		return *this;
-	}
-	~Bitmap() 
-	{
-	}
-	void clearBitmap()
-	{
-		clear();
-		m_bitmapInfo.free();
-	}
-
-	// implementation is in device.h to have it inline
-	void create( const Device &targetDevice, int width, int height );
-	void create( const Device &targetDevice, const Size &size )
-	{
-		create( targetDevice, size.width, size.height );
-	}
-	void createInfo( int depth, size_t numColors )
-	{
-		m_bitmapInfo.calloc( 
-			1, 
-			sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * numColors 
-		);
-
-		m_bitmapInfo->bmiHeader.biSize         = sizeof( BITMAPINFOHEADER );
-		m_bitmapInfo->bmiHeader.biWidth        = m_size.width;
-		m_bitmapInfo->bmiHeader.biHeight       = m_size.height;
-		m_bitmapInfo->bmiHeader.biPlanes       = 1;
-		m_bitmapInfo->bmiHeader.biBitCount     = WORD(depth);
-		m_bitmapInfo->bmiHeader.biCompression  = 0;
-		m_bitmapInfo->bmiHeader.biClrUsed      = DWORD(numColors);
-		m_bitmapInfo->bmiHeader.biClrImportant = DWORD(numColors);
+		return m_icon;
 	}
 	int getWidth() const
 	{
-		return m_size.width;
+		return m_width;
 	}
 	int getHeight() const
 	{
-		return m_size.height;
-	}
-	RGBQUAD & operator [] ( size_t idx )
-	{
-		return m_bitmapInfo->bmiColors[idx];
-	}
-	const RGBQUAD & operator [] ( size_t idx ) const
-	{
-		return m_bitmapInfo->bmiColors[idx];
-	}
-	const BITMAPINFO *getInfo() const
-	{
-		return m_bitmapInfo;
+		return m_height;
 	}
 };
+
 
 // --------------------------------------------------------------------- //
 // ----- exported datas ------------------------------------------------ //
@@ -282,7 +195,7 @@ class Bitmap : public GdiObject<HBITMAP>
 // ----- entry points -------------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-}	// namespace winlib"
+}	// namespace winlib
 
 #ifdef __BORLANDC__
 #	pragma option -RT.
@@ -291,4 +204,4 @@ class Bitmap : public GdiObject<HBITMAP>
 #	pragma option -p.
 #endif
 
-#endif
+#endif	// WINDOWS_ICONS_H

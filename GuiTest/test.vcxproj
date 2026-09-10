@@ -86,12 +86,17 @@
     <ClCompile Include="test.gui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="test.gui.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="test.bmp" />
     <None Include="test.gui">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="test.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
