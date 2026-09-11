@@ -41,6 +41,12 @@
 #define STRICT 1
 #endif
 
+#ifdef _MSC_VER
+#	pragma warning( disable: 4481 )	// do not warn
+#elif !defined(override)
+#define override /* ignore with C++ Builder */
+#endif
+
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -154,7 +160,7 @@ class ForeignWindow
 	ForeignWindow( WindowClass_t windowType )
 	{
 		m_windowType = windowType;
-		m_winHandle	= NULL;
+		m_winHandle	= nullptr;
 
 		m_exStyle = m_style = 0;
 		m_caret = false;
@@ -257,7 +263,7 @@ class ForeignWindow
 	/*
 		searching for windows
 	*/
-	static ForeignWindow findWindow( const char *className=NULL, const char *title=NULL )
+	static ForeignWindow findWindow( const char *className=nullptr, const char *title=nullptr )
 	{
 		return ForeignWindow( ::FindWindow( className, title ) );
 	}
@@ -279,7 +285,7 @@ class ForeignWindow
 		message box
 	*/
 	int messageBox( const char	*text,
-					const char	*title=NULL,
+					const char	*title=nullptr,
 					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
 	{
 		return MessageBox( handle(), LPCSTR(text), LPCSTR(title), type );
@@ -398,7 +404,7 @@ class ForeignWindow
 	*/
 	void invalidateWindow( bool clear=true ) const
 	{
-		InvalidateRect( m_winHandle, NULL, clear );
+		InvalidateRect( m_winHandle, nullptr, clear );
 	}
 	void invalidateRect( const RectBorder &rect, bool clear=true ) const
 	{
@@ -750,10 +756,10 @@ class ForeignWindow
 	/*
 		icon
 	*/
-	void setIcon( HICON icon )
+	void setIcon( const Icon &icon )
 	{
 		// SetClassLong( winHandle, GCL_HICON, (DWORD)icon );
-		message( WM_SETICON, ICON_BIG, (LPARAM)icon );
+		message( WM_SETICON, ICON_BIG, LPARAM(HICON(icon)) );
 	}
 	void setIcon( const char *iconName )
 	{
@@ -774,7 +780,7 @@ class ForeignWindow
 	void createCaret( int x, int y, int height )
 	{
 		m_caret = true;
-		CreateCaret( m_winHandle, NULL, 0, height );
+		CreateCaret( m_winHandle, nullptr, 0, height );
 		SetCaretPos( x, y );
 		ShowCaret( m_winHandle );
 	}

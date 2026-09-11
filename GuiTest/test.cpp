@@ -367,12 +367,12 @@ class BitmapWindow : public OverlappedWindow
 	{
 		m_bg = Application::loadBitmap(BACKGROUND_BMP);
 		m_test = Application::loadBitmap(TEST_BMP);
-		m_icon = Application::loadIcon(TEST_ICON);
 
 		resize(m_bg.getWidth(), m_bg.getHeight());
 		adjustWindoRect();
-		int width = gak::math::max(m_test.getWidth(),m_icon.getWidth() );
-		int height = gak::math::max(m_test.getHeight(),m_icon.getHeight() );
+		Size iconSize = m_icon.getSize();
+		int width = gak::math::max(m_test.getWidth(), iconSize.width );
+		int height = gak::math::max(m_test.getHeight(),iconSize.height );
 
 		m_thread = new BitmapThread( this, m_bg.getWidth()-width, m_bg.getHeight()-height );
 		return psPROCESSED;

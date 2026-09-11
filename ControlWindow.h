@@ -254,7 +254,7 @@ class Button : public ControlWindow
 		bool			success = false;
 		unsigned long	style = getStyle();
 
-		HICON icon = Application::loadIcon( resourceId );
+		Icon icon = Application::loadIcon( resourceId );
 		if( icon )
 		{
 			if( !(style & BS_ICON) || (style & BS_BITMAP) )
@@ -263,7 +263,7 @@ class Button : public ControlWindow
 				style = addStyle( BS_ICON );
 				message( BM_SETSTYLE, style, FALSE ); 
 			}
-			message( BM_SETIMAGE, IMAGE_ICON, (LPARAM)icon );
+			message( BM_SETIMAGE, IMAGE_ICON, LPARAM(HICON(icon)) );
 			success = true;
 		}
 		else if( style & BS_ICON )
@@ -539,7 +539,7 @@ class Label : public ControlWindow
 		bool			success = false;
 		unsigned long	style = getStyle();
 
-		HICON icon = Application::loadIcon( resourceId );
+		Icon icon = Application::loadIcon( resourceId );
 		if( icon )
 		{
 			if( !(style & SS_ICON) || (style & SS_BITMAP) )
@@ -547,7 +547,7 @@ class Label : public ControlWindow
 				removeStyle( SS_BITMAP );
 				style = addStyle( SS_ICON );
 			}
-			message( STM_SETICON, (WPARAM)icon );
+			message( STM_SETICON, WPARAM(HICON(icon)) );
 			success = true;
 		}
 		else if( style & SS_ICON )

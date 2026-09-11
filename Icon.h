@@ -42,8 +42,6 @@
 
 #include <Windows.h>
 
-#include <WINLIB/WINAPP.H>
-
 // --------------------------------------------------------------------- //
 // ----- imported datas ------------------------------------------------ //
 // --------------------------------------------------------------------- //
@@ -81,50 +79,10 @@ namespace winlib
 class Icon
 {
 	HICON		m_icon;
-	int			m_width, m_height;
-
-	void getInfo()
-	{
-		if( m_icon )
-		{
-			ICONINFO	iconInfo;
-			BITMAP		bm;
-			GetIconInfo(m_icon, &iconInfo);
-			if( iconInfo.hbmColor) 
-			{
-				GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bm);
-				m_width = bm.bmWidth;
-				m_height = bm.bmHeight;
-			} 
-			// Bei Schwarz-Weiﬂ-Icons existiert nur hbmMask (enth‰lt Maske + Bild vertikal gestapelt)
-			else if (iconInfo.hbmMask) 
-			{
-				GetObject(iconInfo.hbmMask, sizeof(BITMAP), &bm);
-				m_width = bm.bmWidth;
-				m_height = bm.bmHeight/2;
-			}
-			if (iconInfo.hbmColor) 
-				DeleteObject(iconInfo.hbmColor);
-			if (iconInfo.hbmMask)  
-				DeleteObject(iconInfo.hbmMask);
-		}
-	}
 
 	public:
-	Icon( HICON icon ) : m_icon( icon )
-	{
-		getInfo();
-	}
-	Icon( int iconID )
-	{
-		m_icon = Application::loadIcon( iconID );
-		getInfo();
-	}
-	Icon( const char *iconName )
-	{
-		m_icon = Application::loadIcon( iconName );
-		getInfo();
-	}
+	Icon( HICON icon=nullptr ) : m_icon(icon)
+	{}
 	~Icon()
 	{
 	}
@@ -132,14 +90,46 @@ class Icon
 	{
 		return m_icon;
 	}
-	int getWidth() const
+	operator bool() const
 	{
-		return m_width;
+		return m_icon != nullptr;
 	}
-	int getHeight() const
+	bool operator !() const
 	{
-		return m_height;
+		return m_icon == nullptr;
 	}
+	Size getSize() const
+	{
+		if( m_icon )
+		{
+			Size		size;
+			ICONINFO	iconInfo;
+			BITMAP		bm;
+			GetIconInfo(m_icon, &iconInfo);
+			if( iconInfo.hbmColor) 
+			{
+				GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bm);
+				size.width = bm.bmWidth;
+				size.height = bm.bmHeight;
+			} 
+			// Bei Schwarz-Weiﬂ-Icons existiert nur hbmMask (enth‰lt Maske + Bild vertikal gestapelt)
+			else if (iconInfo.hbmMask) 
+			{
+				GetObject(iconInfo.hbmMask, sizeof(BITMAP), &bm);
+				size.width = bm.bmWidth;
+				size.height = bm.bmHeight/2;
+			}
+			if (iconInfo.hbmColor) 
+				DeleteObject(iconInfo.hbmColor);
+			if (iconInfo.hbmMask)  
+				DeleteObject(iconInfo.hbmMask);
+
+			return size;
+		}
+
+		return Size(0,0);
+	}
+
 };
 
 

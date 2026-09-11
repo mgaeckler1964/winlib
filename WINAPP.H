@@ -59,9 +59,11 @@
 #include <gak/string.h>
 #include <gak/xml.h>
 #include <gak/directory.h>
+#include <gak/memory>
 
 #include <WINLIB/WINLIB.H>
 #include <WINLIB/bitmap.h>
+#include <WINLIB/Icon.h>
 #include <WINLIB/resourceTags.h>
 #include <WINLIB/menu.h>
 
@@ -111,8 +113,9 @@ class Application
 	F_STRING			m_fileName;
 	F_STRING			m_pathName;
 
-	HICON				m_applicationIcon;
+	Icon				m_applicationIcon;
 	const char			*m_iconName;
+
 	CallbackWindow		*m_mainWindow;
 	gak::xml::Document	*m_guiDoc;
 	gak::xml::Element	*m_guiRoot;
@@ -249,20 +252,19 @@ class Application
 	template <class RESULT_MENU, class MENU_T>
 	RESULT_MENU *loadMenuNew( MENU_T menuName )
 	{
-		RESULT_MENU *theMenu = new RESULT_MENU();
+		std::unique_ptr<RESULT_MENU> theMenu( new RESULT_MENU() );
 		if( theMenu->load( getResInstance(), menuName ) )
 		{
 			if( theMenu->load( getAppInstance(), menuName ) )
 			{
 				if( theMenu->load( getMenuResource( menuName ) ) )
 				{
-					delete theMenu;
-					theMenu = NULL;
+					theMenu.reset();
 				}
 			}
 		}
 
-		return theMenu;
+		return theMenu.release();
 	}
 
 	Menu *loadMenu( const char *menuName )
@@ -295,7 +297,7 @@ class Application
 		}
 		if( !theBitmap && !IS_INTRESOURCE(bitmapName) )
 		{
-			theBitmap = HBITMAP(LoadImage( NULL, bitmapName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE ));
+			theBitmap = HBITMAP(LoadImage( nullptr, bitmapName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE ));
 		}
 #ifdef __BORLANDC__
 #	pragma warn -inl
@@ -309,24 +311,24 @@ class Application
 	{
 		return loadBitmap( MAKEINTRESOURCE( bitmapId ) );
 	}
-	static HICON loadIcon( const char *iconName )
+	static Icon loadIcon( const char *iconName )
 	{
-		HICON theIcon = LoadIcon( getResInstance(), iconName );
+		Icon theIcon = LoadIcon( getResInstance(), iconName );
 		if( !theIcon )
 			theIcon = LoadIcon( getAppInstance(), iconName );
 
 		return theIcon;
 	}
-	static HICON loadIcon( int iconId )
+	static Icon loadIcon( int iconId )
 	{
 		return loadIcon( MAKEINTRESOURCE( iconId ) );
 	}
-	HICON getIcon()
+	const Icon &getIcon()
 	{
 		if( !m_applicationIcon && m_iconName )
 			m_applicationIcon = loadIcon( m_iconName );
 		if( !m_applicationIcon )
-			m_applicationIcon = LoadIcon( NULL, IDI_APPLICATION );
+			m_applicationIcon = LoadIcon( nullptr, IDI_APPLICATION );
 		return m_applicationIcon;
 	}
 	CallbackWindow *getMainWindow() const

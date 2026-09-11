@@ -82,12 +82,6 @@
 #	pragma option -pc
 #endif
 
-#ifdef _MSC_VER
-#	pragma warning( disable: 4481 )	// do not warn
-#elif !defined(override)
-#define override /* ignore with C++ Builder */
-#endif
-
 namespace winlib
 {
 
