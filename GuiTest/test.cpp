@@ -37,6 +37,7 @@
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
 
+#include <gak/stopWatch.h>
 #include <gak/gaklib.h>
 #include <gak/fmtNumber.h>
 #include <gak/logfile.h>
@@ -310,13 +311,14 @@ class BitmapThread : public gak::Thread
 	int m_xMax;
 	int m_yMax;
 public:
-	int m_iconX, m_iconY;
-	int m_bitmapX, m_bitmapY;
+	int		m_iconX, m_iconY;
+	int		m_bitmapX, m_bitmapY;
+	size_t	m_count;
 	BitmapThread(OverlappedWindow *win, int xMax, int yMax ) 
 		: gak::Thread(), m_win( win ), 
 		m_iconX(0), m_iconY(0), 
 		m_bitmapX(xMax-1), m_bitmapY(yMax-1), 
-		m_xMax(xMax) , m_yMax(yMax)
+		m_xMax(xMax) , m_yMax(yMax), m_count(0)
 	{
 		StartThread("PainterThread");
 	}
@@ -346,8 +348,9 @@ public:
 			if( m_bitmapY>=m_yMax || m_bitmapY<=0 )
 				yBitMove *= -1;
 
+			++m_count;
 			m_win->invalidateWindow(false);
-			Sleep(40);
+			Sleep(1);
 		}
 	}
 };
@@ -355,8 +358,9 @@ public:
 class BitmapWindow : public OverlappedWindow
 {
 	BitmapThread	*m_thread;
-	Icon m_icon;
-	Bitmap m_bg, m_test;
+	Icon			m_icon;
+	Bitmap			m_bg, 
+					m_test;
 
 	public:
 	BitmapWindow(BasicWindow *owner) : OverlappedWindow(owner), m_icon(Application::loadIcon(TEST_ICON))
@@ -385,14 +389,47 @@ class BitmapWindow : public OverlappedWindow
 	}
 	ProcessStatus handleRepaint( Device &hDC ) override
 	{
-		MemoryDevice	mem( hDC, getSize() );
+		static size_t			s_count = 0;
+		static gak::StopWatch	s_sw(true);
+		
+
+		MemoryDevice	mem( hDC, getClientSize() );
 
 		mem.drawBitmap( 0, 0, m_bg );
+		if( s_count && m_thread->m_count )
+		{
+			clock_t millis = s_sw.get<gak::MilliSeconds<clock_t> >().get();
+			if( millis )
+			{
+				if( millis > 30000 )
+				{
+					s_sw.stop();
+					s_sw.start();
+					m_thread->m_count = s_count = 0;
+				}
+				else
+				{
+					double secconds=double(millis)/1000.0;
+					{
+						double picsPerSec = double(s_count)/secconds;
+						STRING pics = gak::formatFloat( picsPerSec, 0, 2 );
+						mem.textOut( 10, 10, pics );
+					}
+					{
+						double msgPerSec = double(m_thread->m_count)/secconds;
+						STRING msgs = gak::formatFloat( msgPerSec, 0, 2 );
+						mem.textOut( 10, 30, msgs );
+					}
+				}
+			}
+		}
 
 		mem.drawBitmap( m_thread->m_bitmapX, m_thread->m_bitmapY, m_test );
 		mem.drawIcon( m_thread->m_iconX, m_thread->m_iconY, m_icon );
 
 		mem.drawToWindow();
+
+		++s_count;
 		return psPROCESSED;
 	}
 };

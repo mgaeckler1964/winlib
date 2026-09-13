@@ -225,7 +225,7 @@ class ForeignWindow
 	/*
 		control id
 	*/
-	void setId( int controlId )
+	void setId( int controlId ) const
 	{
 		if( isValid() )
 		{
@@ -249,12 +249,12 @@ class ForeignWindow
 	/*
 		window hiararchy
 	*/
-	void mouseToChildPosition( const Point &position, const ForeignWindow *child, Point *newPosition )
+	void mouseToChildPosition( const Point &position, const ForeignWindow *child, Point *newPosition ) const
 	{
 		*newPosition = position;
 		mouseToChildPosition( child, newPosition );
 	}
-	void mouseToChildPosition( const ForeignWindow *child, Point *position )
+	void mouseToChildPosition( const ForeignWindow *child, Point *position ) const
 	{
 		ClientToScreen( handle(), position );
 		ScreenToClient( child->handle(), position );
@@ -325,7 +325,7 @@ class ForeignWindow
 	}
 
 	template<typename TextT, typename TitleT>
-	int messageError( TextT text, TitleT title=0 )
+	int messageError( TextT text, TitleT title=0 ) const
 	{
 		return messageBox( text, title, MB_APPLMODAL|MB_ICONERROR|MB_OK );
 	}
@@ -364,7 +364,7 @@ class ForeignWindow
 	/*
 		focus/enable/disable control
 	*/
-	void setForeground()
+	void setForeground() const
 	{
 		SetForegroundWindow(m_winHandle);
 	}
@@ -506,14 +506,14 @@ class ForeignWindow
 		return int(message( WM_GETTEXTLENGTH ));
 	}
 	gak::STRING getText( bool oemConvert = false ) const;
-	void setText( const gak::STRING &text )
+	void setText( const gak::STRING &text ) const
 	{
 		if( isValid() )
 		{
 			SetWindowText( m_winHandle, text.convertToCharset( STR_ANSI ) );
 		}
 	}
-	void setText( int id )
+	void setText( int id ) const
 	{
 		setText( loadString( id ) );
 	}
@@ -522,21 +522,21 @@ class ForeignWindow
 		size and position
 		=================
 	*/
-	void resize( int width, int height )
+	void resize( int width, int height ) const
 	{
 		if( isValid() )
 		{
 			SetWindowPos( m_winHandle, 0, -1, -1, width, height, SWP_NOMOVE|SWP_NOZORDER );
 		}
 	}
-	void move( int xPos, int yPos )
+	void move( int xPos, int yPos ) const
 	{
 		if( isValid() )
 		{
 			SetWindowPos( m_winHandle, 0, xPos, yPos, 0, 0, SWP_NOSIZE|SWP_NOZORDER );
 		}
 	}
-	void sizeNmove( int xPos, int yPos, int width, int height )
+	void sizeNmove( int xPos, int yPos, int width, int height ) const
 	{
 		if( isValid() )
 		{
@@ -634,7 +634,7 @@ class ForeignWindow
 		return Point( rect.left, rect.top );
 	}
 
-	Point winPoint2Screen( const Point &winPnt )
+	Point winPoint2Screen( const Point &winPnt ) const
 	{
 		RectBorder	rect = getWindowRectangle();
 		return Point(winPnt.x + rect.left,winPnt.y + rect.top);
@@ -668,12 +668,12 @@ class ForeignWindow
 		Scrollbars
 		==========
 	*/
-	void showVertScrollBar( int min, int max )
+	void showVertScrollBar( int min, int max ) const
 	{
 		SetScrollRange( m_winHandle, SB_VERT, min, max, true );
 		ShowScrollBar( m_winHandle, SB_VERT, true );
 	}
-	void hideVertScrollBar()
+	void hideVertScrollBar() const
 	{
 		ShowScrollBar( m_winHandle, SB_VERT, false );
 	}
@@ -698,12 +698,12 @@ class ForeignWindow
 		return vScroll;
 	}
 
-	void showHorizScrollBar( int min, int max )
+	void showHorizScrollBar( int min, int max ) const
 	{
 		SetScrollRange( m_winHandle, SB_HORZ, min, max, true );
 		ShowScrollBar( m_winHandle, SB_HORZ, true );
 	}
-	void hideHorizScrollBar()
+	void hideHorizScrollBar() const
 	{
 		ShowScrollBar( m_winHandle, SB_HORZ, false );
 	}
@@ -727,11 +727,11 @@ class ForeignWindow
 		}
 		return hScroll;
 	}
-	void scrollHorizontal( int position )
+	void scrollHorizontal( int position ) const
 	{
 		message( WM_HSCROLL, MAKELONG( SB_THUMBPOSITION, WORD(position) ) );	
 	}
-	void scrollVertical( int position )
+	void scrollVertical( int position ) const
 	{
 		message( WM_VSCROLL, MAKELONG( SB_THUMBPOSITION, (WORD)position ) );
 	}
@@ -756,16 +756,16 @@ class ForeignWindow
 	/*
 		icon
 	*/
-	void setIcon( const Icon &icon )
+	void setIcon( const Icon &icon ) const
 	{
 		// SetClassLong( winHandle, GCL_HICON, (DWORD)icon );
 		message( WM_SETICON, ICON_BIG, LPARAM(HICON(icon)) );
 	}
-	void setIcon( const char *iconName )
+	void setIcon( const char *iconName ) const
 	{
 		setIcon( appObject->loadIcon( iconName ) );
 	}
-	void setIcon( int iconId )
+	void setIcon( int iconId ) const
 	{
 		setIcon( appObject->loadIcon( iconId ) );
 	}

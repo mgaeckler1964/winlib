@@ -71,6 +71,7 @@
 #include <winlib/brush.h>
 #include <winlib/font.h>
 #include <winlib/layout.h>
+#include <gak/CopyProtection.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -146,7 +147,7 @@ typedef gak::ArrayOfPointer<BasicWindow>	OwnedWindows;
 
 class FrameChild;
 
-class BasicWindow : public ForeignWindow
+class BasicWindow : public ForeignWindow, public gak::CopyProtection
 {
 	private:
 	const BasicWindow	*m_parent;
@@ -194,10 +195,6 @@ class BasicWindow : public ForeignWindow
 	{
 		m_ownedWindows += child;
 	}
-
-	// do nothing, just forbid
-	BasicWindow( const BasicWindow &source );
-	BasicWindow &operator = ( const BasicWindow &source );
 
 	// (de)contructors
 	void init()
