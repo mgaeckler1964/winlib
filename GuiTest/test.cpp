@@ -350,7 +350,7 @@ public:
 
 			++m_count;
 			m_win->invalidateWindow(false);
-			Sleep(1);
+			Sleep(15);
 		}
 	}
 };
