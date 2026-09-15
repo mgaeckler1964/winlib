@@ -120,13 +120,12 @@ class WindowsAllocator
 	{
 		return MemHandle( GlobalAlloc( GMEM_MOVEABLE, count*sizeof( OBJ ) ) );
 	}
-	static void release( const MemHandle &data )
+	static void free( const MemHandle &data )
 	{
 		HGLOBAL	memHndl = getHandle( data );
-		OBJ		*ptr = getData( data );
 		if( memHndl )
 		{
-			if( ptr )
+			if( getData( data ) )
 				GlobalUnlock( memHndl );
 			GlobalFree( memHndl );
 		}
