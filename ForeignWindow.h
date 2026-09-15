@@ -41,12 +41,6 @@
 #define STRICT 1
 #endif
 
-#ifdef _MSC_VER
-#	pragma warning( disable: 4481 )	// do not warn
-#elif !defined(override)
-#define override /* ignore with C++ Builder */
-#endif
-
 // --------------------------------------------------------------------- //
 // ----- includes ------------------------------------------------------ //
 // --------------------------------------------------------------------- //
