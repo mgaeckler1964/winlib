@@ -315,6 +315,11 @@ class Device : public gak::CopyProtection
 	{
 		SelectObject( m_device, GetStockObject( ANSI_VAR_FONT ) );
 	}
+	void setMonospacedFont()
+	{
+		SelectObject( m_device, GetStockObject( ANSI_FIXED_FONT ) );
+	}
+	
 	int setLetterSpacing( int letterSpace )
 	{
 		return SetTextCharacterExtra( m_device, letterSpace );
