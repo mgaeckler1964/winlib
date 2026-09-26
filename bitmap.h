@@ -208,6 +208,10 @@ class Bitmap : public GdiObject<HBITMAP>
 		m_bitmapInfo->bmiHeader.biClrUsed      = DWORD(numColors);
 		m_bitmapInfo->bmiHeader.biClrImportant = DWORD(numColors);
 	}
+	const Size &getSize() const
+	{
+		return m_size;
+	}
 	int getWidth() const
 	{
 		return m_size.width;

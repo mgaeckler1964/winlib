@@ -672,6 +672,10 @@ class MemoryDevice : public Device
 	{
 		BitBlt( m_target, 0, 0, m_bitmap.getWidth(), m_bitmap.getHeight(), *this, 0, 0, SRCCOPY );
 	}
+	const Size &getSize() const
+	{
+		return m_bitmap.getSize();
+	}
 #if 0
 	void drawScaledToWindow()
 	{
