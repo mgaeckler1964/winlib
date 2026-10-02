@@ -404,16 +404,41 @@ class Device : public gak::CopyProtection
 		FillRect( m_device, &rect, brush );
 	}
 
-	void textOut( int x, int y, const STRING &text )
+	template <typename STRING_T>
+	void textOut( int x, int y, STRING_T &text )
+	{
+		moveTo( x, y );
+		TextOut(
+			m_device,
+			x, y,
+			text.c_str(),
+			int(text.size())
+		);
+	}
+
+	void textOut( int x, int y, const char *text )
 	{
 		moveTo( x, y );
 		TextOut(
 			m_device,
 			x, y,
 			text,
-			int(text.strlen())
+			int(strlen(text))
 		);
 	}
+
+	template <typename T, size_t N>
+	void textOutA( int x, int y, const T (&text)[N] )
+	{
+		moveTo( x, y );
+		TextOut(
+			m_device,
+			x, y,
+			text,
+			int(N-1)
+		);
+	}
+
 	void drawText( const char *text, size_t len, const RectBorder &rect, unsigned format )
 	{
 //		SetTextAlign( device, TA_TOP|TA_LEFT|TA_NOUPDATECP );
