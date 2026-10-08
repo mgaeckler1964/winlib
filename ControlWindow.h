@@ -514,7 +514,6 @@ class ListBox : public ControlWindow
 	{
 		removeStyle( LBS_EXTENDEDSEL );
 	}
-
 };
 
 class Label : public ControlWindow
@@ -1263,6 +1262,17 @@ class TabControl : public ControlWindow
 	}
 	void resizeTabs();
 };
+
+// --------------------------------------------------------------------- //
+// ----- entry points -------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+template <typename SELECTOR_T, typename T, size_t N>
+void fillSelector(SELECTOR_T *selector, T (&arr)[N])
+{
+	for( T*ptr=arr; ptr<arr+N; ++ptr )
+		selector->addEntry( *ptr );
+}
 
 }	// namespace winlib
 

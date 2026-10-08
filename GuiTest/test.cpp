@@ -424,6 +424,9 @@ class BitmapWindow : public OverlappedWindow
 			}
 		}
 
+		mem.getBrush().create( colors::AQUA_MARINE );
+		mem.pie( mem.getSize().width/2, mem.getSize().height/2, 100, 0, M_PI );
+
 		mem.drawBitmap( m_thread->m_bitmapX, m_thread->m_bitmapY, m_test );
 		mem.drawIcon( m_thread->m_iconX, m_thread->m_iconY, m_icon );
 

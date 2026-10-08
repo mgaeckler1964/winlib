@@ -385,6 +385,11 @@ class Device : public gak::CopyProtection
 		Ellipse( m_device, x-radius, y-radius, x+radius, y+radius );
 	}
 
+	// degrees are radial pi based values with 0 is the x-axis to the right
+	// positive values are going clock wise this means pi/2 is the negative y-axis to bottom
+	// -pi/2 is the positive y-axis to top
+	// the direction from start to end is counter clockwise
+	// TODO maybe I should change this discrepance in future
 	void pie(int x, int y, int radius, double startAngle, double endAngle );
 	void pie(const Point &center, int radius, double startAngle, double endAngle )
 	{
@@ -517,6 +522,10 @@ class Device : public gak::CopyProtection
 	void drawIcon( int x, int y, const Icon &icon )
 	{
 		DrawIcon(m_device, x, y, icon);
+	}
+	void drawIcon( int x, int y, int width, int height, const Icon &icon )
+	{
+		DrawIconEx(m_device, x, y, icon, width, height,0, nullptr, DI_IMAGE );
 	}
 	void drawBitmap( int x, int y, const Bitmap &bitmap );
 	void getBitmap( int x, int y, int width, int heigth, Bitmap *bitmap );
