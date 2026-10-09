@@ -318,7 +318,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	{
 		ForeignWindow::invalidateRect( rect, clear );
 		const BasicWindow *parent = getParent();
-		if( parent )
+		if( parent && hasStyle( WS_CHILD ) )
 		{
 			RectBorder	clientRect = getRelativeRectangle();
 			RectBorder	newRect = clientRect;
@@ -334,7 +334,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	{
 		ForeignWindow::invalidateWindow( clear );
 		const BasicWindow *parent = getParent();
-		if( parent )
+		if( parent && hasStyle(WS_CHILD) )
 		{
 			parent->invalidateRect( getRelativeRectangle(), clear );
 		}
