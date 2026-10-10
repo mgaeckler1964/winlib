@@ -94,7 +94,7 @@ void ModalPopup::DisableAllWindows()
 	activeWindow = GetActiveWindow();
 
 	proc = MakeProcInstance( (FARPROC)EnableDisableProc, getInstance() );
-	EnumThreadWindows( GetCurrentThreadId(), (WNDENUMPROC)proc, (LPARAM)handle() );
+	EnumThreadWindows( GetCurrentThreadId(), WNDENUMPROC(proc), LPARAM(handle()) );
 	FreeProcInstance( proc );
 }
 
@@ -103,7 +103,7 @@ void ModalPopup::EnableAllWindows()
 	FARPROC proc;
 
 	proc = MakeProcInstance( (FARPROC)EnableDisableProc, getInstance() );
-	EnumThreadWindows( GetCurrentThreadId(), (WNDENUMPROC)proc, (LPARAM)false );
+	EnumThreadWindows( GetCurrentThreadId(), WNDENUMPROC(proc), LPARAM(false) );
 
 	FreeProcInstance( proc );
 	if( activeWindow )
@@ -129,7 +129,7 @@ void PopupWindow::registerClass()
 		className += "_POPUP_WINDOW";
 
 		fillDefaultClass( &wc );
-		wc.hbrBackground	= (HBRUSH)(COLOR_BTNFACE+1);
+		wc.hbrBackground	= HBRUSH((COLOR_BTNFACE+1));
 
 		wc.lpszClassName = className;
 		registered = CallbackWindow::registerClass( &wc );
@@ -148,7 +148,7 @@ void OverlappedWindow::registerClass()
 		className += "_OVERLAPPED_WINDOW";
 
 		fillDefaultClass( &wc );
-		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		wc.hbrBackground	= HBRUSH((COLOR_WINDOW+1));
 
 		wc.lpszClassName = className;
 		registered = CallbackWindow::registerClass( &wc );
@@ -167,7 +167,7 @@ void ToolWindow::registerClass()
 		className += "_TOOL_WINDOW";
 
 		fillDefaultClass( &wc );
-		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		wc.hbrBackground	= HBRUSH((COLOR_BTNFACE+1));
 
 
 		wc.lpszClassName = className;

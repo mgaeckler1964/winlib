@@ -209,26 +209,24 @@ class DesignerForm : public OverlappedWindow
 	private:
 	class BackgroundChanger
 	{
-		const STRING	&colorName;
-		COLORREF		color;
+		const STRING	&m_colorName;
+		COLORREF		m_color;
 
-		BasicWindow::BackgroundColor colorType;
+		BasicWindow::BackgroundColor m_colorType;
 
 		public:
 		BackgroundChanger( const STRING &colorName, COLORREF color ) 
-		: colorName(colorName), color(color)
-		{
-			colorType = getColorValue( colorName );
-		}
+		: m_colorName(colorName), m_color(color), m_colorType( getColorValue( colorName ) )
+		{}
 
 		void operator () ( BasicWindow *child ) const
 		{
-			child->setBackgroundColor( colorType, color );
+			child->setBackgroundColor( m_colorType, m_color );
 			gak::xml::Element		*resource = child->getResource();
-			resource->setStringAttribute( "bgColor", colorName );
-			resource->setIntegerAttribute( "bg_red", GetRValue( color ) );
-			resource->setIntegerAttribute( "bg_green", GetGValue( color ) );
-			resource->setIntegerAttribute( "bg_blue", GetBValue( color ) );
+			resource->setStringAttribute( "bgColor", m_colorName );
+			resource->setIntegerAttribute( "bg_red", GetRValue( m_color ) );
+			resource->setIntegerAttribute( "bg_green", GetGValue( m_color ) );
+			resource->setIntegerAttribute( "bg_blue", GetBValue( m_color ) );
 		}
 	};
 	public:

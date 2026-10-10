@@ -632,7 +632,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	{
 		setBackgroundColor( type, RGB( red, green, blue ) );
 	}
-	void setBackgroundColor( BackgroundColor type, COLORREF color )
+	void setBackgroundColor( BackgroundColor type, COLORREF color=0 )
 	{
 		if( type == bcDEFAULT )
 			m_backGroundBrush.clearBrush();
