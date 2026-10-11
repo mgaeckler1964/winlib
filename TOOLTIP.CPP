@@ -117,7 +117,7 @@ SuccessCode ToolTipWindow::create( BasicWindow *parent, const char *text )
 	GetCursorPos( &cursor );
 
 	cursor.x -= size.width/2;
-	cursor.y -= size.height;
+	cursor.y -= size.height+2;
 
 	if( cursor.x < 0 )
 		cursor.x = 0;
