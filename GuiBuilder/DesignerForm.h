@@ -171,8 +171,8 @@ class DesignerForm : public OverlappedWindow
 	}
 	ProcessStatus handleKeyDown( int key ) override;
 	ProcessStatus handleResize( const Size &newSize ) override;
-	ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position ) override;
-	ProcessStatus handleMouseMove( WPARAM modifier, const Point &position ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position ) override;
+	ProcessStatus handleMouseMove( ModifierFlags modifier, const Point &position ) override;
 	void postControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam ) override;
 
 	void moveHorizontal( int xPos );

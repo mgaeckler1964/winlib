@@ -932,11 +932,11 @@ ProcessStatus DesignerForm::handleResize( const Size &clientSize )
 	return OverlappedWindow::handleResize( clientSize );
 }
 
-ProcessStatus DesignerForm::handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position )
+ProcessStatus DesignerForm::handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position )
 {
 	doEnterFunction("DesignerForm::handleLeftButton");
 	focus();
-	if( leftButton == lbDOWN && m_theGuiBuilder->getCurrentId() == SELECT_PUSH && !(modifier& MK_SHIFT) )
+	if( leftButton == lbDOWN && m_theGuiBuilder->getCurrentId() == SELECT_PUSH && !modifier.test(ModifierFlags::mbShiftKey) )
 	{
 		m_startDraging = false;
 		startSelect( position );
@@ -965,7 +965,7 @@ ProcessStatus DesignerForm::handleLeftButton( LeftButton leftButton, WPARAM modi
 	return psPROCESSED;
 }
 
-ProcessStatus DesignerForm::handleMouseMove( WPARAM , const Point &position )
+ProcessStatus DesignerForm::handleMouseMove( ModifierFlags , const Point &position )
 {
 	doEnterFunction("DesignerForm::handleMouseMove");
 	Size	clientSize = getClientSize();

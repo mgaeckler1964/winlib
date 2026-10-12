@@ -747,7 +747,7 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 	return psPROCESSED;
 }
 
-ProcessStatus GridViewer::handleMouseMove( WPARAM /*modifier*/, const Point &position )
+ProcessStatus GridViewer::handleMouseMove( ModifierFlags /*modifier*/, const Point &position )
 {
 	MouseState		newState = m_mouseState;
 	unsigned long	style = getStyle();
@@ -803,7 +803,7 @@ ProcessStatus GridViewer::handleMouseMove( WPARAM /*modifier*/, const Point &pos
 	return psPROCESSED;
 }
 
-ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, WPARAM /*modifier*/, const Point &position )
+ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, ModifierFlags /*modifier*/, const Point &position )
 {
 	unsigned long	style = getStyle();
 

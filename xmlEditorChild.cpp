@@ -361,7 +361,7 @@ void XMLeditorChild::handleKillFocus()
 }
 
 ProcessStatus XMLeditorChild::handleLeftButton(
-	LeftButton leftButton, WPARAM modifier, const Point &position
+	LeftButton leftButton, ModifierFlags modifier, const Point &position
 )
 {
 	doEnterFunctionEx(gakLogging::llDetail, "XMLeditorChild::handleLeftButton");

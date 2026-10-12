@@ -206,8 +206,8 @@ class GridViewer : public ChildWindow
 	ProcessStatus handleRepaint( Device &hDC ) override;
 	ProcessStatus handleResize( const Size &newSize ) override;
 
-	ProcessStatus handleMouseMove( WPARAM modifier, const Point &position ) override;
-	ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position ) override;
+	ProcessStatus handleMouseMove( ModifierFlags modifier, const Point &position ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position ) override;
 
 	ProcessStatus handleKeyDown( int key ) override;
 	ProcessStatus handleCharacterInput( int c ) override;

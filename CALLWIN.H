@@ -63,6 +63,7 @@
 #include <gak/list.h>
 #include <gak/string.h>
 #include <gak/memory>
+#include <gak/bitfield.h>
 
 #include <winlib/basicwin.h>
 #include <winlib/winapp.h>
@@ -131,6 +132,23 @@ enum RightButton
 	rbDOUBLE_CLICK=WM_RBUTTONDBLCLK, 
 	rbDOWN=WM_RBUTTONDOWN, 
 	rbUP=WM_RBUTTONUP
+};
+
+class ModifierFlags : public gak::Bitfield
+{
+	public:
+	enum ModifierBits
+	{
+		mbLeftMouseButton,		// = 0 0x01,
+		mbRightMouseButton,		// = 1 0x02;
+		mbShiftKey,				// = 2 0x04;
+		mbControlKey,			// = 3 0x08;
+		mbMiddleMouseButton,	// = 4 0x10;
+		mbX1MouseButton,		// = 5 0x20;
+		mbX2MouseButton			// = 6 0x40;
+	};
+
+	ModifierFlags( WPARAM wParam ) : Bitfield( gak::uint32(wParam) ) {}
 };
 
 // --------------------------------------------------------------------- //
@@ -348,13 +366,13 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	virtual ProcessStatus handleMouseRelease();
 
 	// WM_MOUSEMOVE
-	virtual ProcessStatus handleMouseMove( WPARAM modifier, const Point &position );
+	virtual ProcessStatus handleMouseMove( ModifierFlags modifier, const Point &position );
 
 	// WM_LBUTTONDBLCLK, WM_LBUTTONDOWN, WM_LBUTTONUP
-	virtual ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position );
+	virtual ProcessStatus handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position );
 
 	// WM_RBUTTONDBLCLK, WM_RBUTTONDOWN, WM_RBUTTONUP
-	virtual ProcessStatus handleRightButton( RightButton rightButton, WPARAM modifier, const Point &position );
+	virtual ProcessStatus handleRightButton( RightButton rightButton, ModifierFlags modifier, const Point &position );
 
 	// WM_RESIZE
 	virtual ProcessStatus handleResize( const Size &newSize );

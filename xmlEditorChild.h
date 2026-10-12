@@ -946,7 +946,7 @@ class XMLeditorChild : public ChildWindow
 	ProcessStatus handleHorizScroll( HorizScrollCode scrollCode, int nPos, HWND ) override;
 	ProcessStatus handleRepaint( Device &hDC ) override;
 	ProcessStatus handleResize( const Size &newSize ) override;
-	ProcessStatus handleLeftButton( LeftButton leftButton, WPARAM modifier, const Point &position ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position ) override;
 	void handleFocus() override;
 	ProcessStatus handleKeyDown( int key ) override;
 	ProcessStatus handleCharacterInput( int c ) override;

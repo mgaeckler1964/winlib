@@ -1035,17 +1035,17 @@ ProcessStatus CallbackWindow::handleMouseRelease()
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleMouseMove( WPARAM, const Point & )
+ProcessStatus CallbackWindow::handleMouseMove( ModifierFlags, const Point & )
 {
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleLeftButton( LeftButton, WPARAM, const Point & )
+ProcessStatus CallbackWindow::handleLeftButton( LeftButton, ModifierFlags, const Point & )
 {
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleRightButton( RightButton, WPARAM, const Point & )
+ProcessStatus CallbackWindow::handleRightButton( RightButton, ModifierFlags, const Point & )
 {
 	return psDO_DEFAULT;
 }
