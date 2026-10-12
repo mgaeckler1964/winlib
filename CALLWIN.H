@@ -207,6 +207,8 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	std::unique_ptr<ToolTipWindow>	m_toolWin;
 	bool							m_applicationTimer, m_toolWinTimer;
 
+	unsigned			m_captureCount;
+
 	TreeView			*m_dragTreeView;
 	TreeNode			*m_dragItem;
 
@@ -315,11 +317,17 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	protected:
 	void captureMouse()
 	{
-		SetCapture( handle() );
+		if( !m_captureCount++ )
+		{
+			SetCapture( handle() );
+		}
 	}
 	void releaseMouse()
 	{
-		ReleaseCapture();
+		if( m_captureCount > 0 && --m_captureCount == 0 )
+		{
+			ReleaseCapture();
+		}
 	}
 
 	/*

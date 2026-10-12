@@ -124,6 +124,7 @@ CallbackWindow::CallbackWindow( BasicWindow *owner )
 
 	m_callBackCount = 0;
 
+	m_captureCount = 0;
 	m_allowNotifications = true;
 	m_dialogProcessing = false;
 	
@@ -535,6 +536,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 
 		// The mouse
 		case WM_CAPTURECHANGED:
+			m_captureCount = 0;
 			msgStatus = handleMouseRelease();
 			break;
 
@@ -1254,6 +1256,7 @@ void CallbackWindow::showToolHelp( const char *text )
 		}
 		SetWindowPos( m_toolWin->handle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
 		focus();
+		captureMouse();
 	}
 }
 
@@ -1263,6 +1266,7 @@ void CallbackWindow::removeToolHelp(bool force)
 	{
 		m_toolWin->close();
 		m_toolWin.reset();
+		releaseMouse();
 	}
 }
 
