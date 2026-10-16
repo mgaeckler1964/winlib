@@ -382,15 +382,20 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	// WM_RBUTTONDBLCLK, WM_RBUTTONDOWN, WM_RBUTTONUP
 	virtual ProcessStatus handleRightButton( RightButton rightButton, ModifierFlags modifier, const Point &position );
 
+	// WM_ENTERSIZEMOVE:
+	virtual ProcessStatus handleEnterSizeMove();
+
 	// WM_RESIZE
 	virtual ProcessStatus handleResize( const Size &newSize );
+
+	// WM_EXITSIZEMOVE:
+	virtual ProcessStatus handleExitSizeMove();
 
 	// WM_DROPFILES
 	virtual void handleFile( const char *filename, size_t idx, size_t numFiles );
 	private:
 			void handleFiles( HDROP );
 	protected:
-
 	// find & replace dialogs
 	virtual void handleFind( const char *, bool, bool, bool );
 	virtual void handleReplace(	const char *, const char *,

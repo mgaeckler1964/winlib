@@ -396,15 +396,24 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 
 		// sizing
-		// WM_WINDOWPOSCHANGED
-
+		case WM_ENTERSIZEMOVE:
+			msgStatus = handleEnterSizeMove();
+			break;
+		//case WM_WINDOWPOSCHANGED:
 		case WM_SIZE:
 		{
-			m_clientSize = MAKESIZE( DWORD(lParam) );
-			resizeStatusBar( &m_clientSize );
-			msgStatus = handleResize( m_clientSize );
+			if( wParam != SIZE_MAXHIDE && wParam != SIZE_MAXSHOW )
+			{
+				m_clientSize = MAKESIZE( DWORD(lParam) );
+				resizeStatusBar( &m_clientSize );
+				msgStatus = handleResize( m_clientSize );
+			}
 			break;
 		}
+		case WM_EXITSIZEMOVE:
+			msgStatus = handleExitSizeMove();
+			break;
+
 		// repainting
 		case WM_ERASEBKGND:
 		{
@@ -957,10 +966,20 @@ void CallbackWindow::handleActivate( bool )
 {
 }
 
+ProcessStatus CallbackWindow::handleEnterSizeMove()
+{
+	return psDO_DEFAULT; 
+}
+
 ProcessStatus CallbackWindow::handleResize( const Size &newSize )
 {
 	doLayout( newSize );
 
+	return psDO_DEFAULT; 
+}
+
+ProcessStatus CallbackWindow::handleExitSizeMove()
+{
 	return psDO_DEFAULT; 
 }
 
