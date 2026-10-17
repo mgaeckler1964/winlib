@@ -450,6 +450,32 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	}
 
 	/*
+		Display Mode
+	*/
+	public:
+	enum _DisplayMode
+	{
+		dmMINIMIZED,
+		dmNORMAL,
+		dmMAXIMIZED
+	};
+	typedef EnumWrapper<_DisplayMode> DisplayMode;
+	DisplayMode getDisplayMode(const Size *size = nullptr) const
+	{
+		Size mySize;;
+		if( IsZoomed( handle() ) )
+			return dmMAXIMIZED;
+		if( !size )
+		{
+			mySize = getClientSize();
+			size = &mySize;
+		}
+		if( ~(*size) )
+			return dmMINIMIZED;
+		return dmNORMAL;
+	}
+
+	/*
 		layout and size
 	*/
 	void setWidthOffset( int width )
@@ -461,8 +487,8 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 		m_heightOffset = width;
 	}
 	void saveWindowRect( const char *windowName = NULL ) const;
-	void restoreWindowRect( const char *windowName = NULL, int nCmdShow = SW_SHOW );
-	void restoreWindowPos( const char *windowName = NULL, int nCmdShow = SW_SHOW );
+	void restoreWindowRect( const char *windowName = NULL, ShowWindowMode nCmdShow = swSHOW );
+	void restoreWindowPos( const char *windowName = NULL, ShowWindowMode nCmdShow = swSHOW );
 
 	void setLayoutData( LayoutData *layoutData )
 	{

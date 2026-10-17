@@ -243,8 +243,8 @@ void BasicWindow::saveWindowRect( const char *winName ) const
 }
 
 void BasicWindow::restoreWindowRect(
-	const char	*winName,
-	int			nCmdShow 
+	const char		*winName,
+	ShowWindowMode	nCmdShow 
 )
 {
 	STRING	title;
@@ -283,8 +283,8 @@ void BasicWindow::restoreWindowRect(
 }
 
 void BasicWindow::restoreWindowPos(
-	const char	*winName,
-	int			nCmdShow 
+	const char		*winName,
+	ShowWindowMode	nCmdShow 
 )
 {
 	STRING	title;

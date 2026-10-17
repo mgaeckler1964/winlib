@@ -157,6 +157,16 @@ class Bitmap : public GdiObject<HBITMAP>
 		return *this;
 	}
 
+	protected:
+	Bitmap &setSize( const Size &size )
+	{
+		m_size = size;
+		return *this;
+	}
+	BITMAPINFO *getInfo()
+	{
+		return m_bitmapInfo;
+	}
 
 	public:
 	Bitmap() 
@@ -204,7 +214,7 @@ class Bitmap : public GdiObject<HBITMAP>
 		m_bitmapInfo->bmiHeader.biHeight       = m_size.height;
 		m_bitmapInfo->bmiHeader.biPlanes       = 1;
 		m_bitmapInfo->bmiHeader.biBitCount     = WORD(depth);
-		m_bitmapInfo->bmiHeader.biCompression  = 0;
+		m_bitmapInfo->bmiHeader.biCompression  = BI_RGB;
 		m_bitmapInfo->bmiHeader.biClrUsed      = DWORD(numColors);
 		m_bitmapInfo->bmiHeader.biClrImportant = DWORD(numColors);
 	}
@@ -232,6 +242,35 @@ class Bitmap : public GdiObject<HBITMAP>
 	{
 		return m_bitmapInfo;
 	}
+};
+
+class DirectBitmap : public Bitmap
+{
+	COLORREF	*m_pixelBuffer;
+
+	public:
+	DirectBitmap() : m_pixelBuffer(nullptr) {}
+
+
+	DirectBitmap &createBitmap(const Size &size)
+	{
+		setSize(size);
+		createInfo( 32, 0 );
+		getInfo()->bmiHeader.biHeight = -size.height;
+
+		setHandle( CreateDIBSection(nullptr, getInfo(), DIB_RGB_COLORS, (void**)&m_pixelBuffer, nullptr, 0) );
+
+		return *this;
+	}
+
+	DirectBitmap &setPixel( int x, int y, COLORREF pixel )
+	{
+		assert( x<getWidth() );
+		assert( y<getHeight() );
+		m_pixelBuffer[y*getWidth()+x] = pixel | 0xFF000000;
+		return *this;
+	}
+
 };
 
 // --------------------------------------------------------------------- //

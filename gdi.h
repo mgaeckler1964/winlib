@@ -109,6 +109,14 @@ class GdiHandle
 
 	GdiHandle( const GdiHandle &src );
 
+	void deleteObject()
+	{
+		if( m_handle )
+		{
+			bool ret = DeleteObject( m_handle );
+			assert(ret);
+		}
+	}
 	public:
 	GdiHandle( const GdiType &newHandle = 0 )
 	{
@@ -116,11 +124,11 @@ class GdiHandle
 	}
 	~GdiHandle()
 	{
-		DeleteObject( m_handle );
+		deleteObject();
 	}
 	const GdiHandle & operator = ( const GdiType &newHandle )
 	{
-		DeleteObject( m_handle );
+		deleteObject();
 		m_handle = newHandle;
 
 		return *this;

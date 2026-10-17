@@ -101,21 +101,44 @@ const WindowClass_t FileDialogFlag		= 0x10;
 template < typename enumT >
 class EnumWrapper
 {
-	enumT code;
+	enumT m_val;
 
 	public:
-	EnumWrapper( enumT val ) : code(val) {}
+	EnumWrapper( enumT val ) : m_val(val) {}
 	bool operator == ( enumT val ) const
 	{
-		return code == val;
+		return m_val == val;
 	}
 	bool operator != ( enumT val ) const
 	{
-		return code != val;
+		return m_val != val;
+	}
+	enumT get() const
+	{
+		return m_val;
 	}
 };
 enum _SuccessCode { scSUCCESS, scERROR };
 typedef EnumWrapper<_SuccessCode>	SuccessCode;
+
+enum _ShowWindowMode {
+	swHIDE = SW_HIDE,
+	swSHOWNORMAL=SW_SHOWNORMAL,
+	swNORMAL=SW_NORMAL,
+	swSHOWMINIMIZED=SW_SHOWMINIMIZED,
+	swSHOWMAXIMIZED=SW_SHOWMAXIMIZED,
+	swMAXIMIZE=SW_MAXIMIZE,
+	swSHOWNOACTIVATE=SW_SHOWNOACTIVATE,
+	swSHOW=SW_SHOW,
+	swMINIMIZE=SW_MINIMIZE,
+	swSHOWMINNOACTIVE=SW_SHOWMINNOACTIVE,
+	swSHOWNA=SW_SHOWNA,
+	swRESTORE=SW_RESTORE,
+	swSHOWDEFAULT=SW_SHOWDEFAULT,
+	swFORCEMINIMIZE=SW_FORCEMINIMIZE,
+	swMAX=SW_MAX
+};
+typedef EnumWrapper<_ShowWindowMode>	ShowWindowMode;
 
 class ForeignWindow
 {
@@ -327,28 +350,28 @@ class ForeignWindow
 	/*
 		displaying window
 	*/
-	void show( int nCmdShow=SW_SHOW )
+	void show( ShowWindowMode nCmdShow=swSHOW )
 	{
-		if( nCmdShow != SW_HIDE )
+		if( nCmdShow != swHIDE )
 			m_style |= WS_VISIBLE; // addStyle( WS_VISIBLE );
 		else
 			m_style &= ~WS_VISIBLE; // removeStyle( WS_VISIBLE );
 		if( isValid() )
 		{
-			ShowWindow( m_winHandle, nCmdShow );
+			ShowWindow( m_winHandle, nCmdShow.get() );
 		}
 	}
 	void hide()
 	{
-		show( SW_HIDE );
+		show( swHIDE );
 	}
 	void minimize()
 	{
-		show( SW_MINIMIZE );
+		show( swMINIMIZE );
 	}
 	void maximize()
 	{
-		show( SW_MAXIMIZE );
+		show( swMAXIMIZE );
 	}
 	bool isVisible() const
 	{
@@ -369,7 +392,7 @@ class ForeignWindow
 		{
 			if( IsIconic( m_winHandle ) )
 			{
-				show( SW_RESTORE );
+				show( swRESTORE );
 			}
 			SetWindowPos(m_winHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			if( withForground )

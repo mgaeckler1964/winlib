@@ -112,6 +112,14 @@ struct Size
 	{
 		return width > 0 && height > 0;
 	}
+	bool operator ! () const
+	{
+		return width<=0 || height<=0;
+	}
+	bool operator ~ () const
+	{
+		return width<=0 && height<=0;
+	}
 };
 
 struct Point : public POINT
