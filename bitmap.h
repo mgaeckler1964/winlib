@@ -244,9 +244,26 @@ class Bitmap : public GdiObject<HBITMAP>
 	}
 };
 
+class BGRA
+{
+	friend class DirectBitmap;
+	typedef DWORD	_BGRA;
+
+	_BGRA	m_pixel;
+
+	public:
+	BGRA( unsigned char blue, unsigned char green, unsigned char red, unsigned char alpha = 255 ) 
+		: m_pixel(DWORD(blue)|(DWORD(green)<<8)|(DWORD(red)<<16)|(DWORD(alpha)<<24))
+	{}
+	operator _BGRA () const
+	{
+		return m_pixel;
+	}
+};
+
 class DirectBitmap : public Bitmap
 {
-	COLORREF	*m_pixelBuffer;
+	BGRA::_BGRA	*m_pixelBuffer;
 
 	public:
 	DirectBitmap() : m_pixelBuffer(nullptr) {}
@@ -263,11 +280,11 @@ class DirectBitmap : public Bitmap
 		return *this;
 	}
 
-	DirectBitmap &setPixel( int x, int y, COLORREF pixel )
+	DirectBitmap &setPixel( int x, int y, BGRA pixel )
 	{
 		assert( x<getWidth() );
 		assert( y<getHeight() );
-		m_pixelBuffer[y*getWidth()+x] = pixel | 0xFF000000;
+		m_pixelBuffer[y*getWidth()+x] = pixel;
 		return *this;
 	}
 
