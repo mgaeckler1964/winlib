@@ -427,6 +427,22 @@ class BitmapWindow : public OverlappedWindow
 		mem.getBrush().create( colors::AQUA_MARINE );
 		mem.pie( mem.getSize().width/2, mem.getSize().height/2, 100, 0, M_PI );
 
+		char text[] = "Hello World";
+//		mem.getFont().setDirection( 0 ).create();
+		mem.textOutA( mem.getSize().width/2, mem.getSize().height/2, text );
+
+		mem.getFont().setDirection( 900 ).create();
+		mem.textOutA( mem.getSize().width/2, mem.getSize().height/2, text );
+
+		mem.getFont().setTimes().setDirection( 1800 ).create();
+		mem.textOutA( mem.getSize().width/2, mem.getSize().height/2, text );
+
+		mem.getFont().setCourier().setDirection( 2700 ).create();
+		mem.textOutA( mem.getSize().width/2, mem.getSize().height/2, text );
+
+		mem.getFont().setArial().setDirection( 0 ).create();
+		mem.textOutA( mem.getSize().width/2, mem.getSize().height/2, text );
+
 		mem.drawBitmap( m_thread->m_bitmapX, m_thread->m_bitmapY, m_test );
 		mem.drawIcon( m_thread->m_iconX, m_thread->m_iconY, m_icon );
 

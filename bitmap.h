@@ -261,6 +261,11 @@ class BGRA
 	}
 };
 
+inline BGRA makeBGRA( COLORREF color )
+{
+	return BGRA(GetBValue(color),GetGValue(color),GetRValue(color), 255);
+}
+
 class DirectBitmap : public Bitmap
 {
 	BGRA::_BGRA	*m_pixelBuffer;
@@ -272,7 +277,7 @@ class DirectBitmap : public Bitmap
 	DirectBitmap &createBitmap(const Size &size)
 	{
 		setSize(size);
-		createInfo( 32, 0 );
+		createInfo( sizeof(BGRA::_BGRA)*8, 0 );
 		getInfo()->bmiHeader.biHeight = -size.height;
 
 		setHandle( CreateDIBSection(nullptr, getInfo(), DIB_RGB_COLORS, (void**)&m_pixelBuffer, nullptr, 0) );

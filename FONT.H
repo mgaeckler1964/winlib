@@ -75,6 +75,13 @@
 
 namespace winlib
 {
+// --------------------------------------------------------------------- //
+// ----- constants ----------------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+#ifdef __BORLANDC__
+#define CLEARTYPE_QUALITY 5
+#endif
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -177,6 +184,7 @@ class Font : public GdiObject<HFONT>
 
 		return *this;
 	}
+
 	Font &setOutPrecision( unsigned char prec )
 	{
 		m_fontData.lfOutPrecision = prec;
@@ -234,6 +242,21 @@ class Font : public GdiObject<HFONT>
 	const char *getFontName() const
 	{
 		return m_fontData.lfFaceName;
+	}
+	Font &setArial()
+	{
+		setFontName("Arial");
+		return *this;
+	}
+	Font &setTimes()
+	{
+		setFontName("Times New Roman");
+		return *this;
+	}
+	Font &setCourier()
+	{
+		setFontName("Courier New");
+		return *this;
 	}
 	Font &setFontSize( int newSize )
 	{
@@ -377,6 +400,17 @@ class Font : public GdiObject<HFONT>
 
 	STRING toString() const;
 	void fromString( const STRING &source, bool alwaysCreate );
+
+	Font &setDirection( int direction)
+	{
+		m_fontData.lfQuality = CLEARTYPE_QUALITY;
+		m_fontData.lfEscapement = m_fontData.lfOrientation = direction;
+
+		if( isAssigned() )
+			create();
+
+		return *this;
+	}
 };
 
 std::ostream &operator >> ( std::ostream &out, const Font &font );

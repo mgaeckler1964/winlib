@@ -148,7 +148,7 @@ class ModifierFlags : public gak::Bitfield
 		mbX2MouseButton			// = 6 0x40;
 	};
 
-	ModifierFlags( WPARAM wParam ) : Bitfield( gak::uint32(wParam) ) {}
+	ModifierFlags( WPARAM wParam ) : gak::Bitfield( gak::uint32(wParam) ) {}
 };
 
 // --------------------------------------------------------------------- //

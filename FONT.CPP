@@ -263,6 +263,17 @@ void Font::fromString( const STRING &source, bool alwaysCreate )
 bool Font::create()
 {
 	m_fontData.lfHeight = -getFontSizePixel();
+	if( m_fontData.lfOrientation || m_fontData.lfEscapement )
+	{
+		if( !m_fontData.lfHeight )
+		{
+			m_fontData.lfHeight = -12;
+		}
+		if( !*m_fontData.lfFaceName )
+		{
+			setFontName("Arial");
+		}
+	}
 	setHandle( CreateFontIndirect( &m_fontData ) );
 
 	send2Window();

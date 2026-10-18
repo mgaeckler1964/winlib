@@ -271,37 +271,44 @@ class Device : public gak::CopyProtection
 		font
 	*/
 
-	void selectFont()
+	Device &selectFont()
 	{
 		if( !m_font.isAssigned() )
 			m_font.create();
+		return *this;
 	}
-	void selectFont( const Font &newFont )
+	Device &selectFont( const Font &newFont )
 	{
 		m_font = newFont;
 		m_font.connect( m_device );
 		selectFont();
+		return *this;
 	}
-	void setTextColor( COLORREF color )
+	Device &setTextColor( COLORREF color )
 	{
 		SetTextColor( m_device, color ); 
+		return *this;
 	}
-	void setTextColor( unsigned char red, unsigned char green, unsigned char blue )
+	Device &setTextColor( unsigned char red, unsigned char green, unsigned char blue )
 	{
 		setTextColor( RGB( red, green, blue ) ); 
+		return *this;
 	}
-	void setBackgroundColor( COLORREF color, int mode = OPAQUE )
+	Device &setBackgroundColor( COLORREF color, int mode = OPAQUE )
 	{
 		SetBkMode( m_device,  mode );
 		SetBkColor( m_device, color );
+		return *this;
 	}
-	void setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
+	Device &setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
 	{
 		setBackgroundColor( RGB( red, green, blue ), mode );
+		return *this;
 	}
-	void clrBackgroundColor()
+	Device &clrBackgroundColor()
 	{
 		SetBkMode( m_device, TRANSPARENT );
+		return *this;
 	}
 	const Font &getFont() const
 	{
@@ -311,13 +318,15 @@ class Device : public gak::CopyProtection
 	{
 		return m_font;
 	}
-	void setDefaultFont()
+	Device &setDefaultFont()
 	{
 		SelectObject( m_device, GetStockObject( ANSI_VAR_FONT ) );
+		return *this;
 	}
-	void setMonospacedFont()
+	Device &setMonospacedFont()
 	{
 		SelectObject( m_device, GetStockObject( ANSI_FIXED_FONT ) );
+		return *this;
 	}
 	
 	int setLetterSpacing( int letterSpace )
