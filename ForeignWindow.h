@@ -105,6 +105,7 @@ class EnumWrapper
 
 	public:
 	EnumWrapper( enumT val ) : m_val(val) {}
+	explicit EnumWrapper( int val ) : m_val(enumT(val)) {}
 	bool operator == ( enumT val ) const
 	{
 		return m_val == val;

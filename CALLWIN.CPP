@@ -700,12 +700,11 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 
 		case WM_SETFOCUS:
-			msgStatus = psDO_DEFAULT;
+//			msgStatus = psDO_DEFAULT;
 			handleFocus();
 			break;
-
 		case WM_KILLFOCUS:
-			msgStatus = psDO_DEFAULT;
+//			msgStatus = psDO_DEFAULT;
 			if( hasCaret() )
 				destroyCaret();
 			handleKillFocus();
@@ -975,7 +974,8 @@ ProcessStatus CallbackWindow::handleResize( const Size &newSize )
 {
 	doLayout( newSize );
 
-	return psDO_DEFAULT; 
+//	return psDO_DEFAULT; 
+	return psPROCESSED;
 }
 
 ProcessStatus CallbackWindow::handleExitSizeMove()
@@ -1058,17 +1058,20 @@ ProcessStatus CallbackWindow::handleMouseRelease()
 
 ProcessStatus CallbackWindow::handleMouseMove( ModifierFlags, const Point & )
 {
-	return psDO_DEFAULT;
+	return psPROCESSED;
+//	return psDO_DEFAULT;
 }
 
 ProcessStatus CallbackWindow::handleLeftButton( LeftButton, ModifierFlags, const Point & )
 {
-	return psDO_DEFAULT;
+	return psPROCESSED;
+//	return psDO_DEFAULT;
 }
 
 ProcessStatus CallbackWindow::handleRightButton( RightButton, ModifierFlags, const Point & )
 {
-	return psDO_DEFAULT;
+	return psPROCESSED;
+//	return psDO_DEFAULT;
 }
 
 void CallbackWindow::handleFile( const char *, size_t, size_t )
