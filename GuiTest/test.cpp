@@ -305,6 +305,86 @@ class TestPopup : public PopupWindow
 	}
 };
 
+class ColorWindow : public OverlappedWindow
+{
+	typedef gak::math::Scale<int>	Scale;
+	typedef Scale::Pair				Range;
+
+	DirectBitmap	m_colors;
+	void createBitmap( const Size &winSize )
+	{
+		Scale		scale( Range( 0, winSize.width-1 ), Range( 0,255 ) );
+		const Size	&bitmapSize = m_colors.getSize();
+		if( bitmapSize != winSize )
+		{
+			m_colors.createBitmap( winSize );
+
+			for( int x=0; x<winSize.width; ++x )
+			{
+				gak::uint8	plane = scale( x );
+				gak::uint8	plane2 = plane >> 1;
+
+				BGRA		colors[] =
+				{
+					BGRA(plane, 0, 0),
+//					BGRA(255, 0, 0),
+					BGRA(0, plane, 0),
+//					BGRA(0, 255, 0),
+					BGRA(0, 0, plane),
+//					BGRA(0, 0, 255),
+
+					BGRA(plane, plane, 0),
+					BGRA(plane, 0, plane),
+					BGRA(0, plane, plane),
+
+					BGRA(plane, plane2, plane2),
+					BGRA(plane2, plane, plane2),
+					BGRA(plane2, plane2, plane),
+
+					BGRA(plane, plane, plane2),
+					BGRA(plane, plane2, plane),
+					BGRA(plane2, plane, plane),
+
+					BGRA(plane, plane, plane),
+				};
+				const int yStep = winSize.height/arraySize(colors);
+				int limit = yStep;
+				int y = 0;
+				FOR_EACH( i, colors, {
+					for( ; y<limit; ++y )
+					{
+						m_colors.setPixel(x, y, colors[i] );
+					}
+					limit += yStep;
+					if( limit + yStep > winSize.height )
+						limit  = winSize.height;
+				});
+			}
+		}
+	}
+
+	ProcessStatus handleCreate() override
+	{
+//		createBitmap(getClientSize());
+		return OverlappedWindow::handleCreate();
+	}
+	ProcessStatus handleResize( const Size &newSize ) override
+	{
+		createBitmap(newSize);
+		invalidateWindow();
+		return psPROCESSED;
+	}
+	ProcessStatus handleRepaint( Device &hDC ) override
+	{
+		hDC.drawBitmap( 0, 0, m_colors );
+		return OverlappedWindow::handleRepaint( hDC );
+	}
+	public:
+	ColorWindow(BasicWindow *owner) : OverlappedWindow(owner)
+	{
+	}
+};
+
 class BitmapThread : public gak::Thread
 {
 	OverlappedWindow *m_win;
@@ -781,6 +861,10 @@ CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, int /* n
 
 	OverlappedWindow	*testOverLapped = new BitmapWindow( newWindow );
 	testOverLapped->setText( "My Oberlapped");
+	testOverLapped->create( nullptr );
+
+	testOverLapped = new ColorWindow( newWindow );
+	testOverLapped->setText( "My Color Window");
 	testOverLapped->create( nullptr );
 
 	return newWindow;
