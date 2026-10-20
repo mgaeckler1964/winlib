@@ -499,6 +499,13 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	{
 		s_hAccel = appObject->loadAccelerators( id );
 	}
+
+	template <size_t N>
+	static void setAccelerators(ACCEL (&arr)[N] )
+	{
+		setAccelerators( arr, N );
+	}
+
 	static void setAccelerators( ACCEL *accelerators, int numItems )
 	{
 		s_hAccel = CreateAcceleratorTable( accelerators, numItems );

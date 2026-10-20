@@ -231,11 +231,16 @@ class OpenFileDialog : public FileDialog
 	template <typename IdType>
 	bool create(
 		const BasicWindow	*parent,
-		int					titleId = 0,
+		int					titleId ,
 		IdType				filterId = 0,
 		int					numIds = 1,
 		unsigned long		flags = OFN_FILEMUSTEXIST|OFN_HIDEREADONLY 
 	);
+
+	bool create( const BasicWindow *parent )
+	{
+		return create( parent, 0, 0, 1 );
+	}
 };
 
 class SaveFileAsDialog : public FileDialog
@@ -256,10 +261,14 @@ class SaveFileAsDialog : public FileDialog
 	template <typename IdType>
 	bool create(
 		const BasicWindow	*parent,
-		int					titleId = 0,
+		int					titleId,
 		IdType				filterId = 0,
 		int					numIds = 1 
 	);
+	bool create( const BasicWindow	*parent	)
+	{
+		return create( parent, 0, 0, 1 );
+	}
 
 	void addDefaultExtension( const STRING &ext )
 	{
