@@ -96,7 +96,6 @@ namespace winlib
 	using gak::STRING;
 	using gak::F_STRING;
 	using gak::T_STRING;
-	using gak::uint8;
 }
 #endif
 
@@ -140,8 +139,8 @@ void closeStartup();
 #ifdef __cplusplus
 	namespace winlib
 	{
-		void getWindowsVersion(uint8 *major, uint8 *minor, gak::uint16 *build );
-		uint8 getWindowsMajorVersion();
+		void getWindowsVersion(gak::uint8 *major, gak::uint8 *minor, gak::uint16 *build );
+		gak::uint8 getWindowsMajorVersion();
 		STRING getWindowsVersion();
 		STRING getWindowsWidth();
 	}
