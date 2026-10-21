@@ -82,8 +82,8 @@ struct FileTypeRegistry
 // --------------------------------------------------------------------- //
 
 bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type );
-bool addFileType( FileTypeRegistry *type );
-bool removeFileType( FileTypeRegistry *type );
+long addFileType( const FileTypeRegistry *type );
+long removeFileType( const FileTypeRegistry *type );
 
 }	// namespace winlib
 

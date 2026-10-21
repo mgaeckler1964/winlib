@@ -178,45 +178,45 @@ bool getFileType( const char *extension, const char *cmd, FileTypeRegistry *type
 	return error;
 }
 
-bool addFileType( FileTypeRegistry *type )
+long addFileType( const FileTypeRegistry *type )
 {
 	doEnterFunctionEx( gakLogging::llDetail, "bool addFileType( FileTypeRegistry *type )" );
 
 	Registry	classesRoot;
-	if( classesRoot.openPublic( "Software\\classes", KEY_READ|KEY_WOW64_64KEY ) != ERROR_SUCCESS )
-/*@*/	return true;
+	long		error = classesRoot.openPublic( "Software\\classes", KEY_WRITE|KEY_WOW64_64KEY );
+	if( error != ERROR_SUCCESS )
+/*@*/	return error;
 
 	long		openResult;
 	Registry	cmdTypeKey, // open edit etc.
 				ddeKey;
 	STRING		tmp;
-	bool		error;
 
 	doLogValueEx( gakLogging::llInfo, type->extension );
 	doLogValueEx( gakLogging::llInfo, type->type );
-	error = classesRoot.setKeyValue( type->extension, type->type ) != ERROR_SUCCESS;
-	if( !error )
+	error = classesRoot.setKeyValue( type->extension, type->type );
+	if( error==ERROR_SUCCESS )
 	{
 		doLogValueEx( gakLogging::llInfo, type->type );
 		doLogValueEx( gakLogging::llInfo, type->type_description );
-		error = classesRoot.setKeyValue( type->type, type->type_description ) != ERROR_SUCCESS;
+		error = classesRoot.setKeyValue( type->type, type->type_description );
 	}
 
-	if( !error )
+	if( error==ERROR_SUCCESS )
 	{
 		tmp = type->type + "\\DefaultIcon";
 		if( type->icon[0U] )
-			error = classesRoot.setKeyValue( tmp, type->icon ) != ERROR_SUCCESS;
+			error = classesRoot.setKeyValue( tmp, type->icon );
 		else
 			classesRoot.deleteSubkey( tmp );
 	}
 
-	if( !error )
+	if( error==ERROR_SUCCESS )
 	{
 		tmp = type->type + "\\shell\\" + type->cmd;
-		error = cmdTypeKey.createKey( classesRoot, tmp ) != ERROR_SUCCESS;
+		error = cmdTypeKey.createKey( classesRoot, tmp );
 	}
-	if( !error )
+	if( error==ERROR_SUCCESS )
 	{
 		cmdTypeKey.setKeyValue( type->cmd_description );
 
@@ -238,26 +238,23 @@ bool addFileType( FileTypeRegistry *type )
 					ddeKey.setKeyValue( "Topic", type->topic );
 				else
 					ddeKey.deleteSubkey( "Topic" );
-				error = false;
 			}
 		}
 		else
 		{
 			cmdTypeKey.deleteSubkey( "ddeexec\\Application" );
 			cmdTypeKey.deleteSubkey( "ddeexec" );
-			error = false;
 		}
 	}
 
 	return error;
 }
 
-bool removeFileType( FileTypeRegistry *type )
+long removeFileType( const FileTypeRegistry *type )
 {
 	STRING	tmp = type->type + "\\shell\\" + type->cmd;
-	bool	error = RegistryClassesRoot().deleteSubkey( tmp ) != ERROR_SUCCESS;
 
-	return error;
+	return RegistryClassesRoot().deleteSubkey( tmp );
 }
 
 }	// namespace winlib
