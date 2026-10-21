@@ -87,6 +87,10 @@ BasicWindow::~BasicWindow()
 	{
 		delete m_layoutData;
 	}
+	if( isValid() )					// in case of an exceptio or other fail
+		ForeignWindow::close();		// I must delete my window handle
+									// ForeignWindows also controls windows
+									// from other apps and will not delete them
 }
 
 // --------------------------------------------------------------------- //
