@@ -261,9 +261,9 @@ class BGRA
 	}
 };
 
-inline BGRA makeBGRA( COLORREF color )
+inline BGRA makeBGRA( COLORREF color, unsigned char alpha=255 )
 {
-	return BGRA(GetBValue(color),GetGValue(color),GetRValue(color), 255);
+	return BGRA(GetBValue(color),GetGValue(color),GetRValue(color), alpha);
 }
 
 class DirectBitmap : public Bitmap

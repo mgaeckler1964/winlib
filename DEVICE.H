@@ -80,6 +80,10 @@
 #	pragma option -pc
 #endif
 
+#ifdef _MSC_VER
+#	pragma comment( lib, "msimg32.lib" )
+#endif
+
 namespace winlib
 {
 
@@ -537,6 +541,7 @@ class Device : public gak::CopyProtection
 		DrawIconEx(m_device, x, y, icon, width, height,0, nullptr, DI_IMAGE );
 	}
 	void drawBitmap( int x, int y, const Bitmap &bitmap );
+	void drawAlphaBitmap( int x, int y, const Bitmap &bitmap );
 	void getBitmap( int x, int y, int width, int heigth, Bitmap *bitmap );
 
 	void setPixel( int x, int y, COLORREF color ) const
@@ -911,6 +916,19 @@ inline void Device::drawBitmap( int x, int y, const Bitmap &bitmap )
 	BitBlt(
 		*this, x, y, bitmap.getWidth(), bitmap.getHeight(),
 		hDCmem, 0, 0, SRCCOPY
+	);
+}
+
+inline void Device::drawAlphaBitmap( int x, int y, const Bitmap &bitmap )
+{
+	MemoryDevice	hDCmem( *this, bitmap );
+	BLENDFUNCTION ftn = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
+	AlphaBlend(
+		*this, 
+		x, y, bitmap.getWidth(), bitmap.getHeight(),
+		hDCmem, 
+		0, 0, bitmap.getWidth(), bitmap.getHeight(),
+		ftn
 	);
 }
 

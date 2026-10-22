@@ -365,7 +365,6 @@ class ColorWindow : public OverlappedWindow
 
 	ProcessStatus handleCreate() override
 	{
-//		createBitmap(getClientSize());
 		return OverlappedWindow::handleCreate();
 	}
 	ProcessStatus handleResize( const Size &newSize ) override
