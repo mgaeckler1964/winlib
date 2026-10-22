@@ -139,13 +139,16 @@ static GuiBuilderApplication	theApp;
    
 bool GuiBuilderApplication::startApplication( HINSTANCE hInstance, const char *cmdLine )
 {
-	FileTypeRegistry	ftReg;
-	ftReg.extension = ".gui";
-	ftReg.type = "gui_file";
-	ftReg.type_description = "Winlib GUI Definition";
-	ftReg.cmd = "open";
-	ftReg.cmd_description =	"&open";
-	ftReg.commandLine =	STRING(getFileName()).add(" \"%1\"");
+	FileTypeRegistry	ftReg =
+	{
+		".gui",									// .extension
+		"gui_file",								// .type
+		"Winlib GUI Definition",				// .type_description
+		nullptr,								// .icon
+		"open",									// .cmd
+		"&open",								// .cmd_description
+		STRING(getFileName()).add(" \"%1\"")	// commandLine
+	};
 
 	addFileType(&ftReg);
 	return Application::startApplication( hInstance, cmdLine );
