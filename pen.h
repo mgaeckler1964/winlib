@@ -187,7 +187,7 @@ class Pen : public GdiObject<HPEN>
 
 		return *this;
 	}
-	void setStyle( gak::css::Border borderStyle, bool doCreate=true )
+	Pen &setStyle( gak::css::Border borderStyle, bool doCreate=true )
 	{
 		Style penStyle;
 
@@ -205,22 +205,28 @@ class Pen : public GdiObject<HPEN>
 			penStyle = psSolid;
 
 		setStyle( penStyle, doCreate );
+
+		return *this;
 	}
 
 	/*
 		simple Pen
 	*/
-	void create( Style style, int width, COLORREF color )
+	Pen &create( Style style, int width, COLORREF color )
 	{
 		m_logPen.lopnStyle = style;
 		m_logPen.lopnWidth.x = width;
 		m_logPen.lopnColor = color;
 
 		setPen( CreatePen( style, width, color ) );
+
+		return *this;
 	}
-	void create( Style style, int width, unsigned char red, unsigned char green, unsigned char blue )
+	Pen &create( Style style, int width, unsigned char red, unsigned char green, unsigned char blue )
 	{
 		create( style, width, RGB( red, green, blue ) );
+
+		return *this;
 	}
 	/*
 		standard pen
@@ -231,11 +237,13 @@ class Pen : public GdiObject<HPEN>
 		spWhite = WHITE_PEN,
 		spBlack = BLACK_PEN
 	};
-	void selectPen( SystemPen pen )
+	Pen &selectPen( SystemPen pen )
 	{
 		HPEN	handle = HPEN( GetStockObject(pen) );
 		setPen( handle );
 		GetObject( handle, sizeof(m_logPen), &m_logPen );
+
+		return *this;
 	}
 };
 

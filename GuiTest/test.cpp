@@ -50,6 +50,7 @@
 #include <WINLIB/chartWin.h>
 #include <WINLIB/OLEserver.h>
 #include <WINLIB/frame.h>
+#include <WINLIB/colors.h>
 
 #ifndef __BORLANDC__
 #include "test.gui.h"
@@ -305,7 +306,176 @@ class TestPopup : public PopupWindow
 	}
 };
 
+/*
+	here are all colors defined in namespace winlib::colors 
+*/
+namespace winlib 
+{
+namespace colors
+{
+	static const COLORREF s_colors[] =
+	{
+		BLACK,
+		WHITE,
+		RED,
+		LIME,
+		BLUE,
+		YELLOW,
+		MAGENTA,
+		CYAN,
+		MAROON,
+		GREEN,
+		NAVY,
+		OLIVE,
+		PURPE,
+		TEAL,
+		GRAY,
+		SILVER,
+
+		DARK_RED,
+		BROWN,
+		FIREBRICK,
+		CRIMSON,
+		TOMATO,
+		CORAL,
+		INDIAN_RED,
+		SALMON,
+		LIGHT_SALMON,
+		ORANGE,
+		GOLD,
+		GOLD_ROD,
+		KHAKI,
+		YELLOW_GREEN,
+		OLIVE_DRAB,
+		LAWN_GREEN,
+		GREEN_YELLOW,
+		DARK_GREEN,
+		FORREST_GREEN,
+		LIME_GREEN,
+		PALE_GREEN,
+		SPRING_GREEN,
+		SEA_GREEN,
+		TURQUOISE,
+		AQUA_MARINE,
+
+		POWDER_BLUE,
+		CADET_BLUE,
+		STEEL_BLUE,
+		CORN_FLOWER_BLUE,
+		DODGER_BLUE,
+		SKY_BLUE,
+		MIDNIGHT_BLUE,
+		DARK_BLUE,
+		ROYAL_BLUE,
+		BLUE_VIOLET,
+		INDIGO,
+		SLATE_BLUE,
+		THISTLE,
+		PLUM,
+		VIOLET,
+		ORCHID,
+		PINK,
+		ANTIQUE_WHITE,
+		BEIGE,
+		BISQUE,
+		BLANCHED_ALMOND,
+		WHEAT,
+		CORN_SILK,
+		LEMON_CHIFFON,
+		SADDLE_BROWN,
+		SIENNA,
+		CHOCOLATE,
+		PERU,
+		SANDY_BROWN,
+		BURLY_WOOD,
+		TAN,
+		ROSY_BROWN,
+		MOCCASIN,
+		NAVAJO_WHITE,
+		REACH_PUFF,
+		MISTY_ROSE,
+		LAVENDER_BLUSH,
+		LINEN,
+		OLD_LACE,
+		PAPAYA_WHIP,
+		SEA_SHELL,
+		MINT_GREEN,
+		LAVENDER,
+		FLORAL_WHITE,
+		ALICE_BLUE,
+		GHOST_WHITE,
+		HONEY_DEW,
+		IVORY,
+		AURE,
+		SNOW,
+	};
+}}
+
 class ColorWindow : public OverlappedWindow
+{
+	ProcessStatus handleMouseMove( ModifierFlags modifier, const Point &position ) override
+	{
+		DrawDevice	hDC(this);
+		COLORREF color = hDC.getPixel( position );
+
+		STRING theText = STRING().add(gak::NumberBuffer().addNumber(position.x).c_str())
+			.add(',')
+			.add(gak::NumberBuffer().addNumber(position.y).c_str())
+			.add( ' ' )
+			.add(gak::NumberBuffer().addNumber(GetRValue(color)).c_str())
+			.add( ' ' )
+			.add(gak::NumberBuffer().addNumber(GetGValue(color)).c_str())
+			.add( ' ' )
+			.add(gak::NumberBuffer().addNumber(GetBValue(color)).c_str())
+		;
+		showToolHelp(theText);
+		return psPROCESSED;
+	}
+
+	public:
+	ColorWindow(BasicWindow *owner) : OverlappedWindow(owner)
+	{
+	}
+};
+
+class BlockColortWindow : public ColorWindow
+{
+	ProcessStatus handleResize( const Size &newSize ) override
+	{
+		invalidateWindow();
+		return psPROCESSED;
+	}
+	ProcessStatus handleRepaint( Device &hDC ) override
+	{
+		const Size		size = getClientSize();
+		const size_t	numColors = arraySize(winlib::colors::s_colors);
+		int		sCount = std::sqrt( float(numColors) );
+		if( sCount*sCount < numColors )
+			++sCount;
+		const Size rectSize(size.width/sCount, size.height/sCount);
+		for( int colIndex = 0, y=0; y<sCount && colIndex<numColors; ++y )
+		{
+			for( int x=0; x<sCount && colIndex<numColors; ++x, ++colIndex )
+			{
+				hDC.getPen().selectPen(Pen::spNull);
+				hDC.getBrush().create( winlib::colors::s_colors[colIndex] );
+				//hDC.setBackgroundColor(winlib::colors::s_colors[colIndex]);
+				const int pixX = x*rectSize.width;
+				const int pixY = y*rectSize.height;
+				hDC.rectangle(pixX, pixY, pixX+rectSize.width+2, pixY+rectSize.height+1 );
+			}
+		}
+
+		return psPROCESSED;
+	}
+	public:
+	BlockColortWindow(BasicWindow *owner) : ColorWindow(owner)
+	{
+	}
+};
+
+
+class ColorGradientWindow : public ColorWindow
 {
 	typedef gak::math::Scale<int>	Scale;
 	typedef Scale::Pair				Range;
@@ -327,11 +497,11 @@ class ColorWindow : public OverlappedWindow
 				BGRA		colors[] =
 				{
 					BGRA(plane, 0, 0),
-//					BGRA(255, 0, 0),
+					BGRA(255, 0, 0),
 					BGRA(0, plane, 0),
-//					BGRA(0, 255, 0),
+					BGRA(0, 255, 0),
 					BGRA(0, 0, plane),
-//					BGRA(0, 0, 255),
+					BGRA(0, 0, 255),
 
 					BGRA(plane, plane, 0),
 					BGRA(plane, 0, plane),
@@ -363,10 +533,6 @@ class ColorWindow : public OverlappedWindow
 		}
 	}
 
-	ProcessStatus handleCreate() override
-	{
-		return OverlappedWindow::handleCreate();
-	}
 	ProcessStatus handleResize( const Size &newSize ) override
 	{
 		createBitmap(newSize);
@@ -376,10 +542,11 @@ class ColorWindow : public OverlappedWindow
 	ProcessStatus handleRepaint( Device &hDC ) override
 	{
 		hDC.drawBitmap( 0, 0, m_colors );
-		return OverlappedWindow::handleRepaint( hDC );
+		return psPROCESSED;
 	}
-	public:
-	ColorWindow(BasicWindow *owner) : OverlappedWindow(owner)
+
+public:
+	ColorGradientWindow(BasicWindow *owner) : ColorWindow(owner)
 	{
 	}
 };
@@ -859,11 +1026,15 @@ CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, int /* n
 	newWindow->create();
 
 	OverlappedWindow	*testOverLapped = new BitmapWindow( newWindow );
-	testOverLapped->setText( "My Oberlapped");
+	testOverLapped->setText( "My BitmapWindow");
 	testOverLapped->create( nullptr );
 
-	testOverLapped = new ColorWindow( newWindow );
-	testOverLapped->setText( "My Color Window");
+	testOverLapped = new ColorGradientWindow( newWindow );
+	testOverLapped->setText( "My ColorGradientWindow");
+	testOverLapped->create( nullptr );
+
+	testOverLapped = new BlockColortWindow( newWindow );
+	testOverLapped->setText( "My BlockColortWindow");
 	testOverLapped->create( nullptr );
 
 	return newWindow;

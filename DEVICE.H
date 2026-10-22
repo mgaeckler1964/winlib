@@ -548,9 +548,21 @@ class Device : public gak::CopyProtection
 	{
 		SetPixel( m_device, x,y, color );
 	}
+	void setPixel( const Point &position, COLORREF color ) const
+	{
+		SetPixel( m_device, position.x, position.y, color );
+	}
 	void setPixel( int x, int y, unsigned char red, unsigned char green, unsigned char blue ) const
 	{
 		setPixel( x,y, RGB(red, green, blue) );
+	}
+	COLORREF getPixel( int x, int y ) const
+	{
+		return GetPixel( m_device, x,y );
+	}
+	COLORREF getPixel( const Point &position ) const
+	{
+		return getPixel( position.x, position.y );
 	}
 
 	/*
