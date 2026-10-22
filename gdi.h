@@ -115,6 +115,7 @@ class GdiHandle
 		{
 			bool ret = DeleteObject( m_handle );
 			assert(ret);
+			ret;			// to avoid warning in visual C++
 		}
 	}
 	public:
