@@ -113,7 +113,7 @@ typedef gak::Array<Chart2D>		AllCharts2D;
 
 struct	Chart1D : public CommonChart
 {
-	double		value;
+	double	value;
 
 	Chart1D( COLORREF color=0, double value=0 ) : CommonChart(0,color), value(value) {}
 };

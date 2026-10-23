@@ -150,7 +150,7 @@ Point ChartChild::value2Pixel(const Chart2dPoint &value, const Size &size )
 void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 {
 	const int bottom = m_1dBounds.getMin() < 0 
-		? size.height + int(m_1dBounds.getMin() * size.height / m_1dBounds.getRange() +0.5)
+		? size.height + gak::math::round<int>(m_1dBounds.getMin() * size.height / m_1dBounds.getRange())
 		: size.height;
 	const int width = size.width / int(m_1dData.size());
 	int left = 0;
@@ -162,7 +162,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 	)
 	{
 		bool textInBar = false;
-		const int top = bottom - int((it->value * bottom) / m_1dBounds.getMax() +0.5);
+		const int top = bottom - gak::math::round<int>((it->value * bottom) / m_1dBounds.getMax());
 
 		hDC.getPen().create(Pen::psNull, 0, 0);
 		hDC.getBrush().create(it->color);

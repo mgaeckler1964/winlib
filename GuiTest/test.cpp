@@ -413,7 +413,7 @@ namespace colors
 
 class ColorWindow : public OverlappedWindow
 {
-	ProcessStatus handleMouseMove( ModifierFlags modifier, const Point &position ) override
+	ProcessStatus handleMouseMove( ModifierFlags , const Point &position ) override
 	{
 		DrawDevice	hDC(this);
 		COLORREF color = hDC.getPixel( position );
@@ -440,7 +440,7 @@ class ColorWindow : public OverlappedWindow
 
 class BlockColortWindow : public ColorWindow
 {
-	ProcessStatus handleResize( const Size &newSize ) override
+	ProcessStatus handleResize( const Size & ) override
 	{
 		invalidateWindow();
 		return psPROCESSED;
@@ -449,13 +449,13 @@ class BlockColortWindow : public ColorWindow
 	{
 		const Size		size = getClientSize();
 		const size_t	numColors = arraySize(winlib::colors::s_colors);
-		int		sCount = std::sqrt( float(numColors) );
-		if( sCount*sCount < numColors )
+		int		sCount = int(std::sqrt( float(numColors) ));
+		if( size_t(sCount*sCount) < numColors )
 			++sCount;
 		const Size rectSize(size.width/sCount, size.height/sCount);
-		for( int colIndex = 0, y=0; y<sCount && colIndex<numColors; ++y )
+		for( int colIndex = 0, y=0; y<sCount && colIndex<int(numColors); ++y )
 		{
-			for( int x=0; x<sCount && colIndex<numColors; ++x, ++colIndex )
+			for( int x=0; x<sCount && colIndex<int(numColors); ++x, ++colIndex )
 			{
 				hDC.getPen().selectPen(Pen::spNull);
 				hDC.getBrush().create( winlib::colors::s_colors[colIndex] );
@@ -491,7 +491,7 @@ class ColorGradientWindow : public ColorWindow
 
 			for( int x=0; x<winSize.width; ++x )
 			{
-				gak::uint8	plane = scale( x );
+				gak::uint8	plane = gak::uint8(scale( x ));
 				gak::uint8	plane2 = plane >> 1;
 
 				BGRA		colors[] =
@@ -517,7 +517,7 @@ class ColorGradientWindow : public ColorWindow
 
 					BGRA(plane, plane, plane),
 				};
-				const int yStep = winSize.height/arraySize(colors);
+				const int yStep = int(winSize.height/arraySize(colors));
 				int limit = yStep;
 				int y = 0;
 				FOR_EACH( i, colors, {
@@ -1004,7 +1004,7 @@ static OleClassFactory<MyOleDocument>	s_factory;
 // ----- class virtuals ------------------------------------------------ //
 // --------------------------------------------------------------------- //
    
-bool TestApp::startApplication( HINSTANCE , const char *cmdLine )
+bool TestApp::startApplication( HINSTANCE , const char * )
 {
 	doEnableLogEx(gakLogging::llInfo);
 
