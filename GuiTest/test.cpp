@@ -316,7 +316,18 @@ namespace colors
 	static const COLORREF s_colors[] =
 	{
 		BLACK,
+		RGB(30,30,30),
+		RGB(60,60,60),
+		RGB(90,90,90),
+		DIM_GRAY,
+		GRAY,
+		DARK_GRAY,
+		SILVER,
+		LIGHT_GRAY,
+		GAINSBORO,
+		WHITE_SMOKE,
 		WHITE,
+
 		RED,
 		LIME,
 		BLUE,
@@ -327,10 +338,8 @@ namespace colors
 		GREEN,
 		NAVY,
 		OLIVE,
-		PURPE,
+		PURPLE,
 		TEAL,
-		GRAY,
-		SILVER,
 
 		DARK_RED,
 		BROWN,
@@ -339,41 +348,79 @@ namespace colors
 		TOMATO,
 		CORAL,
 		INDIAN_RED,
+		LIGHT_CORAL,
+		DARK_SALMON,
 		SALMON,
 		LIGHT_SALMON,
+		ORANGE_RED,
+		DARK_ORANGE,
 		ORANGE,
 		GOLD,
+		DARK_GOLD_ROD,
 		GOLD_ROD,
+		PALE_GOLD_ROD,
+		DARK_KHAKI,
 		KHAKI,
 		YELLOW_GREEN,
+		DARK_OLIVE_GREEN,
 		OLIVE_DRAB,
 		LAWN_GREEN,
+		CHARTREUSE,
 		GREEN_YELLOW,
 		DARK_GREEN,
 		FORREST_GREEN,
 		LIME_GREEN,
+		LIGHT_GREEN,
 		PALE_GREEN,
+		DARK_SEA_GREEN,
+		MEDIUM_SPRING_GREEN,
 		SPRING_GREEN,
 		SEA_GREEN,
+		MEDIUM_AQUA_MARINE,
+		MEDIUM_SEA_GREEN,
+		LIGHT_SEA_GREEN,
+		DARK_SLATE_GRAY,
+		DARK_CYAN,
+		LIGHT_CYAN,
+		DARK_TURQUOISE,
 		TURQUOISE,
+		MEDIUM_TURQUOISE,
+		PALE_TURQUOISE,
 		AQUA_MARINE,
 
 		POWDER_BLUE,
 		CADET_BLUE,
 		STEEL_BLUE,
 		CORN_FLOWER_BLUE,
+		DEEP_SKY__BLUE,
 		DODGER_BLUE,
+		LIGHT_BLUE,
 		SKY_BLUE,
+		LIGHT_SKY_BLUE,
 		MIDNIGHT_BLUE,
 		DARK_BLUE,
+		MEDIUM_BLUE,
 		ROYAL_BLUE,
 		BLUE_VIOLET,
 		INDIGO,
+		DARK_SLATE_BLUE,
 		SLATE_BLUE,
+		MEDIUM_SLATE_BLUE,
+		MEDIUM_PURPLE,
+		DARK_MAGENTA,
+		DARK_VIOLET,
+		DARK_ORCHID,
+		MEDIUM_ORCHID,
+
 		THISTLE,
 		PLUM,
 		VIOLET,
 		ORCHID,
+		MEDIUM_VIOLET,
+		PALE_VIOLET,
+		DEEP_PINK,
+		HOT_PINK,
+		LIGHT_PINK,
 		PINK,
 		ANTIQUE_WHITE,
 		BEIGE,
@@ -382,6 +429,8 @@ namespace colors
 		WHEAT,
 		CORN_SILK,
 		LEMON_CHIFFON,
+		LIGHT_GOLD_ROD,
+		LIGHT_YELLOW,
 		SADDLE_BROWN,
 		SIENNA,
 		CHOCOLATE,
@@ -392,21 +441,24 @@ namespace colors
 		ROSY_BROWN,
 		MOCCASIN,
 		NAVAJO_WHITE,
-		REACH_PUFF,
+		PEACH_PUFF,
 		MISTY_ROSE,
 		LAVENDER_BLUSH,
 		LINEN,
 		OLD_LACE,
 		PAPAYA_WHIP,
 		SEA_SHELL,
-		MINT_GREEN,
+		MINT_CREAM,
+		SLATE_GRAY,
+		LIGHT_SLATE_GRAY,
+		LIGHT_STEEL_BLUE,
 		LAVENDER,
 		FLORAL_WHITE,
 		ALICE_BLUE,
 		GHOST_WHITE,
 		HONEY_DEW,
 		IVORY,
-		AURE,
+		AZURE,
 		SNOW,
 	};
 }}
@@ -438,7 +490,7 @@ class ColorWindow : public OverlappedWindow
 	}
 };
 
-class BlockColortWindow : public ColorWindow
+class BlockColorWindow : public ColorWindow
 {
 	ProcessStatus handleResize( const Size & ) override
 	{
@@ -469,7 +521,7 @@ class BlockColortWindow : public ColorWindow
 		return psPROCESSED;
 	}
 	public:
-	BlockColortWindow(BasicWindow *owner) : ColorWindow(owner)
+	BlockColorWindow(BasicWindow *owner) : ColorWindow(owner)
 	{
 	}
 };
@@ -504,16 +556,25 @@ class ColorGradientWindow : public ColorWindow
 					BGRA(0, 0, 255),
 
 					BGRA(plane, plane, 0),
+					BGRA(255, 255, 0),
 					BGRA(plane, 0, plane),
+					BGRA(255, 0, 255),
 					BGRA(0, plane, plane),
+					BGRA(0, 255, 255),
 
 					BGRA(plane, plane2, plane2),
+					BGRA(255, 127, 127),
 					BGRA(plane2, plane, plane2),
+					BGRA(127, 255, 127),
 					BGRA(plane2, plane2, plane),
+					BGRA(127, 127, 255),
 
 					BGRA(plane, plane, plane2),
+					BGRA(255, 255, 127),
 					BGRA(plane, plane2, plane),
+					BGRA(255, 127, 255),
 					BGRA(plane2, plane, plane),
+					BGRA(127, 255, 255),
 
 					BGRA(plane, plane, plane),
 				};
@@ -1033,8 +1094,8 @@ CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, int /* n
 	testOverLapped->setText( "My ColorGradientWindow");
 	testOverLapped->create( nullptr );
 
-	testOverLapped = new BlockColortWindow( newWindow );
-	testOverLapped->setText( "My BlockColortWindow");
+	testOverLapped = new BlockColorWindow( newWindow );
+	testOverLapped->setText( "My BlockColorWindow");
 	testOverLapped->create( nullptr );
 
 	return newWindow;
