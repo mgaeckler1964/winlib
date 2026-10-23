@@ -99,6 +99,47 @@ namespace winlib
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+enum _BackgroundMode
+{
+	bmUNKNOWN = -1,
+	bmTRANSPARENT = TRANSPARENT,
+	bmOPAQUE = OPAQUE,
+};
+typedef EnumWrapper<_BackgroundMode, bmOPAQUE>	BackgroundMode;
+
+enum _DrawMode
+{
+	dmUNKNOWN		= -1,
+	dmERROR			= 0,
+	dmBLACK			= R2_BLACK,			/*  0       */
+	dmNOTMERGEPEN	= R2_NOTMERGEPEN,	/* DPon     */
+	dmMASKNOTPEN	= R2_MASKNOTPEN,	/* DPna     */
+	dmNOTCOPYPEN	= R2_NOTCOPYPEN,	/* PN       */
+	dmMASKPENNOT	= R2_MASKPENNOT,	/* PDna     */
+	dmNOT			= R2_NOT,			/* Dn       */
+	dmXORPEN		= R2_XORPEN,		/* DPx      */
+	dmNOTMASKPEN	= R2_NOTMASKPEN,	/* DPan     */
+	dmMASKPEN		= R2_MASKPEN,		/* DPa      */
+	dmNOTXORPEN		= R2_NOTXORPEN,		/* DPxn     */
+	dmNOP			= R2_NOP,			/* D        */
+	dmMERGENOTPEN	= R2_MERGENOTPEN,	/* DPno     */
+	dmCOPYPEN		= R2_COPYPEN,		/* P        */
+	dmMERGEPENNOT	= R2_MERGEPENNOT,	/* PDno     */
+	dmMERGEPEN		= R2_MERGEPEN,		/* DPo      */
+	dmWHITE			= R2_WHITE,			/*  1       */
+	dmLAST			= R2_LAST
+};
+typedef EnumWrapper<_DrawMode, dmUNKNOWN>	DrawMode;
+
+enum _PolygonFillMode
+{
+	pfmUNKNOWN = -1,
+	pfmERROR = 0, 
+	pfmALTERNATE = ALTERNATE,
+	pfmWINDING = WINDING
+};
+typedef EnumWrapper<_PolygonFillMode, pfmUNKNOWN>	PolygonFillMode;
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -329,13 +370,13 @@ class Device : public gak::CopyProtection
 		the background color for the gap in doted or dashed lines and TextOut
 		It is NOT used for Eclipse, Pie, Rectangle and PolyLine
 	*/
-	Device &setBackgroundColor( COLORREF color, int mode = OPAQUE )
+	Device &setBackgroundColor( COLORREF color, BackgroundMode mode = bmOPAQUE )
 	{
-		SetBkMode( m_device,  mode );
+		SetBkMode( m_device,  mode.get() );
 		SetBkColor( m_device, color );
 		return *this;
 	}
-	Device &setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
+	Device &setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, BackgroundMode mode = bmOPAQUE )
 	{
 		setBackgroundColor( RGB( red, green, blue ), mode );
 		return *this;
@@ -498,9 +539,14 @@ class Device : public gak::CopyProtection
 	/*
 		draw modes
 	*/
-	int setROP2( int drawMode ) const
+	DrawMode setDrawMode( DrawMode drawMode ) const
 	{
-		return SetROP2( m_device, drawMode );
+		return DrawMode(SetROP2( m_device, drawMode.get() ));
+	}
+
+	PolygonFillMode setPolygonFillMode( PolygonFillMode fillMode ) const
+	{
+		return PolygonFillMode(SetPolyFillMode( m_device, fillMode.get() ));
 	}
 
 	Device &setTextAlignment( HorizontalAlignment ha, VerticalAlignment va )

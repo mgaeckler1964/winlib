@@ -266,11 +266,11 @@ void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const TheCell &c
 			textRect.right = textRect.left + m_caretOffsetPixel;
 			textRect.left += size.width;
 		}
-		hDC.setROP2( R2_NOT );
+		hDC.setDrawMode( dmNOT );
 		hDC.getBrush().createSyscolor( scSELECTION );
 		hDC.getPen().setStyle( Pen::psNull );
 		hDC.drawRectangle( textRect );
-		hDC.setROP2( R2_COPYPEN );
+		hDC.setDrawMode( dmCOPYPEN );
 	}
 }
 

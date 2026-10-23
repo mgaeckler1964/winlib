@@ -91,13 +91,13 @@ namespace winlib
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
-template < typename enumT >
+template < typename enumT, enumT defVal=enumT() >
 class EnumWrapper
 {
 	enumT m_val;
 
 	public:
-	EnumWrapper( enumT val ) : m_val(val) {}
+	EnumWrapper( enumT val=defVal ) : m_val(val) {}
 	explicit EnumWrapper( int val ) : m_val(enumT(val)) {}
 	bool operator == ( enumT val ) const
 	{
@@ -106,6 +106,14 @@ class EnumWrapper
 	bool operator != ( enumT val ) const
 	{
 		return m_val != val;
+	}
+	bool operator == ( EnumWrapper val ) const
+	{
+		return m_val == val.m_val;
+	}
+	bool operator != ( EnumWrapper val ) const
+	{
+		return m_val != val.m_val;
 	}
 	enumT get() const
 	{

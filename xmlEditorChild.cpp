@@ -247,14 +247,14 @@ void XMLeditorChild::drawCursor( Device &context )
 		const internal::XML_LINE_CHUNK	&theChunk = theLine.m_theLine[m_cursorPos.getChunk()];
 
 		context.getPen().selectPen( Pen::spBlack );
-		int old = context.setROP2( R2_NOT );
+		DrawMode	old = context.setDrawMode( dmNOT );
 
 		context.verticalLine(
 			theChunk.getPosition().x-m_horizOffset+m_cursorPos.getHorizOffset(),
 			theChunk.getPosition().y-m_vertOffset,
 			theChunk.getPosition().y+theLine.m_lineHeight-m_vertOffset
 		);
-		context.setROP2( old );
+		context.setDrawMode( old );
 	}
 }
 
