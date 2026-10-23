@@ -148,7 +148,7 @@ class TestPopup : public PopupWindow
 		unsigned char blue = (unsigned char)randomNumber( 255 );
 
 		hDC.getBrush().create( red, green, blue );
-		hDC.rectangle( 0, 0, size.width, size.height );
+		hDC.drawRectangle( 0, 0, size.width, size.height );
 		//hDC.pie(size.width/2, size.height/2, size.height/2, -1, 0 );
 
 	}
@@ -511,10 +511,9 @@ class BlockColorWindow : public ColorWindow
 			{
 				hDC.getPen().selectPen(Pen::spNull);
 				hDC.getBrush().create( winlib::colors::s_colors[colIndex] );
-				//hDC.setBackgroundColor(winlib::colors::s_colors[colIndex]);
 				const int pixX = x*rectSize.width;
 				const int pixY = y*rectSize.height;
-				hDC.rectangle(pixX, pixY, pixX+rectSize.width+2, pixY+rectSize.height+1 );
+				hDC.drawRectangle(pixX, pixY, pixX+rectSize.width+2, pixY+rectSize.height+1 );
 			}
 		}
 
@@ -698,7 +697,6 @@ class BitmapWindow : public OverlappedWindow
 	{
 		static size_t			s_count = 0;
 		static gak::StopWatch	s_sw(true);
-		
 
 		MemoryDevice	mem( hDC, getClientSize() );
 
@@ -732,7 +730,9 @@ class BitmapWindow : public OverlappedWindow
 		}
 
 		mem.getBrush().create( colors::AQUA_MARINE );
-		mem.pie( mem.getSize().width/2, mem.getSize().height/2, 100, 0, M_PI );
+		mem.getPen().create(Pen::psDot, 1, colors::MAGENTA );
+		mem.setBackgroundColor( colors::YELLOW_GREEN );
+		mem.pie( mem.getSize().width/2, mem.getSize().height/2, 100, M_PI/4, M_PI/2 );
 
 		char text[] = "Hello World";
 //		mem.getFont().setDirection( 0 ).create();
@@ -769,7 +769,7 @@ class TestApp : Application
 {
 	bool startApplication( HINSTANCE hInstance, const char *cmdLine ) override;
 
-	CallbackWindow  *createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ ) override;
+	CallbackWindow  *createMainWindow( const char *cmdLine, ShowWindowMode nCmdShow ) override;
 	void deleteMainWindow( BasicWindow  *mainWindow ) override;
 };
 
@@ -908,7 +908,7 @@ class MyOleDocument : public OleBaseDocument
 		// Hintergrund weiß füllen (oder Rectangle zeichnen, um Grenzen zu definieren)
 		Brush hBrush;
 		hBrush.create(colors::WHITE);
-		hMetaDC.rectangle(rect, hBrush);
+		hMetaDC.fillRectangle(rect, hBrush);
 
 		int fontSize = 30, fontWeight = FW_BOLD;
 		if( m_currentText.size() > 25 )
@@ -1081,7 +1081,7 @@ bool TestApp::startApplication( HINSTANCE , const char * )
 	return 0;
 }
 
-CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, int /* nCmdShow */ )
+CallbackWindow  *TestApp::createMainWindow( const char * /* cmdLine */, ShowWindowMode /* nCmdShow */ )
 {
 	TestPopup	*newWindow = new TestPopup;
 	newWindow->create();

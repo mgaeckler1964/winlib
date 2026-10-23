@@ -2865,7 +2865,7 @@ void XML_VIEWER_BOX::drawLine(
 		}
 		context.getBrush().create( color.red, color.green, color.blue );
 		context.getPen().selectPen( Pen::spNull );
-		context.rectangle(
+		context.drawRectangle(
 			theLine.m_position.x-horizOffset,
 			theLine.m_position.y-vertOffset,
 			theLine.m_position.x-horizOffset+theLine.m_maxWidth+1,
@@ -2938,7 +2938,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 		{
 			context.getPen().selectPen( Pen::spNull );
 			context.getBrush().create( color.red, color.green, color.blue );
-			context.rectangle(
+			context.drawRectangle(
 				borderLeft-horizOffset, borderTop-vertOffset,
 				borderRight-horizOffset+1, borderBottom-vertOffset+1
 			);
@@ -3029,7 +3029,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 					context.getPen().setStyle( Pen::psSolid, true );
 
 					context.getBrush().selectBrush( Brush::sbNull );
-					context.rectangle( left-16-horizOffset, top-vertOffset, left-8-horizOffset, top+8-vertOffset );
+					context.drawRectangle( left-16-horizOffset, top-vertOffset, left-8-horizOffset, top+8-vertOffset );
 				}
 			}
 			else
@@ -3097,7 +3097,7 @@ void XML_VIEWER_BOX::draw( Device &context, XMLeditorChild *xmlEditorWindow )
 	{
 		context.getBrush().selectBrush( Brush::sbNull );
 		context.getPen().selectPen( Pen::spBlack );
-		context.rectangle(
+		context.drawRectangle(
 			left-horizOffset, top-vertOffset,
 			right-horizOffset, bottom-vertOffset
 		);

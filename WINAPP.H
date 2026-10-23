@@ -88,6 +88,53 @@ namespace winlib
 {
 
 // --------------------------------------------------------------------- //
+// ----- type definitions ---------------------------------------------- //
+// --------------------------------------------------------------------- //
+
+template < typename enumT >
+class EnumWrapper
+{
+	enumT m_val;
+
+	public:
+	EnumWrapper( enumT val ) : m_val(val) {}
+	explicit EnumWrapper( int val ) : m_val(enumT(val)) {}
+	bool operator == ( enumT val ) const
+	{
+		return m_val == val;
+	}
+	bool operator != ( enumT val ) const
+	{
+		return m_val != val;
+	}
+	enumT get() const
+	{
+		return m_val;
+	}
+};
+enum _SuccessCode { scSUCCESS, scERROR };
+typedef EnumWrapper<_SuccessCode>	SuccessCode;
+
+enum _ShowWindowMode {
+	swHIDE = SW_HIDE,
+	swSHOWNORMAL=SW_SHOWNORMAL,
+	swNORMAL=SW_NORMAL,
+	swSHOWMINIMIZED=SW_SHOWMINIMIZED,
+	swSHOWMAXIMIZED=SW_SHOWMAXIMIZED,
+	swMAXIMIZE=SW_MAXIMIZE,
+	swSHOWNOACTIVATE=SW_SHOWNOACTIVATE,
+	swSHOW=SW_SHOW,
+	swMINIMIZE=SW_MINIMIZE,
+	swSHOWMINNOACTIVE=SW_SHOWMINNOACTIVE,
+	swSHOWNA=SW_SHOWNA,
+	swRESTORE=SW_RESTORE,
+	swSHOWDEFAULT=SW_SHOWDEFAULT,
+	swFORCEMINIMIZE=SW_FORCEMINIMIZE,
+	swMAX=SW_MAX
+};
+typedef EnumWrapper<_ShowWindowMode>	ShowWindowMode;
+
+// --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
 
@@ -180,10 +227,10 @@ class Application
 		return getResource( gak::formatNumber( id ), STRING_TAG, ID_ATTR );
 	}
 
-	virtual CallbackWindow  *createMainWindow( const char *cmdLine, int nCmdShow );
+	virtual CallbackWindow  *createMainWindow( const char *cmdLine, ShowWindowMode nCmdShow );
 	virtual void deleteMainWindow( BasicWindow  *mainWindow );
 
-	virtual int AppMain( HINSTANCE hInstance, const char *cmdLine, int nCmdShow );
+	virtual int AppMain( HINSTANCE hInstance, const char *cmdLine, ShowWindowMode nCmdShow );
 
 	static void setInstance( HINSTANCE theInst )
 	{

@@ -1034,13 +1034,13 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 		{
 			hDC.getPen().selectPen( Pen::spBlack );
 			hDC.getBrush().selectBrush( Brush::sbNull );
-			hDC.rectangle( 0, 0, childRect.width, childRect.height );
+			hDC.drawRectangle( 0, 0, childRect.width, childRect.height );
 		
 			hDC.getBrush().selectBrush( Brush::sbBlack );
-			hDC.rectangle( 0, 0, s_handleSize, s_handleSize );
-			hDC.rectangle( childRect.width-s_handleSize, 0, childRect.width, s_handleSize );
-			hDC.rectangle( childRect.width-s_handleSize, childRect.height-s_handleSize, childRect.width, childRect.height );
-			hDC.rectangle( 0, childRect.height-s_handleSize, s_handleSize, childRect.height );
+			hDC.drawRectangle( 0, 0, s_handleSize, s_handleSize );
+			hDC.drawRectangle( childRect.width-s_handleSize, 0, childRect.width, s_handleSize );
+			hDC.drawRectangle( childRect.width-s_handleSize, childRect.height-s_handleSize, childRect.width, childRect.height );
+			hDC.drawRectangle( 0, childRect.height-s_handleSize, s_handleSize, childRect.height );
 		}
 
 		CallbackWindow *callbackWindow = dynamic_cast<CallbackWindow *>(control);

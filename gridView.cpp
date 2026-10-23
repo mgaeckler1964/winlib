@@ -269,7 +269,7 @@ void GridViewer::drawCell( Device &hDC, const RectBorder &rect, const TheCell &c
 		hDC.setROP2( R2_NOT );
 		hDC.getBrush().createSyscolor( scSELECTION );
 		hDC.getPen().setStyle( Pen::psNull );
-		hDC.rectangle( textRect );
+		hDC.drawRectangle( textRect );
 		hDC.setROP2( R2_COPYPEN );
 	}
 }
@@ -280,7 +280,7 @@ void GridViewer::drawEditCell( Device &hDC, const RectBorder &rect )
 
 	hDC.getBrush().createSyscolor( scWINDOW_FACE );
 	hDC.getPen().setStyle( Pen::psSolid ).setWidth( 1 );
-	hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
+	hDC.drawRectangle( rect.left, rect.top, rect.right, rect.bottom );
 
 	hideCaret();
 	drawCell( hDC, rect, *m_editCell, m_editOffset );
@@ -716,13 +716,13 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 
 							hDC.getBrush().createSyscolor( scDIALOG_FACE );
 							hDC.getPen().setStyle( Pen::psNull );
-							hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
+							hDC.drawRectangle( rect.left, rect.top, rect.right, rect.bottom );
 						}
 						else if( cellData.attribute.backgroundColor > 0 )
 						{
 							hDC.getBrush().create( cellData.attribute.backgroundColor );
 							hDC.getPen().setStyle( Pen::psNull );
-							hDC.rectangle( rect.left, rect.top, rect.right, rect.bottom );
+							hDC.drawRectangle( rect.left, rect.top, rect.right, rect.bottom );
 						}
 						else
 						{

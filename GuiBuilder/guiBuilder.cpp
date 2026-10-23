@@ -84,7 +84,7 @@ using namespace winlib;
 class GuiBuilderApplication : public Application
 {
 	bool startApplication( HINSTANCE hInstance, const char *cmdLine ) override;
-	CallbackWindow  *createMainWindow( const char *cmdLine, int nCmdShow ) override;
+	CallbackWindow  *createMainWindow( const char *cmdLine, ShowWindowMode nCmdShow ) override;
 	void deleteMainWindow( BasicWindow  *mainWindow ) override;
 
 	public:
@@ -154,7 +154,7 @@ bool GuiBuilderApplication::startApplication( HINSTANCE hInstance, const char *c
 	return Application::startApplication( hInstance, cmdLine );
 }
 
-CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *cmdLine, int  )
+CallbackWindow  *GuiBuilderApplication::createMainWindow( const char *cmdLine, ShowWindowMode  )
 {
 	//doEnableLogEx(gakLogging::llError);
 	doEnterFunctionEx(gakLogging::llInfo, "GuiBuilderApplication::createMainWindow");

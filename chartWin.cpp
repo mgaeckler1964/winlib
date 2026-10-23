@@ -166,7 +166,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 
 		hDC.getPen().create(Pen::psNull, 0, 0);
 		hDC.getBrush().create(it->color);
-		hDC.rectangle(left,top,right,bottom);
+		hDC.drawRectangle(left,top,right,bottom);
 
 		const STRING value = gak::formatNumber(it->value);
 		Size textSize;

@@ -421,7 +421,7 @@ bool Application::startApplication( HINSTANCE, const char * )
 	return false;
 }
 
-CallbackWindow *Application::createMainWindow( const char *, int )
+CallbackWindow *Application::createMainWindow( const char *, ShowWindowMode )
 {
 	return nullptr;
 }
@@ -430,7 +430,7 @@ void Application::deleteMainWindow( BasicWindow * )
 {
 }
 
-int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, int nCmdShow )
+int Application::AppMain( HINSTANCE hInstance, const char * cmdLine, ShowWindowMode nCmdShow )
 {
 	doEnterFunctionEx(gakLogging::llInfo, "Application::AppMain");
 
@@ -708,7 +708,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 		if( appObject )
 		{
 			Application::setInstance( hInstance );
-			result = appObject->AppMain( hInstance, cmdLine, nCmdShow );
+			result = appObject->AppMain( hInstance, cmdLine, ShowWindowMode(nCmdShow) );
 		}
 	}
 	catch( std::exception &e )

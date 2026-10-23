@@ -247,6 +247,7 @@ class Device : public gak::CopyProtection
 
 	/*
 		brush
+		A brush is used to fill any shapes
 	*/
 	void selectBrush( const Brush &brush )
 	{
@@ -260,6 +261,7 @@ class Device : public gak::CopyProtection
 
 	/*
 		pen
+		A brush is used to draw lines and any shapes
 	*/
 	void selectPen( const Pen &pen )
 	{
@@ -273,8 +275,8 @@ class Device : public gak::CopyProtection
 
 	/*
 		font
+		A brush is used to draw text
 	*/
-
 	Device &selectFont()
 	{
 		if( !m_font.isAssigned() )
@@ -286,32 +288,6 @@ class Device : public gak::CopyProtection
 		m_font = newFont;
 		m_font.connect( m_device );
 		selectFont();
-		return *this;
-	}
-	Device &setTextColor( COLORREF color )
-	{
-		SetTextColor( m_device, color ); 
-		return *this;
-	}
-	Device &setTextColor( unsigned char red, unsigned char green, unsigned char blue )
-	{
-		setTextColor( RGB( red, green, blue ) ); 
-		return *this;
-	}
-	Device &setBackgroundColor( COLORREF color, int mode = OPAQUE )
-	{
-		SetBkMode( m_device,  mode );
-		SetBkColor( m_device, color );
-		return *this;
-	}
-	Device &setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
-	{
-		setBackgroundColor( RGB( red, green, blue ), mode );
-		return *this;
-	}
-	Device &clrBackgroundColor()
-	{
-		SetBkMode( m_device, TRANSPARENT );
 		return *this;
 	}
 	const Font &getFont() const
@@ -338,28 +314,44 @@ class Device : public gak::CopyProtection
 		return SetTextCharacterExtra( m_device, letterSpace );
 	}
 
-	/*
-		paint operations
-	*/
-	void polyline( const Point *points, int cnt ) const
+	Device &setTextColor( COLORREF color )
 	{
-		Polyline( m_device, points, cnt );
+		SetTextColor( m_device, color ); 
+		return *this;
 	}
-	template <typename ContainerT>
-	void polyline( const ContainerT &points ) const
+	Device &setTextColor( unsigned char red, unsigned char green, unsigned char blue )
 	{
-		polyline( points.getDataBuffer(), int(points.size()) );
-	}
-	void polygon( const Point *points, int cnt ) const
-	{
-		Polygon( m_device, points, cnt );
-	}
-	template <typename ContainerT>
-	void polygon( const ContainerT &points ) const
-	{
-		polygon( points.getDataBuffer(), int(points.size()) );
+		setTextColor( RGB( red, green, blue ) ); 
+		return *this;
 	}
 
+	/*
+		the background color for the gap in doted or dashed lines and TextOut
+		It is NOT used for Eclipse, Pie, Rectangle and PolyLine
+	*/
+	Device &setBackgroundColor( COLORREF color, int mode = OPAQUE )
+	{
+		SetBkMode( m_device,  mode );
+		SetBkColor( m_device, color );
+		return *this;
+	}
+	Device &setBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, int mode = OPAQUE )
+	{
+		setBackgroundColor( RGB( red, green, blue ), mode );
+		return *this;
+	}
+	Device &clrBackgroundColor()
+	{
+		SetBkMode( m_device, TRANSPARENT );
+		return *this;
+	}
+
+	/*
+		paint operations
+		================
+	*/
+	// Lines ( not filled )
+	// --------------------
 	void lineTo( int x, int y ) const
 	{
 		LineTo( m_device, x, y );
@@ -389,6 +381,31 @@ class Device : public gak::CopyProtection
 		lineTo( x2, y );
 	}
 
+	// a PollyLine
+	void polyline( const Point *points, int cnt ) const
+	{
+		Polyline( m_device, points, cnt );
+	}
+	template <typename ContainerT>
+	void polyline( const ContainerT &points ) const
+	{
+		polyline( points.getDataBuffer(), int(points.size()) );
+	}
+
+
+	// Shapes ( filled with current brush)
+	// -----------------------------------
+	// a filled PollyLine with the current brush
+	void polygon( const Point *points, int cnt ) const
+	{
+		Polygon( m_device, points, cnt );
+	}
+	template <typename ContainerT>
+	void polygon( const ContainerT &points ) const
+	{
+		polygon( points.getDataBuffer(), int(points.size()) );
+	}
+
 	void ellipse( int left, int top, int right, int bottom ) const
 	{
 		Ellipse( m_device, left, top, right, bottom );
@@ -409,19 +426,29 @@ class Device : public gak::CopyProtection
 		pie(center.x, center.y, radius, startAngle, endAngle );
 	}
 
-	void rectangle( int left, int top, int right, int bottom ) const
+	void drawRectangle( int left, int top, int right, int bottom ) const
 	{
 		Rectangle( m_device, left, top, right, bottom );
 	}
-	void rectangle( const RectBorder &rect ) const
+	void drawRectangle( const RectBorder &rect ) const
 	{
 		Rectangle( m_device, rect.left, rect.top, rect.right, rect.bottom );
 	}
-	void rectangle( const RectBorder &rect, Brush &brush ) const
+	void roundRectangle( int left, int top, int right, int bottom, int width, int height ) const
+	{
+		RoundRect( m_device, left, top, right, bottom, width, height );
+	}
+	void roundRectangle( const RectBorder &rect, int width, int height ) const
+	{
+		RoundRect( m_device, rect.left, rect.top, rect.right, rect.bottom, width, height );
+	}
+	void fillRectangle( const RectBorder &rect, Brush &brush ) const
 	{
 		FillRect( m_device, &rect, brush );
 	}
 
+	//	text output
+	//	-----------
 	template <typename STRING_T>
 	void textOut( int x, int y, STRING_T &text )
 	{

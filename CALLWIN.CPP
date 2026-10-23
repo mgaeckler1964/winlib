@@ -991,7 +991,7 @@ ProcessStatus CallbackWindow::handleErase( Device &hDC )
 		Size	size = getClientSize();
 		hDC.getPen().selectPen( Pen::spNull );
 		hDC.selectBrush( background );
-		hDC.rectangle( 0, 0, size.width+1, size.height+1 );
+		hDC.drawRectangle( 0, 0, size.width+1, size.height+1 );
 		return psPROCESSED;
 	}
 	return psDO_DEFAULT;
