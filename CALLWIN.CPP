@@ -974,8 +974,7 @@ ProcessStatus CallbackWindow::handleResize( const Size &newSize )
 {
 	doLayout( newSize );
 
-//	return psDO_DEFAULT; 
-	return psPROCESSED;
+	return psDO_DEFAULT;	// for MDI Document Windows
 }
 
 ProcessStatus CallbackWindow::handleExitSizeMove()
