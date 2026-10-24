@@ -86,6 +86,60 @@ inline gak::STRING loadString( int id )
 // ----- type definitions ---------------------------------------------- //
 // --------------------------------------------------------------------- //
 
+enum MessageBoxButtons
+{
+	mbbOK					= MB_OK,				// 0x00000000L
+	mbbOkCancel				= MB_OKCANCEL,			// 0x00000001L
+	mbbAbortRetryIgnore		= MB_ABORTRETRYIGNORE,	// 0x00000002L
+	mbbYesNoCancel			= MB_YESNOCANCEL,		// 0x00000003L
+	mbbYesNo				= MB_YESNO,				// 0x00000004L
+	mbbRetryCancel			= MB_RETRYCANCEL,		// 0x00000005L
+	mbbCancelTryContinue	= MB_CANCELTRYCONTINUE	// 0x00000006L
+};
+
+enum MessageBoxIcons
+{
+	mbiNONE			= 0,
+	mbiSTOP			= MB_ICONSTOP,					// 0x00000010L
+	mbiQUESTION		= MB_ICONQUESTION,				// 0x00000020L
+	mbiWARNING		= MB_ICONWARNING,				// 0x00000030L
+	mbiINFORMATION	= MB_ICONINFORMATION,			// 0x00000040L
+	mbiUSERICON		= MB_USERICON					// 0x00000080L
+};
+
+enum MessageBoxDefault
+{
+	mbdButton1 = MB_DEFBUTTON1,						// 0x00000000L
+	mbdButton2 = MB_DEFBUTTON2,						// 0x00000100L
+	mbdButton3 = MB_DEFBUTTON3,						// 0x00000200L
+	mbdButton4 = MB_DEFBUTTON4,						// 0x00000300L
+};
+
+enum MessageBoxModality
+{
+	mbmApplication	= MB_APPLMODAL,					// 0x00000000L
+	mbmSystem		= MB_SYSTEMMODAL,				// 0x00001000L
+	mbmTask			= MB_TASKMODAL,					// 0x00002000L
+};
+
+enum _MessageBoxResult
+{
+	mbrOK		= IDOK,					// 1
+	mbrCANCEL	= IDCANCEL,				// 2
+	mbrABORT	= IDABORT,				// 3
+	mbrRETRY	= IDRETRY,				// 4
+	mbrIGNORE	= IDIGNORE,				// 5
+	mbrYES		= IDYES,				// 6
+	mbrNO		= IDNO					// 7
+};
+typedef EnumWrapper<_MessageBoxResult>	MessageBoxResult;
+
+inline unsigned MessageBoxFlags( MessageBoxButtons buttons=mbbOK, MessageBoxIcons icons=mbiNONE, MessageBoxDefault defBtn=mbdButton1, MessageBoxModality modal=mbmApplication )
+{ 
+	return buttons | icons | defBtn | modal;
+}
+
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -259,15 +313,17 @@ class ForeignWindow
 	/*
 		message box
 	*/
-	int messageBox( const char	*text,
-					const char	*title=nullptr,
-					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
+	MessageBoxResult messageBox( 
+		const char	*text,
+		const char	*title=nullptr,
+		unsigned	type=MessageBoxFlags(mbbOK, mbiSTOP) ) const
 	{
-		return MessageBox( handle(), LPCSTR(text), LPCSTR(title), type );
+		return MessageBoxResult(MessageBox( handle(), LPCSTR(text), LPCSTR(title), type ));
 	}
-	int messageBox( int			textId,
-					int			titleId=0,
-					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
+	MessageBoxResult messageBox( 
+		int			textId,
+		int			titleId=0,
+		unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
 	{
 		gak::STRING	text = loadString( textId );
 
@@ -277,7 +333,7 @@ class ForeignWindow
 
 		return messageBox( text, title, type );
 	}
-	int messageBox( const char	*text,
+	MessageBoxResult messageBox( const char	*text,
 					int			titleId,
 					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
 	{
@@ -287,7 +343,7 @@ class ForeignWindow
 
 		return messageBox( text, title, type );
 	}
-	int messageBox( int			textId,
+	MessageBoxResult messageBox( int			textId,
 					const char	*title,
 					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
 	{
@@ -296,11 +352,11 @@ class ForeignWindow
 		if( !text.isEmpty() )
 			return messageBox( text, title, type );
 		else
-			return 0;
+			return MessageBoxResult(0);
 	}
 
 	template<typename TextT, typename TitleT>
-	int messageError( TextT text, TitleT title=0 ) const
+	MessageBoxResult messageError( TextT text, TitleT title=0 ) const
 	{
 		return messageBox( text, title, MB_APPLMODAL|MB_ICONERROR|MB_OK );
 	}

@@ -154,12 +154,13 @@ class TestPopup : public PopupWindow
 	}
 	ProcessStatus handleOk() override
 	{
+		if( messageBox( "Create new popups?", "Create new popups?", MessageBoxFlags(mbbYesNo, mbiQUESTION) ) != mbrYES )
+			return psPROCESSED;
 
 #ifndef __BORLANDC__
 		TestForm *testForm = new TestForm;
 		testForm->create(this);
 #endif
-
 		OverlappedWindow	*popup = new OverlappedWindow( nullptr );
 		Label *label = new Label( popup );
 		label->setText( "POPUP with WS_POPUP && CAPTION" );

@@ -916,12 +916,12 @@ bool GuiBuilderWindow::checkChangedFlag()
 {
 	if( m_changedFlag )
 	{
-		int buttonID = messageBox( "Document has changed. Do you want to save?", "MG GUI Builder", MB_ICONQUESTION|MB_YESNOCANCEL );
-		if( buttonID == IDCANCEL )
+		MessageBoxResult buttonID = messageBox( "Document has changed. Do you want to save?", "MG GUI Builder", MB_ICONQUESTION|MB_YESNOCANCEL );
+		if( buttonID == mbrCANCEL )
 		{
 			return false;
 		}
-		else if( buttonID == IDYES )
+		else if( buttonID == mbrYES )
 		{
 			return saveDocument();
 		}
