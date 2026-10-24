@@ -962,7 +962,7 @@ class MyOleDocument : public OleBaseDocument
 				// all GDI tasks must be finnished before creating the meta file
 				// => this is one BLOCK and all GDI Objects are destroyed
 				// WICHTIG: Dem OLE-Container mitteilen, welchen Bereich das Metafile einnimmt
-				hMetaDC.setMapMode(MM_ANISOTROPIC);
+				hMetaDC.setMapMode(mmANISOTROPIC);
 				hMetaDC.setWindowOrgEx( winlib::Point(0,0) );
 				hMetaDC.setWindowExtEx( Size(WIDTH, HEIGHT));
 

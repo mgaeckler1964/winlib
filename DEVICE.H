@@ -140,6 +140,21 @@ enum _PolygonFillMode
 };
 typedef EnumWrapper<_PolygonFillMode, pfmUNKNOWN>	PolygonFillMode;
 
+enum _MapMode
+{
+	mmUNKNOWN		= -1,
+	mmERROR			= 0, 
+	mmTEXT			= MM_TEXT,
+	mmLOMETRI		= MM_LOMETRIC,
+	mmHIMETRIC		= MM_HIMETRIC,
+	mmLOENGLISH		= MM_LOENGLISH,
+	mmHIENGLISH		= MM_HIENGLISH,
+	mmTWIPS			= MM_TWIPS,
+	mmISOTROPIC		= MM_ISOTROPIC,
+	mmANISOTROPIC	= MM_ANISOTROPIC
+};
+typedef EnumWrapper<_MapMode, mmUNKNOWN>	MapMode;
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -566,9 +581,9 @@ class Device : public gak::CopyProtection
 		SelectClipRgn( m_device, m_clipRegion.getHandle() );
 		return *this;
 	}
-	Device &setMapMode( int mode )
+	Device &setMapMode( MapMode mode )
 	{
-		SetMapMode(m_device, mode);
+		SetMapMode(m_device, mode.get());
 		return *this;
 	}
 

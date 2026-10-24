@@ -121,7 +121,7 @@ class Palette : public GdiObject<HPALETTE>
 
 	void init( size_t numColors )
 	{
-		clearPalette();
+		clear();
 		m_colors.resize(sizeof( LOGPALETTE ) + numColors * sizeof( PALETTEENTRY ));
 		m_colors->palVersion = 0x300;
 		m_colors->palNumEntries = WORD(numColors);
