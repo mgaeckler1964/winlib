@@ -154,7 +154,8 @@ class TestPopup : public PopupWindow
 	}
 	ProcessStatus handleOk() override
 	{
-		if( messageBox( "Create new popups?", "Create new popups?", MessageBoxFlags(mbbYesNo, mbiQUESTION) ) != mbrYES )
+		MessageBoxResult	ret = messageBox( "Create new popups?", "Create new popups?", MessageBoxFlags(mbbYesNo, mbiQUESTION) );
+		if( ret != mbrYES )
 			return psPROCESSED;
 
 #ifndef __BORLANDC__

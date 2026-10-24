@@ -123,7 +123,8 @@ class EnumWrapper
 enum _SuccessCode { scSUCCESS, scERROR };
 typedef EnumWrapper<_SuccessCode>	SuccessCode;
 
-enum _ShowWindowMode {
+enum _ShowWindowMode
+{
 	swHIDE = SW_HIDE,
 	swSHOWNORMAL=SW_SHOWNORMAL,
 	swNORMAL=SW_NORMAL,
@@ -235,7 +236,7 @@ class Application
 		return getResource( gak::formatNumber( id ), STRING_TAG, ID_ATTR );
 	}
 
-	virtual CallbackWindow  *createMainWindow( const char *cmdLine, ShowWindowMode nCmdShow );
+	virtual CallbackWindow *createMainWindow( const char *cmdLine, ShowWindowMode nCmdShow );
 	virtual void deleteMainWindow( BasicWindow  *mainWindow );
 
 	virtual int AppMain( HINSTANCE hInstance, const char *cmdLine, ShowWindowMode nCmdShow );

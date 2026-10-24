@@ -130,7 +130,9 @@ enum _MessageBoxResult
 	mbrRETRY	= IDRETRY,				// 4
 	mbrIGNORE	= IDIGNORE,				// 5
 	mbrYES		= IDYES,				// 6
-	mbrNO		= IDNO					// 7
+	mbrNO		= IDNO,					// 7
+	mbrTRYAGAIN = IDTRYAGAIN,			// 10
+	mbrCONTINUE	= IDCONTINUE			// 11
 };
 typedef EnumWrapper<_MessageBoxResult>	MessageBoxResult;
 
