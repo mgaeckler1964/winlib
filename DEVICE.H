@@ -155,6 +155,13 @@ enum _MapMode
 };
 typedef EnumWrapper<_MapMode, mmUNKNOWN>	MapMode;
 
+enum _DibColors
+{
+	dcPAL = DIB_PAL_COLORS,
+	dcRGB = DIB_RGB_COLORS
+};
+typedef EnumWrapper<_DibColors, dcPAL>	DibColors;
+
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
 // --------------------------------------------------------------------- //
@@ -611,13 +618,13 @@ public:
 	/*
 		bitmaps
 	*/
-	void setDIBits( const Bitmap &bitmap, unsigned uStartScan, unsigned numLines, void *data, unsigned color )
+	void setDIBits( const Bitmap &bitmap, unsigned uStartScan, unsigned numLines, void *data, DibColors color )
 	{
 		SetDIBits(
 			m_device, bitmap, 
 			uStartScan, numLines, 
 			data,
-			bitmap.getInfo(), color
+			bitmap.getInfo(), color.get()
 		);
 	}
 	void drawIcon( int x, int y, const Icon &icon )
@@ -658,23 +665,23 @@ public:
 	*/
 	int pointToPixel( int ptValue ) const
 	{
-		return MulDiv(ptValue, GetDeviceCaps(m_device, LOGPIXELSY), 72);
+		return MulDiv(ptValue, getyResolution(), 72);
 	}
 	int picaToPixel( int pcValue ) const
 	{
-		return MulDiv(pcValue, GetDeviceCaps(m_device, LOGPIXELSY), 6);
+		return MulDiv(pcValue, getyResolution(), 6);
 	}
 	int cmToPixel( int cmValue ) const
 	{
-		return MulDiv(cmValue, GetDeviceCaps(m_device, LOGPIXELSY)*100, 254);
+		return MulDiv(cmValue, getyResolution()*100, 254);
 	}
 	int mmToPixel( int mmValue ) const
 	{
-		return MulDiv(mmValue, GetDeviceCaps(m_device, LOGPIXELSY)*10, 254);
+		return MulDiv(mmValue, getyResolution()*10, 254);
 	}
 	int inToPixel( int inValue ) const
 	{
-		return inValue * GetDeviceCaps(m_device, LOGPIXELSY);
+		return inValue * getyResolution();
 	}
 
 	/*
@@ -682,23 +689,23 @@ public:
 	*/
 	int pointToPixel( double ptValue ) const
 	{
-		return int(ptValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 72.0 +0.5);
+		return gak::math::round<int>(ptValue * double(getyResolution()) / 72.0);
 	}
 	int picaToPixel( double pcValue ) const
 	{
-		return int(pcValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 6.0 +0.5);
+		return gak::math::round<int>(pcValue * double(getyResolution()) / 6.0);
 	}
 	int cmToPixel( double cmValue ) const
 	{
-		return int(cmValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 2.54 +0.5);
+		return gak::math::round<int>(cmValue * double(getyResolution()) / 2.54);
 	}
 	int mmToPixel( double mmValue ) const
 	{
-		return int(mmValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) / 25.4 +0.5);
+		return gak::math::round<int>(mmValue * double(getyResolution()) / 25.4);
 	}
 	int inToPixel( double inValue ) const
 	{
-		return int(inValue * double(GetDeviceCaps(m_device, LOGPIXELSY)) + 0.5);
+		return gak::math::round<int>(inValue * double(getyResolution()));
 	}
 
 
@@ -707,23 +714,23 @@ public:
 	*/
 	double pixelToPoint( int pxValue ) const
 	{
-		return (double)pxValue * 72.0 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
+		return (double)pxValue * 72.0 / (double)getyResolution();
 	}
 	double pixelToPica( int pxValue ) const
 	{
-		return (double)pxValue * 6.0 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
+		return (double)pxValue * 6.0 / (double)getyResolution();
 	}
 	double pixelToCM( int pxValue ) const
 	{
-		return (double)pxValue * 2.54 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
+		return (double)pxValue * 2.54 / (double)getyResolution();
 	}
 	double pixelToMM( int pxValue ) const
 	{
-		return (double)pxValue * 25.4 / (double)GetDeviceCaps(m_device, LOGPIXELSY);
+		return (double)pxValue * 25.4 / (double)getyResolution();
 	}
 	double pixelToIN( int pxValue ) const
 	{
-		return (double)pxValue / (double)GetDeviceCaps(m_device, LOGPIXELSY);
+		return (double)pxValue / (double)getyResolution();
 	}
 };
 
