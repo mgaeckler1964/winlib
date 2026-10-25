@@ -100,7 +100,7 @@ enum MessageBoxButtons
 enum MessageBoxIcons
 {
 	mbiNONE			= 0,
-	mbiSTOP			= MB_ICONSTOP,					// 0x00000010L
+	mbiERROR		= MB_ICONERROR,					// 0x00000010L
 	mbiQUESTION		= MB_ICONQUESTION,				// 0x00000020L
 	mbiWARNING		= MB_ICONWARNING,				// 0x00000030L
 	mbiINFORMATION	= MB_ICONINFORMATION,			// 0x00000040L
@@ -317,14 +317,14 @@ public:
 	MessageBoxResult messageBox( 
 		const char	*text,
 		const char	*title=nullptr,
-		unsigned	type=MessageBoxFlags(mbbOK, mbiSTOP) ) const
+		unsigned	type=MessageBoxFlags(mbbOK, mbiERROR) ) const
 	{
 		return MessageBoxResult(MessageBox( handle(), LPCSTR(text), LPCSTR(title), type ));
 	}
 	MessageBoxResult messageBox( 
 		int			textId,
 		int			titleId=0,
-		unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
+		unsigned	type=MessageBoxFlags(mbbOK, mbiERROR) ) const
 	{
 		gak::STRING	text = loadString( textId );
 
@@ -336,7 +336,7 @@ public:
 	}
 	MessageBoxResult messageBox( const char	*text,
 					int			titleId,
-					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
+					unsigned	type=MessageBoxFlags(mbbOK, mbiERROR) ) const
 	{
 		gak::STRING	title;
 		if( titleId )
@@ -346,7 +346,7 @@ public:
 	}
 	MessageBoxResult messageBox( int			textId,
 					const char	*title,
-					unsigned	type=MB_APPLMODAL|MB_ICONSTOP|MB_OK ) const
+					unsigned	type=MessageBoxFlags(mbbOK, mbiERROR) ) const
 	{
 		gak::STRING	text = loadString( textId );
 
@@ -359,7 +359,7 @@ public:
 	template<typename TextT, typename TitleT>
 	MessageBoxResult messageError( TextT text, TitleT title=0 ) const
 	{
-		return messageBox( text, title, MB_APPLMODAL|MB_ICONERROR|MB_OK );
+		return messageBox( text, title, MessageBoxFlags(mbbOK, mbiERROR) );
 	}
 
 	/*

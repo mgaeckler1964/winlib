@@ -1420,11 +1420,11 @@ extern "C" LRESULT PASCAL WindowProc(
 	}
 	catch( std::exception &e )
 	{
-		::MessageBox( nullptr, e.what(), "Error", MB_ICONERROR );
+		::MessageBox( nullptr, e.what(), "Error", mbiERROR );
 	}
 	catch( ... )
 	{
-		::MessageBox( nullptr, "Unknown error", "Error", MB_ICONERROR );
+		::MessageBox( nullptr, "Unknown error", "Error", mbiERROR );
 	}
 	return returnVal;
 }

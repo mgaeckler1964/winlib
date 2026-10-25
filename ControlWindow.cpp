@@ -893,7 +893,7 @@ size_t EDIT::searchText(
 	}
 	else
 	{
-		MessageBeep( MB_ICONASTERISK );
+		MessageBeep( mbiINFORMATION );
 	}
 	return findPos;
 }

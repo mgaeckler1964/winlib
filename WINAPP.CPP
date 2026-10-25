@@ -713,12 +713,12 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 	}
 	catch( std::exception &e )
 	{
-		MessageBox( nullptr, LPCSTR(e.what()), LPCSTR("Exception"), MB_ICONERROR );
+		MessageBox( nullptr, LPCSTR(e.what()), LPCSTR("Exception"), mbiERROR );
 		result = -1;
 	}
 	catch( ... )
 	{
-		MessageBox( nullptr, LPCSTR("Unknown error 8-("), LPCSTR("Exception"), MB_ICONERROR );
+		MessageBox( nullptr, LPCSTR("Unknown error 8-("), LPCSTR("Exception"), mbiERROR );
 		result = -2;
 	}
 	return result;

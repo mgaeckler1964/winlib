@@ -916,7 +916,7 @@ bool GuiBuilderWindow::checkChangedFlag()
 {
 	if( m_changedFlag )
 	{
-		MessageBoxResult buttonID = messageBox( "Document has changed. Do you want to save?", "MG GUI Builder", MB_ICONQUESTION|MB_YESNOCANCEL );
+		MessageBoxResult buttonID = messageBox( "Document has changed. Do you want to save?", "MG GUI Builder", MessageBoxFlags(mbbYesNoCancel,mbiQUESTION) );
 		if( buttonID == mbrCANCEL )
 		{
 			return false;
@@ -2712,7 +2712,7 @@ SuccessCode GuiBuilderWindow::create()
 {
 	if( !setMenu( MAIN_MENU_id ) )
 	{
-		messageBox( "Unable to load Menu", "Error", MB_ICONERROR );
+		messageBox( "Unable to load Menu", "Error", mbiERROR );
 /*@*/	return scERROR;
 	}
 
@@ -2845,7 +2845,7 @@ SuccessCode GuiBuilderWindow::create()
 		}
 		else
 		{
-			messageBox( "Unable to create scroller frame", "Error", MB_ICONERROR );
+			messageBox( "Unable to create scroller frame", "Error", mbiERROR );
 		}
 
 		if( (error=properties.create( &propertiesScroller )) == scSUCCESS )
@@ -2857,12 +2857,12 @@ SuccessCode GuiBuilderWindow::create()
 		}
 		else
 		{
-			messageBox( "Unable to create properties frame", "Error", MB_ICONERROR );
+			messageBox( "Unable to create properties frame", "Error", mbiERROR );
 		}
 	}
 	else
 	{
-		messageBox( "Unable to create main window", "Error", MB_ICONERROR );
+		messageBox( "Unable to create main window", "Error", mbiERROR );
 	}
 
 	return error;
