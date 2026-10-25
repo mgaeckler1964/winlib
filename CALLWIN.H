@@ -100,7 +100,7 @@ const int TOOL_WIN_TIMER_ID	=2;
 // --------------------------------------------------------------------- //
 
 enum _ProcessStatus { psPROCESSED, psDO_DEFAULT, psSEND_TO_PARENT, psPOST_TO_PARENT };
-typedef EnumWrapper<_ProcessStatus>	ProcessStatus;
+typedef EnumWrapper<_ProcessStatus, psPROCESSED>	ProcessStatus;
 
 enum HorizScrollCode 
 {
@@ -136,7 +136,7 @@ enum RightButton
 
 class ModifierFlags : public gak::Bitfield
 {
-	public:
+public:
 	enum ModifierBits
 	{
 		mbLeftMouseButton,		// = 0 0x01,
@@ -194,7 +194,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	friend class MDIchildWindow;
 
 	// data
-	private:
+private:
 
 	static HACCEL			s_hAccel;
 	static AcceleratorMap	s_accelerators;
@@ -225,10 +225,10 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	Size				m_clientSize;
 
-	protected:
+protected:
 	LRESULT				m_callBackValue;
 
-	protected:
+protected:
 	void watch()
 	{
 #ifndef NDEBUG
@@ -256,14 +256,14 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 
 	// creating and destroying
-	protected:
+protected:
 	CallbackWindow( BasicWindow *owner );
 	~CallbackWindow();
 
-	public:
+public:
 	static void registerSearchDialog( SearchDialog *newFindDialog );
 
-	protected:
+protected:
 	bool isShiftKey() const
 	{
 		return m_shiftKey;
@@ -285,11 +285,11 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		return bool(m_closed && m_destroyed);
 	}
 
-	public:
+public:
 	void adjustWindoRect();
 	void setClientSize( int width, int height );
 
-	protected:
+protected:
 	SuccessCode create( BasicWindow *parent, LPSTR lpParam=nullptr )
 	{
 		SuccessCode error = BasicWindow::create( parent, m_menu.get(), lpParam );
@@ -302,7 +302,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		return error;
 	}
 
-	public:
+public:
 	SuccessCode close() override;
 	void acceptFiles()
 	{
@@ -314,7 +314,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	}
 
 	// mouse capture
-	protected:
+protected:
 	void captureMouse()
 	{
 		if( !m_captureCount++ )
@@ -336,7 +336,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		===============================================================================================
 	*/
 	// WM_INITDIALOG and WM_CREATE
-	public:
+public:
 	virtual ProcessStatus handleCreate();
 	virtual void getControls();
 	// WM_CLOSE
@@ -393,9 +393,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 
 	// WM_DROPFILES
 	virtual void handleFile( const char *filename, size_t idx, size_t numFiles );
-	private:
+private:
 			void handleFiles( HDROP );
-	protected:
+protected:
 	// find & replace dialogs
 	virtual void handleFind( const char *, bool, bool, bool );
 	virtual void handleReplace(	const char *, const char *,
@@ -452,12 +452,12 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		message loop
 	*/
-	protected:
+protected:
 	void terminateLoop()
 	{
 		m_terminate = true;
 	}
-	public:
+public:
 	void mainLoop();
 	void exitApplication( int exitCode = 0 )
 	{
@@ -470,9 +470,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		control messages
 	*/
 #ifdef _MSC_VER
-	private:
+private:
 	LRESULT controlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam );
-	protected:
+protected:
 	virtual ProcessStatus preControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam );
 	virtual void postControlCallback( BasicWindow *control, unsigned uMsg, WPARAM wParam, LPARAM lParam );
 	void catchControl( BasicWindow *control )
@@ -483,7 +483,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	{
 		RemoveWindowSubclass( control->handle(), controlProcedure, UINT_PTR(control) );
 	}
-	public:
+public:
 #endif
 
 
@@ -519,9 +519,9 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		dialogs
 	*/
-	private:
+private:
 	bool isDialogMessage( MSG &msg );
-	public:
+public:
 	void allowDialogProcessing()
 	{
 		m_dialogProcessing = true;
@@ -557,7 +557,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		timer
 	*/
-	private:
+private:
 	void removeTimer( bool appTimer )
 	{
 		KillTimer( handle(), appTimer ? APPL_TIMER_ID : TOOL_WIN_TIMER_ID );
@@ -579,7 +579,7 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 		else 
 			removeTimer( appTimer );
 	}
-	public:
+public:
 	void createToolTimer()
 	{
 		createTimer( 3000, false );
@@ -607,10 +607,10 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		status bar
 	*/
-	private:
+private:
 	void resizeStatusBar( Size *mySize );
 
-	public:
+public:
 	void addStatusBar();
 	bool hasStatusBar() const
 	{
@@ -634,14 +634,14 @@ class CallbackWindow : public BasicWindow, public gak::ListEntry
 	/*
 		control windows
 	*/
-	private:
+private:
 	ProcessStatus checkControlColor( HWND handle, HDC device );
 
 
 	/*
 		children and layout manager
 	*/
-	public:
+public:
 	void setLayoutManager( LayoutManager *newLayoutManager )
 	{
 		m_layoutManager.reset( newLayoutManager );

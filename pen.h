@@ -115,7 +115,7 @@ class Pen : public GdiObject<HPEN>
 	{
 		memset( &m_logPen, 0, sizeof( m_logPen ) );
 	}
-	public:
+public:
 	Pen()
 	{
 		memset( &m_logPen, 0, sizeof( m_logPen ) );

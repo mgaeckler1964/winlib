@@ -137,7 +137,7 @@ class ChartChild : public ChildWindow
 {
 	static void registerClass();
 	STRING getWindowClassName() const override;
-	public:
+public:
 	static const char className[];
 
 	bool						m_useDemoData;

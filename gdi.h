@@ -104,7 +104,6 @@ enum SystemColor
 template <class GdiType> 
 class GdiHandle
 {
-	private:
 	GdiType		m_handle;
 
 	GdiHandle( const GdiHandle &src );
@@ -118,7 +117,7 @@ class GdiHandle
 			ret;			// to avoid warning in visual C++
 		}
 	}
-	public:
+public:
 	GdiHandle( const GdiType &newHandle = 0 )
 	{
 		m_handle = newHandle;
@@ -154,7 +153,7 @@ class GdiObjectHandle : public GdiHandle<GdiType>
 
 	size_t		m_usageCounter;
 
-	public:
+public:
 	GdiObjectHandle( const GdiType &newHandle ) : GdiHandle<GdiType>( newHandle )
 	{
 		m_usageCounter = 1;
@@ -187,7 +186,7 @@ class GdiObject
 		m_handle = newHandle;
 	}
 
-	protected:
+protected:
 	GdiObject( HDC newDevice = nullptr ) : m_handle(nullptr), m_deviceContext(newDevice), m_old(0) {}
 
 	GdiObject( GdiType newHandle ) 
@@ -249,7 +248,7 @@ class GdiObject
 		return m_handle ? m_handle->getHandle() : nullptr;
 	}
 
-	public:
+public:
 	void connect( HDC hDC )
 	{
 		m_deviceContext = hDC;

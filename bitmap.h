@@ -157,7 +157,7 @@ class Bitmap : public GdiObject<HBITMAP>
 		return *this;
 	}
 
-	protected:
+protected:
 	Bitmap &setSize( const Size &size )
 	{
 		m_size = size;
@@ -168,7 +168,7 @@ class Bitmap : public GdiObject<HBITMAP>
 		return m_bitmapInfo;
 	}
 
-	public:
+public:
 	Bitmap() 
 	{
 	}
@@ -251,7 +251,7 @@ class BGRA
 
 	_BGRA	m_pixel;
 
-	public:
+public:
 	BGRA( unsigned char blue, unsigned char green, unsigned char red, unsigned char alpha = 255 ) 
 		: m_pixel(DWORD(blue)|(DWORD(green)<<8)|(DWORD(red)<<16)|(DWORD(alpha)<<24))
 	{}
@@ -270,7 +270,7 @@ class DirectBitmap : public Bitmap
 {
 	BGRA::_BGRA	*m_pixelBuffer;
 
-	public:
+public:
 	DirectBitmap() : m_pixelBuffer(nullptr) {}
 
 

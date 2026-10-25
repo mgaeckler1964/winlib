@@ -96,7 +96,7 @@ class EnumWrapper
 {
 	enumT m_val;
 
-	public:
+public:
 	EnumWrapper( enumT val=defVal ) : m_val(val) {}
 	explicit EnumWrapper( int val ) : m_val(enumT(val)) {}
 	bool operator == ( enumT val ) const
@@ -121,7 +121,7 @@ class EnumWrapper
 	}
 };
 enum _SuccessCode { scSUCCESS, scERROR };
-typedef EnumWrapper<_SuccessCode>	SuccessCode;
+typedef EnumWrapper<_SuccessCode, scSUCCESS>	SuccessCode;
 
 enum _ShowWindowMode
 {
@@ -141,7 +141,7 @@ enum _ShowWindowMode
 	swFORCEMINIMIZE=SW_FORCEMINIMIZE,
 	swMAX=SW_MAX
 };
-typedef EnumWrapper<_ShowWindowMode>	ShowWindowMode;
+typedef EnumWrapper<_ShowWindowMode, swHIDE>	ShowWindowMode;
 
 // --------------------------------------------------------------------- //
 // ----- class definitions --------------------------------------------- //
@@ -178,16 +178,16 @@ class Application
 
 	gak::IntStrMap		m_resourceStrings;
 
-	private:
+private:
 	STRING getApplicationFromFile();
 
-	protected:
+protected:
 	Application( const char *iconName );
 
 	virtual bool 	startApplication( HINSTANCE hInstance, const char *cmdLine );
 
 
-	public:
+public:
 	Application( int iconID=-1 );
 	~Application();
 

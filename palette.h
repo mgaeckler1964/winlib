@@ -112,7 +112,7 @@ class Palette : public GdiObject<HPALETTE>
 		return getHandle();
 	}
 
-	public:
+public:
 	void clearPalette()
 	{
 		clear();

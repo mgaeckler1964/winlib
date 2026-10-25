@@ -164,14 +164,14 @@ typedef EnumWrapper<_MapMode, mmUNKNOWN>	MapMode;
 */
 class Device : public gak::CopyProtection
 {
-	public:
+public:
 	enum HorizontalAlignment{ haLeft = TA_LEFT, haCenter = TA_CENTER, haRight = TA_RIGHT };
 	enum VerticalAlignment{ vaTop = TA_TOP, vaBaseline = TA_BASELINE , vaBottom = TA_BOTTOM };
 
-	protected:
+protected:
 	HDC				m_device;
 
-	private:
+private:
 	Pen				m_pen;
 	Brush			m_brush;
 
@@ -180,7 +180,7 @@ class Device : public gak::CopyProtection
 
 	GdiHandle<HRGN>	m_clipRegion;
 
-	private:
+private:
 	void connect()
 	{
 		m_brush.connect( m_device );
@@ -188,7 +188,7 @@ class Device : public gak::CopyProtection
 		m_font.connect( m_device );
 	}
 
-	protected:
+protected:
 	/*
 		the device is used for drawing on a printer or memory device
 	*/
@@ -199,7 +199,7 @@ class Device : public gak::CopyProtection
 		setTextAlignment( haLeft, vaTop );
 	}
 
-	//public:
+//public:
 	friend class MemoryDevice;
 	friend class Bitmap;
 	operator HDC () const
@@ -207,7 +207,7 @@ class Device : public gak::CopyProtection
 		return m_device;
 	}
 
-	public:
+public:
 	~Device()
 	{
 		if( m_device )
@@ -732,7 +732,7 @@ class Device : public gak::CopyProtection
 */
 class WindowDevice : public Device
 {
-	protected:
+protected:
 	const BasicWindow *m_window;
 	WindowDevice( const BasicWindow *theWindow, HDC context ) 
 	: Device( context ), m_window( theWindow )
@@ -744,7 +744,7 @@ class WindowDevice : public Device
 */
 class DrawDevice : public WindowDevice
 {
-	public:
+public:
 	DrawDevice( const BasicWindow *theWindow ) 
 	: WindowDevice( theWindow, theWindow->getDC() )
 	{
@@ -766,7 +766,6 @@ class RepaintDevice : public WindowDevice
 
 	friend class CallbackWindow;
 
-	private:
 	RepaintDevice( const BasicWindow *theWindow ) 
 	: WindowDevice( theWindow, theWindow->beginPaint( &m_ps ) )
 	{}
@@ -782,7 +781,7 @@ class RepaintDevice : public WindowDevice
 */
 class BackgroundDevice : public WindowDevice
 {
-	public:
+public:
 	BackgroundDevice( const BasicWindow *theWindow, HDC context ) 
 	: WindowDevice( theWindow, context )
 	{}
@@ -800,7 +799,7 @@ class MemoryDevice : public Device
 	const Device	&m_target;
 	Bitmap			m_bitmap;
 
-	public:
+public:
 	MemoryDevice( const Device &target, const Size &size ) 
 	: Device( CreateCompatibleDC ( target ) ),
 	m_target( target ),
@@ -851,7 +850,7 @@ class MemoryDevice : public Device
 */
 class PrintDevice : public Device
 {
-	public:
+public:
 	PrintDevice( HDC context ) : Device( context ) {}
 
 	void startDocument( const char *file )	const
@@ -884,7 +883,7 @@ class PrintDevice : public Device
 class MetaDevice : public Device
 {
 	HMETAFILE		m_metaFile;
-	public:
+public:
 	MetaDevice( const char *fileName = nullptr ) : Device( CreateMetaFile( fileName ) )
 	{
 		m_metaFile = nullptr;
@@ -919,7 +918,7 @@ class MetaDevice : public Device
 class EnhMetaDevice : public Device
 {
 	HENHMETAFILE	m_metaFile;
-	public:
+public:
 	EnhMetaDevice( const char *fileName, const char *descr, const RectBorder *rect ) : Device( CreateEnhMetaFile( nullptr, fileName, rect, descr) )
 	{
 		m_metaFile = nullptr;

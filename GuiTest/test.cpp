@@ -97,7 +97,7 @@ static const int HEIGHT = 1000;
 class TestForm : public winlibGUI::TestFORM_form
 {
 	winlibGUI::SCROLLER_scroller	*scroller;
-	public:
+public:
 	TestForm() : winlibGUI::TestFORM_form(nullptr) {}
 	ProcessStatus handleCreate() override
 	{
@@ -245,7 +245,7 @@ class TestPopup : public PopupWindow
 	{
 		return psDO_DEFAULT;
 	}
-	public:
+public:
 	TestPopup() : PopupWindow(nullptr), myXmlChild(nullptr), myChartChild(nullptr), myPieChild(nullptr), myTabControl(nullptr) {}
 	void create()
 	{
@@ -467,7 +467,7 @@ namespace colors
 
 class ColorWindow : public OverlappedWindow
 {
-	ProcessStatus handleMouseMove( ModifierFlags , const Point &position ) override
+	ProcessStatus handleMouseMove( ModifierFlags , const winlib::Point &position ) override
 	{
 		DrawDevice	hDC(this);
 		COLORREF color = hDC.getPixel( position );
@@ -486,7 +486,7 @@ class ColorWindow : public OverlappedWindow
 		return psPROCESSED;
 	}
 
-	public:
+public:
 	ColorWindow(BasicWindow *owner) : OverlappedWindow(owner)
 	{
 	}
@@ -521,7 +521,7 @@ class BlockColorWindow : public ColorWindow
 
 		return psPROCESSED;
 	}
-	public:
+public:
 	BlockColorWindow(BasicWindow *owner) : ColorWindow(owner)
 	{
 	}
@@ -670,7 +670,7 @@ class BitmapWindow : public OverlappedWindow
 	Bitmap			m_bg, 
 					m_test;
 
-	public:
+public:
 	BitmapWindow(BasicWindow *owner) : OverlappedWindow(owner), m_icon(Application::loadIcon(TEST_ICON))
 	{
 		removeStyle(WS_THICKFRAME);
@@ -779,7 +779,7 @@ class MyOleDocument : public OleBaseDocument
 {
 	STRING				m_currentText;
 
-	public:
+public:
 	MyOleDocument( GUID guid ) : OleBaseDocument(guid), m_currentText( gak::DateTime().getOriginalTime() )
 	{
 	}

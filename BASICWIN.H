@@ -149,7 +149,6 @@ class FrameChild;
 
 class BasicWindow : public ForeignWindow, public gak::CopyProtection
 {
-	private:
 	const BasicWindow	*m_parent;
 
 	BasicWindow			*m_owner;
@@ -177,7 +176,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 		wsNew, wsInCreation, wsLoading, wsReady
 	} m_state;
 
-	public:
+public:
 	void setLoading()
 	{
 		m_state = wsLoading;
@@ -190,7 +189,8 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	{
 		return m_state == wsReady;
 	}
-	private:
+
+private:
 	void addWindow( BasicWindow *child )
 	{
 		m_ownedWindows += child;
@@ -224,7 +224,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 		}
 	}
 
-	public:
+public:
 	~BasicWindow();
 	BasicWindow( WindowClass_t windowType, BasicWindow *owner ) : ForeignWindow( windowType ), m_font( this )
 	{
@@ -244,7 +244,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	/*
 		creation
 	*/
-	protected:
+protected:
 
 	friend
 	#ifdef __WIN64__
@@ -305,7 +305,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 		return scERROR;
 	}
 
-	public:
+public:
 	template <class TForm> 
 	void setHandle( TForm *form )
 	{
@@ -391,12 +391,12 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	/*
 		hiararchy
 	*/
-	protected:
+protected:
 	void setParent( const BasicWindow *parent )
 	{
 		m_parent = parent;
 	}
-	public:
+public:
 	const BasicWindow *getParent() const
 	{
 		return m_parent;
@@ -452,14 +452,14 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	/*
 		Display Mode
 	*/
-	public:
+public:
 	enum _DisplayMode
 	{
 		dmMINIMIZED,
 		dmNORMAL,
 		dmMAXIMIZED
 	};
-	typedef EnumWrapper<_DisplayMode> DisplayMode;
+	typedef EnumWrapper<_DisplayMode, dmMINIMIZED> DisplayMode;
 	DisplayMode getDisplayMode(const Size *size = nullptr) const
 	{
 		Size mySize;;

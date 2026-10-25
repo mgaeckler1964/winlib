@@ -134,7 +134,7 @@ enum _MessageBoxResult
 	mbrTRYAGAIN = IDTRYAGAIN,			// 10
 	mbrCONTINUE	= IDCONTINUE			// 11
 };
-typedef EnumWrapper<_MessageBoxResult>	MessageBoxResult;
+typedef EnumWrapper<_MessageBoxResult, mbrOK>	MessageBoxResult;
 
 inline unsigned MessageBoxFlags( MessageBoxButtons buttons=mbbOK, MessageBoxIcons icons=mbiNONE, MessageBoxDefault defBtn=mbdButton1, MessageBoxModality modal=mbmApplication )
 { 
@@ -164,7 +164,6 @@ class ForeignWindow
 	/*
 		device contexts
 	*/
-	private:
 	friend class DrawDevice;
 	friend class RepaintDevice;
 	friend class Font;
@@ -187,7 +186,7 @@ class ForeignWindow
 	}
 
 	// (de)contructors
-	protected:
+protected:
 	ForeignWindow( WindowClass_t windowType )
 	{
 		m_windowType = windowType;
@@ -198,7 +197,7 @@ class ForeignWindow
 
 	}
 
-	public:
+public:
 	ForeignWindow( HWND theHandle=0 )
 	{
 		m_windowType = ForeignWindowFlag;
@@ -838,7 +837,7 @@ class ForeignWindow
 	/*
 		copy data
 	*/
-	private:
+private:
 	void copyData( const void *data, std::size_t len, int typeID, const ForeignWindow *src  ) const
 	{
 		COPYDATASTRUCT cds;
@@ -848,7 +847,7 @@ class ForeignWindow
 
 		SendMessage(handle(), WM_COPYDATA, WPARAM(src ? src->handle() : nullptr), LPARAM(&cds));		
 	}
-	public:
+public:
 	void copyData( const gak::STRING &data, int typeID=0, const ForeignWindow *src=nullptr ) const
 	{
 		copyData(data.c_str(), data.size()+1, typeID, src );		
