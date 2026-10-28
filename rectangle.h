@@ -158,14 +158,14 @@ struct RectBorder : public RECT
 {
 	RectBorder() {}
 
-	RectBorder(long left, long top, long right, long bottom ) 
+	RectBorder( long left, long top, long right, long bottom ) 
 	{
 		this->left	= left;
 		this->top	= top;
 		this->right	= right;
 		this->bottom= bottom;
 	}
-	void substractBorder( const RectBorder &border )
+	void subtractBorder( const RectBorder &border )
 	{
 		left	+= border.left;
 		top		+= border.top;
@@ -212,25 +212,42 @@ struct RectBorder : public RECT
 		return Point( right, bottom );
 	}
 
-	void setTopLeft( const Point &corner )
+	RectBorder &setTopLeft( const Point &corner )
 	{
 		top = corner.y;
 		left = corner.x;
+		return *this;
 	}
-	void setTopRight( const Point &corner )
+	RectBorder &setTopRight( const Point &corner )
 	{
 		top = corner.y;
 		right = corner.x;
+		return *this;
 	}
-	void setBottomLeft( const Point &corner )
+	RectBorder &setBottomLeft( const Point &corner )
 	{
 		bottom = corner.y;
 		left = corner.x;
+		return *this;
 	}
-	void setBottomRight( const Point &corner )
+	RectBorder &setBottomRight( const Point &corner )
 	{
 		bottom = corner.y;
 		right = corner.x;
+		return *this;
+	}
+	RectBorder &move( const Point &from,  const Point &to )
+	{
+		const int xOffset = to.x-from.x;
+		const int yOffset = to.y-from.y;
+
+		left += xOffset;
+		right += xOffset;
+
+		top += yOffset;
+		bottom += yOffset;
+
+		return *this;
 	}
 };
 
@@ -249,7 +266,7 @@ struct RectSize : public Point, public Size
 		x = y = 0;
 	}
 
-	void substractBorder( const RectBorder &border )
+	void subtractBorder( const RectBorder &border )
 	{
 		x		+= border.left;
 		y		+= border.top;

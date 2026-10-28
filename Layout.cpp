@@ -346,14 +346,14 @@ Size LayoutManager::calcSize( const ChildWindows &/*children*/, const Size &newS
 void SingleChildManager::doLayout( const ChildWindows &children, const Size &newSize )
 {
 	RectSize	freeArea( newSize );
-	freeArea.substractBorder( m_margin );
+	freeArea.subtractBorder( m_margin );
 
 	if( children.size() == 1 )
 	{
 		BasicWindow			*child = children[0];
 		LayoutData	*layoutData = child->getLayoutData();
 		if( layoutData )
-			freeArea.substractBorder( layoutData->padding );
+			freeArea.subtractBorder( layoutData->padding );
 		child->sizeNmove( freeArea );
 	}
 }
@@ -382,7 +382,7 @@ void RowManager::doLayout( const ChildWindows &children, const Size &newSize )
 	if( numVisible )
 	{
 		RectSize	freeArea( newSize );
-		freeArea.substractBorder( m_margin );
+		freeArea.subtractBorder( m_margin );
 		freeArea.width /= int(numVisible);
 
 		for( size_t i=0; i<children.size(); i++ )
@@ -393,7 +393,7 @@ void RowManager::doLayout( const ChildWindows &children, const Size &newSize )
 				RectSize	childDim = freeArea;
 				LayoutData	*layoutData = child->getLayoutData();
 				if( layoutData )
-					childDim.substractBorder( layoutData->padding );
+					childDim.subtractBorder( layoutData->padding );
 
 				child->sizeNmove( childDim );
 				freeArea.x += freeArea.width;
@@ -410,7 +410,7 @@ void ColManager::doLayout( const ChildWindows &children, const Size &newSize )
 			numVisible++;
 
 	RectSize	freeArea( newSize );
-	freeArea.substractBorder( m_margin );
+	freeArea.subtractBorder( m_margin );
 	freeArea.height /= int(numVisible);
 
 	for( size_t i=0; i<children.size(); i++ )
@@ -421,7 +421,7 @@ void ColManager::doLayout( const ChildWindows &children, const Size &newSize )
 			RectSize	childDim = freeArea;
 			LayoutData	*layoutData = child->getLayoutData();
 			if( layoutData )
-				childDim.substractBorder( layoutData->padding );
+				childDim.subtractBorder( layoutData->padding );
 
 			child->sizeNmove( childDim );
 

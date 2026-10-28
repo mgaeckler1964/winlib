@@ -288,6 +288,10 @@ protected:
 public:
 	void adjustWindoRect();
 	void setClientSize( int width, int height );
+	void setClientSize( const Size &size )
+	{
+		setClientSize(size.width, size.height);
+	}
 
 protected:
 	SuccessCode create( BasicWindow *parent, LPSTR lpParam=nullptr )
