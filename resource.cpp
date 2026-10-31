@@ -586,11 +586,11 @@ STRING getColorName( size_t index )
 
 BasicWindow::BackgroundColor getColorValue( const STRING &name )
 {
-	for( size_t i=0; i<arraySize( colorValues ) ; i++ )
+	FOR_EACH( i, colorValues,
 	{
 		if( name == colorValues[i] )
 			return BasicWindow::BackgroundColor( i );
-	}
+	});
 
 	return BasicWindow::bcDEFAULT;
 }

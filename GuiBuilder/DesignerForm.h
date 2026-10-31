@@ -206,34 +206,19 @@ class DesignerForm : public OverlappedWindow
 
 	void refreshSelection();
 
-	private:
-	class BackgroundChanger
-	{
-		const STRING	&m_colorName;
-		COLORREF		m_color;
-
-		BasicWindow::BackgroundColor m_colorType;
-
-		public:
-		BackgroundChanger( const STRING &colorName, COLORREF color ) 
-		: m_colorName(colorName), m_color(color), m_colorType( getColorValue( colorName ) )
-		{}
-
-		void operator () ( BasicWindow *child ) const
-		{
-			child->setBackgroundColor( m_colorType, m_color );
-			gak::xml::Element		*resource = child->getResource();
-			resource->setStringAttribute( "bgColor", m_colorName );
-			resource->setIntegerAttribute( "bg_red", GetRValue( m_color ) );
-			resource->setIntegerAttribute( "bg_green", GetGValue( m_color ) );
-			resource->setIntegerAttribute( "bg_blue", GetBValue( m_color ) );
-		}
-	};
 	public:
 	void setBackgroundColor( const STRING &colorName, COLORREF color )
 	{
-		BackgroundChanger	theChanger( colorName, color );
-		m_selected.forEach( theChanger );
+		BasicWindow::BackgroundColor	colorType( getColorValue( colorName ) );
+
+		m_selected.forEach( [=] ( BasicWindow *child ) {
+			child->setBackgroundColor( colorType, color );
+			gak::xml::Element		*resource = child->getResource();
+			resource->setStringAttribute( "bgColor", colorName );
+			resource->setIntegerAttribute( "bg_red", GetRValue( color ) );
+			resource->setIntegerAttribute( "bg_green", GetGValue( color ) );
+			resource->setIntegerAttribute( "bg_blue", GetBValue( color ) );
+		} );
 	}
 
 	using OverlappedWindow::setBackgroundColor;
