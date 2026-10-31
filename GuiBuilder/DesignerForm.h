@@ -211,13 +211,14 @@ class DesignerForm : public OverlappedWindow
 	{
 		BasicWindow::BackgroundColor	colorType( getColorValue( colorName ) );
 
-		m_selected.forEach( [=] ( BasicWindow *child ) {
+		m_selected.forEach( [=] ( BasicWindow *child ) -> bool {
 			child->setBackgroundColor( colorType, color );
 			gak::xml::Element		*resource = child->getResource();
 			resource->setStringAttribute( "bgColor", colorName );
 			resource->setIntegerAttribute( "bg_red", GetRValue( color ) );
 			resource->setIntegerAttribute( "bg_green", GetGValue( color ) );
 			resource->setIntegerAttribute( "bg_blue", GetBValue( color ) );
+			return false;
 		} );
 	}
 
@@ -231,11 +232,10 @@ class DesignerForm : public OverlappedWindow
 		return colors::WHITE;
 	}
 
-	private:
-	class LayoutRemover
+	public:
+	void removeLayoutData()
 	{
-		public:
-		static void perform( BasicWindow *child )
+		m_selected.forEach( [] (BasicWindow *child) -> bool
 		{
 			child->setLayoutData( nullptr );
 			gak::xml::Element	*resource = child->getResource();
@@ -248,23 +248,15 @@ class DesignerForm : public OverlappedWindow
 					delete layout;
 				}
 			}
-		}
-	};
-	public:
-	void removeLayoutData()
-	{
-		m_selected.forEach<LayoutRemover>();
+			return false;
+		});
 	}
 
-	private:
-	class ControlCatcher
+	public:
+	void catchControls( const ChildWindows &children )
 	{
-		DesignerForm	*theDesignerWindow;
-		public:
-		ControlCatcher( DesignerForm	*theDesignerWindow ) 
-		: theDesignerWindow(theDesignerWindow) {}
-
-		void operator () ( BasicWindow *child ) const
+		DesignerForm	*theDesignerWindow = this;
+		children.forEach( [=] (BasicWindow *child) -> bool
 		{
 			theDesignerWindow->catchControl( child );
 			FrameChild	*frame = dynamic_cast<FrameChild*>(child);
@@ -272,14 +264,8 @@ class DesignerForm : public OverlappedWindow
 			{
 				theDesignerWindow->catchControls( frame->getChildren() );
 			}
-		}
-
-	};
-	public:
-	void catchControls( const ChildWindows &children )
-	{
-		ControlCatcher catcher( this );
-		children.forEach( catcher );
+			return false;
+		});
 	}
 	void catchControls()
 	{
