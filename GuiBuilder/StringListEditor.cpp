@@ -146,21 +146,18 @@ void StringListEditor::reload( const xml::XmlArray &childResources )
 	stringListGrid->setCell( 0, 0, "Name" );
 	stringListGrid->setCell( 1, 0, "Value" );
 	stringListGrid->focus();
-	for( 
-		xml::XmlArray::const_iterator it = childResources.cbegin(), endIT = childResources.cend();
-		it != endIT;
-		++it, ++i
-	)
+	childResources.forEach( [&](xml::Element *string) -> bool
 	{
 		if( i )
 		{
-			xml::Element	*string = *it;
 			STRING	name = string->getAttribute( NAME_ATTR );
 			STRING	value = string->getAttribute( CAPTION_ATTR );
 			stringListGrid->setCell( 0, i, name );
 			stringListGrid->setCell( 1, i, value );
 		}
-	}
+		++i;
+		return false;
+	});
 	invalidateWindow();
 }
 

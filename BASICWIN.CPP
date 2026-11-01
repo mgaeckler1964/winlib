@@ -134,11 +134,7 @@ void BasicWindow::checkSize( int width, int height )
 
 bool BasicWindow::handleChildClose( BasicWindow *child, bool deleted )
 {
-	for(
-		OwnedWindows::iterator it = m_ownedWindows.begin(), endIT = m_ownedWindows.end();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_ITER( OwnedWindows, m_ownedWindows, it, 
 	{
 		if( child == *it )
 		{
@@ -150,7 +146,7 @@ bool BasicWindow::handleChildClose( BasicWindow *child, bool deleted )
 			deleted = true;
 /*v*/		break;
 		}
-	}
+	});
 
 	m_childWindows.removeElement( child );
 
@@ -160,17 +156,13 @@ bool BasicWindow::handleChildClose( BasicWindow *child, bool deleted )
 bool BasicWindow::canClose()
 {
 	// check child windows! not owned windows
-	for(
-		ChildWindows::iterator it = m_childWindows.begin(), endIT = m_childWindows.end();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows, it, 
 	{
 		if( !(*it)->canClose() )
 		{
 			return false;
 		}
-	}
+	});
 
 
 	return true;
@@ -312,36 +304,32 @@ void BasicWindow::restoreWindowPos(
 #ifndef __BORLANDC__
 FrameChild *BasicWindow::findFrame( const Point &position ) const
 {
-	FrameChild	*foundChild = NULL;
+	FrameChild	*foundChild = nullptr;
 
-	for( 
-		ChildWindows::const_iterator it = m_childWindows.cbegin(), endIT = m_childWindows.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows,  it,
 	{
 		FrameChild	*child = dynamic_cast<FrameChild*>( *it );
 
 		if( !child )
-			continue;
+/*^*/		continue;
 
 		RectBorder	childRect = child->getRelativeRectangle();
 
 		if( childRect.left > position.x )
-			continue;
+/*^*/		continue;
 
 		if( childRect.right < position.x )
-			continue;
+/*^*/		continue;
 
 		if( childRect.top > position.y )
-			continue;
+/*^*/		continue;
 
 		if( childRect.bottom < position.y )
-			continue;
+/*^*/		continue;
 
 		foundChild = child;
-		break;
-	}
+/*v*/	break;
+	});
 
 	if( foundChild )
 	{
@@ -356,29 +344,25 @@ FrameChild *BasicWindow::findFrame( const Point &position ) const
 
 BasicWindow *BasicWindow::findChild( const Point &position ) const
 {
-	BasicWindow	*foundChild = NULL;
+	BasicWindow	*foundChild = nullptr;
 	long		smallest = std::numeric_limits<long>::max();
 
-	for( 
-		ChildWindows::const_iterator it = m_childWindows.cbegin(), endIT = m_childWindows.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows,  it,
 	{
 		BasicWindow	*child = *it;
 		RectBorder	childRect = child->getRelativeRectangle();
 
 		if( childRect.left > position.x )
-			continue;
+/*^*/		continue;
 
 		if( childRect.right < position.x )
-			continue;
+/*^*/		continue;
 
 		if( childRect.top > position.y )
-			continue;
+/*^*/		continue;
 
 		if( childRect.bottom < position.y )
-			continue;
+/*^*/		continue;
 
 		long size = (childRect.right-childRect.left) * (childRect.bottom-childRect.top);
 
@@ -387,7 +371,7 @@ BasicWindow *BasicWindow::findChild( const Point &position ) const
 			foundChild = child;
 			smallest = size;
 		}
-	}
+	});
 
 	if( foundChild )
 	{
@@ -414,11 +398,7 @@ BasicWindow *BasicWindow::findChild( xml::Element *resource ) const
 		return const_cast<BasicWindow*>(this);
 	}
 
-	for( 
-		ChildWindows::const_iterator it = m_childWindows.cbegin(), endIT = m_childWindows.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows,  it,
 	{
 		BasicWindow	*child = *it;
 		if( resource == child->getResource() )
@@ -426,13 +406,13 @@ BasicWindow *BasicWindow::findChild( xml::Element *resource ) const
 			return child;
 		}
 
-		if( (child = child->findChild( resource )) != NULL )
+		if( (child = child->findChild( resource )) != nullptr )
 		{
 			return child;
 		}
-	}
+	});
 
-	return NULL;
+	return nullptr;
 }
 
 BasicWindow *BasicWindow::findChild( int id ) const
@@ -442,11 +422,7 @@ BasicWindow *BasicWindow::findChild( int id ) const
 		return const_cast<BasicWindow*>(this);
 	}
 
-	for( 
-		ChildWindows::const_iterator it = m_childWindows.cbegin(), endIT = m_childWindows.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows,  it,
 	{
 		BasicWindow	*child = *it;
 		if( id == child->m_controlId )
@@ -454,13 +430,13 @@ BasicWindow *BasicWindow::findChild( int id ) const
 			return child;
 		}
 
-		if( (child = child->findChild( id )) != NULL )
+		if( (child = child->findChild( id )) != nullptr )
 		{
 			return child;
 		}
-	}
+	});
 
-	return NULL;
+	return nullptr;
 }
 
  BasicWindow *BasicWindow::findChild( HWND iHandle ) const
@@ -470,11 +446,7 @@ BasicWindow *BasicWindow::findChild( int id ) const
 		return const_cast<BasicWindow*>(this);
 	}
 
-	for( 
-		ChildWindows::const_iterator it = m_childWindows.cbegin(), endIT = m_childWindows.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( ChildWindows, m_childWindows,  it,
 	{
 		BasicWindow	*child = *it;
 		if( iHandle == child->handle() )
@@ -482,20 +454,20 @@ BasicWindow *BasicWindow::findChild( int id ) const
 			return child;
 		}
 
-		if( (child = child->findChild( iHandle )) != NULL )
+		if( (child = child->findChild( iHandle )) != nullptr )
 		{
 			return child;
 		}
-	}
+	});
 
-	return NULL;
+	return nullptr;
 }
 
 const BasicWindow *BasicWindow::getTopWindow() const
 {
 	const BasicWindow	*top = this;
 
-	while( top->m_parent != NULL )
+	while( top->m_parent != nullptr )
 	{
 		top = top->m_parent;
 	}

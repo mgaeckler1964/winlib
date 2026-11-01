@@ -172,23 +172,17 @@ ProcessStatus TranslateForm::handleCreate()
 	size_t	row = 0;
 	translationsGrid->createData( 2, m_captions.size() );
 	translationsGrid->setFixedCols( 1 );
-	for(
-		Captions::const_iterator	it = m_captions.cbegin(), endIT = m_captions.cend();
-		it != endIT;
-		++it
-	)
+	m_captions.forEach( [&](const STRING &item)->bool
 	{
-		translationsGrid->setCell( 0, row++, *it );
-	}
+		translationsGrid->setCell( 0, row++, item );
+		return false;
+	});
 
-	for(
-		Dictionarys::const_iterator it = m_dictionarys.cbegin(), endIT = m_dictionarys.cend();
-		it != endIT;
-		++it
-	)
+	m_dictionarys.forEach( [=](const Dictionarys::value_type &it) ->bool
 	{
-		targetLanguageCombo->addEntry( it->getKey() );
-	}
+		targetLanguageCombo->addEntry( it.getKey() );
+		return false;
+	});
 	targetLanguageCombo->selectEntry( 0 );
 	handleSelectionChange( targetLanguageCombo_id );
 	return TranslationForm_form::handleCreate();

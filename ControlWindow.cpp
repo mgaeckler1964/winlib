@@ -1107,14 +1107,10 @@ void TabControl::showTab(size_t i)
 
 void TabControl::resizeTabs()
 {
-	for( 
-		gak::Array<FrameChild *>::iterator it = m_tabs.begin(), endIT = m_tabs.end();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_ITER( gak::Array<FrameChild *>, m_tabs, it, 
 	{
 		resizeTab( *it );
-	}
+	});
 }
 
 // --------------------------------------------------------------------- //

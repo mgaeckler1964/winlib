@@ -293,19 +293,16 @@ void GuiBuilderWindow::handleChildSelect()
 	ArrayOfInts	selItems;
 	childSelect.getSelectedItems( &selItems );
 
-	for( 
-		ArrayOfInts::const_iterator it = selItems.cbegin(), endIT = selItems.cend();
-		it != endIT;
-		++it
-	)
+	selItems.forEach( [=]( int item ) -> bool
 	{
-		BasicWindow *child = getChildByResource( m_childResources[*it] );
+		BasicWindow *child = getChildByResource( m_childResources[item] );
 		if( child )
 		{
 			designerForm->selectControl( child, false );
 			selectControl( child, FromChildSelect );
 		}
-	}
+		return false;
+	});
 
 	designerForm->invalidateWindow();
 	enableDisaleProperties();
@@ -346,13 +343,9 @@ STRING GuiBuilderWindow::getUniqueType()
 	ArrayOfInts	selected;
 
 	childSelect.getSelectedItems( &selected );
-	for( 
-		ArrayOfInts::const_iterator it = selected.cbegin(), endIT = selected.cend();
-		it != endIT;
-		++it
-	)
+	selected.forEach( [&](int item) -> bool
 	{
-		xml::Element *resource = m_childResources[*it];
+		xml::Element *resource = m_childResources[item];
 		currentType = resource->getTag();
 		if( currentType == CHILD_TAG )
 		{
@@ -366,9 +359,10 @@ STRING GuiBuilderWindow::getUniqueType()
 		else if( uniqueType != currentType )
 		{
 			uniqueType = NULL_STRING;
-			break;
+			return true;	//break;
 		}
-	}
+		return false;
+	});
 
 	return uniqueType;
 }
@@ -937,11 +931,7 @@ void GuiBuilderWindow::loadTranslations( xml::Document *doc )
 	{
 		xml::XmlArray	languages;
 		translations->getChildElements( &languages, LANGUAGE_TAG );
-		for( 
-			xml::XmlArray::const_iterator it = languages.cbegin(), endIT = languages.cend();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_CITER(xml::XmlArray, languages, it,
 		{
 			xml::Element *language = *it;
 			STRING	lang = language->getAttribute( LANG_ATTRIBUTE );
@@ -949,19 +939,15 @@ void GuiBuilderWindow::loadTranslations( xml::Document *doc )
 
 			xml::XmlArray	items;
 			language->getChildElements( &items, ITEM_TAG );
-			for( 
-				xml::XmlArray::const_iterator it = items.cbegin(), endIT = items.cend();
-				it != endIT;
-				++it
-			)
+			FOR_EACH_CITER(xml::XmlArray, items, it,
 			{
 				const xml::Element *item = *it;
 				STRING caption = item->getAttribute( CAPTION_ATTR );
 				STRING translation = item->getAttribute( TRANSLATION_ATTRIBUTE );
 
 				currentDict[caption] = translation;
-			}
-		}
+			});
+		} );
 	}
 }
 
@@ -995,20 +981,16 @@ void GuiBuilderWindow::loadGUI( xml::Document *doc )
 		*/
 		xml::XmlArray	items;
 		const char	*frameTypes[] = { FORM_TAG, FRAME_TAG, SCROLLER_TAG, LIST_TAG };
-		for( size_t i=0; i<arraySize(frameTypes); i++ )
+		FOR_EACH( i, frameTypes, 
 		{
 			gui->getAllElements( &items, frameTypes[i] );
-			for( 
-				xml::XmlArray::const_iterator it = items.cbegin(), endIT = items.cend();
-				it != endIT;
-				++it
-			)
+			items.forEach( [=](xml::Element *item) -> bool
 			{
-				xml::Element *item = *it;
 				STRING		name = item->getAttribute( NAME_ATTR );
 				addSelectedTopResource( item, name );
-			}
-		}
+				return false;
+			});
+		});
 	}
 }
 
@@ -1101,18 +1083,15 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 				"#include <winlib/gridView.h>\n\n"
 				"#include <winlib/winApp.h>\n\n"
 				"namespace winlibGUI {\n\n";
-	for( 
-		IdentifiersMap::const_iterator	it = identifiers.cbegin(), endIT = identifiers.cend();
-		it != endIT;
-		++it
-	) 
+	identifiers.forEach( [&](const IdentifiersMap::value_type &it) -> bool
 	{
-		const STRING &name = it->getKey();
+		const STRING &name = it.getKey();
 		if( !checkDefaultIdentifier( name ) )
 		{
-			stream << "\tconst int " << name << "_id=" << it->getValue() << ";\n";
+			stream << "\tconst int " << name << "_id=" << it.getValue() << ";\n";
 		}
-	}
+		return false;
+	});
 
 	stream << "\n\tclass GuiApplication : public winlib::Application {\n"
 			<< "\t\tpublic:\n"
@@ -1120,11 +1099,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 			"\t\tGuiApplication(int iconID=-1) : winlib::Application(iconID) {}\n"
 			"\t};\n";
 
-	for( 
-		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_ITER( xml::XmlArray, m_topResources, it, 
 	{
 		xml::Element	*resource = *it;
 		STRING			tag = resource->getTag();
@@ -1157,15 +1132,11 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 
 			xml::XmlArray	children;
 			resource->getAllElements( &children, CHILD_TAG );
-			for( 
-				xml::XmlArray::iterator	it = children.begin(), endIT = children.end();
-				it != endIT;
-				++it
-			)
+			FOR_EACH_ITER( xml::XmlArray, children, it, 
 			{
 				xml::Element	*child = *it;
-				STRING		type = child->getAttribute( TYPE_ATTR );
-				STRING		name = fixIfBad(child->getAttribute( NAME_ATTR ));
+				STRING			type = child->getAttribute( TYPE_ATTR );
+				STRING			name = fixIfBad(child->getAttribute( NAME_ATTR ));
 				if( !type.isEmpty() && !name.isEmpty() )
 				{
 					if( checkDefaultIdentifier( name ) )
@@ -1193,7 +1164,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 						}
 					}
 				}
-			}
+			});
 
 			stream << "\t\tprivate:\n"
 				"\t\tvirtual void getControls();\n"
@@ -1207,7 +1178,7 @@ void GuiBuilderWindow::saveHeader( const F_STRING &fileName, const IdentifiersMa
 				stream << "\tstatic const int " << name << "_count = " << resource->getNumObjects() << ";\n";
 			}
 		}
-	}
+	});
 	stream << "}\t// namespace winlibGUI\n\n"
 		"#endif // " << macro << '\n'
 	;
@@ -1236,11 +1207,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 					"\t\t}\n"
 					"\t\treturn doc;\n"
 				"\t}\n\n";
-	for( 
-		xml::XmlArray::iterator	it = m_topResources.begin(), endIT = m_topResources.end();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_ITER( xml::XmlArray, m_topResources, it, 
 	{
 		xml::Element		*resource = *it;
 		STRING			tag = resource->getTag();
@@ -1250,11 +1217,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 			stream << "\n\tvoid " << name << '_' << tag << "::getControls() {\n";
 			xml::XmlArray	children;
 			resource->getAllElements( &children, CHILD_TAG );
-			for( 
-				xml::XmlArray::iterator	it = children.begin(), endIT = children.end();
-				it != endIT;
-				++it
-			)
+			FOR_EACH_ITER( xml::XmlArray, children, it, 
 			{
 				xml::Element	*child = *it;
 				STRING		type = child->getAttribute( TYPE_ATTR );
@@ -1300,7 +1263,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 
 
 				}
-			}
+			});
 
 			stream << "\t}\t// " << name << '\n';
 		}
@@ -1311,11 +1274,7 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 			if( children.size() && !name.isEmpty() )
 			{
 				stream << "\tconst int " << name << "_ids[] = {\n";
-				for( 
-					xml::XmlArray::const_iterator	it = children.cbegin(), endIT = children.cend();
-					it != endIT;
-					++it
-				)
+				FOR_EACH_CITER( xml::XmlArray, children, it, 
 				{
 					xml::Element	*string = *it;
 					STRING			name = fixIfBad(string->getAttribute( NAME_ATTR ));
@@ -1323,11 +1282,11 @@ void GuiBuilderWindow::saveCpp( const F_STRING &fileName, const STRING &xmlGuiSr
 					{
 						stream << "\t\t" << name << "_id,\n";
 					}
-				}
+				});
 				stream << "\t};\n";
 			}
 		}
-	}
+	});
 	stream << "}\t// namespace winlibGUI\n";
 }
 
@@ -1336,11 +1295,7 @@ void GuiBuilderWindow::saveDictionaries( const STRING &fileName )
 	if( m_dictionarys.size() )
 	{
 		xml::Any	translations( TRANSLATIONS );
-		for(
-			Dictionarys::const_iterator it = m_dictionarys.cbegin(), endIT = m_dictionarys.cend();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_CITER( Dictionarys, m_dictionarys, it, 
 		{
 			const Dictionary &dictionary = it->getValue();
 
@@ -1350,11 +1305,7 @@ void GuiBuilderWindow::saveDictionaries( const STRING &fileName )
 
 				xml::Element *language = translations.addObject( new xml::Any( LANGUAGE_TAG ) );
 				language->setStringAttribute( LANG_ATTRIBUTE, lang );
-				for(
-					Dictionary::const_iterator it = dictionary.cbegin(), endIT = dictionary.cend();
-					it != endIT;
-					++it
-				)
+				FOR_EACH_CITER( Dictionary, dictionary, it, 
 				{
 					const STRING &caption = it->getKey();
 					const STRING &translation = it->getValue();
@@ -1362,9 +1313,9 @@ void GuiBuilderWindow::saveDictionaries( const STRING &fileName )
 	
 					item->setStringAttribute( CAPTION_ATTR, caption );
 					item->setStringAttribute( TRANSLATION_ATTRIBUTE, translation );
-				}
+				});
 			}
-		}
+		});
 		STRING			translationFileName = fileName + '.';
 		translationFileName += TRANSLATIONS;
 
@@ -1377,14 +1328,10 @@ void GuiBuilderWindow::saveDictionaries( const STRING &fileName )
 void GuiBuilderWindow::saveTranslations( const F_STRING &fileName )
 {
 	F_STRING	plainName = removeExtension( fileName );
-	for(
-		Dictionarys::const_iterator it = m_dictionarys.cbegin(), endIT = m_dictionarys.cend();
-		it != endIT;
-		++it
-	)
+	m_dictionarys.forEach( [=](const Dictionarys::value_type &it)->bool
 	{
-		F_STRING newName = plainName + '.' + it->getKey() + ".gui";
-		const Dictionary &dict = it->getValue();
+		F_STRING newName = plainName + '.' + it.getKey() + ".gui";
+		const Dictionary &dict = it.getValue();
 
 		std::unique_ptr<xml::Element> newDocument( m_guiDoc->copy() );
 
@@ -1393,7 +1340,8 @@ void GuiBuilderWindow::saveTranslations( const F_STRING &fileName )
 		STRING	xmlCode = newDocument->generateDoc();
 		std::ofstream	stream( newName );
 		stream << xmlCode;
-	}
+		return false;
+	});
 }
 
 void GuiBuilderWindow::saveDocumentAs( const F_STRING &fileName )
@@ -1619,15 +1567,11 @@ void GuiBuilderWindow::editItemList()
 			create the XML tree
 		*/
 		std::unique_ptr<xml::Element>	newItems( new xml::Any( ITEMS_TAG ) );
-		for( 
-			ArrayOfStrings::iterator it = itemList.begin(), endIT = itemList.end();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_ITER( ArrayOfStrings, itemList, it, 
 		{
 			xml::Element	*item = newItems->addObject( new xml::Any( ITEM_TAG ) );
 			item->addObject( new xml::PCData( it->stripBlanks() ) );
-		}
+		});
 
 		/*
 			replace all selected items lists with this new list
@@ -1661,18 +1605,15 @@ void GuiBuilderWindow::editItemList()
 				if( type==TabControl::className )
 				{
 					STRING	name = resource->getAttribute( NAME_ATTR );
-					for( 
-						ArrayOfStrings::const_iterator it = itemList.cbegin(), endIT = itemList.cend();
-						it != endIT;
-						++it
-					)
+					itemList.forEach( [=](const STRING &str)->bool
 					{
-						STRING frameName = getFrameName4Tab(name, *it);
+						STRING frameName = getFrameName4Tab(name, str);
 						if( !::findFrame( m_guiDoc->getRoot(), frameName ) )
 						{
 							newFrame( frameName );
 						}
-					}
+						return false;
+					});
 				}
 			}
 		}

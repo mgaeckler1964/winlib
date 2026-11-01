@@ -529,13 +529,8 @@ void StyleDialog::calcStyle()
 	size_t numItems = StyleListBox->getSelectedItems( &selItems );
 	if( numItems )
 	{
-		for( 
-			ArrayOfInts::const_iterator it = selItems.cbegin(), endIT = selItems.cend();
-			it != endIT;
-			++it 
-		)
+		selItems.forEach([&](size_t	idx) -> bool
 		{
-			size_t	idx = size_t(*it);
 			if( idx < arraySize( windowStyles ) )
 			{
 				newStyle &= ~windowStyles[idx].mask;
@@ -546,7 +541,8 @@ void StyleDialog::calcStyle()
 				newStyle &= ~m_additional[idx].mask;
 				newStyle |= m_additional[idx].value;
 			}
-		}
+			return false;
+		});
 	}
 
 	m_style = newStyle;

@@ -541,18 +541,14 @@ xml::Element	*Application::getResource( const STRING &identifier, const STRING &
 			{
 				xml::XmlArray	strings;
 				container->getAllElements( &strings, type );
-				for(
-					xml::XmlArray::iterator it = strings.begin(), endIT = strings.end();
-					it != endIT;
-					++it
-				)
+				FOR_EACH_ITER( xml::XmlArray, strings, it, 
 				{
 					if( (*it)->getAttribute( filterType ) == identifier )
 					{
 						resource = *it;
 						break;
 					}
-				}
+				});
 
 			}
 			else

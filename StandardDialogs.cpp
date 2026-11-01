@@ -92,16 +92,12 @@ APIENTRY OFNHookProc(
 	}
 	else
 	{
-		for(
-			Array<SaveFileAsDialog*>::iterator it = s_saveDialogs.begin(), endIT = s_saveDialogs.end();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_ITER( Array<SaveFileAsDialog*>, s_saveDialogs, it, 
 		{
 			theDialog = *it;
 			if( theDialog->handle() == hdlg )
 				break;
-		}
+		});
 	}
 	if( theDialog && theDialog->handle() == hdlg )
 		theDialog->handleMessage( uiMsg, wParam, lParam );

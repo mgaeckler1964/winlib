@@ -155,11 +155,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 	const int width = size.width / int(m_1dData.size());
 	int left = 0;
 	int right = left + width;
-	for(
-		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( AllCharts1D, m_1dData, it, 
 	{
 		bool textInBar = false;
 		const int top = bottom - gak::math::round<int>((it->value * bottom) / m_1dBounds.getMax());
@@ -208,7 +204,7 @@ void ChartChild::drawBarCharts(Device &hDC, const Size &size)
 
 		left=right;
 		right = left+width;
-	}
+	});
 }
 
 void ChartChild::drawPieCharts(Device &hDC, const Size &size)
@@ -219,28 +215,20 @@ void ChartChild::drawPieCharts(Device &hDC, const Size &size)
 	int radius = gak::math::min(size.width, size.height) /2;
 	double sum = 0;
 
-	for(
-		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( AllCharts1D, m_1dData, it,
 	{
 		sum += it->value;
-	}
+	});
 	const double	pi2 = M_PI*2;
 	double			startAngle = 0;
-	for(
-		AllCharts1D::const_iterator it = m_1dData.cbegin(), endIT = m_1dData.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( AllCharts1D, m_1dData, it,
 	{
 		hDC.getBrush().create(it->color);
 		const double pieAngle = it->value * pi2 / sum;
 		const double nextAngle = startAngle+pieAngle;
 		hDC.pie(center,radius,nextAngle, startAngle );
 		startAngle = nextAngle;
-	}
+	});
 }
 
 
@@ -252,14 +240,10 @@ void ChartChild::paintLine(Device &hDC, const Chart2D &lineData, const Size &siz
 	hDC.getPen().create(Pen::psSolid, lineData.lineWidth, lineData.color);
 	myPolyline.setMinSize(lineData.data.size());
 	std::back_insert_iterator< gak::Array<Point> > inserter = std::back_inserter(myPolyline);
-	for(
-		Chart2dData::const_iterator it = lineData.data.cbegin(), endIT = lineData.data.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( Chart2dData, lineData.data, it, 
 	{
 		*inserter = value2Pixel( *it, size );
-	}
+	});
 
 	hDC.polyline(myPolyline);
 }
@@ -267,15 +251,11 @@ void ChartChild::paintLine(Device &hDC, const Chart2D &lineData, const Size &siz
 
 void ChartChild::add2dChart2( Chart2D *data )
 {
-	for(
-		Chart2dData::const_iterator it = data->data.cbegin(), endIT = data->data.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER( Chart2dData, data->data, it,
 	{
 		m_xBounds.test( it->val1 );
 		m_yBounds.test( it->val2 );
-	}
+	});
 	m_2dData.createElement().moveFrom( *data );
 }
 
@@ -342,14 +322,10 @@ ProcessStatus ChartChild::handleRepaint( Device &hDC )
 			drawPieCharts(hDC, size);
 	}
 
-	for(
-		AllCharts2D::const_iterator it = m_2dData.cbegin(), endIT = m_2dData.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER(AllCharts2D, m_2dData, it, 
 	{
 		paintLine( hDC, *it, size );
-	}
+	});
 
 	return psPROCESSED;
 }

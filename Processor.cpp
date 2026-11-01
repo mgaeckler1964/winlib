@@ -135,15 +135,11 @@ void WindowProcessor::operator () ()
 	{
 		EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(this));
 	}
-	for( 
-		gak::Array<ForeignWindow>::const_iterator it = m_windowList.cbegin(), endIT = m_windowList.cend();
-		it != endIT;
-		++it
-	)
+	FOR_EACH_CITER(gak::Array<ForeignWindow>, m_windowList, it,
 	{
 		if( processWindow( *it ) )
 			break;
-	}
+	});
 }
 void WindowProcessor::addWindow(HWND hwnd)
 {

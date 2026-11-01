@@ -200,7 +200,7 @@ public:
 #ifdef __BORLANDC__
 	#pragma warn -inl
 #endif
-		return doc ? doc->getFilename() : NULL_STRING;
+		return doc ? doc->getFilename() : gak::NULL_STRING;
 #ifdef __BORLANDC__
 	#pragma warn +inl
 #endif

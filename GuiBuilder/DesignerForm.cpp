@@ -342,13 +342,8 @@ void DesignerForm::restoreChildren()
 		restored = false;
 		m_currentFrame->doLayout();
 		const ChildWindows	&children = m_currentFrame->getChildren();
-		for(
-			ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
-			it != endIT;
-			++it
-		)
+		children.forEach( [&](BasicWindow *child) ->bool
 		{
-			BasicWindow *child = *it;
 			if( child != m_lastChildClick )	// do never restore the selected child
 			{
 				LayoutData *layoutData = child->getLayoutData();
@@ -377,7 +372,8 @@ void DesignerForm::restoreChildren()
 					}
 				}
 			}
-		}
+			return false;
+		});
 	} while( restored );
 }
 
@@ -460,20 +456,15 @@ void DesignerForm::performTableDrag( const Point &position )
 				move all children right
 			*/
 			const ChildWindows &children = m_currentFrame->getChildren();
-			for(
-				ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
-				it != endIT;
-				++it
-			)
+			children.forEach( [=](BasicWindow *child) -> bool
 			{
-				BasicWindow *child = *it;
-		
 				LayoutData		*layoutData = child->getLayoutData();
 				if( layoutData )
 				{
 					layoutData->xPos -= col;
 				}
-			}
+				return false;
+			});
 			swap = false;
 			layoutData->xPos = 0;
 		}
@@ -486,20 +477,15 @@ void DesignerForm::performTableDrag( const Point &position )
 				move all children down
 			*/
 			const ChildWindows	&children = m_currentFrame->getChildren();
-			for(
-				ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
-				it != endIT;
-				++it
-			)
+			children.forEach( [=](BasicWindow *child) -> bool
 			{
-				BasicWindow *child = *it;
-		
 				LayoutData		*layoutData = child->getLayoutData();
 				if( layoutData )
 				{
 					layoutData->yPos -= row;
 				}
-			}
+				return false;
+			});
 			swap = false;
 			layoutData->yPos = 0;
 		}
@@ -553,13 +539,8 @@ void DesignerForm::performStandardDrag( const Point &position )
 	int xOffset = position.x - m_lastMousePos.x;
 	int yOffset = position.y - m_lastMousePos.y;
 	m_lastMousePos = position;
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *control) -> bool
 	{
-		BasicWindow *control = *it;
 		Point		pos;
 		if( m_relativePositions.hasElement( control ) )
 		{
@@ -592,7 +573,8 @@ void DesignerForm::performStandardDrag( const Point &position )
 		{
 			m_theGuiBuilder->setChangedFlag();
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::performResize( const Point &position )
@@ -601,13 +583,8 @@ void DesignerForm::performResize( const Point &position )
 	int xOffset = position.x - m_lastMousePos.x;
 	int yOffset = position.y - m_lastMousePos.y;
 	m_lastMousePos = position;
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *control) -> bool
 	{
-		BasicWindow *control = *it;
 		RectBorder	rect = control->getRelativeRectangle();
 		if( m_sizeMode == smLOWERRIGHT )
 		{
@@ -637,42 +614,33 @@ void DesignerForm::performResize( const Point &position )
 		resource->setIntegerAttribute( LayoutData::widthAttr, rect.getWidth() );
 		resource->setIntegerAttribute( LayoutData::heightAttr, rect.getHeight() );
 		m_theGuiBuilder->setChangedFlag();
-	}
+		return false;
+	});
 }
 
 void DesignerForm::endTableDrag()
 {
 	const ChildWindows &children = m_currentFrame->getChildren();
-	for(
-		ChildWindows::const_iterator it = children.cbegin(),  endIT = children.cend();
-		it != endIT;
-		++it
-	)
+	children.forEach( [](BasicWindow *child) -> bool
 	{
-		BasicWindow *child = *it;
-		
 		LayoutData		*layoutData = child->getLayoutData();
 		if( layoutData )
 		{
-			xml::Element		*resource = child->getResource();
-			xml::Element		*layout = resource->getElement( LayoutData::className );
+			xml::Element	*resource = child->getResource();
+			xml::Element	*layout = resource->getElement( LayoutData::className );
 			layout->setIntegerAttribute( LayoutData::xPosAttr, layoutData->xPos );
 			layout->setIntegerAttribute( LayoutData::yPosAttr, layoutData->yPos );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::endDragging()
 {
 	if( s_gridSize && !m_tableManager )
 	{
-		for( 
-			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-			it != endIT;
-			++it
-		)
+		m_selected.forEach( [](BasicWindow *control) -> bool
 		{
-			BasicWindow *control = *it;
 			RectBorder	rect = control->getRelativeRectangle();
 
 			rect.left += s_gridSize / 2;
@@ -694,7 +662,8 @@ void DesignerForm::endDragging()
 			{
 				resource->setIntegerAttribute( LayoutData::heightAttr, rect.getHeight() );
 			}
-		}
+			return false;
+		});
 	}
 }
 
@@ -882,13 +851,8 @@ ProcessStatus DesignerForm::handleKeyDown( int key )
 	if( key == VK_DELETE )
 	{
 		bool	itsMe = false;
-		for( 
-			ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-			it != endIT;
-			++it
-		)
+		m_selected.forEach( [&](BasicWindow *child) -> bool
 		{
-			BasicWindow		*child = *it;
 			if( child == this )
 			{
 				itsMe = true;
@@ -898,7 +862,8 @@ ProcessStatus DesignerForm::handleKeyDown( int key )
 			resource->remove();
 			delete resource;
 			child->close();
-		}
+			return false;
+		} );
 		m_selected.clear();
 		
 		m_theGuiBuilder->removeSelected( itsMe );
@@ -1094,13 +1059,8 @@ void DesignerForm::postControlCallback( BasicWindow *control, unsigned uMsg, WPA
 void DesignerForm::moveHorizontal( int xPos )
 {
 	int	dummy, yPos;
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [&](BasicWindow *child) -> bool
 	{
-		BasicWindow *child = *it;
 		child->getRelativePosition( &dummy, &yPos );
 		child->move( xPos, yPos );
 		gak::xml::Element	*resource = child->getResource();
@@ -1108,19 +1068,15 @@ void DesignerForm::moveHorizontal( int xPos )
 		{
 			resource->setIntegerAttribute( LayoutData::xPosAttr, xPos );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::moveVertical( int yPos )
 {
 	int	dummy, xPos;
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [&](BasicWindow *child) -> bool
 	{
-		BasicWindow *child = *it;
 		child->getRelativePosition( &xPos, &dummy );
 		child->move( xPos, yPos );
 		gak::xml::Element	*resource = child->getResource();
@@ -1128,19 +1084,14 @@ void DesignerForm::moveVertical( int yPos )
 		{
 			resource->setIntegerAttribute( LayoutData::yPosAttr, yPos );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setWidth( int width )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
-
 		gak::xml::Element	*resource = child->getResource();
 		if( child == this && resource )
 		{
@@ -1159,18 +1110,14 @@ void DesignerForm::setWidth( int width )
 		{
 			resource->setIntegerAttribute( LayoutData::widthAttr, width );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setHeight( int height )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		gak::xml::Element	*resource = child->getResource();
 		if( child == this && resource )
 		{
@@ -1189,34 +1136,26 @@ void DesignerForm::setHeight( int height )
 		{
 			resource->setIntegerAttribute( LayoutData::heightAttr, height );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setCaption( const STRING &caption )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		child->setText( caption );
 		gak::xml::Element	*resource = child->getResource();
 		if( resource )
 			resource->setStringAttribute( CAPTION_ATTR, caption );
-	}
+		return false;
+	});
 }
 	
 void DesignerForm::setLayoutHorizontal( int xPos )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1231,18 +1170,14 @@ void DesignerForm::setLayoutHorizontal( int xPos )
 
 			layout->setIntegerAttribute( LayoutData::xPosAttr, xPos );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setLayoutVertical( int yPos )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1257,18 +1192,14 @@ void DesignerForm::setLayoutVertical( int yPos )
 
 			layout->setIntegerAttribute( LayoutData::yPosAttr, yPos );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setLayoutSizeHorizontal( unsigned width )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1283,18 +1214,14 @@ void DesignerForm::setLayoutSizeHorizontal( unsigned width )
 
 			layout->setIntegerAttribute( LayoutData::widthAttr, width );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setLayoutSizeVertical( unsigned height )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1309,18 +1236,14 @@ void DesignerForm::setLayoutSizeVertical( unsigned height )
 
 			layout->setIntegerAttribute( LayoutData::heightAttr, height );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setLayoutGrowHorizontal( unsigned growWidth )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1335,18 +1258,14 @@ void DesignerForm::setLayoutGrowHorizontal( unsigned growWidth )
 
 			layout->setIntegerAttribute( LayoutData::growWidthAttr, growWidth );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setLayoutGrowVertical( unsigned growHeight )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1361,18 +1280,14 @@ void DesignerForm::setLayoutGrowVertical( unsigned growHeight )
 
 			layout->setIntegerAttribute( LayoutData::growHeightAttr, growHeight );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setPaddingLeft( int paddingLeft )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1387,18 +1302,14 @@ void DesignerForm::setPaddingLeft( int paddingLeft )
 
 			layout->setIntegerAttribute( LayoutData::paddingLeft, paddingLeft );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setPaddingRight( int paddingRight )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1413,18 +1324,14 @@ void DesignerForm::setPaddingRight( int paddingRight )
 
 			layout->setIntegerAttribute( LayoutData::paddingRight, paddingRight );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setPaddingTop( int paddingTop )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1439,18 +1346,14 @@ void DesignerForm::setPaddingTop( int paddingTop )
 
 			layout->setIntegerAttribute( LayoutData::paddingTop, paddingTop );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setPaddingBottom( int paddingBottom )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1465,7 +1368,8 @@ void DesignerForm::setPaddingBottom( int paddingBottom )
 
 			layout->setIntegerAttribute( LayoutData::paddingBottom, paddingBottom );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setAttachment( int attachment )
@@ -1474,13 +1378,8 @@ void DesignerForm::setAttachment( int attachment )
 	{
 		return;		// do not change
 	}
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow	*child = *it;
 		LayoutData	*layoutData = child->getLayoutData();
 		if( !layoutData )
 			child->setLayoutData( layoutData = new LayoutData );
@@ -1497,7 +1396,8 @@ void DesignerForm::setAttachment( int attachment )
 
 			layout->setIntegerAttribute( LayoutData::attachment, attachment );
 		}
-	}
+		return false;
+	});
 	m_theGuiBuilder->setChangedFlag();
 }
 
@@ -1520,13 +1420,9 @@ void DesignerForm::setLayoutManager( const STRING &type )
 		}
 	}
 	
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *bchild) -> bool
 	{
-		CallbackWindow *child = dynamic_cast<CallbackWindow*>( *it );
+		CallbackWindow *child = dynamic_cast<CallbackWindow*>( bchild );
 		if( child )
 		{
 			LayoutManager *m_layoutManager = createLayoutManager( type, true );
@@ -1553,18 +1449,15 @@ void DesignerForm::setLayoutManager( const STRING &type )
 				}
 			}
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setMargin( int marginLeft, int marginRight, int marginTop, int marginBottom )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *bchild) -> bool
 	{
-		CallbackWindow	*child = dynamic_cast<CallbackWindow*>(*it);
+		CallbackWindow	*child = dynamic_cast<CallbackWindow*>(bchild);
 		if( child )
 		{
 			LayoutManager	*m_layoutManager = child->getLayoutManager();
@@ -1596,54 +1489,43 @@ void DesignerForm::setMargin( int marginLeft, int marginRight, int marginTop, in
 				}
 			}
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setFont( const STRING &font )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow			*child = *it;
 		gak::xml::Element	*resource = child->getResource();
 		if( resource )
 		{
 			resource->setStringAttribute( "font", font );
 			child->getFont().fromString( font, true );
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setBaseClass( const STRING &baseClass )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-		BasicWindow			*child = *it;
 		gak::xml::Element	*resource = child->getResource();
 		if( resource && resource->getTag() == FORM_TAG )
 		{
 			resource->setStringAttribute( "baseClass", baseClass );
 			m_theGuiBuilder->setChangedFlag();
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setNumCols( unsigned numCols )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *bchild) -> bool
 	{
-		GridViewer	*child = dynamic_cast<GridViewer*>(*it);
+		GridViewer	*child = dynamic_cast<GridViewer*>(bchild);
 		if( child )
 		{
 			child->setNumCols( numCols );
@@ -1653,18 +1535,15 @@ void DesignerForm::setNumCols( unsigned numCols )
 				resource->setIntegerAttribute( "numCols", numCols );
 			}
 		}
-	}
+		return false;
+	});
 }
 
 void DesignerForm::setNumRows( unsigned numRows )
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *bchild) -> bool
 	{
-		GridViewer	*child = dynamic_cast<GridViewer*>(*it);
+		GridViewer	*child = dynamic_cast<GridViewer*>(bchild);
 		if( child )
 		{
 			child->setNumRows( numRows );
@@ -1674,20 +1553,15 @@ void DesignerForm::setNumRows( unsigned numRows )
 				resource->setIntegerAttribute( "numRows", numRows );
 			}
 		}
-	}
+		return false;
+	});
 }
 
 bool DesignerForm::moveUp()
 {
 	bool hasChanged = false;
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [&](BasicWindow *child) -> bool
 	{
-
-		BasicWindow *child = *it;
 		gak::xml::Element *element = child->getResource();
 		if( element )
 		{
@@ -1699,14 +1573,15 @@ bool DesignerForm::moveUp()
 			}
 			else
 			{
-/*v*/			break;
+/*v*/			return true;	//break;
 			}
 		}
 		else
 		{
-/*v*/		break;
+/*v*/		return true;	//break;
 		}
-	}
+		return false;
+	});
 		
 	return hasChanged;
 }
@@ -1751,17 +1626,11 @@ bool DesignerForm::moveDown()
 
 void DesignerForm::refreshSelection()
 {
-	for( 
-		ChildWindows::const_iterator it = m_selected.cbegin(), endIT = m_selected.cend();
-		it != endIT;
-		++it
-	)
+	m_selected.forEach( [=](BasicWindow *child) -> bool
 	{
-
-		BasicWindow *child = *it;
 		m_theGuiBuilder->selectControl( child, FromRefresh );
-
-	}
+		return false;
+	} );
 }
 
 // --------------------------------------------------------------------- //

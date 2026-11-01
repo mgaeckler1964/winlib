@@ -145,11 +145,7 @@ void GridViewer::calcDimensions( const Size &size )
 		double	rowHeight = getRowHeight();
 
 		double	left = 0;
-		for(
-			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_ITER( gak::PODarray<ColAttribute>, m_colAttributes, it, 
 		{
 			it->left = unsigned(left+0.5);
 			if( it->width )
@@ -157,7 +153,7 @@ void GridViewer::calcDimensions( const Size &size )
 			else
 				left += colWidth;
 			it->right = unsigned(left+0.5);
-		}
+		});
 		m_totalWidth = int(left+0.5);
 		if( m_totalWidth > size.width )
 		{
@@ -173,11 +169,7 @@ void GridViewer::calcDimensions( const Size &size )
 		}
 
 		double	top = 0;
-		for(
-			gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
-			it != endIT;
-			++it
-		)
+		FOR_EACH_ITER( gak::PODarray<RowAttribute>, m_rowAttributes, it, 
 		{
 			it->top = unsigned(top+0.5);
 			if( it->height )
@@ -185,7 +177,7 @@ void GridViewer::calcDimensions( const Size &size )
 			else
 				top += rowHeight;
 			it->bottom = unsigned(top+0.5);
-		}
+		});
 		m_totalHeight = int(top+0.5);
 		if( m_totalHeight > size.height )
 		{
@@ -623,11 +615,7 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 		hDC.getPen().setStyle( Pen::psDot ).setWidth( 1 );
 
 		unsigned col=0;
-		for(
-			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
-			it != endIT;
-			++it, ++col
-		)
+		FOR_EACH_ITER( gak::PODarray<ColAttribute>, m_colAttributes, it, 
 		{
 			int	pos = it->left;
 			if( col >= m_fixedCols )
@@ -638,14 +626,11 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 			{
 				hDC.verticalLine( pos, 0, size.height );
 			}
-		}
+			++col;
+		});
 
 		unsigned row=0;
-		for(
-			gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
-			it != endIT;
-			++it, ++row
-		)
+		FOR_EACH_ITER( gak::PODarray<RowAttribute>, m_rowAttributes, it, 
 		{
 			int pos = it->top;
 			if( row >= m_fixedRows )
@@ -654,7 +639,8 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 				break;
 			if( pos > 0  )
 				hDC.horizontalLine( 0, size.width, pos );
-		}
+			++row;
+		});
 	}
 
 	if( m_data.getNumRows() && m_data.getNumCols() )
@@ -663,11 +649,7 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 		size_t col=0;
 		hDC.selectFont( getFont() );
 		hDC.clrBackgroundColor();
-		for(
-			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
-			it != endIT;
-			++it, ++col
-		)
+		FOR_EACH_ITER( gak::PODarray<ColAttribute>, m_colAttributes, it, 
 		{
 			RectBorder	rect;
 			rect.left = it->left;
@@ -683,11 +665,7 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 			if( rect.right > 0 )
 			{
 				size_t row=0;
-				for(
-					gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
-					it != endIT;
-					++it, ++row
-				)
+				FOR_EACH_ITER( gak::PODarray<RowAttribute>, m_rowAttributes, it, 
 				{
 					rect.top = it->top;
 					rect.bottom = it->bottom;
@@ -739,9 +717,12 @@ ProcessStatus GridViewer::handleRepaint( Device &hDC )
 							drawCell( hDC, rect, cellData, 0 );
 						}
 					}
-				}
+					++row;
+				});
 			}
-		}
+
+			++col;
+		});
 	}
 
 	return psPROCESSED;
@@ -756,11 +737,7 @@ ProcessStatus GridViewer::handleMouseMove( ModifierFlags /*modifier*/, const Poi
 	{
 		newState = msNORMAL;
 		size_t	col = 0;
-		for(
-			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
-			it != endIT;
-			++it, ++col
-		)
+		FOR_EACH_ITER( gak::PODarray<ColAttribute>, m_colAttributes, it, 
 		{
 			int right = it->right;
 			if( col >= m_fixedCols )
@@ -772,7 +749,8 @@ ProcessStatus GridViewer::handleMouseMove( ModifierFlags /*modifier*/, const Poi
 				m_sizerCol = col;
 				break;
 			}
-		}
+			++col;
+		});
 	}
 	else if( m_mouseState == msDO_COL_SIZER )
 	{
@@ -822,11 +800,7 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, ModifierFlags
 		m_editCell = nullptr;
 		int		caretLeft=0;
 		size_t	col = 0;
-		for(
-			gak::PODarray<ColAttribute>::iterator it = m_colAttributes.begin(), endIT = m_colAttributes.end();
-			it != endIT;
-			++it, ++col
-		)
+		FOR_EACH_ITER( gak::PODarray<ColAttribute>, m_colAttributes, it, 
 		{
 			int left = it->left;
 			int right = it->right;
@@ -841,15 +815,12 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, ModifierFlags
 				caretLeft = left;
 /*v*/			break;
 			}
-		}
+			++col;
+		});
 		if( col < m_data.getNumCols() )
 		{
 			size_t row=0;
-			for(
-				gak::PODarray<RowAttribute>::iterator it = m_rowAttributes.begin(), endIT = m_rowAttributes.end();
-				it != endIT;
-				++it, ++row
-			)
+			FOR_EACH_ITER( gak::PODarray<RowAttribute>, m_rowAttributes, it, 
 			{
 				bool	isCaption = (col < m_fixedCols || row < m_fixedRows);
 				int	top = it->top;
@@ -876,7 +847,8 @@ ProcessStatus GridViewer::handleLeftButton( LeftButton leftButton, ModifierFlags
 					m_caretOffsetPixel = 0;
 /*v*/				break;
 				}
-			}
+				++row;
+			});
 		}
 		if( lastEditCell != m_editCell )
 		{

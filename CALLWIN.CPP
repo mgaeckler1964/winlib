@@ -747,18 +747,14 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 		case WM_SETFONT:
 		{
 			const ChildWindows &children = getChildren();
-			for( 
-				ChildWindows::const_iterator it = children.cbegin(), endIT = children.cend();
-				it != endIT;
-				++it
-			)
+			FOR_EACH_CITER( ChildWindows, children,  it,
 			{
 				BasicWindow *child = *it;
 				if( !child->getFont().isAssigned() )
 				{
 					child->message( WM_SETFONT, wParam, lParam );
 				}
-			}
+			});
 			break;
 		}
 		case WM_GETFONT:
