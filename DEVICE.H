@@ -505,7 +505,7 @@ public:
 	{
 		RoundRect( m_device, rect.left, rect.top, rect.right, rect.bottom, width, height );
 	}
-	void fillRectangle( const RectBorder &rect, Brush &brush ) const
+	void fillRectangle( const RectBorder &rect, const Brush &brush ) const
 	{
 		FillRect( m_device, &rect, brush );
 	}
