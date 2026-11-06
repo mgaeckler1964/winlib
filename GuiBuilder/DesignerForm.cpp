@@ -383,7 +383,7 @@ void DesignerForm::performTableDrag( const Point &position )
 	assert( m_lastChildClick );
 
 	Point	childPos;
-	mouseToChildPosition( position, m_lastChildClick->getParent(), &childPos );
+	mapMousePosition( position, m_lastChildClick->getParent(), &childPos );
 
 	int	col, row;
 	int colLeft, rowTop;
@@ -684,7 +684,7 @@ void DesignerForm::createControl( const Point *position )
 	{
 		// mouse position is relative to me
 		// we must calculate the position relaitve to the frame
-		mouseToChildPosition( *position, parent, &newChildPos );
+		mapMousePosition( *position, parent, &newChildPos );
 		position = &newChildPos;
 	}
 

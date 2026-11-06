@@ -362,6 +362,9 @@ public:
 	// WM_PAINT
 	virtual ProcessStatus handleRepaint( Device &hDC );
 
+	// WM_PAINT_FRAME
+	virtual ProcessStatus handleRepaintFrame( const FrameChild *frame );
+
 	// WM_COMMAND
 	virtual ProcessStatus handleEditChange( int control );
 	virtual ProcessStatus handleButtonClick( int control );

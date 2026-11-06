@@ -34,6 +34,7 @@
 // --------------------------------------------------------------------- //
 
 #include <winlib/frame.h>
+#include <winlib/messages.h>
 
 // --------------------------------------------------------------------- //
 // ----- module switches ----------------------------------------------- //
@@ -72,7 +73,7 @@ void FrameChild::registerClass()
 		fillDefaultClass( &wc );
 		wc.style			|= CS_DBLCLKS;
 		wc.lpszClassName	 = className;
-		wc.hbrBackground	 = NULL;
+		wc.hbrBackground	 = nullptr;
 
 		registered = CallbackWindow::registerClass( &wc );
 	}
@@ -85,6 +86,35 @@ void FrameChild::registerClass()
 STRING FrameChild::getWindowClassName() const
 {
 	return className;
+}
+
+ProcessStatus FrameChild::handleRepaint( Device &hDC )
+{
+	if( m_notifyParent )
+	{
+		getParent()->message( WM_PAINT_FRAME, WPARAM(handle()), LPARAM(this) );
+		return psPROCESSED;
+	}
+	else
+	{
+		return psDO_DEFAULT;
+	}
+}
+
+ProcessStatus FrameChild::handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &iPosition )
+{
+	if( m_notifyParent )
+	{
+		Point position(iPosition);
+		const BasicWindow *parent = getParent();
+		mapMousePosition( parent, &position );
+		parent->message( leftButton, modifier, MAKELPARAM( position.x, position.y ) );
+		return psPROCESSED;
+	}
+	else
+	{
+		return psDO_DEFAULT;
+	}
 }
 
 }	// namespace winlib

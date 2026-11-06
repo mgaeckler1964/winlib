@@ -173,7 +173,7 @@ class BasicWindow : public ForeignWindow, public gak::CopyProtection
 	gak::xml::Element	*m_resource;
 
 	enum WindowState {
-		wsNew, wsInCreation, wsLoading, wsReady
+		wsNew, wsInCreation, wsLoading, wsControlsOK, wsReady
 	} m_state;
 
 public:
@@ -181,13 +181,25 @@ public:
 	{
 		m_state = wsLoading;
 	}
+	void setControlsOK()
+	{
+		m_state = wsControlsOK;
+	}
 	void setReady()
 	{
 		m_state = wsReady;
 	}
 	bool isReady() const
 	{
-		return m_state == wsReady;
+		return wsReady == m_state;
+	}
+	bool isLoading() const
+	{
+		return wsLoading == m_state;
+	}
+	bool isControlsOK() const
+	{
+		return wsControlsOK <= m_state;
 	}
 
 private:

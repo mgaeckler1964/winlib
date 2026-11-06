@@ -279,16 +279,17 @@ public:
 	/*
 		window hiararchy
 	*/
-	void mouseToChildPosition( const Point &position, const ForeignWindow *child, Point *newPosition ) const
+	void mapMousePosition( const Point &position, const ForeignWindow *target, Point *newPosition ) const
 	{
 		*newPosition = position;
-		mouseToChildPosition( child, newPosition );
+		mapMousePosition( target, newPosition );
 	}
-	void mouseToChildPosition( const ForeignWindow *child, Point *position ) const
+	void mapMousePosition( const ForeignWindow *target, Point *position ) const
 	{
 		ClientToScreen( handle(), position );
-		ScreenToClient( child->handle(), position );
+		ScreenToClient( target->handle(), position );
 	}
+	
 
 	/*
 		searching for windows

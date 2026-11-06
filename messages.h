@@ -70,6 +70,7 @@ static const UINT WM_GRID_ITEM_ENTER	= WM_USER+20;
 static const UINT WM_GRID_ITEM_EXIT		= WM_USER+21;
 
 static const UINT WM_ASYNC_TASK_END		= WM_USER+30;
+static const UINT WM_PAINT_FRAME		= WM_USER+31;
 
 // --------------------------------------------------------------------- //
 // ----- macros -------------------------------------------------------- //

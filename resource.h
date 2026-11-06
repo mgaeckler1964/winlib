@@ -186,6 +186,7 @@ SuccessCode createForm(
 		form->doLayout();
 
 		form->getControls();
+		form->setControlsOK();
 		form->allowDialogProcessing();
 		form->allowNotifications();
 

@@ -63,16 +63,20 @@ namespace winlib
 */
 class FrameChild : public ChildWindow
 {
-	private:
+	bool	m_notifyParent;
 	static void registerClass();
 	STRING getWindowClassName() const override;
-	public:
-	static const char className[];
-	private:
 
-	public:
-	FrameChild( BasicWindow *owner = NULL ) 
-	: ChildWindow( owner )
+public:
+	static const char className[];
+
+private:
+	ProcessStatus handleRepaint( Device &hDC ) override;
+	ProcessStatus handleLeftButton( LeftButton leftButton, ModifierFlags modifier, const Point &position ) override;
+
+public:
+	FrameChild( BasicWindow *owner = nullptr ) 
+	: ChildWindow( owner ), m_notifyParent(false)
 	{
 		registerClass();
 		addStyle( WS_GROUP|WS_VISIBLE );
@@ -85,6 +89,10 @@ class FrameChild : public ChildWindow
 	SuccessCode create( BasicWindow *parent, const char *resourceName, bool designerMode=false )
 	{
 		return createFrameByXml( appObject->getGuiDoc(), resourceName, this, parent, designerMode );
+	}
+	void notifyParent()
+	{
+		m_notifyParent = true;
 	}
 };
 

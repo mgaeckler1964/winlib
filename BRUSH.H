@@ -143,38 +143,43 @@ class Brush : public GdiObject<HBRUSH>
 	/*
 		Solid Brush
 	*/
-	void create( COLORREF color )
+	Brush &create( COLORREF color )
 	{
 		m_logBrush.lbStyle = BS_SOLID;
 		m_logBrush.lbColor = color;
 		setBrush( 
 			CreateSolidBrush( m_logBrush.lbColor = color ) 
 		);
+		return *this;
 	}
-	void create( unsigned char red, unsigned char green, unsigned char blue )
+	Brush &create( unsigned char red, unsigned char green, unsigned char blue )
 	{
 		create( RGB( red, green, blue ) );
+		return *this;
 	}
-	void createSyscolor( SystemColor color )
+	Brush &createSyscolor( SystemColor color )
 	{
 		HBRUSH	handle = HBRUSH( GetSysColorBrush( color ) );
 		setBrush( handle );
 		GetObject( handle, sizeof(m_logBrush), &m_logBrush );
+		return *this;
 	}
 	COLORREF getBackgroundColor() const
 	{
 		return m_logBrush.lbColor;
 	}
-	void create( FillStyle fillStyle, COLORREF fillColor )
+	Brush &create( FillStyle fillStyle, COLORREF fillColor )
 	{
 		m_logBrush.lbStyle = BS_HATCHED;
 		m_logBrush.lbHatch = fillStyle;
 		m_logBrush.lbColor = fillColor;
 		setBrush( CreateHatchBrush( fillStyle, fillColor ) );
+		return *this;
 	}
-	void create( FillStyle fillStyle, unsigned char red, unsigned char green, unsigned char blue )
+	Brush &create( FillStyle fillStyle, unsigned char red, unsigned char green, unsigned char blue )
 	{
 		create( fillStyle, RGB( red, green, blue ) );
+		return *this;
 	}
 
 	/*

@@ -428,6 +428,13 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			msgStatus = handleRepaint( dc );
 			break;
 		}
+		case WM_PAINT_FRAME:
+		{
+			const FrameChild *frame=reinterpret_cast<const FrameChild*>(lParam);
+			msgStatus = handleRepaintFrame( frame );
+			break;
+		}
+
 
 		// scroll bars
 		case WM_VSCROLL:
@@ -558,7 +565,7 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			if( m_dragTreeView )
 			{
 				msgStatus = psPROCESSED;
-				mouseToChildPosition( m_dragTreeView, &point );
+				mapMousePosition( m_dragTreeView, &point );
 				TreeNode	*dragOver = m_dragTreeView->doDrag( point );
 				if( dragOver )
 				{
@@ -995,6 +1002,11 @@ ProcessStatus CallbackWindow::handleErase( Device &hDC )
 ProcessStatus CallbackWindow::handleRepaint( Device & )
 {
 	return psDO_DEFAULT;
+}
+
+ProcessStatus CallbackWindow::handleRepaintFrame( const FrameChild *frame )
+{
+	return psSEND_TO_PARENT;
 }
 
 ProcessStatus CallbackWindow::handleEditChange( int /* editControl */ )
