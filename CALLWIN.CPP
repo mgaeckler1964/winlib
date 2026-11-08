@@ -707,11 +707,11 @@ LRESULT CallbackWindow::callBack( const unsigned int message, const WPARAM wPara
 			break;
 
 		case WM_SETFOCUS:
-//			msgStatus = psDO_DEFAULT;
+			msgStatus = psDO_DEFAULT;
 			handleFocus();
 			break;
 		case WM_KILLFOCUS:
-//			msgStatus = psDO_DEFAULT;
+			msgStatus = psDO_DEFAULT;
 			if( hasCaret() )
 				destroyCaret();
 			handleKillFocus();
@@ -1004,7 +1004,7 @@ ProcessStatus CallbackWindow::handleRepaint( Device & )
 	return psDO_DEFAULT;
 }
 
-ProcessStatus CallbackWindow::handleRepaintFrame( const FrameChild *frame )
+ProcessStatus CallbackWindow::handleRepaintFrame( const FrameChild * /*frame*/ )
 {
 	return psSEND_TO_PARENT;
 }
@@ -1065,20 +1065,17 @@ ProcessStatus CallbackWindow::handleMouseRelease()
 
 ProcessStatus CallbackWindow::handleMouseMove( ModifierFlags, const Point & )
 {
-	return psPROCESSED;
-//	return psDO_DEFAULT;
+	return psDO_DEFAULT;
 }
 
 ProcessStatus CallbackWindow::handleLeftButton( LeftButton, ModifierFlags, const Point & )
 {
-	return psPROCESSED;
-//	return psDO_DEFAULT;
+	return psDO_DEFAULT;
 }
 
 ProcessStatus CallbackWindow::handleRightButton( RightButton, ModifierFlags, const Point & )
 {
-	return psPROCESSED;
-//	return psDO_DEFAULT;
+	return psDO_DEFAULT;
 }
 
 void CallbackWindow::handleFile( const char *, size_t, size_t )
