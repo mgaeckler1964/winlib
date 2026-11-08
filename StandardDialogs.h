@@ -385,8 +385,8 @@ class FontDialog
 template <typename IdType>
 void FileDialog::init( const BasicWindow *parent, int titleId, IdType filterID, int numFilter )
 {
-	m_title = titleId ? appObject->loadString( titleId ) : NULL_STRING;
-	m_filter = NULL_STRING;
+	m_title = titleId ? appObject->loadString( titleId ) : gak::NULL_STRING;
+	m_filter = gak::NULL_STRING;
 
 	if( filterID )
 	{
